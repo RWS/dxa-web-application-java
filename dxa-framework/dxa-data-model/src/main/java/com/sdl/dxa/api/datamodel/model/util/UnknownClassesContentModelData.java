@@ -5,10 +5,10 @@ import com.sdl.dxa.api.datamodel.model.ContentModelData;
 /**
  * Handler of an unknown entity-level class. Basically represents any data structure that is not known with a Map.
  */
-public class UnknownClassesContentModelData extends ContentModelData implements HandlesTypeInformationForUnknownClasses {
+public class UnknownClassesContentModelData extends ContentModelData {
 
     @Override
-    public String getTypeId() {
-        return (String) get("@type");
+    protected boolean shouldRemoveDollarType() {
+        return false;
     }
 }

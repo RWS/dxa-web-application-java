@@ -8,11 +8,10 @@ import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
-import com.sdl.dxa.api.datamodel.model.util.HandlesTypeInformationForUnknownClasses;
+import com.sdl.dxa.api.datamodel.model.util.HandlesTypeInformationForListWrapper;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
 import com.sdl.dxa.api.datamodel.model.util.UnknownClassesContentModelData;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -42,8 +41,6 @@ import static org.springframework.util.ClassUtils.getDefaultClassLoader;
 @Slf4j
 public class ModelDataTypeIdResolver extends TypeIdResolverBase {
 
-    private static final String LIST_MARKER = "[]";
-
     private static final Map<String, JavaType> BASIC_MAPPING = new HashMap<>();
 
     static {
@@ -67,10 +64,10 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
 
         // now go through all the mappings to add all additional [] that are not yet added (= no explicit implementation for it)
         BASIC_MAPPING.entrySet().stream()
-                .filter(entry -> !entry.getKey().contains(LIST_MARKER))
-                .filter(entry -> !BASIC_MAPPING.containsKey(entry.getKey() + LIST_MARKER))
+                .filter(entry -> !entry.getKey().contains(Constants.LIST_MARKER))
+                .filter(entry -> !BASIC_MAPPING.containsKey(entry.getKey() + Constants.LIST_MARKER))
                 .collect(Collectors.toList())
-                .forEach(entry -> addMapping(entry.getKey() + LIST_MARKER, ListWrapper.class, entry.getValue().getRawClass()));
+                .forEach(entry -> addMapping(entry.getKey() + Constants.LIST_MARKER, ListWrapper.class, entry.getValue().getRawClass()));
     }
 
     private static void addMapping(String classId, Class<?> basicClass, Class<?> genericClass) {
@@ -96,21 +93,15 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
         return JsonTypeInfo.Id.CUSTOM;
     }
 
-    @NotNull
     private String getIdFromValue(Object value) {
         if (value == null) {
             log.warn("Should normally never happen, Jackson should handle nulls");
             return "unknown";
         }
 
-        try {
-            if (value instanceof HandlesTypeInformationForUnknownClasses &&
-                    value.getClass().getMethod("getTypeId").getDeclaringClass().equals(value.getClass())) {
-                log.debug("Value {} is of an unknown non-core type, request type ID from ir directly", value);
-                return ((HandlesTypeInformationForUnknownClasses) value).getTypeId();
-            }
-        } catch (NoSuchMethodException e) {
-            log.error("Method getTypeId doesn't belong to a class where it should belong to, should never happen", e);
+        if (value instanceof UnknownClassesContentModelData || value instanceof ListWrapper.UnknownClassesListWrapper) {
+            log.debug("Value {} is of an unknown non-core type, we have no idea about the type, let's just skip it, it is in the data map anyway", value);
+            return null;
         }
 
         JsonTypeName annotation = value.getClass().getAnnotation(JsonTypeName.class);
@@ -123,9 +114,9 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
             Object firstValue = ((ListWrapper) value).get(0);
 
             String typeName;
-            if (firstValue instanceof HandlesTypeInformationForUnknownClasses) {
+            if (firstValue instanceof HandlesTypeInformationForListWrapper) {
                 log.debug("First value of the list defines a type ID for the list", value);
-                typeName = ((HandlesTypeInformationForUnknownClasses) firstValue).getTypeId();
+                typeName = ((HandlesTypeInformationForListWrapper) firstValue).getTypeId();
             } else if (firstValue.getClass().isAnnotationPresent(JsonTypeName.class)) {
                 log.debug("First value of the list is annotated with a type ID for the list", value);
                 typeName = defaultIfBlank(firstValue.getClass().getAnnotation(JsonTypeName.class).value(),
@@ -134,7 +125,7 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
                 log.debug("First value of the list is doesn't know a type ID for the list, using simple name", value);
                 typeName = firstValue.getClass().getSimpleName();
             }
-            String id = getMappingName(typeName) + LIST_MARKER;
+            String id = getMappingName(typeName) + Constants.LIST_MARKER;
             log.trace("Value is instance of ListWrapper without an explicit implementation, value = '{}', id = '{}'", id);
             return id;
         }
@@ -154,7 +145,7 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
         if (javaType == null) {
             log.debug("Found id = {} which we don't know, create a map or list of maps to just save the data", id);
             return TypeFactory.defaultInstance().constructSpecializedType(unknownType(),
-                    id.contains(LIST_MARKER) ? ListWrapper.UnknownClassesListWrapper.class : UnknownClassesContentModelData.class);
+                    id.contains(Constants.LIST_MARKER) ? ListWrapper.UnknownClassesListWrapper.class : UnknownClassesContentModelData.class);
         }
         log.trace("Type ID '{}' is mapped to '{}'", id, javaType);
         return javaType;

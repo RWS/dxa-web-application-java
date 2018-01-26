@@ -102,12 +102,11 @@ public class ListWrapper<T> implements DelegatesToList<T> {
      * List of unknown entity-level {@link UnknownClassesContentModelData}s.
      */
     @NoArgsConstructor(access = AccessLevel.PUBLIC)
-    public static class UnknownClassesListWrapper extends ListWrapper<UnknownClassesContentModelData>
-            implements HandlesTypeInformationForUnknownClasses {
+    public static class UnknownClassesListWrapper extends ListWrapper<UnknownClassesContentModelData> {
 
-        @JsonProperty("@type")
+        @JsonProperty("$type")
         @Getter
-        private String typeId;
+        private String type;
 
         @SuppressWarnings("unused")
         public UnknownClassesListWrapper(List<UnknownClassesContentModelData> values) {

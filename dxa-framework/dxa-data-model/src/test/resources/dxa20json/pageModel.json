@@ -184,32 +184,26 @@
     },
     "UnknownClass": {
       "$type": "UnknownClass",
-      "@type": "UnknownClass",
       "Id": "UnknownClass"
     },
     "UnknownClasses": {
       "$type": "UnknownClass[]",
-      "@type": "UnknownClass[]",
       "$values": [
         {
           "$type": "UnknownClass",
-          "@type": "UnknownClass",
           "Id": "UnknownClass[] > UnknownClass"
         }
       ]
     },
     "UnknownParentClasses": {
       "$type": "UnknownParentClass[]",
-      "@type": "UnknownParentClass[]",
       "$values": [
         {
           "$type": "UnknownClass",
-          "@type": "UnknownClass",
           "Id": "UnknownParentClass[] > UnknownClass"
         },
         {
           "$type": "SecondUnknownClass",
-          "@type": "SecondUnknownClass",
           "Id": "UnknownParentClass[] > SecondUnknownClass"
         }
       ]

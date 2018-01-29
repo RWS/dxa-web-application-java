@@ -3,6 +3,7 @@ package com.sdl.dxa.api.datamodel;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
+import com.sdl.dxa.api.datamodel.json.Constants;
 import com.sdl.dxa.api.datamodel.model.BinaryContentData;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
@@ -115,13 +116,13 @@ public class DeserializationTest {
 
         assertEquals("UnknownClass[]", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownClasses")).getType());
         assertEquals("UnknownClass", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownClasses")).getValues()
-                .get(0).get("$type"));
+                .get(0).get(Constants.DOLLAR_TYPE));
 
         assertEquals("UnknownParentClass[]", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownParentClasses")).getType());
         assertEquals("UnknownClass", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownParentClasses")).getValues()
-                .get(0).get("$type"));
+                .get(0).get(Constants.DOLLAR_TYPE));
         assertEquals("SecondUnknownClass", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownParentClasses")).getValues()
-                .get(1).get("$type"));
+                .get(1).get(Constants.DOLLAR_TYPE));
     }
 
     private void assertRegions(List<RegionModelData> regions) {

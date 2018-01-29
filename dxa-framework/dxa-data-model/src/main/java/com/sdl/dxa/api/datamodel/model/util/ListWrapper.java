@@ -15,6 +15,8 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.sdl.dxa.api.datamodel.json.Constants.DOLLAR_TYPE;
+
 /**
  * Wrapper for the polymorphic list JSON representation coming from .NET Template Builder.
  * <p>It serializes the list as the following meaning that all elements of a list are of type {@link ContentModelData}</p>
@@ -104,7 +106,7 @@ public class ListWrapper<T> implements DelegatesToList<T> {
     @NoArgsConstructor(access = AccessLevel.PUBLIC)
     public static class UnknownClassesListWrapper extends ListWrapper<UnknownClassesContentModelData> {
 
-        @JsonProperty("$type")
+        @JsonProperty(DOLLAR_TYPE)
         @Getter
         private String type;
 

@@ -122,7 +122,7 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
                 typeName = defaultIfBlank(firstValue.getClass().getAnnotation(JsonTypeName.class).value(),
                         firstValue.getClass().getSimpleName());
             } else {
-                log.debug("First value of the list is doesn't know a type ID for the list, using simple name", value);
+                log.debug("First value of the list doesn't know a type ID for the list, using simple name", value);
                 typeName = firstValue.getClass().getSimpleName();
             }
             String id = getMappingName(typeName) + Constants.LIST_MARKER;

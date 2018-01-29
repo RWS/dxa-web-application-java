@@ -8,11 +8,14 @@ import com.sdl.dxa.api.datamodel.model.KeywordModelData;
 import com.sdl.dxa.api.datamodel.model.RichTextData;
 import lombok.AccessLevel;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.sdl.dxa.api.datamodel.json.Constants.DOLLAR_TYPE;
 
 /**
  * Wrapper for the polymorphic list JSON representation coming from .NET Template Builder.
@@ -93,6 +96,22 @@ public class ListWrapper<T> implements DelegatesToList<T> {
     public static class RichTextDataListWrapper extends ListWrapper<RichTextData> {
 
         public RichTextDataListWrapper(List<RichTextData> values) {
+            super(values);
+        }
+    }
+
+    /**
+     * List of unknown entity-level {@link UnknownClassesContentModelData}s.
+     */
+    @NoArgsConstructor(access = AccessLevel.PUBLIC)
+    public static class UnknownClassesListWrapper extends ListWrapper<UnknownClassesContentModelData> {
+
+        @JsonProperty(DOLLAR_TYPE)
+        @Getter
+        private String type;
+
+        @SuppressWarnings("unused")
+        public UnknownClassesListWrapper(List<UnknownClassesContentModelData> values) {
             super(values);
         }
     }

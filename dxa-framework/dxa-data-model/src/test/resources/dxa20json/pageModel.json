@@ -144,73 +144,71 @@
       }
     }
   ],
-  "Conditions": [
-    {
-      "$type": "TargetGroupCondition",
-      "TargetGroup": {
-        "Description": "moo 1",
-        "Conditions": [
-          {
-            "$type": "TargetGroupCondition",
-            "TargetGroup": {
-              "Description": "moo 1 1"
-            },
-            "Negate": true
-          },
-          {
-            "$type": "TargetGroupCondition",
-            "TargetGroup": {
-              "Description": "moo 1 2"
-            },
-            "Negate": true
-          }
-        ]
-      },
-      "Negate": false
+  "ExtensionData": {
+    "EntityModelData": {
+      "$type": "EntityModelData",
+      "Id": "EntityModelData"
     },
-    {
-      "$type": "CustomerCharacteristicCondition",
-      "Name": "John Johnson 0",
-      "Value": "JJ0",
-      "Operator": 0,
-      "Negate": true
+    "EntityModelDatas": {
+      "$type": "EntityModelData[]",
+      "$values": [
+        {
+          "Id": "EntityModelData[] > EntityModelData"
+        }
+      ]
     },
-    {
-      "$type": "CustomerCharacteristicCondition",
-      "Name": "John Johnson 1",
-      "Value": "JJ1",
-      "Operator": 1,
-      "Negate": true
+    "KnownClass": {
+      "$type": "KnownClass",
+      "Id": "KnownClass"
     },
-    {
-      "$type": "CustomerCharacteristicCondition",
-      "Name": "John Johnson 2",
-      "Value": "JJ2",
-      "Operator": 2,
-      "Negate": true
+    "KnownClasses": {
+      "$type": "KnownClass[]",
+      "$values": [
+        {
+          "Id": "KnownClass[] > KnownClass"
+        }
+      ]
     },
-    {
-      "$type": "CustomerCharacteristicCondition",
-      "Name": "John Johnson 3",
-      "Value": "JJ3",
-      "Operator": 3,
-      "Negate": true
+    "KnownParentClasses": {
+      "$type": "KnownParentClass[]",
+      "$values": [
+        {
+          "$type": "FirstChildKnownClass",
+          "Id": "KnownParentClass[] > FirstChildKnownClass"
+        },
+        {
+          "$type": "SecondChildKnownClass",
+          "Id": "KnownParentClass[] > SecondKnownClass"
+        }
+      ]
     },
-    {
-      "$type": "CustomerCharacteristicCondition",
-      "Name": "John Johnson minint",
-      "Value": "JJminint",
-      "Operator": -2147483648,
-      "Negate": true
+    "UnknownClass": {
+      "$type": "UnknownClass",
+      "Id": "UnknownClass"
     },
-    {
-      "$type": "KeywordCondition",
-      "Operator": 3,
-      "Value": "kw",
-      "KeywordModelData": null,
-      "Negate": true
+    "UnknownClasses": {
+      "$type": "UnknownClass[]",
+      "$values": [
+        {
+          "$type": "UnknownClass",
+          "Id": "UnknownClass[] > UnknownClass"
+        }
+      ]
+    },
+    "UnknownParentClasses": {
+      "$type": "UnknownParentClass[]",
+      "$values": [
+        {
+          "$type": "UnknownClass",
+          "Id": "UnknownParentClass[] > UnknownClass"
+        },
+        {
+          "$type": "SecondUnknownClass",
+          "Id": "UnknownParentClass[] > SecondUnknownClass"
+        }
+      ]
     }
-  ],
+  },
   "MvcData": {
     "ViewName": "ViewName",
     "ActionName": "ActionName",

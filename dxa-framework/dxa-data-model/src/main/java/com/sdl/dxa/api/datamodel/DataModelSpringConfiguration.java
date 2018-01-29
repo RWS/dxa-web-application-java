@@ -9,7 +9,6 @@ import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.sdl.dxa.api.datamodel.json.Polymorphic;
 import com.sdl.dxa.api.datamodel.json.PolymorphicObjectMixin;
-import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -43,7 +42,7 @@ public class DataModelSpringConfiguration {
 
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(Polymorphic.class));
-        scanner.findCandidateComponents(ViewModelData.class.getPackage().getName())
+        scanner.findCandidateComponents(DataModelSpringConfiguration.class.getPackage().getName())
                 .forEach(type -> {
                     try {
                         Class<?> aClass = forName(type.getBeanClassName(), getDefaultClassLoader());

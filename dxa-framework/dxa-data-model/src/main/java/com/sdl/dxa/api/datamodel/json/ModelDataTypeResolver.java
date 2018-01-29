@@ -2,6 +2,7 @@ package com.sdl.dxa.api.datamodel.json;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.core.JsonGenerator;
+import com.fasterxml.jackson.core.type.WritableTypeId;
 import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.SerializationConfig;
@@ -17,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.io.IOException;
 import java.util.Collection;
+
+import static com.google.common.primitives.Primitives.isWrapperType;
 
 /**
  * {@link TypeResolverBuilder} for handling DXA-specific polymorphic logic. Handles type information for {@code java.lang.Object} in JSON.
@@ -47,18 +50,32 @@ public class ModelDataTypeResolver extends StdTypeResolverBuilder {
         TypeIdResolver idRes = idResolver(config, baseType, subtypes, true, false);
         return new AsPropertyTypeSerializer(idRes, null, _typeProperty) {
             @Override
-            public void writeTypePrefixForScalar(Object value, JsonGenerator g) throws IOException {
+            public void writeTypePrefixForScalar(Object value, JsonGenerator g) {
                 // does nothing, we don't need type information for scalars
             }
 
             @Override
-            public void writeTypePrefixForScalar(Object value, JsonGenerator g, Class<?> type) throws IOException {
+            public void writeTypeSuffixForScalar(Object value, JsonGenerator g) {
                 // does nothing, we don't need type information for scalars
             }
 
             @Override
-            public void writeTypeSuffixForScalar(Object value, JsonGenerator g) throws IOException {
+            public void writeTypePrefixForScalar(Object value, JsonGenerator g, Class<?> type) {
                 // does nothing, we don't need type information for scalars
+            }
+
+            @Override
+            public WritableTypeId writeTypePrefix(JsonGenerator g, WritableTypeId idMetadata) throws IOException {
+                return isWrapperType(idMetadata.forValue.getClass()) ?
+                        idMetadata :
+                        super.writeTypePrefix(g, idMetadata);
+            }
+
+            @Override
+            public WritableTypeId writeTypeSuffix(JsonGenerator g, WritableTypeId idMetadata) throws IOException {
+                return isWrapperType(idMetadata.forValue.getClass()) ?
+                        idMetadata :
+                        super.writeTypeSuffix(g, idMetadata);
             }
         };
     }

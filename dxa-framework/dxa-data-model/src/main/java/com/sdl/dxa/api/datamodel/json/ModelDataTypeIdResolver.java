@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.google.common.primitives.Primitives;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.api.datamodel.model.util.HandlesHierarchyTypeInformation;
@@ -46,9 +47,8 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
     private static final Map<String, JavaType> BASIC_MAPPING = new HashMap<>();
 
     static {
-        Stream.of(Boolean.class, Character.class, Byte.class, Short.class, Integer.class, Long.class, Float.class,
-                Double.class, String.class).forEach(aClass -> addMapping(aClass.getSimpleName(), aClass, null));
-
+        addMapping(String.class.getSimpleName(), String.class, null);
+        Primitives.allWrapperTypes().forEach(aClass -> addMapping(aClass.getSimpleName(), aClass, null));
         Stream.of(Date.class, DateTime.class).forEach(aClass -> addMapping(aClass.getSimpleName(), String.class, null));
 
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);

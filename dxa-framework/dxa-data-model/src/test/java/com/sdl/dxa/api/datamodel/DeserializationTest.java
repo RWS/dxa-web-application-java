@@ -16,7 +16,7 @@ import com.sdl.dxa.api.datamodel.model.known.FirstChildKnownClass;
 import com.sdl.dxa.api.datamodel.model.known.KnownClass;
 import com.sdl.dxa.api.datamodel.model.known.SecondChildKnownClass;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
-import com.sdl.dxa.api.datamodel.model.util.UnknownClassesContentModelData;
+import com.sdl.dxa.api.datamodel.model.util.UnknownClassContentModelData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.junit.Test;
@@ -111,14 +111,14 @@ public class DeserializationTest {
 
         // ===
 
-        assertTrue(extensionData.get("UnknownClass") instanceof UnknownClassesContentModelData);
-        assertEquals("UnknownClass", ((UnknownClassesContentModelData) extensionData.get("UnknownClass")).get("$type"));
+        assertTrue(extensionData.get("UnknownClass") instanceof UnknownClassContentModelData);
+        assertEquals("UnknownClass", ((UnknownClassContentModelData) extensionData.get("UnknownClass")).getTypeId());
 
-        assertEquals("UnknownClass[]", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownClasses")).getType());
+        assertEquals("UnknownClass[]", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownClasses")).getTypeId());
         assertEquals("UnknownClass", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownClasses")).getValues()
                 .get(0).get(Constants.DOLLAR_TYPE));
 
-        assertEquals("UnknownParentClass[]", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownParentClasses")).getType());
+        assertEquals("UnknownParentClass[]", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownParentClasses")).getTypeId());
         assertEquals("UnknownClass", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownParentClasses")).getValues()
                 .get(0).get(Constants.DOLLAR_TYPE));
         assertEquals("SecondUnknownClass", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownParentClasses")).getValues()

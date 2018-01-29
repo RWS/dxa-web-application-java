@@ -1,9 +1,13 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.sdl.dxa.api.datamodel.json.ModelDataTypeIdResolver;
 import com.sdl.dxa.api.datamodel.model.util.CanGetAndCast;
 import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
+import com.sdl.dxa.api.datamodel.model.util.HandlesHierarchyTypeInformation;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
+import com.sdl.dxa.api.datamodel.model.util.UnknownClassContentModelData;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -40,12 +44,12 @@ public class ContentModelData extends HashMap<String, Object>
 
     @Override
     public Object put(String key, Object value) {
-        return shouldRemoveDollarType() && DOLLAR_TYPE.equals(key) ? null : super.put(key, value);
+        return DOLLAR_TYPE.equals(key) && isRemoveDollarType(value) ? null : super.put(key, value);
     }
 
     @Override
     public void putAll(Map<? extends String, ?> m) {
-        if (shouldRemoveDollarType()) {
+        if (m.containsKey(DOLLAR_TYPE) && isRemoveDollarType(m.get(DOLLAR_TYPE))) {
             m.remove(DOLLAR_TYPE);
         }
         super.putAll(m);
@@ -53,7 +57,7 @@ public class ContentModelData extends HashMap<String, Object>
 
     @Override
     public Object putIfAbsent(String key, Object value) {
-        return shouldRemoveDollarType() && DOLLAR_TYPE.equals(key) ? null : super.putIfAbsent(key, value);
+        return DOLLAR_TYPE.equals(key) && isRemoveDollarType(value) ? null : super.putIfAbsent(key, value);
     }
 
     @Override
@@ -82,11 +86,15 @@ public class ContentModelData extends HashMap<String, Object>
     }
 
     /**
-     * $type is removed only for unknown classes which are mapped to a a map.
+     * $type is normally removed since it is restored after by {@link ModelDataTypeIdResolver} and we don't want to pollute map with it.
+     * In case we know for sure that the type information will be missing when serializing back,
+     * custom implementations like {@link UnknownClassContentModelData} may want to save it to help to restore later using {@link HandlesHierarchyTypeInformation}.
      *
-     * @return true unless overridden
+     * @param typeId type ID
+     * @return true if $type should be removed, false otherwise; default is always true
      */
-    protected boolean shouldRemoveDollarType() {
+    protected boolean isRemoveDollarType(@Nullable Object typeId) {
+        // default implementation does nothing with typeId
         return true;
     }
 }

@@ -8,10 +8,12 @@ import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
-import com.sdl.dxa.api.datamodel.model.util.HandlesTypeInformationForListWrapper;
+import com.sdl.dxa.api.datamodel.model.util.HandlesHierarchyTypeInformation;
+import com.sdl.dxa.api.datamodel.model.util.HandlesOwnTypeInformation;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
-import com.sdl.dxa.api.datamodel.model.util.UnknownClassesContentModelData;
+import com.sdl.dxa.api.datamodel.model.util.UnknownClassContentModelData;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
@@ -93,15 +95,17 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
         return JsonTypeInfo.Id.CUSTOM;
     }
 
+    @NotNull
     private String getIdFromValue(Object value) {
         if (value == null) {
             log.warn("Should normally never happen, Jackson should handle nulls");
             return "unknown";
         }
 
-        if (value instanceof UnknownClassesContentModelData || value instanceof ListWrapper.UnknownClassesListWrapper) {
-            log.debug("Value {} is of an unknown non-core type, we have no idea about the type, let's just skip it, it is in the data map anyway", value);
-            return null;
+        if (value instanceof HandlesOwnTypeInformation) {
+            String typeId = ((HandlesOwnTypeInformation) value).getTypeId();
+            log.debug("Value {} of a class {} handles its type information ({}), let's just use it", value, value.getClass(), typeId);
+            return typeId;
         }
 
         JsonTypeName annotation = value.getClass().getAnnotation(JsonTypeName.class);
@@ -113,19 +117,10 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
         if (value instanceof ListWrapper && !((ListWrapper) value).empty()) {
             Object firstValue = ((ListWrapper) value).get(0);
 
-            String typeName;
-            if (firstValue instanceof HandlesTypeInformationForListWrapper) {
-                log.debug("First value of the list defines a type ID for the list", value);
-                typeName = ((HandlesTypeInformationForListWrapper) firstValue).getTypeId();
-            } else if (firstValue.getClass().isAnnotationPresent(JsonTypeName.class)) {
-                log.debug("First value of the list is annotated with a type ID for the list", value);
-                typeName = defaultIfBlank(firstValue.getClass().getAnnotation(JsonTypeName.class).value(),
-                        firstValue.getClass().getSimpleName());
-            } else {
-                log.debug("First value of the list doesn't know a type ID for the list, using simple name", value);
-                typeName = firstValue.getClass().getSimpleName();
-            }
-            String id = getMappingName(typeName) + Constants.LIST_MARKER;
+            log.debug("Need to guess list type, use first element for this, it defines the whole list type");
+            String typeId = firstValue instanceof HandlesHierarchyTypeInformation ?
+                    ((HandlesHierarchyTypeInformation) firstValue).getTypeId() : getIdFromValue(firstValue);
+            String id = typeId + Constants.LIST_MARKER;
             log.trace("Value is instance of ListWrapper without an explicit implementation, value = '{}', id = '{}'", id);
             return id;
         }
@@ -145,7 +140,7 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
         if (javaType == null) {
             log.debug("Found id = {} which we don't know, create a map or list of maps to just save the data", id);
             return TypeFactory.defaultInstance().constructSpecializedType(unknownType(),
-                    id.contains(Constants.LIST_MARKER) ? ListWrapper.UnknownClassesListWrapper.class : UnknownClassesContentModelData.class);
+                    id.contains(Constants.LIST_MARKER) ? ListWrapper.UnknownClassesListWrapper.class : UnknownClassContentModelData.class);
         }
         log.trace("Type ID '{}' is mapped to '{}'", id, javaType);
         return javaType;

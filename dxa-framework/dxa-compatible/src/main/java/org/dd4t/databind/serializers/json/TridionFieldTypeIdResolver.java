@@ -94,7 +94,6 @@ public class TridionFieldTypeIdResolver implements TypeIdResolver {
         return "-1";
     }
 
-    @Override
     public JavaType typeFromId (final String s) {
         String clazzName = getClassForKey(s);
         Class<?> clazz;
@@ -113,6 +112,18 @@ public class TridionFieldTypeIdResolver implements TypeIdResolver {
     @Override
     public JavaType typeFromId (final DatabindContext databindContext, final String s) {
         return typeFromId(s);
+    }
+
+    @Override
+    public String getDescForKnownTypeIds() {
+
+        final StringBuilder knownTypeIds = new StringBuilder();
+        for (Map.Entry entry : FIELD_TYPES.entrySet()) {
+            knownTypeIds.append("[TypeId Key:").append(entry.getKey()).append(",").append("Type:").append(entry.getValue()).append("]");
+            knownTypeIds.append("\n");
+        }
+
+        return knownTypeIds.toString();
     }
 
     @Override

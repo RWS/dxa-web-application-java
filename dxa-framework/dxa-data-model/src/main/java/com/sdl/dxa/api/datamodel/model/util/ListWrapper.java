@@ -1,5 +1,6 @@
 package com.sdl.dxa.api.datamodel.model.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
@@ -8,9 +9,9 @@ import com.sdl.dxa.api.datamodel.model.KeywordModelData;
 import com.sdl.dxa.api.datamodel.model.RichTextData;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -101,18 +102,36 @@ public class ListWrapper<T> implements DelegatesToList<T> {
     }
 
     /**
-     * List of unknown entity-level {@link UnknownClassesContentModelData}s.
+     * List of unknown entity-level {@link UnknownClassContentModelData}s.
      */
     @NoArgsConstructor(access = AccessLevel.PUBLIC)
-    public static class UnknownClassesListWrapper extends ListWrapper<UnknownClassesContentModelData> {
+    public static class UnknownClassesListWrapper extends ListWrapper<UnknownClassesListWrapper.UnknownClassesListWrapperElement>
+            implements HandlesOwnTypeInformation {
 
-        @JsonProperty(DOLLAR_TYPE)
-        @Getter
-        private String type;
+        private String typeId;
 
         @SuppressWarnings("unused")
-        public UnknownClassesListWrapper(List<UnknownClassesContentModelData> values) {
+        public UnknownClassesListWrapper(List<UnknownClassesListWrapperElement> values) {
             super(values);
+        }
+
+        @Override
+        @JsonIgnore
+        public String getTypeId() {
+            return typeId;
+        }
+
+        @JsonProperty(DOLLAR_TYPE)
+        public void setTypeId(String type) {
+            this.typeId = type;
+        }
+
+        public static class UnknownClassesListWrapperElement extends ContentModelData {
+
+            @Override
+            protected boolean isRemoveDollarType(@Nullable Object typeId) {
+                return false;
+            }
         }
     }
 }

@@ -1,7 +1,6 @@
 /**
  * DXA Data Model project contains R2 model and its related classes.
- * <p>
- * DXA data model is extensible but there are some details of implementation that are important for you if you implement custom polymorphic classes:
+ * <p>DXA data model is extensible but there are some details of implementation that are important for you if you implement custom polymorphic classes:</p>
  * <ul>
  * <li>{@link com.fasterxml.jackson.annotation.JsonTypeName} annotation will automatically add your class as a supported for DXA polymorphic mapping</li>
  * <li>{@link com.sdl.dxa.api.datamodel.json.Polymorphic} annotation tells DXA mapper that this is a polymorphic class and its type is any subtype of the current class</li>
@@ -9,8 +8,7 @@
  * <li>Interfaces and abstract classes cannot be polymorphic, you need concrete classes as parents.</li>
  * <li>Your Data Model classes should be in this package or its subpackages.</li>
  * </ul>
- * </p>
- * <p>Here there are some examples of different class structure:
+ * <p>Here there are some examples of different class structure:</p>
  * <ol>
  * <li>A single class that is supported by polymorphic mapping: <pre><code>
  * package com.sdl.dxa.api.datamodel;
@@ -35,7 +33,6 @@
  * public class SecondClass extends ParentClass { }
  * </code></pre></li>
  * </ol>
- * </p>
  *
  * @dxa.publicApi Not everything in data Model is included as Public API in data model.
  * @dxa.publicApi Only {@link com.sdl.dxa.api.datamodel.json.Polymorphic} and {@link com.sdl.dxa.api.datamodel.model.util.HandlesTypeInformationForListWrapper} are.

@@ -6,6 +6,7 @@ import com.sdl.web.content.client.configuration.impl.BaseClientConfigurationLoad
 import com.sdl.web.discovery.datalayer.model.ContentServiceCapability;
 import com.sdl.web.discovery.datalayer.model.KeyValuePair;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
@@ -32,6 +33,7 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
 
     private String serviceUrl;
 
+    @Autowired
     public ModelServiceConfiguration(
             @Value("${dxa.model.service.url.page.model}") String pageModelUrl,
             @Value("${dxa.model.service.url.entity.model}") String entityModelUrl,

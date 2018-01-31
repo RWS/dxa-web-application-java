@@ -3,7 +3,6 @@ package com.sdl.dxa.api.datamodel;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
-import com.sdl.dxa.api.datamodel.json.Constants;
 import com.sdl.dxa.api.datamodel.model.BinaryContentData;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
@@ -15,8 +14,8 @@ import com.sdl.dxa.api.datamodel.model.RichTextData;
 import com.sdl.dxa.api.datamodel.model.known.FirstChildKnownClass;
 import com.sdl.dxa.api.datamodel.model.known.KnownClass;
 import com.sdl.dxa.api.datamodel.model.known.SecondChildKnownClass;
+import com.sdl.dxa.api.datamodel.model.unknown.UnknownModelData;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
-import com.sdl.dxa.api.datamodel.model.util.UnknownClassContentModelData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.junit.Test;
@@ -30,6 +29,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
@@ -94,7 +95,7 @@ public class DeserializationTest {
         assertEquals(serialized1, serialized2);
     }
 
-    private void _assertExtensionData(Map<String, Object> extensionData) {
+    private void _assertExtensionData(Map<String, Object> extensionData) throws IOException {
         assertTrue(extensionData.get("EntityModelData") instanceof EntityModelData);
 
         assertTrue(extensionData.get("EntityModelDatas") instanceof ListWrapper);
@@ -111,18 +112,19 @@ public class DeserializationTest {
 
         // ===
 
-        assertTrue(extensionData.get("UnknownClass") instanceof UnknownClassContentModelData);
-        assertEquals("UnknownClass", ((UnknownClassContentModelData) extensionData.get("UnknownClass")).getTypeId());
+        assertUnknown(extensionData, "UnknownClassNoType");
+        assertUnknown(extensionData, "UnknownClass");
+        assertUnknown(extensionData, "UnknownClasses");
+        assertUnknown(extensionData, "UnknownParentClasses");
+        assertUnknown(extensionData, "DeserializerTest");
+    }
 
-        assertEquals("UnknownClass[]", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownClasses")).getTypeId());
-        assertEquals("UnknownClass", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownClasses")).getValues()
-                .get(0).get(Constants.DOLLAR_TYPE));
+    private void assertUnknown(Map<String, Object> extensionData, String fieldName) throws IOException {
+        ClassPathResource resource = new ClassPathResource("dxa20json/unknown/" + fieldName);
+        String content = new String(Files.readAllBytes(Paths.get(resource.getURI())));
 
-        assertEquals("UnknownParentClass[]", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownParentClasses")).getTypeId());
-        assertEquals("UnknownClass", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownParentClasses")).getValues()
-                .get(0).get(Constants.DOLLAR_TYPE));
-        assertEquals("SecondUnknownClass", ((ListWrapper.UnknownClassesListWrapper) extensionData.get("UnknownParentClasses")).getValues()
-                .get(1).get(Constants.DOLLAR_TYPE));
+        assertTrue(extensionData.get(fieldName) instanceof UnknownModelData);
+        assertEquals(content, ((UnknownModelData) extensionData.get(fieldName)).getContent());
     }
 
     private void assertRegions(List<RegionModelData> regions) {

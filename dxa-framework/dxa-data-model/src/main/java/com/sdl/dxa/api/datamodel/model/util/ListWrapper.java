@@ -1,6 +1,5 @@
 package com.sdl.dxa.api.datamodel.model.util;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
@@ -11,12 +10,9 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static com.sdl.dxa.api.datamodel.json.Constants.DOLLAR_TYPE;
 
 /**
  * Wrapper for the polymorphic list JSON representation coming from .NET Template Builder.
@@ -98,40 +94,6 @@ public class ListWrapper<T> implements DelegatesToList<T> {
 
         public RichTextDataListWrapper(List<RichTextData> values) {
             super(values);
-        }
-    }
-
-    /**
-     * List of unknown entity-level {@link UnknownClassContentModelData}s.
-     */
-    @NoArgsConstructor(access = AccessLevel.PUBLIC)
-    public static class UnknownClassesListWrapper extends ListWrapper<UnknownClassesListWrapper.UnknownClassesListWrapperElement>
-            implements HandlesOwnTypeInformation {
-
-        private String typeId;
-
-        @SuppressWarnings("unused")
-        public UnknownClassesListWrapper(List<UnknownClassesListWrapperElement> values) {
-            super(values);
-        }
-
-        @Override
-        @JsonIgnore
-        public String getTypeId() {
-            return typeId;
-        }
-
-        @JsonProperty(DOLLAR_TYPE)
-        public void setTypeId(String type) {
-            this.typeId = type;
-        }
-
-        public static class UnknownClassesListWrapperElement extends ContentModelData {
-
-            @Override
-            protected boolean isRemoveDollarType(@Nullable Object typeId) {
-                return false;
-            }
         }
     }
 }

@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.annotation.JsonTypeIdResolver;
 import com.fasterxml.jackson.databind.annotation.JsonTypeResolver;
 
-import static com.sdl.dxa.api.datamodel.json.Constants.DOLLAR_TYPE;
+import static com.sdl.dxa.api.datamodel.Constants.DOLLAR_TYPE;
 
 /**
  * Mix-in for Jackson that makes everything polymorphic.

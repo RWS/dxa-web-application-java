@@ -7,12 +7,12 @@ import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 import com.google.common.primitives.Primitives;
+import com.sdl.dxa.api.datamodel.Constants;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.api.datamodel.model.util.HandlesHierarchyTypeInformation;
-import com.sdl.dxa.api.datamodel.model.util.HandlesOwnTypeInformation;
+import com.sdl.dxa.api.datamodel.model.unknown.UnknownModelData;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
-import com.sdl.dxa.api.datamodel.model.util.UnknownClassContentModelData;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -26,6 +26,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.fasterxml.jackson.databind.type.TypeFactory.unknownType;
+import static com.sdl.dxa.api.datamodel.Constants.UNKNOWN_TYPE;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.springframework.util.ClassUtils.forName;
@@ -99,13 +100,7 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
     private String getIdFromValue(Object value) {
         if (value == null) {
             log.warn("Should normally never happen, Jackson should handle nulls");
-            return "unknown";
-        }
-
-        if (value instanceof HandlesOwnTypeInformation) {
-            String typeId = ((HandlesOwnTypeInformation) value).getTypeId();
-            log.debug("Value {} of a class {} handles its type information ({}), let's just use it", value, value.getClass(), typeId);
-            return typeId;
+            return UNKNOWN_TYPE;
         }
 
         JsonTypeName annotation = value.getClass().getAnnotation(JsonTypeName.class);
@@ -138,9 +133,8 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
     public JavaType typeFromId(DatabindContext context, String id) {
         JavaType javaType = BASIC_MAPPING.get(id);
         if (javaType == null) {
-            log.debug("Found id = {} which we don't know, create a map or list of maps to just save the data", id);
-            return TypeFactory.defaultInstance().constructSpecializedType(unknownType(),
-                    id.contains(Constants.LIST_MARKER) ? ListWrapper.UnknownClassesListWrapper.class : UnknownClassContentModelData.class);
+            log.debug("Found id = {} which we don't know, create a content holder to just save the data", id);
+            return TypeFactory.defaultInstance().constructSpecializedType(unknownType(), UnknownModelData.class);
         }
         log.trace("Type ID '{}' is mapped to '{}'", id, javaType);
         return javaType;

@@ -12,13 +12,18 @@ import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
 import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.jsontype.impl.AsPropertyTypeDeserializer;
 import com.fasterxml.jackson.databind.jsontype.impl.AsPropertyTypeSerializer;
 import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder;
+import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.sdl.dxa.api.datamodel.model.unknown.UnknownModelData;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.util.Collection;
 
+import static com.fasterxml.jackson.databind.type.TypeFactory.unknownType;
 import static com.google.common.primitives.Primitives.isWrapperType;
 
 /**
@@ -38,7 +43,11 @@ public class ModelDataTypeResolver extends StdTypeResolverBuilder {
 
     @Override
     public TypeDeserializer buildTypeDeserializer(DeserializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
-        return useForType(baseType, config) ? super.buildTypeDeserializer(config, baseType, subtypes) : null;
+        return useForType(baseType, config) ?
+                (_includeAs == JsonTypeInfo.As.PROPERTY ?
+                        _buildModelDataTypeDeserializer(config, baseType, subtypes)
+                        : super.buildTypeDeserializer(config, baseType, subtypes)) :
+                null;
     }
 
     private boolean useForType(JavaType t, ClassIntrospector.MixInResolver mixInResolver) {
@@ -46,37 +55,47 @@ public class ModelDataTypeResolver extends StdTypeResolverBuilder {
         return mixin != null && PolymorphicObjectMixin.class.isAssignableFrom(mixin);
     }
 
+    @NotNull
+    private TypeDeserializer _buildModelDataTypeDeserializer(DeserializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
+        TypeIdResolver idRes = idResolver(config, baseType, subtypes, false, true);
+        return new AsPropertyTypeDeserializer(baseType, idRes, _typeProperty, _typeIdVisible,
+                TypeFactory.defaultInstance().constructSpecializedType(unknownType(), UnknownModelData.class));
+    }
+
     private TypeSerializer _buildModelDataTypeSerializer(SerializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
         TypeIdResolver idRes = idResolver(config, baseType, subtypes, true, false);
-        return new AsPropertyTypeSerializer(idRes, null, _typeProperty) {
-            @Override
-            public void writeTypePrefixForScalar(Object value, JsonGenerator g) {
-                // does nothing, we don't need type information for scalars
-            }
+        return new DxaAsPropertyTypeSerializer(idRes);
+    }
 
-            @Override
-            public void writeTypeSuffixForScalar(Object value, JsonGenerator g) {
-                // does nothing, we don't need type information for scalars
-            }
+    private class DxaAsPropertyTypeSerializer extends AsPropertyTypeSerializer {
 
-            @Override
-            public void writeTypePrefixForScalar(Object value, JsonGenerator g, Class<?> type) {
-                // does nothing, we don't need type information for scalars
-            }
+        DxaAsPropertyTypeSerializer(TypeIdResolver idRes) {
+            super(idRes, null, ModelDataTypeResolver.this._typeProperty);
+        }
 
-            @Override
-            public WritableTypeId writeTypePrefix(JsonGenerator g, WritableTypeId idMetadata) throws IOException {
-                return isWrapperType(idMetadata.forValue.getClass()) ?
-                        idMetadata :
-                        super.writeTypePrefix(g, idMetadata);
-            }
+        @Override
+        public void writeTypePrefixForScalar(Object value, JsonGenerator g) {
+            // does nothing, we don't need type information for scalars
+        }
 
-            @Override
-            public WritableTypeId writeTypeSuffix(JsonGenerator g, WritableTypeId idMetadata) throws IOException {
-                return isWrapperType(idMetadata.forValue.getClass()) ?
-                        idMetadata :
-                        super.writeTypeSuffix(g, idMetadata);
-            }
-        };
+        @Override
+        public void writeTypeSuffixForScalar(Object value, JsonGenerator g) {
+            // does nothing, we don't need type information for scalars
+        }
+
+        @Override
+        public void writeTypePrefixForScalar(Object value, JsonGenerator g, Class<?> type) {
+            // does nothing, we don't need type information for scalars
+        }
+
+        @Override
+        public WritableTypeId writeTypePrefix(JsonGenerator g, WritableTypeId idMetadata) throws IOException {
+            return isWrapperType(idMetadata.forValue.getClass()) ? idMetadata : super.writeTypePrefix(g, idMetadata);
+        }
+
+        @Override
+        public WritableTypeId writeTypeSuffix(JsonGenerator g, WritableTypeId idMetadata) throws IOException {
+            return isWrapperType(idMetadata.forValue.getClass()) ? idMetadata : super.writeTypeSuffix(g, idMetadata);
+        }
     }
 }

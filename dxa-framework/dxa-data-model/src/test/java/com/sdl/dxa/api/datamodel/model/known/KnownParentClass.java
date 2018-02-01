@@ -10,6 +10,6 @@ public class KnownParentClass implements HandlesHierarchyTypeInformation {
 
     @Override
     public String getTypeId() {
-        return "KnownParentClass";
+        return KnownParentClass.class.getSimpleName();
     }
 }

@@ -20,6 +20,8 @@ public interface HandlesHierarchyTypeInformation {
 
     /**
      * Returns {@code Type ID} of the implementor. Implement on parent (top level) classes.
+     * <p>The simplest suggested implementation is done on a parent class and look as simple as this:
+     * {@code return KnownParentClass.class.getSimpleName();}
      *
      * @return type id
      */

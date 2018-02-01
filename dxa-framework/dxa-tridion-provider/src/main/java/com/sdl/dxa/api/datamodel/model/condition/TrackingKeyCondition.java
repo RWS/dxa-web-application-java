@@ -1,7 +1,6 @@
 package com.sdl.dxa.api.datamodel.model.condition;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.sdl.dxa.api.datamodel.model.KeywordModelData;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,9 +11,9 @@ import lombok.experimental.Accessors;
 @Data
 @Accessors(chain = true)
 @JsonTypeName
-public class KeywordCondition extends Condition {
+public class TrackingKeyCondition extends Condition {
 
-    private KeywordModelData keywordModelData;
+    private String trackingKeyTitle;
 
     private ConditionOperator operator;
 

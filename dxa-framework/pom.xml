@@ -20,7 +20,6 @@
         <module>dxa-common</module>
         <module>dxa-common-api</module>
         <module>dxa-tridion-provider</module>
-        <module>dxa-compatible</module>
         <module>dxa-data-model</module>
         <module>dxa-tridion-common</module>
     </modules>

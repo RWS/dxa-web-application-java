@@ -161,7 +161,7 @@
         <!-- DD4T dependencies -->
         <!-- These are not really used in the framework and are needed only for Model Service adapter -->
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
-        <dd4t-latest.version>2.1.0-beta5</dd4t-latest.version>
+        <dd4t-latest.version>2.1.0</dd4t-latest.version>
 
     </properties>
 
@@ -234,11 +234,6 @@
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-common-api</artifactId>
-                <version>${dxa.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-compatible</artifactId>
                 <version>${dxa.version}</version>
             </dependency>
             <dependency>
@@ -747,24 +742,20 @@
             </dependency>
 
             <!-- DD4T dependencies for Model Service adapter only! -->
-            <!-- Scope provided is important since we don't actually want these dependencies to be downloaded -->
             <dependency>
                 <groupId>org.dd4t</groupId>
                 <artifactId>dd4t-api</artifactId>
                 <version>${dd4t-latest.version}</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.dd4t</groupId>
                 <artifactId>dd4t-providers-common</artifactId>
                 <version>${dd4t-latest.version}</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.dd4t</groupId>
                 <artifactId>dd4t-providers-web8</artifactId>
                 <version>${dd4t-latest.version}</version>
-                <scope>provided</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

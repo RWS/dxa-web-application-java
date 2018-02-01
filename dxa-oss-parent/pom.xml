@@ -75,7 +75,7 @@
         <mockito-version>1.10.19</mockito-version>
 
         <!-- Spring -->
-        <spring.version>4.3.7.RELEASE</spring.version>
+        <spring.version>4.3.8.RELEASE</spring.version>
         <spring-security.version>4.1.4.RELEASE</spring-security.version>
 
         <!--was 1.7.3-->

@@ -33,6 +33,15 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
 
     private String serviceUrl;
 
+    public ModelServiceConfiguration(
+            @Value("${dxa.model.service.url.page.model}") String pageModelUrl,
+            @Value("${dxa.model.service.url.entity.model}") String entityModelUrl,
+            @Value("${dxa.model.service.url.api.navigation}") String navigationApiUrl,
+            @Value("${dxa.model.service.url.api.navigation.subtree}") String onDemandApiUrl,
+            @Value("${dxa.model.service.key}") String modelServiceKey) throws ConfigurationException {
+        this(pageModelUrl, entityModelUrl, navigationApiUrl, onDemandApiUrl, modelServiceKey, null);
+    }
+
     @Autowired
     public ModelServiceConfiguration(
             @Value("${dxa.model.service.url.page.model}") String pageModelUrl,

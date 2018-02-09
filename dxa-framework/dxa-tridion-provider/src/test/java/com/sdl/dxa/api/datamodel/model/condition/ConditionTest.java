@@ -71,6 +71,8 @@ public class ConditionTest {
         assertTrue(targetGroupCondition.isNegate());
         TargetGroup targetGroup = targetGroupCondition.getTargetGroup();
         assertEquals("TargetGroup", targetGroup.getDescription());
+        assertEquals("Id", targetGroup.getId());
+        assertEquals("Title", targetGroup.getTitle());
 
         trackingKeyCondition = (TrackingKeyCondition) targetGroup.getConditions().get(0);
         assertEquals("Test Keyword 1", trackingKeyCondition.getTrackingKeyTitle());

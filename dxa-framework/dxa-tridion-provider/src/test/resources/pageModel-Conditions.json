@@ -27,6 +27,8 @@
         {
           "$type": "TargetGroupCondition",
           "TargetGroup": {
+            "Id": "Id",
+            "Title": "Title",
             "Description": "TargetGroup",
             "Conditions": [
               {

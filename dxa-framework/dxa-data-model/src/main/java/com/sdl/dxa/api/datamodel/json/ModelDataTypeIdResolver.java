@@ -6,7 +6,12 @@ import com.fasterxml.jackson.databind.DatabindContext;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.jsontype.impl.TypeIdResolverBase;
 import com.fasterxml.jackson.databind.type.TypeFactory;
+import com.google.common.primitives.Primitives;
+import com.sdl.dxa.api.datamodel.Constants;
+import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
+import com.sdl.dxa.api.datamodel.model.util.HandlesHierarchyTypeInformation;
+import com.sdl.dxa.api.datamodel.model.unknown.UnknownModelData;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -14,13 +19,14 @@ import org.joda.time.DateTime;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static com.fasterxml.jackson.databind.type.TypeFactory.unknownType;
+import static com.sdl.dxa.api.datamodel.Constants.UNKNOWN_TYPE;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.springframework.util.ClassUtils.forName;
@@ -39,45 +45,38 @@ import static org.springframework.util.ClassUtils.getDefaultClassLoader;
 @Slf4j
 public class ModelDataTypeIdResolver extends TypeIdResolverBase {
 
-    private static final String LIST_MARKER = "[]";
-
     private static final Map<String, JavaType> BASIC_MAPPING = new HashMap<>();
 
     static {
-        Stream.of(Boolean.class, Character.class, Byte.class, Short.class, Integer.class, Long.class, Float.class,
-                Double.class, String.class).forEach(aClass -> {
-            addMapping(aClass.getSimpleName(), aClass);
-            addMapping(aClass.getSimpleName() + LIST_MARKER, ListWrapper.class, aClass);
-        });
-
-        Stream.of(Date.class, DateTime.class).forEach(aClass -> {
-            addMapping(aClass.getSimpleName(), String.class);
-            addMapping(aClass.getSimpleName() + LIST_MARKER, ListWrapper.class, String.class);
-        });
+        addMapping(String.class.getSimpleName(), String.class, null);
+        Primitives.allWrapperTypes().forEach(aClass -> addMapping(aClass.getSimpleName(), aClass, null));
+        Stream.of(Date.class, DateTime.class).forEach(aClass -> addMapping(aClass.getSimpleName(), String.class, null));
 
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(JsonTypeName.class));
-        scanner.findCandidateComponents(ViewModelData.class.getPackage().getName())
+        scanner.findCandidateComponents(DataModelSpringConfiguration.class.getPackage().getName())
                 .forEach(type -> {
                     try {
                         Class<?> aClass = forName(type.getBeanClassName(), getDefaultClassLoader());
                         JsonTypeName typeName = aClass.getAnnotation(JsonTypeName.class);
-                        addMapping(defaultIfBlank(typeName.value(), aClass.getSimpleName()), aClass);
+                        addMapping(defaultIfBlank(typeName.value(), aClass.getSimpleName()), aClass, null);
                     } catch (ClassNotFoundException e) {
                         log.warn("Class not found while mapping model data to typeIDs. Should never happen.", e);
                     }
                 });
-    }
 
-    private static void addMapping(String classId, Class<?> basicClass) {
-        addMapping(classId, basicClass, null);
+        // now go through all the mappings to add all additional [] that are not yet added (= no explicit implementation for it)
+        BASIC_MAPPING.entrySet().stream()
+                .filter(entry -> !entry.getKey().contains(Constants.LIST_MARKER))
+                .filter(entry -> !BASIC_MAPPING.containsKey(entry.getKey() + Constants.LIST_MARKER))
+                .collect(Collectors.toList())
+                .forEach(entry -> addMapping(entry.getKey() + Constants.LIST_MARKER, ListWrapper.class, entry.getValue().getRawClass()));
     }
 
     private static void addMapping(String classId, Class<?> basicClass, Class<?> genericClass) {
         JavaType javaType = genericClass == null ?
                 TypeFactory.defaultInstance().constructSpecializedType(unknownType(), basicClass) :
                 TypeFactory.defaultInstance().constructParametricType(basicClass, genericClass);
-
         BASIC_MAPPING.put(classId, javaType);
         log.trace("Added mapping for polymorphic deserialization {} <-> {}", classId, javaType);
     }
@@ -101,7 +100,7 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
     private String getIdFromValue(Object value) {
         if (value == null) {
             log.warn("Should normally never happen, Jackson should handle nulls");
-            return "unknown";
+            return UNKNOWN_TYPE;
         }
 
         JsonTypeName annotation = value.getClass().getAnnotation(JsonTypeName.class);
@@ -111,8 +110,12 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
         }
 
         if (value instanceof ListWrapper && !((ListWrapper) value).empty()) {
-            String simpleName = ((ListWrapper) value).get(0).getClass().getSimpleName();
-            String id = getMappingName(simpleName) + LIST_MARKER;
+            Object firstValue = ((ListWrapper) value).get(0);
+
+            log.debug("Need to guess list type, use first element for this, it defines the whole list type");
+            String typeId = firstValue instanceof HandlesHierarchyTypeInformation ?
+                    ((HandlesHierarchyTypeInformation) firstValue).getTypeId() : getIdFromValue(firstValue);
+            String id = typeId + Constants.LIST_MARKER;
             log.trace("Value is instance of ListWrapper without an explicit implementation, value = '{}', id = '{}'", id);
             return id;
         }
@@ -127,8 +130,12 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
     }
 
     @Override
-    public JavaType typeFromId(DatabindContext context, String id) throws IOException {
+    public JavaType typeFromId(DatabindContext context, String id) {
         JavaType javaType = BASIC_MAPPING.get(id);
+        if (javaType == null) {
+            log.debug("Found id = {} which we don't know, create a content holder to just save the data", id);
+            return TypeFactory.defaultInstance().constructSpecializedType(unknownType(), UnknownModelData.class);
+        }
         log.trace("Type ID '{}' is mapped to '{}'", id, javaType);
         return javaType;
     }

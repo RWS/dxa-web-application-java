@@ -1,7 +1,6 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
-import com.sdl.dxa.api.datamodel.model.condition.Condition;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,8 +30,6 @@ public class PageModelData extends ViewModelData {
     private String title;
 
     private List<RegionModelData> regions;
-
-    private List<Condition> conditions;
 
     private String urlPath;
 

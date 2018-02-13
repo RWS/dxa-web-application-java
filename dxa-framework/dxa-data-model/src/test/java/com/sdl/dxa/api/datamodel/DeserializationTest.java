@@ -11,11 +11,10 @@ import com.sdl.dxa.api.datamodel.model.KeywordModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.RichTextData;
-import com.sdl.dxa.api.datamodel.model.condition.Condition;
-import com.sdl.dxa.api.datamodel.model.condition.ConditionOperator;
-import com.sdl.dxa.api.datamodel.model.condition.CustomerCharacteristicCondition;
-import com.sdl.dxa.api.datamodel.model.condition.KeywordCondition;
-import com.sdl.dxa.api.datamodel.model.condition.TargetGroupCondition;
+import com.sdl.dxa.api.datamodel.model.known.FirstChildKnownClass;
+import com.sdl.dxa.api.datamodel.model.known.KnownClass;
+import com.sdl.dxa.api.datamodel.model.known.SecondChildKnownClass;
+import com.sdl.dxa.api.datamodel.model.unknown.UnknownModelData;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,14 +29,16 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Date;
 import java.util.List;
 import java.util.ListIterator;
+import java.util.Map;
 
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
@@ -73,38 +74,57 @@ public class DeserializationTest {
         assertEquals("ActionName", page.getMvcData().getActionName());
         assertEquals("Value1", page.getMvcData().getParameters().get("Key1"));
 
-        assertConditions(page.getConditions());
+        assertExtensionData(page);
 
         assertRegions(page.getRegions());
     }
 
-    private void assertConditions(List<Condition> conditions) {
-        ListIterator<Condition> iterator = conditions.listIterator();
+    private void assertExtensionData(PageModelData page) throws IOException {
+        Map<String, Object> extensionData = page.getExtensionData();
+        _assertExtensionData(extensionData);
 
-        TargetGroupCondition condition = ((TargetGroupCondition) iterator.next());
-        assertEquals("moo 1", condition.getTargetGroup().getDescription());
-        assertFalse(condition.isNegate());
-        assertTrue(condition.getTargetGroup().getConditions().size() == 2);
+        // what if we serialize and deserialize? do we still have type info for unknown classes?
+        String serialized1 = objectMapper.writeValueAsString(page);
+        _assertExtensionData(objectMapper.readValue(serialized1, PageModelData.class).getExtensionData());
 
-        CustomerCharacteristicCondition condition1 = (CustomerCharacteristicCondition) iterator.next();
-        assertEquals("JJ0", condition1.getValue());
-        assertEquals("John Johnson 0", condition1.getName());
-        assertTrue(condition1.isNegate());
-        assertEquals(ConditionOperator.EQUALS, condition1.getOperator());
+        // and again to confirm that deserializing of previously serialized content results in the same
+        String serialized2 = objectMapper.writeValueAsString(page);
+        _assertExtensionData(objectMapper.readValue(serialized2, PageModelData.class).getExtensionData());
 
-        assertEquals(ConditionOperator.GREATER_THAN, ((CustomerCharacteristicCondition) iterator.next()).getOperator());
+        // and even content is the same
+        assertEquals(serialized1, serialized2);
+    }
 
-        assertEquals(ConditionOperator.LESS_THEN, ((CustomerCharacteristicCondition) iterator.next()).getOperator());
+    private void _assertExtensionData(Map<String, Object> extensionData) throws IOException {
+        assertTrue(extensionData.get("EntityModelData") instanceof EntityModelData);
 
-        assertEquals(ConditionOperator.NOT_EQUAL, ((CustomerCharacteristicCondition) iterator.next()).getOperator());
+        assertTrue(extensionData.get("EntityModelDatas") instanceof ListWrapper);
+        assertTrue(((ListWrapper) extensionData.get("EntityModelDatas")).get(0) instanceof EntityModelData);
 
-        assertEquals(ConditionOperator.UNKNOWN_BY_CLIENT, ((CustomerCharacteristicCondition) iterator.next()).getOperator());
+        assertTrue(extensionData.get("KnownClass") instanceof KnownClass);
 
-        KeywordCondition keywordCondition = (KeywordCondition) iterator.next();
-        assertEquals("kw", keywordCondition.getValue());
-        assertEquals(ConditionOperator.NOT_EQUAL, keywordCondition.getOperator());
-        assertNull(keywordCondition.getKeywordModelData());
-        assertTrue(keywordCondition.isNegate());
+        assertTrue(extensionData.get("KnownClasses") instanceof ListWrapper);
+        assertTrue(((ListWrapper) extensionData.get("KnownClasses")).get(0) instanceof KnownClass);
+
+        assertTrue(extensionData.get("KnownParentClasses") instanceof ListWrapper);
+        assertTrue(((ListWrapper) extensionData.get("KnownParentClasses")).get(0) instanceof FirstChildKnownClass);
+        assertTrue(((ListWrapper) extensionData.get("KnownParentClasses")).get(1) instanceof SecondChildKnownClass);
+
+        // ===
+
+        assertUnknown(extensionData, "UnknownClassNoType");
+        assertUnknown(extensionData, "UnknownClass");
+        assertUnknown(extensionData, "UnknownClasses");
+        assertUnknown(extensionData, "UnknownParentClasses");
+        assertUnknown(extensionData, "DeserializerTest");
+    }
+
+    private void assertUnknown(Map<String, Object> extensionData, String fieldName) throws IOException {
+        ClassPathResource resource = new ClassPathResource("dxa20json/unknown/" + fieldName);
+        String content = new String(Files.readAllBytes(Paths.get(resource.getURI())));
+
+        assertTrue(extensionData.get(fieldName) instanceof UnknownModelData);
+        assertEquals(content, ((UnknownModelData) extensionData.get(fieldName)).getContent());
     }
 
     private void assertRegions(List<RegionModelData> regions) {
@@ -237,17 +257,19 @@ public class DeserializationTest {
         //when
         String serialized = objectMapper.writeValueAsString(trip);
         DeserializeTrip deserialized = objectMapper.readValue(serialized, DeserializeTrip.class);
+        // After the first serialize, we might've added $type because of polymorphic mapping, but later we save if in CMDs and restore it from there
+        // this leads to reordering of the properties, and serialized content is not exactly the same while is semantically equal.
+        // To fix this we compare only 2 & 3 attempt of serialization but compare every result of deserialization.
 
-        //then
-        assertEquals(trip, deserialized);
-
-        //when
         String serialized2 = objectMapper.writeValueAsString(deserialized);
         DeserializeTrip deserialized2 = objectMapper.readValue(serialized2, DeserializeTrip.class);
+        String serialized3 = objectMapper.writeValueAsString(deserialized);
+        DeserializeTrip deserialized3 = objectMapper.readValue(serialized2, DeserializeTrip.class);
 
         //then
-        assertEquals(serialized2, serialized);
-        assertEquals(trip, deserialized2);
+        assertEquals(serialized2, serialized3);
+        assertEquals(deserialized, deserialized2);
+        assertEquals(deserialized, deserialized3);
     }
 
     @Data

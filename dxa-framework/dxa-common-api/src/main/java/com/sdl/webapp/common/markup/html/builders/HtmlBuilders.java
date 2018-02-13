@@ -45,7 +45,12 @@ public final class HtmlBuilders {
     }
 
     public static AnchorElementBuilder a(String href) {
-        return a().withHref(href);
+        AnchorElementBuilder a = a();
+        if (href == null) {
+            return a;
+        }
+        String _href = href.trim();
+        return _href.isEmpty() ? a : a.withHref(_href);
     }
 
     public static ButtonElementBuilder button() {

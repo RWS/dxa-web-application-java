@@ -347,7 +347,7 @@ public abstract class AbstractDefaultContentProvider implements ContentProvider 
         if (path.contains(baseUrl)) {
             return path;
         }
-        return UriUtils.encodePath(baseUrl + path, "UTF-8");
+        return UriUtils.encodePath(baseUrl + path, "UTF-8").replace("&", "%26");
     }
 
     private StaticContentFile getStaticContentFile(String path, String localizationId)

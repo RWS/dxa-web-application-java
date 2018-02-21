@@ -190,6 +190,6 @@ public class StaticContentResolver {
         if (path.contains(baseUrl)) {
             return path;
         }
-        return UriUtils.encodePath(baseUrl + path, "UTF-8");
+        return UriUtils.encodePath(baseUrl + path, "UTF-8").replace("&", "%26");
     }
 }

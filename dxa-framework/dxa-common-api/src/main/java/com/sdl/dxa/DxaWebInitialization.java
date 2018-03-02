@@ -1,5 +1,6 @@
 package com.sdl.dxa;
 
+import com.sdl.webapp.common.impl.interceptor.HealthCheckFilter;
 import com.sdl.webapp.common.util.InitializationUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -8,7 +9,6 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
 import java.util.Properties;
 
@@ -45,13 +45,15 @@ public class DxaWebInitialization implements WebApplicationInitializer, Ordered 
     }
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup(ServletContext servletContext) {
         Properties dxaProperties = InitializationUtils.loadDxaProperties();
 
         if (Boolean.parseBoolean(dxaProperties.getProperty("dxa.web.default.init", "true"))) {
 
             registerWebServiceServlet(servletContext);
             registerCharacterEncodingFilter(servletContext);
+
+            InitializationUtils.registerFilter(servletContext, HealthCheckFilter.class, "/system/health");
 
             registerServlet(servletContext, "com.tridion.transport.HTTPSReceiverServlet", "/cd_upload/httpupload");
             registerListener(servletContext, "com.tridion.storage.persistence.session.SessionManagementContextListener");

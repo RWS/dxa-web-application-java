@@ -5,7 +5,7 @@ import com.sdl.web.client.impl.OAuthTokenProvider;
 import com.sdl.web.content.client.configuration.impl.BaseClientConfigurationLoader;
 import com.sdl.web.discovery.datalayer.model.ContentServiceCapability;
 import com.sdl.web.discovery.datalayer.model.KeyValuePair;
-import com.sun.istack.internal.Nullable;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

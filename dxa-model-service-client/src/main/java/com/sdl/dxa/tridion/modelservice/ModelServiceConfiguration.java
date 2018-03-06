@@ -5,6 +5,7 @@ import com.sdl.web.client.impl.OAuthTokenProvider;
 import com.sdl.web.content.client.configuration.impl.BaseClientConfigurationLoader;
 import com.sdl.web.discovery.datalayer.model.ContentServiceCapability;
 import com.sdl.web.discovery.datalayer.model.KeyValuePair;
+import com.sun.istack.internal.Nullable;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,8 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
     private final String navigationApiUrl;
 
     private final String onDemandApiUrl;
+
+    private final String modelServiceKey;
 
     private OAuthTokenProvider oAuthTokenProvider;
 
@@ -56,24 +59,24 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
             this.oAuthTokenProvider.getToken();
         }
 
+        this.modelServiceKey = modelServiceKey;
+        this.pageModelUrl = pageModelUrl;
+        this.entityModelUrl = entityModelUrl;
+        this.navigationApiUrl = navigationApiUrl;
+        this.onDemandApiUrl = onDemandApiUrl;
+
         if (modelServiceUrl != null) {
             log.debug("Using Model Service Url {} from properties", modelServiceUrl);
             this.serviceUrl = modelServiceUrl;
         } else {
             Assert.notNull(modelServiceKey, "At least one of two properties required: dxa.model.service.key, dxa.model.service.url");
-            this.serviceUrl = loadServiceUrlFromCapability(modelServiceKey);
-            log.debug("Using Model Service Url {} from Discovery Service", this.serviceUrl);
+            getServiceUrl(); // preload url
         }
-
-        this.pageModelUrl = this.serviceUrl + pageModelUrl;
-        this.entityModelUrl = this.serviceUrl + entityModelUrl;
-        this.navigationApiUrl = this.serviceUrl + navigationApiUrl;
-        this.onDemandApiUrl = this.serviceUrl + onDemandApiUrl;
     }
 
     @Override
     protected String getServiceUrl() {
-        return serviceUrl;
+        return this.serviceUrl != null ? this.serviceUrl : loadServiceUrlFromCapability(this.modelServiceKey);
     }
 
     /**
@@ -86,35 +89,43 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
     }
 
     public String getPageModelUrl() {
-        return pageModelUrl;
+        return getServiceUrl() + pageModelUrl;
     }
 
     public String getEntityModelUrl() {
-        return entityModelUrl;
+        return getServiceUrl() + entityModelUrl;
     }
 
     public String getNavigationApiUrl() {
-        return navigationApiUrl;
+        return getServiceUrl() + navigationApiUrl;
     }
 
     public String getOnDemandApiUrl() {
-        return onDemandApiUrl;
+        return getServiceUrl() + onDemandApiUrl;
     }
 
     public OAuthTokenProvider getOAuthTokenProvider() {
         return oAuthTokenProvider;
     }
 
-    private String loadServiceUrlFromCapability(String modelServiceKey) throws ConfigurationException {
-        Optional<ContentServiceCapability> capability = getCapabilityFromDiscoveryService(ContentServiceCapability.class);
-        if (capability.isPresent()) {
-            return capability.get().getExtensionProperties().stream()
+    @Nullable
+    private String loadServiceUrlFromCapability(String modelServiceKey) {
+        try {
+            Optional<ContentServiceCapability> capability = getCapabilityFromDiscoveryService(ContentServiceCapability.class);
+            if (!capability.isPresent()) {
+                throw new ConfigurationException("ContentServiceCapability is not available, cannot get Model Service url");
+            }
+
+            String resolvedMsUrl = capability.get().getExtensionProperties().stream()
                     .filter(keyValuePair -> Objects.equals(keyValuePair.getKey(), modelServiceKey))
                     .map(KeyValuePair::getValue)
                     .findFirst()
                     .orElseThrow(() -> new ConfigurationException("DXA Model Service URL is not available on Discovery"));
-        } else {
-            throw new ConfigurationException("ContentServiceCapability is not available, cannot get Model Service url");
+            log.debug("Using Model Service Url {} from Discovery Service", resolvedMsUrl);
+            return resolvedMsUrl;
+        } catch (ConfigurationException e) {
+            log.warn("Cannot load Model Service URL from Discovery Service using key = '{}', will retry later", modelServiceKey, e);
+            return null;
         }
     }
 }

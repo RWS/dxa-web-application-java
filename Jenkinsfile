@@ -36,19 +36,20 @@ pipeline {
     stage('Upload Artefacts') {
       steps {
         timestamps() {
-            dir ('artefact') {
-              powershell returnStdout: false, script: 'Copy-Item -Force -Recurse ..\\local-project-repo .'
-            }
-            withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-docker-registry', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
-              dir('artefact') {
-                bat "aws s3 cp --recursive --region eu-west-1 . s3://sdl-web-dev-dxa-artifacts/pipelines/webapp-java/%BRANCH_NAME%/%BUILD_ID%"
-              }
-            }
-          script {
-                currentBuild.description = "Artefacts uploaded to <a href='https://s3.eu-west-1.amazonaws.com/sdl-web-dev-dxa-artifacts/pipelines/webapp-java/${BRANCH_NAME}/${env.BUILD_ID}/'>s3://sdl-web-dev-dxa-artifacts/pipelines/webapp-java/${BRANCH_NAME}/${env.BUILD_ID}</a>"
-              }
-          powershell "'s3://sdl-web-dev-dxa-artifacts/pipelines/webapp-java/${BRANCH_NAME}/${env.BUILD_ID}' | Set-Content s3location"
-          archiveArtifacts artifacts: 's3location', caseSensitive: false, defaultExcludes: false, onlyIfSuccessful: true
+          archiveArtifacts artifacts: 'local-project-repo/**', caseSensitive: false, defaultExcludes: false, onlyIfSuccessful: true
+            //dir ('artefact') {
+            //  powershell returnStdout: false, script: 'Copy-Item -Force -Recurse ..\\local-project-repo .'
+            //}
+            //withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'aws-docker-registry', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
+            //  dir('artefact') {
+            //    bat "aws s3 cp --recursive --region eu-west-1 . s3://sdl-web-dev-dxa-artifacts/pipelines/webapp-java/%BRANCH_NAME%/%BUILD_ID%"
+            //  }
+            //}
+          //script {
+          //      currentBuild.description = "Artefacts uploaded to <a href='https://s3.eu-west-1.amazonaws.com/sdl-web-dev-dxa-artifacts/pipelines/webapp-java/${BRANCH_NAME}/${env.BUILD_ID}/'>s3://sdl-web-dev-dxa-artifacts/pipelines/webapp-java/${BRANCH_NAME}/${env.BUILD_ID}</a>"
+          //    }
+          //powershell "'s3://sdl-web-dev-dxa-artifacts/pipelines/webapp-java/${BRANCH_NAME}/${env.BUILD_ID}' | Set-Content s3location"
+          //archiveArtifacts artifacts: 's3location', caseSensitive: false, defaultExcludes: false, onlyIfSuccessful: true
         }
       }
     }

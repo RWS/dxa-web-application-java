@@ -10,6 +10,7 @@ import org.springframework.web.filter.CharacterEncodingFilter;
 import javax.servlet.FilterRegistration;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletRegistration;
+import java.util.Optional;
 import java.util.Properties;
 
 import static com.sdl.webapp.common.util.InitializationUtils.registerListener;
@@ -60,6 +61,15 @@ public class DxaWebInitialization implements WebApplicationInitializer, Ordered 
             registerListener(servletContext, "com.tridion.webservices.odata.ODataContextListener");
 
             log.info("Default DXA web application initialization complete.");
+
+            // keep the "dxa.modules.cid.sessionid.name" for backwards-compatibility
+            String sessionIdName = Optional.ofNullable(dxaProperties.getProperty("dxa.modules.cid.sessionid.name"))
+                    .orElseGet(() -> Optional.ofNullable(dxaProperties.getProperty("dxa.web.sessionid.name"))
+                            .orElse(null));
+            if (sessionIdName != null) {
+                servletContext.getSessionCookieConfig().setName(sessionIdName);
+                log.info("Set default SESSIONID to {}", sessionIdName);
+            }
         }
     }
 

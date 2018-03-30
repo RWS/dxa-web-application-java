@@ -41,7 +41,7 @@ public final class TcmUtils {
 
     private static final String TCM_S_S_S = "%s:%s-%s-%s";
 
-    private static final Pattern PATTERN = Pattern.compile("(?<namespace>\\[a-z]{3}):(?<publicationId>\\d+)-(?<itemId>\\d+)(-(?<itemType>\\d+))?");
+    private static final Pattern PATTERN = Pattern.compile("(?<namespace>\\D+):(?<publicationId>\\d+)-(?<itemId>\\d+)(-(?<itemType>\\d+))?");
 
     private TcmUtils() {
     }
@@ -57,7 +57,8 @@ public final class TcmUtils {
     }
 
     private static String buildPublicationTcmUriInternal(String publicationId) {
-        return String.format(TCM_S_S_S, 0, publicationId, PUBLICATION_ITEM_TYPE);
+        return buildTcmUri(DEFAULT_NAMESPACE, 0, publicationId, PUBLICATION_ITEM_TYPE);
+//        return String.format(TCM_S_S_S, 0, publicationId, PUBLICATION_ITEM_TYPE);
     }
 
     /**
@@ -85,7 +86,8 @@ public final class TcmUtils {
      * @return TCM URI for template
      */
     public static String buildTemplateTcmUri(String publicationId, String itemId) {
-        return String.format(TCM_S_S_S, publicationId, itemId, COMPONENT_TEMPLATE_ITEM_TYPE);
+        return buildTcmUri(publicationId, itemId, COMPONENT_TEMPLATE_ITEM_TYPE);
+//        return String.format(TCM_S_S_S, publicationId, itemId, COMPONENT_TEMPLATE_ITEM_TYPE);
     }
 
     /**
@@ -96,7 +98,8 @@ public final class TcmUtils {
      * @return TCM URI for page
      */
     public static String buildPageTcmUri(Object publicationId, Object itemId) {
-        return String.format(TCM_S_S_S, publicationId, itemId, PAGE_ITEM_TYPE);
+        return buildTcmUri(publicationId, itemId, PAGE_ITEM_TYPE);
+//        return String.format(TCM_S_S_S, publicationId, itemId, PAGE_ITEM_TYPE);
     }
 
     /**
@@ -114,7 +117,8 @@ public final class TcmUtils {
      * @return TCM URI for keyword
      */
     public static String buildKeywordTcmUri(String publicationId, String itemId) {
-        return String.format(TCM_S_S_S, publicationId, itemId, KEYWORD_ITEM_TYPE);
+        return buildTcmUri(publicationId, itemId, KEYWORD_ITEM_TYPE);
+//        return String.format(TCM_S_S_S, publicationId, itemId, KEYWORD_ITEM_TYPE);
     }
 
     /**
@@ -272,7 +276,7 @@ public final class TcmUtils {
             log.warn("TCM URI {} is not valid", tcmUri);
             throw new IllegalArgumentException("TCM URI is not valid: " + tcmUri);
         }
-        String itemType = matcher.group(4);
+        String itemType = matcher.group(5);
         return itemType == null ? buildTcmUri(publicationId, getItemId(tcmUri)) :
                 buildTcmUri(publicationId, getItemId(tcmUri), Integer.parseInt(itemType));
 
@@ -298,7 +302,7 @@ public final class TcmUtils {
      * @return a TCM URI
      */
     public static String buildTcmUri(int publicationId, int itemId, int itemType) {
-        return buildTcmUriInternal(String.valueOf(publicationId), String.valueOf(itemId), String.valueOf(itemType));
+        return buildTcmUriInternal(DEFAULT_NAMESPACE, String.valueOf(publicationId), String.valueOf(itemId), String.valueOf(itemType));
     }
 
     /**

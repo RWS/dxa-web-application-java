@@ -35,11 +35,13 @@ public final class TcmUtils {
 
     public static final int KEYWORD_ITEM_TYPE = 1024;
 
-    private static final String TCM_S_S = "tcm:%s-%s";
+    public static final String DEFAULT_NAMESPACE = "tcm";
 
-    private static final String TCM_S_S_S = "tcm:%s-%s-%s";
+    private static final String TCM_S_S = "%s:%s-%s";
 
-    private static final Pattern PATTERN = Pattern.compile("tcm:(?<publicationId>\\d+)-(?<itemId>\\d+)(-(?<itemType>\\d+))?");
+    private static final String TCM_S_S_S = "%s:%s-%s-%s";
+
+    private static final Pattern PATTERN = Pattern.compile("(?<namespace>\\[a-z]{3}):(?<publicationId>\\d+)-(?<itemId>\\d+)(-(?<itemType>\\d+))?");
 
     private TcmUtils() {
     }
@@ -123,7 +125,7 @@ public final class TcmUtils {
      * @return short TCM URI
      */
     public static String buildTcmUri(String publicationId, String itemId) {
-        return buildTcmUriInternal(publicationId, itemId);
+        return buildTcmUriInternal(DEFAULT_NAMESPACE, publicationId, itemId);
     }
 
     /**
@@ -134,11 +136,23 @@ public final class TcmUtils {
      * @return short TCM URI
      */
     public static String buildTcmUri(Object publicationId, Object itemId) {
-        return buildTcmUriInternal(String.valueOf(publicationId), String.valueOf(itemId));
+        return buildTcmUriInternal(DEFAULT_NAMESPACE, String.valueOf(publicationId), String.valueOf(itemId));
     }
 
-    private static String buildTcmUriInternal(String publicationId, String itemId) {
-        return String.format(TCM_S_S, publicationId, itemId);
+    /**
+     * Build a short URI looking like <code>NAMESPACE:PUB_ID-ITEM_ID</code>. For example ish:10054-64587 or tcm:16-345
+     *
+     * @param namespace Custom namespace comes from URI
+     * @param publicationId publication ID
+     * @param itemId        item ID
+     * @return short TCM URI
+     */
+    public static String buildTcmUri(String namespace, Object publicationId, Object itemId) {
+        return buildTcmUriInternal(namespace, String.valueOf(publicationId), String.valueOf(itemId));
+    }
+
+    private static String buildTcmUriInternal(String namespace, String publicationId, String itemId) {
+        return String.format(TCM_S_S, namespace, publicationId, itemId);
     }
 
     /**
@@ -146,27 +160,40 @@ public final class TcmUtils {
      *
      * @param publicationId publication ID
      * @param itemId        item ID
-     * @param itemType      item type
+     * @param itemType      Type of the item ({see the @link com.tridion.ItemTypes})
      * @return a TCM URI
      */
     public static String buildTcmUri(String publicationId, String itemId, String itemType) {
-        return buildTcmUriInternal(publicationId, itemId, itemType);
+        return buildTcmUriInternal(DEFAULT_NAMESPACE, publicationId, itemId, itemType);
     }
 
     /**
-     * Build a short TCM URI looking like <code>tcm:PUB_ID-ITEM_ID</code>.
+     * Build a short TCM URI looking like <code>tcm:PUB_ID-ITEM_ID-ITEM_TYPE</code>. For example ish:10054-64587-8 or tcm:16-34521-1
      *
+     * @param publicationId publication ID
+     * @param itemId        item ID
+     * @param itemType      Type of the item ({see the @link com.tridion.ItemTypes})
+     * @return short TCM URI
+     */
+    public static String buildTcmUri(Object publicationId, Object itemId, int itemType) {
+        return buildTcmUriInternal(DEFAULT_NAMESPACE, String.valueOf(publicationId), String.valueOf(itemId), String.valueOf(itemType));
+    }
+
+    /**
+     * Build a short TCM URI looking like <code>NAMESPACE:PUB_ID-ITEM_ID</code>.
+     *
+     * @param namespace Custom namespace comes from URI
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return short TCM URI
      */
-    public static String buildTcmUri(Object publicationId, Object itemId, int itemType) {
-        return buildTcmUriInternal(String.valueOf(publicationId), String.valueOf(itemId), String.valueOf(itemType));
+    public static String buildTcmUri(String namespace, Object publicationId, Object itemId, int itemType) {
+        return buildTcmUriInternal(namespace, String.valueOf(publicationId), String.valueOf(itemId), String.valueOf(itemType));
     }
 
 
-    public static String buildTcmUriInternal(String publicationId, String itemId, String itemType) {
-        return String.format(TCM_S_S_S, publicationId, itemId, itemType);
+    public static String buildTcmUriInternal(String namespace, String publicationId, String itemId, String itemType) {
+        return String.format(TCM_S_S_S, namespace, publicationId, itemId, itemType);
     }
 
     /**
@@ -224,9 +251,12 @@ public final class TcmUtils {
      * @return item ID or <code>-1</code> if URI is not valid or null
      */
     public static int getItemId(String tcmUri) {
-
         return extractGroupFromTcm(tcmUri, "itemId");
     }
+
+//    public static String getNamespace(String tcmUri) {
+//        return extractGroupFromTcm(tcmUri, "namespace");
+//    }
 
     /**
      * Localizes given TCM URI to current publication.
@@ -256,7 +286,7 @@ public final class TcmUtils {
      * @return short TCM URI
      */
     public static String buildTcmUri(int publicationId, int itemId) {
-        return buildTcmUriInternal(String.valueOf(publicationId), String.valueOf(itemId));
+        return buildTcmUriInternal(DEFAULT_NAMESPACE, String.valueOf(publicationId), String.valueOf(itemId));
     }
 
     /**

@@ -103,6 +103,18 @@ public final class TcmUtils {
     }
 
     /**
+     * Build a template TCM URI looking like <code>tcm:PUB_ID-ITEM_ID-32</code>.
+     *
+     * @param namespace @param namespace Custom namespace comes from URL
+     * @param publicationId publication ID
+     * @param itemId        item ID
+     * @return TCM URI for page
+     */
+    public static String buildPageTcmUri(String namespace, Object publicationId, Object itemId) {
+        return buildTcmUri(namespace, publicationId, itemId, PAGE_ITEM_TYPE);
+    }
+
+    /**
      * See {@link #buildKeywordTcmUri(String, String)}.
      */
     public static String buildKeywordTcmUri(int publicationId, int itemId) {
@@ -146,7 +158,7 @@ public final class TcmUtils {
     /**
      * Build a short URI looking like <code>NAMESPACE:PUB_ID-ITEM_ID</code>. For example ish:10054-64587 or tcm:16-345
      *
-     * @param namespace Custom namespace comes from URI
+     * @param namespace Custom namespace comes from URL
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return short TCM URI
@@ -186,7 +198,7 @@ public final class TcmUtils {
     /**
      * Build a short TCM URI looking like <code>NAMESPACE:PUB_ID-ITEM_ID</code>.
      *
-     * @param namespace Custom namespace comes from URI
+     * @param namespace Custom namespace comes from URL
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return short TCM URI

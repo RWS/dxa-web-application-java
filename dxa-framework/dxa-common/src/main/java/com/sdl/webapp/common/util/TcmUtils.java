@@ -41,7 +41,7 @@ public final class TcmUtils {
 
     private static final String TCM_S_S_S = "%s:%s-%s-%s";
 
-    private static final Pattern PATTERN = Pattern.compile("(?<namespace>tcm|ish+):(?<publicationId>\\d+)-(?<itemId>\\d+)(-(?<itemType>\\d+))?");
+    private static final Pattern URI_SCHEMA = Pattern.compile("(?<namespace>tcm|ish+):(?<publicationId>\\d+)-(?<itemId>\\d+)(-(?<itemType>\\d+))?");
 
     private TcmUtils() {
     }
@@ -79,7 +79,7 @@ public final class TcmUtils {
     }
 
     private static String buildPublicationTcmUriInternal(String namespace, String publicationId) {
-        return buildTcmUriInternal(namespace, String.valueOf(0), publicationId, String.valueOf(PUBLICATION_ITEM_TYPE));
+        return buildTcmUriInternalForRootPublication(namespace, publicationId, String.valueOf(PUBLICATION_ITEM_TYPE));
     }
 
     /**
@@ -249,8 +249,12 @@ public final class TcmUtils {
         return buildTcmUriInternal(namespace, String.valueOf(publicationId), String.valueOf(itemId), String.valueOf(itemType));
     }
 
-    public static String buildTcmUriInternal(String namespace, String publicationId, String itemId, String itemType) {
+    private static String buildTcmUriInternal(String namespace, String publicationId, String itemId, String itemType) {
         return String.format(TCM_S_S_S, namespace, publicationId, itemId, itemType);
+    }
+
+    private static String buildTcmUriInternalForRootPublication(String namespace, String publicationId, String itemType) {
+        return String.format(TCM_S_S_S, namespace, "0", publicationId, itemType);
     }
 
     /**
@@ -270,7 +274,7 @@ public final class TcmUtils {
             return failed;
         }
 
-        Matcher matcher = PATTERN.matcher(tcmUri);
+        Matcher matcher = URI_SCHEMA.matcher(tcmUri);
         if (matcher.matches()) {
             String match = matcher.group(group);
             return match != null ? Integer.parseInt(match) : -2;
@@ -320,12 +324,12 @@ public final class TcmUtils {
      * @return localized TCM URI of an item
      */
     public static String localizeTcmUri(String tcmUri, int publicationId) {
-        Matcher matcher = PATTERN.matcher(tcmUri);
+        Matcher matcher = URI_SCHEMA.matcher(tcmUri);
         if (!matcher.matches()) {
             log.warn("TCM URI {} is not valid", tcmUri);
             throw new IllegalArgumentException("TCM URI is not valid: " + tcmUri);
         }
-        String itemType = matcher.group(5);
+        String itemType = matcher.group("itemType");
         return itemType == null ? buildTcmUri(publicationId, getItemId(tcmUri)) :
                 buildTcmUri(publicationId, getItemId(tcmUri), Integer.parseInt(itemType));
 
@@ -361,7 +365,7 @@ public final class TcmUtils {
      * @return whether the string is TCM URI
      */
     public static boolean isTcmUri(@Nullable Object tcmUri) {
-        return tcmUri != null && PATTERN.matcher(String.valueOf(tcmUri)).matches();
+        return tcmUri != null && URI_SCHEMA.matcher(String.valueOf(tcmUri)).matches();
     }
 
     /**

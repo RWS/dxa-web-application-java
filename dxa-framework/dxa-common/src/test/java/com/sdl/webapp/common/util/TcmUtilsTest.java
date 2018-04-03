@@ -187,7 +187,10 @@ public class TcmUtilsTest {
         assertEquals(STRUCTURE_GROUP_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-4"));
         assertEquals(SCHEMA_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-8"));
         assertEquals(COMPONENT_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-16"));
+
+        // Should return default item type 16
         assertEquals(COMPONENT_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1"));
+
         assertEquals(COMPONENT_TEMPLATE_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-32"));
         assertEquals(PAGE_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-64"));
         assertEquals(PAGE_TEMPLATE_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-128"));

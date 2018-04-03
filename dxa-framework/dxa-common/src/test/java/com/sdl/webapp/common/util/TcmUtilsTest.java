@@ -35,6 +35,20 @@ public class TcmUtilsTest {
     }
 
     @Test
+    public void shouldBuildPublicationTcmUriWithCustomNamespace() throws Exception {
+        //given
+        String expected = "ish:0-2-1";
+
+        //when
+        String result = TcmUtils.buildPublicationTcmUri("ish", 2);
+        String resultStr = TcmUtils.buildPublicationTcmUri("ish", "2");
+
+        //then
+        assertEquals(expected, result);
+        assertEquals(expected, resultStr);
+    }
+
+    @Test
     public void shouldBuildTemplateTcmUri() throws Exception {
         //given
         String expected = "tcm:1-2-32";
@@ -49,7 +63,21 @@ public class TcmUtilsTest {
     }
 
     @Test
-    public void shouldBuildTcmUri() throws Exception {
+    public void shouldBuildTemplateTcmUriWithCustomNamespace() throws Exception {
+        //given
+        String expected = "ish:1-2-32";
+
+        //when
+        String result = TcmUtils.buildTemplateTcmUri("ish", "1", "2");
+        String result2 = TcmUtils.buildTemplateTcmUri("ish", 1, 2);
+
+        //then
+        assertEquals(expected, result);
+        assertEquals(expected, result2);
+    }
+
+    @Test
+    public void shouldBuildShortTcmUri() throws Exception {
         //given
         String expected = "tcm:1-2";
 
@@ -60,6 +88,18 @@ public class TcmUtilsTest {
         //then
         assertEquals(expected, result);
         assertEquals(expected, result2);
+    }
+
+    @Test
+    public void shouldBuildShortTcmUriWithCustomNamespace() throws Exception {
+        //given
+        String expected = "ish:1-2";
+
+        //when
+        String result = TcmUtils.buildTcmUri("ish", 1, 2);
+
+        //then
+        assertEquals(expected, result);
     }
 
     @Test
@@ -75,7 +115,19 @@ public class TcmUtilsTest {
     }
 
     @Test
-    public void shouldBuildTcmUri1() throws Exception {
+    public void shouldBuildTcmUriForPageWithCustomNamespace() {
+        //given
+        String expected = "ish:1-2-64";
+
+        //when
+        String result = TcmUtils.buildPageTcmUri("ish", "1", "2");
+
+        //then
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void shouldBuildTcmUri() throws Exception {
         //given
         String expected = "tcm:1-2-3";
 
@@ -86,6 +138,20 @@ public class TcmUtilsTest {
         //then
         assertEquals(expected, result);
         assertEquals(expected, result2);
+    }
+
+    @Test
+    public void shouldBuildTcmUriWithCustomNamespace() throws Exception {
+        //given
+        String expected = "ish:1-2-3";
+
+        //when
+        String result = TcmUtils.buildTcmUri("ish", 1, 2, 3);
+        String resultStr = TcmUtils.buildTcmUri("ish", "1", "2", "3");
+
+        //then
+        assertEquals(expected, result);
+        assertEquals(expected, resultStr);
     }
 
     @Test

@@ -41,7 +41,7 @@ public final class TcmUtils {
 
     private static final String TCM_S_S_S = "%s:%s-%s-%s";
 
-    private static final Pattern URI_SCHEMA = Pattern.compile("(?<namespace>tcm|ish+):(?<publicationId>\\d+)-(?<itemId>\\d+)(-(?<itemType>\\d+))?");
+    private static final Pattern URI_SCHEMA = Pattern.compile("(?<namespace>tcm|ish):(?<publicationId>\\d+)-(?<itemId>\\d+)(-(?<itemType>\\d+))?");
 
     private TcmUtils() {
     }

@@ -35,7 +35,7 @@ public final class TcmUtils {
 
     public static final int KEYWORD_ITEM_TYPE = 1024;
 
-    public static final String DEFAULT_NAMESPACE = "tcm";
+    private static final String DEFAULT_NAMESPACE = "tcm";
 
     private static final String TCM_S_S = "%s:%s-%s";
 
@@ -59,7 +59,7 @@ public final class TcmUtils {
     /**
      * Build a publication TCM URI looking like <code>NAMESPACE:0-ID-1</code>.
      *
-     * @param namespace     Custom namespace
+     * @param namespace     Custom namespace. At this moment only [tcm, ish] are supported
      * @param publicationId publication ID
      * @return TCM URI for publication
      */
@@ -70,7 +70,7 @@ public final class TcmUtils {
     /**
      * Build a publication TCM URI looking like <code>NAMESPACE:0-ID-1</code>.
      *
-     * @param namespace     Custom namespace
+     * @param namespace     Custom namespace. At this moment only [tcm, ish] are supported
      * @param publicationId publication ID
      * @return TCM URI for publication
      */
@@ -113,7 +113,7 @@ public final class TcmUtils {
     /**
      * Build a template TCM URI looking like <code>NAMESPACE:PUB_ID-ITEM_ID-32</code>.
      *
-     * @param namespace     Custom namespace
+     * @param namespace     Custom namespace. At this moment only [tcm, ish] are supported
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return TCM URI for template
@@ -125,7 +125,7 @@ public final class TcmUtils {
     /**
      * Build a template TCM URI looking like <code>NAMESPACE:PUB_ID-ITEM_ID-32</code>.
      *
-     * @param namespace     Custom namespace
+     * @param namespace     Custom namespace. At this moment only [tcm, ish] are supported
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return TCM URI for template
@@ -148,7 +148,7 @@ public final class TcmUtils {
     /**
      * Build a page TCM URI looking like <code>NAMESPACE:PUB_ID-ITEM_ID-32</code>.
      *
-     * @param namespace @param namespace Custom namespace comes from URL
+     * @param namespace @param Custom namespace. At this moment only [tcm, ish] are supported
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return TCM URI for page
@@ -200,7 +200,7 @@ public final class TcmUtils {
     /**
      * Build a short URI looking like <code>NAMESPACE:PUB_ID-ITEM_ID</code>. For example ish:10054-64587 or tcm:16-345
      *
-     * @param namespace     Custom namespace comes from URL
+     * @param namespace     Custom namespace. At this moment only [tcm, ish] are supported
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return short TCM URI
@@ -240,7 +240,7 @@ public final class TcmUtils {
     /**
      * Build a short TCM URI looking like <code>NAMESPACE:PUB_ID-ITEM_ID</code>.
      *
-     * @param namespace     Custom namespace comes from URL
+     * @param namespace     Custom namespace. At this moment only [tcm, ish] are supported
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return short TCM URI

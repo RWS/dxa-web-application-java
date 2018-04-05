@@ -35,6 +35,20 @@ public class TcmUtilsTest {
     }
 
     @Test
+    public void shouldBuildPublicationTcmUri_WithCustomNamespace() throws Exception {
+        //given
+        String expected = "ish:0-2-1";
+
+        //when
+        String result = TcmUtils.buildPublicationTcmUri("ish", 2);
+        String resultStr = TcmUtils.buildPublicationTcmUri("ish", "2");
+
+        //then
+        assertEquals(expected, result);
+        assertEquals(expected, resultStr);
+    }
+
+    @Test
     public void shouldBuildTemplateTcmUri() throws Exception {
         //given
         String expected = "tcm:1-2-32";
@@ -49,7 +63,21 @@ public class TcmUtilsTest {
     }
 
     @Test
-    public void shouldBuildTcmUri() throws Exception {
+    public void shouldBuildTemplateTcmUri_WithCustomNamespace() throws Exception {
+        //given
+        String expected = "ish:1-2-32";
+
+        //when
+        String result = TcmUtils.buildTemplateTcmUri("ish", "1", "2");
+        String result2 = TcmUtils.buildTemplateTcmUri("ish", 1, 2);
+
+        //then
+        assertEquals(expected, result);
+        assertEquals(expected, result2);
+    }
+
+    @Test
+    public void shouldBuildShortTcmUri() throws Exception {
         //given
         String expected = "tcm:1-2";
 
@@ -60,6 +88,42 @@ public class TcmUtilsTest {
         //then
         assertEquals(expected, result);
         assertEquals(expected, result2);
+    }
+
+    @Test
+    public void shouldBuildShortTcmUri_WhenParamsOfDifferentType() throws Exception {
+        //given
+        String expected = "tcm:1-2";
+
+        //when
+        String result = TcmUtils.buildTcmUri(1, "2");
+
+        //then
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void shouldBuildTcmUri_WhenParamsOfDifferentType_WithCustomNamespace() throws Exception {
+        //given
+        String expected = "ish:1-2-3";
+
+        //when
+        String result = TcmUtils.buildTcmUri("ish", 1, "2", 3);
+
+        //then
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void shouldBuildShortTcmUri_WithCustomNamespace() throws Exception {
+        //given
+        String expected = "ish:1-2";
+
+        //when
+        String result = TcmUtils.buildTcmUri("ish", 1, 2);
+
+        //then
+        assertEquals(expected, result);
     }
 
     @Test
@@ -75,7 +139,19 @@ public class TcmUtilsTest {
     }
 
     @Test
-    public void shouldBuildTcmUri1() throws Exception {
+    public void shouldBuildTcmUriForPage_WithCustomNamespace() {
+        //given
+        String expected = "ish:1-2-64";
+
+        //when
+        String result = TcmUtils.buildPageTcmUri("ish", "1", "2");
+
+        //then
+        assertEquals(expected, result);
+    }
+
+    @Test
+    public void shouldBuildTcmUri() throws Exception {
         //given
         String expected = "tcm:1-2-3";
 
@@ -86,6 +162,20 @@ public class TcmUtilsTest {
         //then
         assertEquals(expected, result);
         assertEquals(expected, result2);
+    }
+
+    @Test
+    public void shouldBuildTcmUri_WithCustomNamespace() throws Exception {
+        //given
+        String expected = "ish:1-2-3";
+
+        //when
+        String result = TcmUtils.buildTcmUri("ish", 1, 2, 3);
+        String resultStr = TcmUtils.buildTcmUri("ish", "1", "2", "3");
+
+        //then
+        assertEquals(expected, result);
+        assertEquals(expected, resultStr);
     }
 
     @Test
@@ -121,7 +211,10 @@ public class TcmUtilsTest {
         assertEquals(STRUCTURE_GROUP_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-4"));
         assertEquals(SCHEMA_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-8"));
         assertEquals(COMPONENT_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-16"));
+
+        // Should return default item type 16
         assertEquals(COMPONENT_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1"));
+
         assertEquals(COMPONENT_TEMPLATE_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-32"));
         assertEquals(PAGE_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-64"));
         assertEquals(PAGE_TEMPLATE_ITEM_TYPE, TcmUtils.getItemType("tcm:42-1-128"));

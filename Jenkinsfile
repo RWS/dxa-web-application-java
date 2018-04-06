@@ -6,14 +6,14 @@ node("dxadocker") {
     // Global variable for Maven location (being boostrapped alongside with Pipeline)
     lpr = pwd()+"\\build\\local-project-repo"
     timestamps { // Enable timestamping of every line in pipeline execution log
+    stage("Checkout installation repo") { // Checkout initial repo > this stage should be removed in case this pipeline will be located in tsi/installation repo
+        // Checkout of tsi/installation Stash project (temporarily done on develop branch, should be picked up on board by jenkins env variable in case of usage as multibranch)
+        checkout([$class: 'GitSCM', branches: [[name: '*/develop']], browser: [$class: 'Stash', repoUrl: 'https://stash.sdl.com/scm/tsi/installation'], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', url: 'https://stash.sdl.com/scm/tsi/installation.git']]])
+    }
     stage("Checkout web-application-java repo") {
         dir("build\\web-application-java") {
             checkout scm
         }
-    }
-    stage("Checkout installation repo") { // Checkout initial repo > this stage should be removed in case this pipeline will be located in tsi/installation repo
-        // Checkout of tsi/installation Stash project (temporarily done on develop branch, should be picked up on board by jenkins env variable in case of usage as multibranch)
-        checkout([$class: 'GitSCM', branches: [[name: '*/develop']], browser: [$class: 'Stash', repoUrl: 'https://stash.sdl.com/scm/tsi/installation'], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', url: 'https://stash.sdl.com/scm/tsi/installation.git']]])
     }
     stage("Checkout dxa-modules repo") {
         dir("build\\dxa-modules") {

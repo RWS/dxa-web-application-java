@@ -326,4 +326,11 @@ public class TcmUtilsTest {
         assertEquals("tcm:1-2-1024", buildKeywordTcmUri("1", "2"));
     }
 
+    @Test
+    public void shouldBuildKeywordTcmUri_WithCustomNamespace() {
+        //when
+        assertEquals("ish:1-2-1024", buildKeywordTcmUri("ish", 1, 2));
+        assertEquals("ish:1-2-1024", buildKeywordTcmUri("ish", "1", "2"));
+    }
+
 }

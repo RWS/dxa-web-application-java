@@ -148,7 +148,7 @@ public final class TcmUtils {
     /**
      * Build a page TCM URI looking like <code>NAMESPACE:PUB_ID-ITEM_ID-32</code>.
      *
-     * @param namespace @param Custom namespace. At this moment only [tcm, ish] are supported
+     * @param namespace Custom namespace. At this moment only [tcm, ish] are supported
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return TCM URI for page
@@ -158,14 +158,14 @@ public final class TcmUtils {
     }
 
     /**
-     * See {@link #buildKeywordTcmUri(String, String)}.
+     * See {@link #buildKeywordTcmUri(int, int)}.
      */
     public static String buildKeywordTcmUri(int publicationId, int itemId) {
         return buildKeywordTcmUri(String.valueOf(publicationId), String.valueOf(itemId));
     }
 
     /**
-     * See {@link #buildKeywordTcmUri(String, String)}.
+     * See {@link #buildKeywordTcmUri(String, String, String)}.
      */
     public static String buildKeywordTcmUri(String namespace, int publicationId, int itemId) {
         return buildKeywordTcmUri(namespace, String.valueOf(publicationId), String.valueOf(itemId));

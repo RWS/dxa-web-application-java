@@ -19,7 +19,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -50,7 +53,10 @@ public class GenericSemanticModelDataConverter {
 
     @Autowired
     public void setConverters(Set<SemanticModelConverter<?>> semanticModelConverters) {
-        semanticModelConverters.forEach(sourceConverter ->
+        List<SemanticModelConverter<?>> list = new ArrayList<>(semanticModelConverters);
+        //reverse sorting the autowired set ensures that higher priority components are added last and thus override lower prio/default components
+        Collections.reverse(list);
+        list.forEach(sourceConverter ->
                 sourceConverter.getTypes().forEach(aClass ->
                         converters.put(aClass, sourceConverter)));
     }

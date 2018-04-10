@@ -32,7 +32,9 @@ public class LocalizationAwareKeyGeneratorTest {
     public void init() {
         when(webRequestContext.getLocalization()).thenReturn(localization);
         when(localization.getId()).thenReturn("42");
-        ReflectionTestUtils.setField(keyGenerator, "webRequestContext", webRequestContext);
+        WebRequestContextLocalizationIdProvider localizationIdProvider = new WebRequestContextLocalizationIdProvider();
+        ReflectionTestUtils.setField(localizationIdProvider, "webRequestContext", webRequestContext);
+        ReflectionTestUtils.setField(keyGenerator, "localizationIdProvider", localizationIdProvider);
     }
 
     @Test

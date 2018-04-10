@@ -38,6 +38,8 @@ import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
 
 /**
  * Static content resolver is capable to resolve static (also versioned) binary content from broker database, and to cache it for same request.
+ *
+ * @dxa.publicApi
  */
 @Slf4j
 @Service
@@ -73,6 +75,7 @@ public class StaticContentResolver {
      * @param requestDto request DTO
      * @return requested static file
      * @throws StaticContentNotFoundException if cannot resolve static file for any reason
+     * @dxa.publicApi
      */
     @NotNull
     public StaticContentItem getStaticContent(@NotNull StaticContentRequestDto requestDto) throws ContentProviderException {
@@ -143,7 +146,10 @@ public class StaticContentResolver {
         }
 
         long componentTime = componentMeta.getLastPublicationDate().getTime();
-        if (isToBeRefreshed(file, componentTime)) {
+
+        boolean shouldRefresh = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
+
+        if (shouldRefresh) {
             BinaryData binaryData = binaryContentRetriever.getBinary(publicationId, itemId, binaryMeta.getVariantId());
 
             log.debug("Writing binary content to file: {}", file);

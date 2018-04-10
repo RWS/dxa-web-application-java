@@ -27,6 +27,7 @@ import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.util.FileUtils;
 import com.tridion.broker.StorageException;
 import com.tridion.broker.querying.MetadataType;
 import com.tridion.broker.querying.Query;
@@ -61,6 +62,11 @@ import java.util.stream.Collectors;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 
+/**
+ * Content Provider default implementation. Look at {@link ContentProvider} documentation for details.
+ *
+ * @dxa.publicApi
+ */
 @Service
 @Slf4j
 public class DefaultContentProvider implements ContentProvider {
@@ -159,6 +165,11 @@ public class DefaultContentProvider implements ContentProvider {
         this.entityEvaluators = entityEvaluators;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
     @Override
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
         PageModel pageModel = _loadPage(path, localization);
@@ -171,7 +182,10 @@ public class DefaultContentProvider implements ContentProvider {
     }
 
     /**
+     * {@inheritDoc}
      * If you need copying cache for dynamic logic, use {@link CopyingCache}.
+     *
+     * @dxa.publicApi
      */
     @Override
     public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
@@ -183,6 +197,11 @@ public class DefaultContentProvider implements ContentProvider {
         return entityModel;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
     @Override
     public <T extends EntityModel> void populateDynamicList(DynamicList<T, SimpleBrokerQuery> dynamicList, Localization localization) throws ContentProviderException {
         if (localization == null) {
@@ -197,13 +216,20 @@ public class DefaultContentProvider implements ContentProvider {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
     @Override
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
+
         return staticContentResolver.getStaticContent(
                 StaticContentRequestDto.builder(path, localizationId)
                         .localizationPath(localizationPath)
                         .baseUrl(webRequestContext.getBaseUrl())
+                        .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isPreview())
                         .build());
     }
 

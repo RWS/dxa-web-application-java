@@ -7,6 +7,7 @@ import java.util.List;
 
 /**
  * DataFormatter Interface for that defines the behavior of the formatters.
+ * @dxa.publicApi
  */
 public interface DataFormatter {
 

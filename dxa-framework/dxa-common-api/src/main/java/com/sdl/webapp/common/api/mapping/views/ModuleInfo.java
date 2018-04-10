@@ -7,6 +7,7 @@ import java.lang.annotation.Target;
 
 /**
  * Module formal description.
+ * @dxa.publicApi
  */
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

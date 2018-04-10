@@ -7,6 +7,9 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
+/**
+ * @dxa.publicApi
+ */
 @Getter
 @EqualsAndHashCode(callSuper = false)
 public final class HtmlStartTag extends HtmlRenderable {
@@ -15,20 +18,11 @@ public final class HtmlStartTag extends HtmlRenderable {
 
     private final List<HtmlAttribute> attributes;
 
-    /**
-     * <p>Constructor for HtmlStartTag.</p>
-     *
-     * @param tagName    a {@link java.lang.String} object.
-     * @param attributes a {@link java.util.List} object.
-     */
     public HtmlStartTag(String tagName, List<HtmlAttribute> attributes) {
         this.tagName = tagName;
         this.attributes = ImmutableList.copyOf(attributes);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String renderHtml() {
         if (StringUtils.isEmpty(tagName)) {

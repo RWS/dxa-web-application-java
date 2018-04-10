@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
 
 /**
- * Output cache that accepts a composite key as a required key.
+ * Output cache that accepts a composite key as a required key. This is a default implementation for manual access.
  *
+ * @dxa.publicApi
  * @see CompositeOutputCacheKeyBase
  */
 @Component

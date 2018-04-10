@@ -17,6 +17,7 @@ import org.springframework.core.Ordered;
  * unless they are required to be injected in the middle of default implementations.
  * Default ones are still expected to be the first.</p>
  *
+ * @dxa.publicApi
  * @see EntityModelData
  * @see PageModelData
  * @see EntityModelBuilder
@@ -25,13 +26,4 @@ import org.springframework.core.Ordered;
  */
 public interface ModelBuilder extends Ordered {
 
-    /**
-     * Please refer to {@link ModelBuilder} documentation to choose the returned value for this method.
-     * The original documentation for {@link Ordered#getOrder()} should also be useful.
-     *
-     * @see ModelBuilder
-     * @see Ordered#getOrder()
-     */
-    @Override
-    int getOrder();
 }

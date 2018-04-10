@@ -8,6 +8,9 @@ import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+/**
+ * @dxa.publicApi
+ */
 @Data
 @EqualsAndHashCode(callSuper = true)
 @AllArgsConstructor

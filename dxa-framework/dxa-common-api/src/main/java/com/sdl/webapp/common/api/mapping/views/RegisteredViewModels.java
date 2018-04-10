@@ -7,9 +7,12 @@ import java.lang.annotation.Target;
 
 /**
  * Set of viewModels to be registered by {@link AbstractModuleInitializer}.
+ *
+ * @dxa.publicApi
  */
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface RegisteredViewModels {
+
     RegisteredViewModel[] value();
 }

@@ -17,6 +17,8 @@ import static org.springframework.util.StringUtils.isEmpty;
 
 /**
  * This utils class holds helper-methods for the logic related to operations with page paths.
+ *
+ * @dxa.publicApi
  */
 @Slf4j
 public final class PathUtils {
@@ -27,7 +29,7 @@ public final class PathUtils {
 
     private static final Pattern PAGE_TITLE_SEQUENCE = Pattern.compile("^(?<sequence>\\d{3}\\s?)(?<pageName>(?<sequenceStop>[^\\d]).*)$");
 
-    private static final Pattern FILE_NAME_PATTERN = Pattern.compile(".*?/?(?<fileName>[^/.]*)\\.(?<extension>[^/.]*)$");
+    private static final Pattern FILE_NAME_PATTERN = Pattern.compile(".*?/?(?<fileName>[^/.]*)(\\.(?<extension>[^/.]*))?$");
 
     private static final Pattern INDEX_PATH_REGEXP = Pattern.compile("^(?<main>.*)(?<index>/(index(\\.html)?)?)$");
 
@@ -59,7 +61,7 @@ public final class PathUtils {
     @Contract("null ,null -> null; _,_ -> !null")
     public static String combinePath(String url, String path) {
         String securedUrl, securedPath;
-        if(url == null && path == null) {
+        if (url == null && path == null) {
             return null;
         }
 

@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 
 import java.util.Optional;
@@ -29,14 +30,20 @@ public abstract class AbstractLinkResolver implements LinkResolver {
     @Deprecated
     public static final String DEFAULT_PAGE_EXTENSION = PathUtils.getDefaultPageExtension();
 
+    @Value("${dxa.web.link-resolver.remove-extension:#{true}}")
+    private boolean shouldRemoveExtension;
+
+    @Value("${dxa.web.link-resolver.strip-index-path:#{true}}")
+    private boolean shouldStripIndexPath;
+
     @Override
     @Cacheable(value = "defaultCache", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary }")
     public String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary) {
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
 
-        String resolvedUrl = _resolveLink(url, publicationId, resolveToBinary);
-
-        return PathUtils.stripDefaultExtension(PathUtils.stripIndexPath(resolvedUrl));
+        String resolvedLink = _resolveLink(url, publicationId, resolveToBinary);
+        String resolvedUrl = shouldStripIndexPath ? PathUtils.stripIndexPath(resolvedLink) : resolvedLink;
+        return shouldRemoveExtension ? PathUtils.stripDefaultExtension(resolvedUrl) : resolvedUrl;
     }
 
     @Contract("null, _, _ -> null; !null, _, _ -> !null")

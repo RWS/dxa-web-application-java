@@ -9,7 +9,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Collection;
 
 /**
- * Supports "on-demand" navigation (i.e. can provide navigation subtrees).
+ * Supports "on-demand" navigation (for example, can provide navigation subtrees).
+ * @dxa.publicApi
  */
 @FunctionalInterface
 public interface OnDemandNavigationProvider {

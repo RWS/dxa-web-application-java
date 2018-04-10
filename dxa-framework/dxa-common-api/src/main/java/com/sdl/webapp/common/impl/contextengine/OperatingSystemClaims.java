@@ -6,6 +6,8 @@ import lombok.Getter;
 
 /**
  * ContextClaims with a 'os' aspect.
+ *
+ * @dxa.publicApi
  */
 public class OperatingSystemClaims extends ContextClaims {
 

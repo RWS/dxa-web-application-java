@@ -2,6 +2,9 @@ package com.sdl.webapp.common.api;
 
 import lombok.Getter;
 
+/**
+ * @dxa.publicApi
+ */
 @Getter
 public enum ScreenWidth {
     EXTRA_SMALL(480), SMALL(940), MEDIUM(1140), LARGE(Integer.MAX_VALUE);

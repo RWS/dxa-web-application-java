@@ -51,7 +51,7 @@ public class ModelServicePageProviderTest {
         String page = modelServicePageProvider.getPageContentByURL("/path", 42);
 
         //then
-        verify(modelServiceClient).getForType(eq("/conf?raw=true&modelType=DD4T"), eq(String.class), eq("tcm"), eq(42), eq("/path"), eq("INCLUDE"));
+        verify(modelServiceClient).getForType(eq("/conf?modelType=DD4T"), eq(String.class), eq("tcm"), eq(42), eq("/path"), eq("INCLUDE"));
         assertEquals(content, page);
     }
 

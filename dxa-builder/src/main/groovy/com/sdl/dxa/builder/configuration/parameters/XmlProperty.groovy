@@ -1,5 +1,6 @@
 package com.sdl.dxa.builder.configuration.parameters
 
+import com.sdl.dxa.builder.configuration.writers.XmlWriter
 import org.jdom2.Namespace
 
 class XmlProperty extends Property {
@@ -49,6 +50,20 @@ class XmlProperty extends Property {
         modifyMap = xmlModifyArray.collectEntries { [(it): value] }
 
         this
+    }
+
+    @Override
+    def processProperty(String filename, String value) {
+        if (value == null) {
+            return
+        }
+        if (this.isCanBeEmpty() || value) {
+            println "Modified $filename, set ${name == null ? 'property to ' : (name + ' = ')} $value"
+            new XmlWriter().from(filename).to(filename).format('raw')
+                    .open()
+                    .modify(this.acceptValue(value))
+                    .save()
+        }
     }
 
     private static Map<String, Tuple2<String, String>> toTuples(Map<String, String> initial, String value) {

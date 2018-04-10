@@ -25,8 +25,26 @@ class MavenBuildTask extends DefaultTask {
 
     def customCommandDelimiter = /\s*>\s*/
 
+    static String mvnVersion() {
+        def mvnVersion = BuildTask.determineShell() + "mvn --version"
+        return mvnVersion.execute().text
+    }
+
+    static boolean isMvnInstalled() {
+        try {
+            return mvnVersion().contains("Maven")
+        } catch (Exception ignored) {
+            return false
+        }
+    }
+
     @TaskAction
     def run() {
+        if (!configurations) {
+            println "Nothing to do with Maven"
+            return
+        }
+
         printMvnVersion()
 
         def pool = Executors.newFixedThreadPool(numberThreads)
@@ -49,7 +67,7 @@ class MavenBuildTask extends DefaultTask {
                     System.in.read()
                 }
                 println "Error building ${output.command}"
-                System.exit(output.code);
+                System.exit(output.code)
             } else {
                 outputPool.submit {
                     println "= SUCCESS (in ${output.timeSeconds}s): ${output.command}"
@@ -77,7 +95,7 @@ class MavenBuildTask extends DefaultTask {
 
     }
 
-    def BuildTask buildTask(String task, Closure callback, boolean verbose) {
+    BuildTask buildTask(String task, Closure callback, boolean verbose) {
         task = task.trim()
 
         if (task =~ customCommandDelimiter) {
@@ -111,13 +129,10 @@ class MavenBuildTask extends DefaultTask {
     }
 
     private static void printMvnVersion() {
-        if (!isVersionShown) {
+        if (!isVersionShown && isMvnInstalled()) {
             isVersionShown = true
 
-            def mvnVersion = BuildTask.determineShell() + "mvn --version"
-            println mvnVersion
-            mvnVersion.execute().in.eachLine { println it }
-            println ""
+            println mvnVersion()
         }
     }
 }

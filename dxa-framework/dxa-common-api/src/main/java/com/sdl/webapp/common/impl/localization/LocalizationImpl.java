@@ -8,6 +8,7 @@ import com.google.common.collect.ListMultimap;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.SiteLocalization;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
+import com.sdl.webapp.common.util.FileUtils;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.ToString;
@@ -24,6 +25,7 @@ public class LocalizationImpl implements Localization {
 
     private static final String FAVICON_PATH = "/favicon.ico";
     private static final Pattern SYSTEM_ASSETS_PATTERN = Pattern.compile("/system(/v\\d+\\.\\d+)?/assets/.*");
+    private static final Pattern SYSTEM_RESOURCES_PATTERN = Pattern.compile("/system(/v\\d+\\.\\d+)?/(resources|config)/.*");
 
     @Getter
     private final String id;
@@ -40,6 +42,9 @@ public class LocalizationImpl implements Localization {
 
     @Getter
     private final String version;
+
+    @Getter
+    private final boolean isHtmlDesignPublished;
 
     @Getter
     private final List<SiteLocalization> siteLocalizations;
@@ -67,7 +72,7 @@ public class LocalizationImpl implements Localization {
         this.default_ = builder.default_;
         this.staging = builder.staging;
         this.version = builder.version;
-
+        this.isHtmlDesignPublished = builder.htmlDesignPublished;
         this.siteLocalizations = builder.siteLocalizationsBuilder.build();
         this.configuration = builder.configurationBuilder.build();
         this.resources = builder.resourcesBuilder.build();
@@ -96,9 +101,19 @@ public class LocalizationImpl implements Localization {
         if (url.startsWith(mediaRoot)) {
             return true;
         }
-
         final String p = path.equals("/") ? url : url.substring(path.length());
-        return p.equals(FAVICON_PATH) || SYSTEM_ASSETS_PATTERN.matcher(p).matches();
+        if (SYSTEM_RESOURCES_PATTERN.matcher(p).matches()) {
+            return true;
+        }
+        return FileUtils.isFavicon(p) || SYSTEM_ASSETS_PATTERN.matcher(p).matches();
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isNonPublishedAsset(String url) {
+        return !this.isHtmlDesignPublished && SYSTEM_ASSETS_PATTERN.matcher(url).matches();
     }
 
     /**
@@ -173,6 +188,7 @@ public class LocalizationImpl implements Localization {
         private boolean default_;
         private boolean staging;
         private String version;
+        private boolean htmlDesignPublished;
 
         private Builder() {
         }
@@ -204,6 +220,11 @@ public class LocalizationImpl implements Localization {
 
         public Builder setVersion(String version) {
             this.version = version;
+            return this;
+        }
+
+        public Builder setHtmlDesignPublished(boolean htmlDesignPublished) {
+            this.htmlDesignPublished = htmlDesignPublished;
             return this;
         }
 

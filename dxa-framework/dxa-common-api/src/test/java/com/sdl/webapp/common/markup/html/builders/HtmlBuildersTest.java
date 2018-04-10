@@ -3,6 +3,7 @@ package com.sdl.webapp.common.markup.html.builders;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 
 /**
@@ -36,6 +37,21 @@ public class HtmlBuildersTest {
     public void testA() {
         assertThat(HtmlBuilders.a().build().toHtml(), is("<a></a>"));
         assertThat(HtmlBuilders.a("http://localhost:8080").build().toHtml(), is("<a href=\"http://localhost:8080\"></a>"));
+    }
+
+    @Test
+    public void shouldNotAddHref_IfItsEmpty() {
+        //given 
+
+        //when
+        AnchorElementBuilder nullA = HtmlBuilders.a(null);
+        AnchorElementBuilder emptyA = HtmlBuilders.a("");
+        AnchorElementBuilder trimA = HtmlBuilders.a("   ");
+
+        //then
+        assertFalse(nullA.build().renderHtml().contains("href"));
+        assertFalse(emptyA.build().renderHtml().contains("href"));
+        assertFalse(trimA.build().renderHtml().contains("href"));
     }
 
     @Test

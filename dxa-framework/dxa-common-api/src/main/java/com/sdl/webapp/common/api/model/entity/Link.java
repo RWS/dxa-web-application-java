@@ -11,6 +11,9 @@ import lombok.EqualsAndHashCode;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
 
+/**
+ * @dxa.publicApi
+ */
 @SemanticEntity(entityName = "EmbeddedLink", vocabulary = SDL_CORE, prefix = "e")
 @Data
 @EqualsAndHashCode(callSuper = true)

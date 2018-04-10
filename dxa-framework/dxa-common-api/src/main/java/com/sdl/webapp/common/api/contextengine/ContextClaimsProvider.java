@@ -7,6 +7,8 @@ import java.util.Map;
 
 /**
  * Context Claims Provider is an interface implementors of which provide you with context claims data.
+ *
+ * @dxa.publicApi
  */
 public interface ContextClaimsProvider {
 

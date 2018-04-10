@@ -6,6 +6,7 @@ import java.util.List;
 
 /**
  * Region model is an interface representing one region on a page. Should be implemented by different types of regions.
+ * @dxa.publicApi
  */
 public interface RegionModel extends ViewModel, FeedItemsProvider, CanFilterEntities {
 

@@ -23,6 +23,7 @@ import static org.apache.commons.collections.CollectionUtils.isEmpty;
 
 /**
  * Default implementation of page model. This is a basic extension point to create your page models.
+ * @dxa.publicApi
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

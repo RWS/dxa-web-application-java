@@ -6,6 +6,10 @@ class Parameter {
     Closure<String> dynamicDefault
     Validator validator
     String value
+    String cliName
+
+    // We don't care about case sensitivity in most cases
+    boolean isValueCaseSensitive
 
     String versionAdded
 
@@ -18,6 +22,7 @@ class Parameter {
     }
 
     Parameter withProperties(Property... properties) {
+        properties.each { it.displayName = this.cliName }
         this.properties = properties
         this
     }
@@ -33,7 +38,20 @@ class Parameter {
     }
 
     Parameter withDefaultValue(Object project, String cliName, String defaultValue) {
+        this.cliName = cliName
         this.value = project && project.hasProperty(cliName) ? (project[cliName] as String).trim() : defaultValue
+        this
+    }
+
+    Parameter withCaseSensitiveValue() {
+        this.isValueCaseSensitive = true
+        this
+    }
+
+    Parameter withSystemEnv(String varName) {
+        if (System.getenv(varName) != null) {
+            this.value = System.getenv(varName)
+        }
         this
     }
 
@@ -58,11 +76,37 @@ class Parameter {
             this.value = this.dynamicDefault(configuration)
         }
 
-        batch ? get() : request()
+        def temp = batch ? get() : request()
+        this.value = this.isValueCaseSensitive ? temp : temp.toLowerCase()
+
+        this.value
+    }
+
+    String request(Map<Property, String> props, String version, boolean isBatch, Map<String, ?> configuration = [:]) {
+        if (!this.isSupportedInCurrentVersion(version)) {
+            return null
+        }
+
+        println("::: ${this.description}\n" +
+                "::: ${this.process(isBatch, configuration)}")
+        println ''
+
+        if (this.properties) {
+            def param = this
+            this.properties.each {
+                it.caseSensitive = param.isValueCaseSensitive
+                props[it] = this.get()
+            }
+        }
+
+        return this.get()
     }
 
     String request() {
-        println "${description}? <Enter> for default '${value ?: 'no default'}'"
+        println "\n  ::  ${description}\n  ::  Default value: '${value ?: 'no default'}'" +
+                (this.isValueCaseSensitive ? "\n  ::  This value is case-sensitive" : '') +
+                "\n\nPress <Enter> to choose default value or type 'halt' to stop"
+
         validator?.describe()
 
         def userValue
@@ -88,6 +132,9 @@ class Parameter {
 
     String get() {
         if (!isValid(value)) {
+            if (this.isValueCaseSensitive) {
+                println "This value is case-sensitive"
+            }
             validator?.describe()
             throw new IllegalArgumentException("Invalid value '${value}' for '${description}'")
         }
@@ -95,6 +142,6 @@ class Parameter {
     }
 
     private boolean isValid(String userValue) {
-        valid = valid || validator == null || validator.validate(userValue)
+        valid = valid || validator == null || validator.setCaseSensitive(this.isValueCaseSensitive).validate(userValue)
     }
 }

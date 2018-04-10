@@ -12,6 +12,8 @@ import java.util.Map;
  *     // is mapped to 'element' in singular form
  *     private List&lt;String&gt; elements;
  * </code></pre>
+ *
+ * @dxa.publicApi
  */
 public interface EntityModel extends ViewModel {
 

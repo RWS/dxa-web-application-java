@@ -11,6 +11,8 @@ class Validator {
 
     Closure<Boolean> validate
 
+    boolean caseSensitive
+
     def describe = { String prefix = "" ->
         println prefix + description
     }
@@ -25,21 +27,40 @@ class Validator {
         this.validate = closure
         this
     }
-    //endregion
+
+    Validator setCaseSensitive(boolean caseSensitive) {
+        this.caseSensitive = caseSensitive
+        this
+    }
+//endregion
 
     //region Validators create methods
     static Validator valueInList(String... values) {
-        new Validator(description: "Value should be one of ${values}", validate: { values.contains(it) })
+        def validator = new Validator(description: "Value should be one of ${values}", validate: {
+            if (!delegate.caseSensitive) {
+                it = it.toLowerCase()
+                values = values*.toLowerCase()
+            }
+            values.contains(it)
+        })
+        validator.validate.delegate = validator
     }
 
     static Validator commaInputFromList(Collection<String> values) {
-        new Validator(description: "Allowed values are: ${values}, or '-' for empty list", validate: { String input ->
+        def validator = new Validator(description: "Allowed values are: ${values}, or '-' for empty list", validate: { String input ->
             if ('-' == input) {
                 return true
             }
+
+            if (!delegate.getCaseSensitive()) {
+                input = input.toLowerCase()
+                values = values*.toLowerCase()
+            }
+
             def tokenize = input.tokenize(' ,')
             values.containsAll(tokenize)
         })
+        validator.validate.delegate = validator
     }
 
     static Validator notEmpty() {
@@ -101,6 +122,7 @@ class Validator {
 
     static Validator url() {
         new Validator(description: 'Should match a valid URL', validate: { String url ->
+            url = url.replace("sdl.corp", "sdl.com") // workaround for valid internal corporate domain
             notEmpty().validate(url) &&
                     (new UrlValidator(ALLOW_ALL_SCHEMES + ALLOW_LOCAL_URLS + ALLOW_2_SLASHES).isValid(url)
                             || url?.matches(/^((https?|ftp):\/\/)?localhost(:\d+)?(\/[^\s]*)?$/))

@@ -4,6 +4,7 @@ import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 
 /**
  * Thrown when a static content provider cannot find the requested static content.
+ * @dxa.publicApi
  */
 public class StaticContentNotFoundException extends DxaItemNotFoundException {
 

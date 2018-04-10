@@ -14,6 +14,7 @@ import lombok.EqualsAndHashCode;
  * Regular semantic mapping can be used to map the Keyword's metadata fields to properties of your subclass.
  * </p>
  *
+ * @dxa.publicApi
  * @see Tag
  * @since 1.7
  */

@@ -37,7 +37,6 @@ public class ModelServiceComponentPresentationProvider extends BrokerComponentPr
     @Override
     protected ComponentPresentation getComponentPresentation(int componentId, int templateId, int publicationId) throws ItemNotFoundException {
         String serviceUrl = fromUriString(modelServiceConfiguration.getEntityModelUrl())
-                .queryParam("raw", "true")
                 .queryParam("dcpType", "HIGHEST_PRIORITY")
                 .build().toUriString();
 

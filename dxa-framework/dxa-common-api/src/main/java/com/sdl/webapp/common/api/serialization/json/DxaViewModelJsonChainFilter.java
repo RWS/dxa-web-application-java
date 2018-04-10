@@ -12,6 +12,7 @@ import java.util.List;
 
 /**
  * Chains filters of class {@link DxaViewModelJsonPropertyFilter}.
+ * @dxa.publicApi
  */
 public final class DxaViewModelJsonChainFilter extends SimpleBeanPropertyFilter {
 

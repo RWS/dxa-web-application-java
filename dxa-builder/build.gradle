@@ -203,7 +203,9 @@ dependencies {
     compile gradleApi()
     compile localGroovy()
     compile 'org.jdom:jdom2:2.0.5'
-    compile 'jaxen:jaxen:1.1.4'
+    compile 'jaxen:jaxen:1.1.6'
+    compile group: 'commons-configuration', name: 'commons-configuration', version: '1.10'
     compile group: 'commons-validator', name: 'commons-validator', version: '1.5.1'
     testCompile group: 'junit', name: 'junit', version: '4.11'
+    testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
 }

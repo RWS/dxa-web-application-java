@@ -23,9 +23,12 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.MARKUP;
 
 /**
  * Controller which returns the sitemap in XML format.
+ *
+ * @dxa.publicApi
  */
 @Controller
 public class SiteMapXmlController {
+
     private static final Logger LOG = LoggerFactory.getLogger(SiteMapXmlController.class);
 
     private final WebRequestContext webRequestContext;
@@ -42,17 +45,17 @@ public class SiteMapXmlController {
         this.markup = markup;
     }
 
-    private static void writeSitemapItemsXml(Collection<SitemapItem> items, StringBuilder builder) {
+    private static void writeSitemapItemsXml(Collection<SitemapItem> items, StringBuilder builder, String baseUrl) {
         for (SitemapItem item : items) {
             if ("Page".equals(item.getType()) && item.getUrl().startsWith("/")) {
                 builder.append("<url>");
-                builder.append("<loc>").append(item.getUrl()).append("</loc>");
+                builder.append("<loc>").append(baseUrl).append(item.getUrl()).append("</loc>");
                 if (item.getPublishedDate() != null) {
                     builder.append("<lastmod>").append(item.getPublishedDate()).append("</lastmod>");
                 }
                 builder.append("</url>");
             } else {
-                writeSitemapItemsXml(item.getItems(), builder);
+                writeSitemapItemsXml(item.getItems(), builder, baseUrl);
             }
         }
     }
@@ -72,7 +75,7 @@ public class SiteMapXmlController {
         StringBuilder builder = new StringBuilder();
         builder.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
         builder.append("<urlset xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\">");
-        writeSitemapItemsXml(navigationModel.getItems(), builder);
+        writeSitemapItemsXml(navigationModel.getItems(), builder, webRequestContext.getBaseUrl());
         builder.append("</urlset>");
 
         return builder.toString();

@@ -8,6 +8,7 @@ import java.util.Map;
 
 /**
  * <p>Localization interface.</p>
+ * @dxa.publicApi
  */
 public interface Localization {
     /**
@@ -31,6 +32,16 @@ public interface Localization {
      * @param url a {@link java.lang.String} object.
      */
     boolean isStaticContent(String url);
+
+    /**
+     * Determines if the specified URL refers to static content within the webapp
+     *
+     * @return {@code true} if the specified URL refers to static content within the webapp, {@code false} otherwise.
+     * @param url a {@link java.lang.String} object.
+     */
+    default boolean isNonPublishedAsset(String url) {
+        return false;
+    }
 
     /**
      * <p>isDefault.</p>
@@ -119,6 +130,5 @@ public interface Localization {
      * @return The list of configured data formats
      */
     List<String> getDataFormats();
-
 
 }

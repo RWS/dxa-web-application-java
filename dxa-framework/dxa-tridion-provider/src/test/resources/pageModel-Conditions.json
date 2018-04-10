@@ -1,0 +1,71 @@
+{
+  "ExtensionData": {
+    "Conditions": {
+      "$type": "Condition[]",
+      "$values": [
+        {
+          "$type": "TrackingKeyCondition",
+          "TrackingKeyTitle": "Test Keyword 1",
+          "Operator": 0,
+          "Value": 1234.0,
+          "Negate": true
+        },
+        {
+          "$type": "CustomerCharacteristicCondition",
+          "Name": "Test Keyword 2",
+          "Operator": 1,
+          "Value": 1234.0,
+          "Negate": true
+        },
+        {
+          "$type": "CustomerCharacteristicCondition",
+          "Name": "Test Keyword 2",
+          "Operator": 2,
+          "Value": 1234.0,
+          "Negate": false
+        },
+        {
+          "$type": "TargetGroupCondition",
+          "TargetGroup": {
+            "Id": "Id",
+            "Title": "Title",
+            "Description": "TargetGroup",
+            "Conditions": [
+              {
+                "$type": "TrackingKeyCondition",
+                "TrackingKeyTitle": "Test Keyword 1",
+                "Operator": 3,
+                "Value": "str",
+                "Negate": true
+              },
+              {
+                "$type": "CustomerCharacteristicCondition",
+                "Name": "Test Keyword 2",
+                "Operator": 4,
+                "Value": true,
+                "Negate": true
+              },
+              {
+                "$type": "TrackingKeyCondition",
+                "Operator": 5
+              },
+              {
+                "$type": "TrackingKeyCondition",
+                "Operator": 6
+              },
+              {
+                "$type": "TrackingKeyCondition",
+                "Operator": 7
+              },
+              {
+                "$type": "TrackingKeyCondition",
+                "Operator": -2147483648
+              }
+            ]
+          },
+          "Negate": true
+        }
+      ]
+    }
+  }
+}

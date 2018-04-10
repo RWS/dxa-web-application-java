@@ -7,6 +7,7 @@ import com.sdl.dxa.api.datamodel.model.MvcModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
+import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
 import com.sdl.dxa.caching.ConditionalKey;
 import com.sdl.dxa.caching.ConditionalKey.ConditionalKeyBuilder;
 import com.sdl.dxa.caching.LocalizationAwareCacheKey;
@@ -20,6 +21,8 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
+import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
 import com.sdl.webapp.common.api.model.AbstractViewModel;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -44,12 +47,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
 import static com.sdl.webapp.common.util.StringUtils.dashify;
 
 /**
- * Default implementation of {@link EntityModelBuilder} and {@link PageModelBuilder}.
+ * Default implementation of {@link EntityModelBuilder} and {@link PageModelBuilder}. Priority of this builder is always {@code highest precedence}.
+ *
+ * @dxa.publicApi
  */
 @Slf4j
 @Service
@@ -78,6 +87,11 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         return HIGHEST_PRECEDENCE;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
     @Override
     public <T extends EntityModel> T buildEntityModel(@Nullable T originalEntityModel, EntityModelData modelData,
                                                       @Nullable Class<T> expectedClass) throws DxaException {
@@ -138,12 +152,42 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         Localization localization = webRequestContext.getLocalization();
         SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(modelData.getSchemaId()));
         try {
-            return semanticMapper.createEntity(viewModelType, semanticSchema.getSemanticFields(),
+            Map<FieldSemantics, SemanticField> semanticFields = getAllSemanticFields(semanticSchema, modelData);
+
+            return semanticMapper.createEntity(viewModelType, semanticFields,
                     DefaultSemanticFieldDataProvider.getFor(modelData, semanticSchema));
         } catch (SemanticMappingException e) {
             log.warn("Cannot do a semantic mapping for class '{}', model data '{}', localization '{}'", viewModelType, modelData, localization);
             throw e;
         }
+    }
+
+    @NotNull
+    private Map<FieldSemantics, SemanticField> getAllSemanticFields(@NotNull SemanticSchema semanticSchema, @NotNull ViewModelData modelData) {
+        final Map<FieldSemantics, SemanticField> semanticFields = semanticSchema.getSemanticFields();
+
+        if (modelData.getExtensionData() != null) {
+            Object schemas = modelData.getExtensionData().get("Schemas");
+            if (schemas != null && schemas instanceof ListWrapper
+                    && !((ListWrapper) schemas).getValues().isEmpty()) {
+                log.debug("Found additional semantic schemas {} used in the view model {}", schemas, modelData);
+
+                Localization localization = webRequestContext.getLocalization();
+                Map<FieldSemantics, SemanticField> allSemanticFields = new HashMap<>(semanticFields);
+
+                //noinspection unchecked
+                allSemanticFields.putAll(((ListWrapper<String>) schemas).getValues().stream()
+                        .map(schemaId -> localization.getSemanticSchemas().get(Long.parseLong(schemaId)))
+                        .filter(Objects::nonNull)
+                        .map(SemanticSchema::getSemanticFields)
+                        .flatMap(fieldMap -> fieldMap.entrySet().stream())
+                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+
+                return allSemanticFields;
+            }
+        }
+
+        return semanticFields;
     }
 
     private void fillViewModel(ViewModel viewModel, ViewModelData modelData) {
@@ -188,6 +232,11 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         }
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
     @Override
     public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData) {
         LocalizationAwareCacheKey cacheKey = pagesCopyingCache.getSpecificKey(modelData);

@@ -10,6 +10,8 @@ import com.sdl.webapp.common.views.JsonView;
  * Used to filter out dynamically properties that are serialized in JSON, for example by {@link JsonView}.
  * All subclass beans of this that are found in current Spring Context will be applied by default to {@link AbstractViewModel}.
  * <strong>The instance should be instantiated in a current Spring context to be picked up.</strong>
+ *
+ * @dxa.publicApi
  */
 @FunctionalInterface
 public interface DxaViewModelJsonPropertyFilter {

@@ -23,6 +23,8 @@ import static org.springframework.util.NumberUtils.convertNumberToTargetClass;
 
 /**
  * Common functionality for context claims.
+ *
+ * @dxa.publicApi
  */
 @Slf4j
 public abstract class ContextClaims {

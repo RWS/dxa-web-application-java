@@ -144,6 +144,125 @@
       }
     }
   ],
+  "ExtensionData": {
+    "EntityModelData": {
+      "$type": "EntityModelData",
+      "Id": "EntityModelData"
+    },
+    "EntityModelDatas": {
+      "$type": "EntityModelData[]",
+      "$values": [
+        {
+          "Id": "EntityModelData[] > EntityModelData"
+        }
+      ]
+    },
+    "KnownClass": {
+      "$type": "KnownClass",
+      "Id": "KnownClass"
+    },
+    "KnownClasses": {
+      "$type": "KnownClass[]",
+      "$values": [
+        {
+          "Id": "KnownClass[] > KnownClass"
+        }
+      ]
+    },
+    "KnownParentClasses": {
+      "$type": "KnownParentClass[]",
+      "$values": [
+        {
+          "$type": "FirstChildKnownClass",
+          "Id": "KnownParentClass[] > FirstChildKnownClass"
+        },
+        {
+          "$type": "SecondChildKnownClass",
+          "Id": "KnownParentClass[] > SecondKnownClass"
+        }
+      ]
+    },
+    "UnknownClassNoType": {
+      "Id": "UnknownClassNoType"
+    },
+    "UnknownClass": {
+      "$type": "UnknownClass",
+      "Id": "UnknownClass"
+    },
+    "UnknownClasses": {
+      "$type": "UnknownClass[]",
+      "$values": [
+        {
+          "$type": "UnknownClass",
+          "Id": "UnknownClass[] > UnknownClass"
+        }
+      ]
+    },
+    "UnknownParentClasses": {
+      "$type": "UnknownParentClass[]",
+      "$values": [
+        {
+          "$type": "UnknownClass",
+          "Id": "UnknownParentClass[] > UnknownClass"
+        },
+        {
+          "$type": "SecondUnknownClass",
+          "Id": "UnknownParentClass[] > SecondUnknownClass"
+        }
+      ]
+    },
+    "DeserializerTest": {
+      "$type": "UnknownParentClass[]",
+      "$values": [
+        {
+          "$type": "UnknownClass",
+          "KeywordModelData": {
+            "StringValue": "1",
+            "ObjectValue": {
+              "$type": "SecondUnknownClass",
+              "Id": "1",
+              "Id2": "2",
+              "Test": {}
+            },
+            "Array": [
+              "value",
+              "value2",
+              1,
+              2,
+              1.0,
+              2.0,
+              {
+                "Id": "2",
+                "Obj": {
+                  "Id": "2"
+                }
+              },
+              {
+                "Id": 3,
+                "Obj": {
+                  "Id": "2"
+                }
+              },
+              [
+                "1",
+                "2"
+              ],
+              [
+                "1",
+                "2"
+              ]
+            ],
+            "Int": 1,
+            "Float": 2.0,
+            "Str": "Str"
+          },
+          "IntValue": 1,
+          "DoubleValue": 1.0,
+          "BoolValue": true
+        }
+      ]
+    }
+  },
   "MvcData": {
     "ViewName": "ViewName",
     "ActionName": "ActionName",

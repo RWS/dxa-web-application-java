@@ -79,7 +79,7 @@ public class ModelServiceClient {
                     log.info("Got 401 status code, reason: {}, check if token is expired and retry if so", statusCode.getReasonPhrase());
                     return _makeRequest(serviceUrl, type, true, params);
                 } else {
-                    String message = "Wrong request to the model service: " + serviceUrl + ", reason: " + statusCode.getReasonPhrase();
+                    String message = "Wrong request to the model service: " + serviceUrl + ", reason: " + statusCode.getReasonPhrase() + "error code: " + statusCode.value();
                     log.info(message);
                     throw new ModelServiceBadRequestException(message, e);
                 }

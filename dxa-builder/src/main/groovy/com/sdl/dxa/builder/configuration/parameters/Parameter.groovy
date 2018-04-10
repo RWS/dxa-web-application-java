@@ -6,6 +6,7 @@ class Parameter {
     Closure<String> dynamicDefault
     Validator validator
     String value
+    String cliName
 
     // We don't care about case sensitivity in most cases
     boolean isValueCaseSensitive
@@ -21,6 +22,7 @@ class Parameter {
     }
 
     Parameter withProperties(Property... properties) {
+        properties.each { it.displayName = this.cliName }
         this.properties = properties
         this
     }
@@ -36,6 +38,7 @@ class Parameter {
     }
 
     Parameter withDefaultValue(Object project, String cliName, String defaultValue) {
+        this.cliName = cliName
         this.value = project && project.hasProperty(cliName) ? (project[cliName] as String).trim() : defaultValue
         this
     }

@@ -9,6 +9,7 @@ import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.api.model.RichTextFragmentImpl;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
+import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import lombok.extern.slf4j.Slf4j;
@@ -33,15 +34,24 @@ public class RichTextDataConverter implements SemanticModelConverter<RichTextDat
                 fragments.add(new RichTextFragmentImpl((String) fragment));
             } else {
                 log.debug("Fragment {} is a not a string but perhaps EntityModelData, skipping link resolving");
-                MediaItem mediaItem;
                 EntityModelData entityModelData = (EntityModelData) fragment;
+                AbstractEntityModel embeddedItem;
                 try {
-                    mediaItem = pipeline.createEntityModel(entityModelData, MediaItem.class);
-                } catch (DxaException e) {
-                    throw new FieldConverterException("Cannot create an instance of Media Item in RichText, model id " + entityModelData.getId(), e);
+                    if (entityModelData.getBinaryContent()!=null) {
+                        embeddedItem = pipeline.createEntityModel(entityModelData, MediaItem.class);
+                    }
+                    else{
+                        embeddedItem = pipeline.createEntityModel(entityModelData, AbstractEntityModel.class);
+                    }
                 }
-                mediaItem.setEmbedded(true);
-                fragments.add(mediaItem);
+                catch (DxaException e) {
+                    throw new FieldConverterException("Cannot create an instance of EntityModel in RichText, model id " + entityModelData.getId(), e);
+                }
+
+                if (embeddedItem instanceof MediaItem) {
+                    ((MediaItem)embeddedItem).setEmbedded(true);
+                }
+                fragments.add(embeddedItem);
             }
         }
 

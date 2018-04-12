@@ -66,7 +66,7 @@ node("dxadocker") {
     stage("Archive artefacts") {
             archiveArtifacts artifacts: "local-project-repo\\**,not-public-repo\\**,dxa-webapp.war,docs\\**", excludes: 'target\\**\\local-project-repo\\**\\*,target\\**\\gradle\\**\\*,target\\**\\.gradle\\**\\*,target\\**\\*-javadoc.jar,target\\**\\*-sources.jar'
     }
-    stage("Trigger model-service build")
+    stage("Trigger model-service build") {
         def brName = env.BRANCH_NAME
         if (brName.contains("feature/")){
             brname = brName.split("feature/")[1]

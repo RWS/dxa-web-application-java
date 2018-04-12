@@ -67,8 +67,12 @@ node("dxadocker") {
             archiveArtifacts artifacts: "local-project-repo\\**,not-public-repo\\**,dxa-webapp.war,docs\\**", excludes: 'target\\**\\local-project-repo\\**\\*,target\\**\\gradle\\**\\*,target\\**\\.gradle\\**\\*,target\\**\\*-javadoc.jar,target\\**\\*-sources.jar'
     }
     stage("Trigger model-service build")
+        def brName = env.BRANCH_NAME
+        if (brName.contains("feature/")){
+            brname = brName.split("feature/")[1]
+        }
         try {
-            build job: "stash/${env.BRANCH_NAME}/model_service", parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
+            build job: "stash/${brName}/model_service", parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
         }
         catch(Exception e) {
             echo "No Job stash/${env.BRANCH_NAME}/model_service available to trigger, proceeding with develop"

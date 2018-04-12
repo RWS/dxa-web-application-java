@@ -71,7 +71,7 @@ node("dxadocker") {
             build job: "stash/${env.BRANCH_NAME}/model_service", parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
         }
         catch(Exception e) {
-            echo "No branch ${env.BRANCH_NAME} available to trigger in model-service, proceeding with develop"
+            echo "No Job stash/${env.BRANCH_NAME}/model_service available to trigger, proceeding with develop"
         }
         finally {
             build job: 'stash/develop/model_service', parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false

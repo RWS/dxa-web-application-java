@@ -21,7 +21,7 @@ node("dxadocker") {
                 checkout([$class: 'GitSCM', branches: [[name: "*/${env.BRANCH_NAME}"]], browser: [$class: 'Stash', repoUrl: 'https://stash.sdl.com/projects/TSI/repos/dxa-modules-java'], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', url: 'https://stash.sdl.com/scm/tsi/dxa-modules.git']]])
             }
             catch(Exception e) {
-                echo "No branch ${env.BRANCH_NAME} present in dxa-modules repo, proceeding with develop"
+                echo "WARNING: No branch ${env.BRANCH_NAME} present in dxa-modules repo, proceeding with develop"
             }
             finally {
                 checkout([$class: 'GitSCM', branches: [[name: "*/develop"]], browser: [$class: 'Stash', repoUrl: 'https://stash.sdl.com/projects/TSI/repos/dxa-modules-java'], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', url: 'https://stash.sdl.com/scm/tsi/dxa-modules.git']]])
@@ -69,13 +69,13 @@ node("dxadocker") {
     stage("Trigger model-service build") {
         def brName = env.BRANCH_NAME
         if (brName.contains("feature/")){
-            brname = brName.split("feature/")[1]
+            brname = brName.split('/')[-1]
         }
         try {
             build job: "stash/${brName}/model_service", parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
         }
         catch(Exception e) {
-            echo "No Job stash/${brName}/model_service available to trigger, proceeding with develop"
+            echo "WARNING: No Job stash/${brName}/model_service available to trigger, proceeding with develop"
         }
         finally {
             build job: 'stash/develop/model_service', parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false

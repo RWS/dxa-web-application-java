@@ -67,18 +67,19 @@ node("dxadocker") {
             archiveArtifacts artifacts: "local-project-repo\\**,not-public-repo\\**,dxa-webapp.war,docs\\**", excludes: 'target\\**\\local-project-repo\\**\\*,target\\**\\gradle\\**\\*,target\\**\\.gradle\\**\\*,target\\**\\*-javadoc.jar,target\\**\\*-sources.jar'
     }
     stage("Trigger model-service build") {
-        def brName = env.BRANCH_NAME
-        if (brName.contains("feature/")){
-            brname = brName.split('/')[-1]
-        }
-        try {
-            build job: "stash/${brName}/model_service", parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
-        }
-        catch(Exception e) {
-            echo "WARNING: No Job stash/${brName}/model_service available to trigger, proceeding with develop"
-        }
-        finally {
-            build job: 'stash/develop/model_service', parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
+        def brName = brName.split('/')[-1]
+        if brName.contains("PR-") {
+            echo "This is pull-request branch. Model service wouldn't be triggered"
+        } else {
+            try {
+                build job: "stash/${brName}/model_service", parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
+            }
+            catch(Exception e) {
+                echo "WARNING: No Job stash/${brName}/model_service available to trigger, proceeding with develop"
+            }
+            finally {
+                build job: 'stash/develop/model_service', parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
+            }
         }
     }
 }

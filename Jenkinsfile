@@ -67,9 +67,9 @@ node("dxadocker") {
             archiveArtifacts artifacts: "local-project-repo\\**,not-public-repo\\**,dxa-webapp.war,docs\\**", excludes: 'target\\**\\local-project-repo\\**\\*,target\\**\\gradle\\**\\*,target\\**\\.gradle\\**\\*,target\\**\\*-javadoc.jar,target\\**\\*-sources.jar'
     }
     stage("Trigger model-service build") {
-        def brName = brName.split('/')[-1]
+        def brName = env.BRANCH_NAME.split('/')[-1]
         if brName.contains("PR-") {
-            echo "This is pull-request branch. Model service wouldn't be triggered"
+            echo "WARNING: This is pull-request branch. Model service wouldn't be triggered"
         } else {
             try {
                 build job: "stash/${brName}/model_service", parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false

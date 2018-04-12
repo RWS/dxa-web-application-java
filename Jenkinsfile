@@ -68,7 +68,7 @@ node("dxadocker") {
     }
     stage("Trigger model-service build") {
         def brName = env.BRANCH_NAME.split('/')[-1]
-        if brName.contains("PR-") {
+        if (brName.contains("PR-")) {
             echo "WARNING: This is pull-request branch. Model service wouldn't be triggered"
         } else {
             try {

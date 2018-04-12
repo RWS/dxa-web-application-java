@@ -67,6 +67,7 @@ node("dxadocker") {
             archiveArtifacts artifacts: "local-project-repo\\**,not-public-repo\\**,dxa-webapp.war,docs\\**", excludes: 'target\\**\\local-project-repo\\**\\*,target\\**\\gradle\\**\\*,target\\**\\.gradle\\**\\*,target\\**\\*-javadoc.jar,target\\**\\*-sources.jar'
     }
     stage("Trigger model-service build")
+<<<<<<< HEAD
         try {
             build job: "stash/${env.BRANCH_NAME}/model_service", parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
         }
@@ -76,5 +77,9 @@ node("dxadocker") {
         finally {
             build job: 'stash/develop/model_service', parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
         }
+=======
+        def jobFolder = env.BRANCH_NAME.split('/')[-1]
+        build job: "${branch}/model_service", parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
+>>>>>>> 3c9f8020e6694560e1a322d7835250965daa6bd6
     }
 }

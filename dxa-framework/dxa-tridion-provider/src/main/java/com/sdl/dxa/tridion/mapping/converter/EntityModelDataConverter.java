@@ -34,6 +34,11 @@ public class EntityModelDataConverter implements SemanticModelConverter<EntityMo
         } else {
             try {
                 if (EntityModel.class.isAssignableFrom(objectType)) {
+                    //If there is no schema information we cannot convert anything, so return null
+                    if (toConvert.getSchemaId()==null)
+                    {
+                        return null;
+                    }
                     result = pipeline.createEntityModel(toConvert, objectType.asSubclass(EntityModel.class));
                 } else {
                     throw new FieldConverterException("Object type " + objectType + " is not supported by EntityModelDataConverter");

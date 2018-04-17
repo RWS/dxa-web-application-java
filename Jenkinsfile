@@ -1,64 +1,62 @@
 def branchCheckout(stashUrl, branchName) {
-        try {
-            checkout(
-                [
-                    $class: 'GitSCM', 
-                    branches: [
-                        [ name: "*/${branchName}" ]
-                    ], 
-                    browser: [
-                        $class: 'Stash', 
-                        repoUrl: stashUrl
-                    ], 
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [
-                        [
-                            $class: 'CloneOption',
-                            shallow: true
-                        ]
-                    ],
-                    submoduleCfg: [],
-                    userRemoteConfigs: [
-                        [
-                            credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', 
-                            url: "${stashUrl}.git"
-                        ]
+    try {
+        checkout(
+            [
+                $class: 'GitSCM', 
+                branches: [
+                    [ name: "*/${branchName}" ]
+                ], 
+                browser: [
+                    $class: 'Stash', 
+                    repoUrl: stashUrl
+                ], 
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [
+                    [
+                        $class: 'CloneOption',
+                        shallow: true
+                    ]
+                ],
+                submoduleCfg: [],
+                userRemoteConfigs: [
+                    [
+                        credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', 
+                        url: "${stashUrl}.git"
                     ]
                 ]
-            )
-        }
-        catch(Exception e) {
-            echo "WARNING: No branch ${branchName} present in '${ stashUrl.split('/')[-1] }' repo, proceeding with develop"
-        }
-        finally {
-            checkout(
-                [
-                    $class: 'GitSCM', 
-                    branches: [
-                        [name: "*/develop"]
-                    ], 
-                    browser: [
-                        $class: 'Stash', 
-                        repoUrl: stashUrl
-                    ], 
-                    doGenerateSubmoduleConfigurations: false,
-                    extensions: [
-                        [
-                            $class: 'CloneOption',
-                            shallow: true
-                        ]
-                    ],
-                    submoduleCfg: [],
-                    userRemoteConfigs: [
-                        [
-                            credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', 
-                            url: "${stashUrl}.git"
-                        ]
-                    ]
-                ]
-            )
-        }
+            ]
+        )
     }
+    catch(Exception e) {
+        echo "WARNING: No branch ${branchName} present in '${ stashUrl.split('/')[-1] }' repo, proceeding with develop"
+        checkout(
+            [
+                $class: 'GitSCM', 
+                branches: [
+                    [name: "*/develop"]
+                ], 
+                browser: [
+                    $class: 'Stash', 
+                    repoUrl: stashUrl
+                ], 
+                doGenerateSubmoduleConfigurations: false,
+                extensions: [
+                    [
+                        $class: 'CloneOption',
+                        shallow: true
+                    ]
+                ],
+                submoduleCfg: [],
+                userRemoteConfigs: [
+                    [
+                        credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', 
+                        url: "${stashUrl}.git"
+                    ]
+                ]
+            ]
+        )
+    }
+}
 
 // DXA Java framework build pipeline
 // Allocation of node for execution of build steps

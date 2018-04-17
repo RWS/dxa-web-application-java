@@ -25,7 +25,7 @@ public class EntityModelDataConverter implements SemanticModelConverter<EntityMo
         Object result;
 
         if (String.class.isAssignableFrom(objectType)) {
-            result = toConvert.getLinkUrl();
+            result = toConvert.getBinaryContent()!=null ? toConvert.getBinaryContent().getUrl() : toConvert.getLinkUrl();
         } else if (Link.class.isAssignableFrom(objectType)) {
             Link link = new Link();
             link.setId(toConvert.getId());

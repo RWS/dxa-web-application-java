@@ -80,7 +80,7 @@ node("dxadocker") {
     }
     stage("Checkout dxa-modules repo") {
         dir("build\\dxa-modules") {
-            branchCheckout('https://stash.sdl.com/projects/TSI/repos/dxa-modules-java', env.BRANCH_NAME)
+            branchCheckout('https://stash.sdl.com/scm/tsi/dxa-modules', env.BRANCH_NAME)
         }
     }
     stage("Gradle publishLocal") {

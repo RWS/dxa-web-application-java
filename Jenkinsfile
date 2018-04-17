@@ -1,22 +1,77 @@
 // DXA Java framework build pipeline
 // Allocation of node for execution of build steps
 node("dxadocker") {
+    
+    def branchCheckout(stashUrl) {
+        try {
+            checkout(
+                [
+                    $class: 'GitSCM', 
+                    branches: [
+                        [ name: "*/${env.BRANCH_NAME}" ]
+                    ], 
+                    browser: [
+                        $class: 'Stash', 
+                        repoUrl: stashUrl
+                    ], 
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [
+                        [
+                            $class: 'CloneOption',
+                            shallow: true
+                        ]
+                    ],
+                    submoduleCfg: [],
+                    userRemoteConfigs: [
+                        [
+                            credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', 
+                            url: "${stashUrl}.git"
+                        ]
+                    ]
+                ]
+            )
+        }
+        catch(Exception e) {
+            echo "WARNING: No branch ${env.BRANCH_NAME} present in '${ stashUrl.split('/')[-1] }' repo, proceeding with develop"
+        }
+        finally {
+            checkout(
+                [
+                    $class: 'GitSCM', 
+                    branches: [
+                        [name: "*/develop"]
+                    ], 
+                    browser: [
+                        $class: 'Stash', 
+                        repoUrl: stashUrl
+                    ], 
+                    doGenerateSubmoduleConfigurations: false,
+                    extensions: [
+                        [
+                            $class: 'CloneOption',
+                            shallow: true
+                        ]
+                    ],
+                    submoduleCfg: [],
+                    userRemoteConfigs: [
+                        [
+                            credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', 
+                            url: "${stashUrl}.git"
+                        ]
+                    ]
+                ]
+            )
+        }
+    }
+    
+
     // Global variable for location of local-project-repo
     def lpr = ""
     // Global variable for Maven location (being boostrapped alongside with Pipeline)
     lpr = pwd()+"\\build\\local-project-repo"
     timestamps { // Enable timestamping of every line in pipeline execution log
     stage("Checkout installation repo") { // Checkout initial repo > this stage should be removed in case this pipeline will be located in tsi/installation repo
-        // TODO: This should turned into a method, as it's repeated 3 times in this file alone.
-        try {
-            checkout([$class: 'GitSCM', branches: [[name: "*/${env.BRANCH_NAME}"]], browser: [$class: 'Stash', repoUrl: 'https://stash.sdl.com/scm/tsi/installation'], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', url: 'https://stash.sdl.com/scm/tsi/installation.git']]])
-        }
-        catch(Exception e) {
-            echo "WARNING: No branch ${env.BRANCH_NAME} present in installation repo, proceeding with develop"
-        }
-        finally {
-            checkout([$class: 'GitSCM', branches: [[name: "*/develop"]], browser: [$class: 'Stash', repoUrl: 'https://stash.sdl.com/scm/tsi/installation'], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', url: 'https://stash.sdl.com/scm/tsi/installation.git']]])
-        }
+        branchCheckout('https://stash.sdl.com/scm/tsi/installation')
     }
     stage("Checkout web-application-java repo") {
         dir("build\\web-application-java") {
@@ -25,15 +80,7 @@ node("dxadocker") {
     }
     stage("Checkout dxa-modules repo") {
         dir("build\\dxa-modules") {
-            try {
-                checkout([$class: 'GitSCM', branches: [[name: "*/${env.BRANCH_NAME}"]], browser: [$class: 'Stash', repoUrl: 'https://stash.sdl.com/projects/TSI/repos/dxa-modules-java'], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', url: 'https://stash.sdl.com/scm/tsi/dxa-modules.git']]])
-            }
-            catch(Exception e) {
-                echo "WARNING: No branch ${env.BRANCH_NAME} present in dxa-modules repo, proceeding with develop"
-            }
-            finally {
-                checkout([$class: 'GitSCM', branches: [[name: "*/develop"]], browser: [$class: 'Stash', repoUrl: 'https://stash.sdl.com/projects/TSI/repos/dxa-modules-java'], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[credentialsId: '55722a63-b868-491a-a365-2084a0f984b1', url: 'https://stash.sdl.com/scm/tsi/dxa-modules.git']]])
-            }
+            branchCheckout('https://stash.sdl.com/projects/TSI/repos/dxa-modules-java')
         }
     }
     stage("Gradle publishLocal") {

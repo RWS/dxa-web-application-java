@@ -55,7 +55,7 @@ node("dxadocker") {
     stage("Build-webapp") {
         def buildFolder = pwd()+"\\build"
             withEnv([
-                "installer_path=${buildFolder}\\installer"
+                "installer_path=${buildFolder}\\installer",
                 "webapp_folder=${buildFolder}\\web-application-java\\dxa-webapp", 
                 "maven_repo_local=${lpr}", 
                 "modules=core,context-expressions,search,googleanalytics,mediamanager,51degrees,smarttarget-web8,audience-manager-web8",

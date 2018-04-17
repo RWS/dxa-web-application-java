@@ -111,7 +111,7 @@ node("dxadocker") {
                 "installer_path=${buildFolder}\\installer",
                 "webapp_folder=${buildFolder}\\web-application-java\\dxa-webapp", 
                 "maven_repo_local=${lpr}", 
-                "modules=core,context-expressions,search,googleanalytics,mediamanager,51degrees,smarttarget-web8,audience-manager-web8",
+                "modules=core,context-expressions,search,googleanalytics,mediamanager,51degrees,smarttarget,audience-manager",
                 "profiles=%modules:,=-module,%-module",
                 "all_modules=%modules%,cid,test",
                 "all_profiles=%all_modules:,=-module,%-module"

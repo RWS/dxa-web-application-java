@@ -1,14 +1,10 @@
-// DXA Java framework build pipeline
-// Allocation of node for execution of build steps
-node("dxadocker") {
-    
-    def branchCheckout(stashUrl) {
+def branchCheckout(stashUrl, branchName) {
         try {
             checkout(
                 [
                     $class: 'GitSCM', 
                     branches: [
-                        [ name: "*/${env.BRANCH_NAME}" ]
+                        [ name: "*/${branchName}" ]
                     ], 
                     browser: [
                         $class: 'Stash', 
@@ -32,7 +28,7 @@ node("dxadocker") {
             )
         }
         catch(Exception e) {
-            echo "WARNING: No branch ${env.BRANCH_NAME} present in '${ stashUrl.split('/')[-1] }' repo, proceeding with develop"
+            echo "WARNING: No branch ${branchName} present in '${ stashUrl.split('/')[-1] }' repo, proceeding with develop"
         }
         finally {
             checkout(
@@ -63,6 +59,10 @@ node("dxadocker") {
             )
         }
     }
+
+// DXA Java framework build pipeline
+// Allocation of node for execution of build steps
+node("dxadocker") {
     
 
     // Global variable for location of local-project-repo
@@ -71,7 +71,7 @@ node("dxadocker") {
     lpr = pwd()+"\\build\\local-project-repo"
     timestamps { // Enable timestamping of every line in pipeline execution log
     stage("Checkout installation repo") { // Checkout initial repo > this stage should be removed in case this pipeline will be located in tsi/installation repo
-        branchCheckout('https://stash.sdl.com/scm/tsi/installation')
+        branchCheckout('https://stash.sdl.com/scm/tsi/installation', env.BRANCH_NAME)
     }
     stage("Checkout web-application-java repo") {
         dir("build\\web-application-java") {
@@ -80,7 +80,7 @@ node("dxadocker") {
     }
     stage("Checkout dxa-modules repo") {
         dir("build\\dxa-modules") {
-            branchCheckout('https://stash.sdl.com/projects/TSI/repos/dxa-modules-java')
+            branchCheckout('https://stash.sdl.com/projects/TSI/repos/dxa-modules-java', env.BRANCH_NAME)
         }
     }
     stage("Gradle publishLocal") {

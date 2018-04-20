@@ -119,7 +119,7 @@ node("dxadocker") {
                 "all_modules=%modules%,cid,test",
                 "all_profiles=%all_modules:,=-module,%-module"
                 ]) {
-                    powershell 'build-automation\\src\\main\\resources\\Build-WebApplicationJava.ps1'
+                    powershell '& "build-automation\\src\\main\\resources\\Build-WebApplicationJava.ps1"'
                 }
     }
     stage("Build-webapp-archetype-compare") {

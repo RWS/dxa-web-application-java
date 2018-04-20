@@ -154,7 +154,7 @@ node("dxadocker") {
                 }
             }
         }}
-    } catch () {
+    } catch (Exception ex) {
         def userInput = input(
             id: 'userInput', message: 'Delete Container?', parameters: [
             [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'Any result to delete container.', name: 'del']

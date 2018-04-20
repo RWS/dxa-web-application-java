@@ -159,6 +159,7 @@ node("dxadocker") {
             id: 'userInput', message: 'Delete Container?', parameters: [
             [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'Any result to delete container.', name: 'del']
             ])
+        throw new Exception('Build Broken')
     } finally {
         echo "Done!"
     }

@@ -1,4 +1,7 @@
 def branchCheckout(stashUrl, branchName) {
+    if (branchName.contains("PR-")) {
+        throw new Exception('Pull Request Builds are not supported because this build uses multiple repositories ;(')
+    }
     try {
         checkout(
             [
@@ -116,7 +119,7 @@ node("dxadocker") {
                 "all_modules=%modules%,cid,test",
                 "all_profiles=%all_modules:,=-module,%-module"
                 ]) {
-                    bat 'build-automation\\src\\main\\resources\\build-web-application-java.cmd'
+                    powershell 'build-automation\\src\\main\\resources\\Build-WebApplicationJava.ps1'
                 }
     }
     stage("Build-webapp-archetype-compare") {

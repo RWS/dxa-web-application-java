@@ -193,20 +193,21 @@ public class TcmUtilsTest {
 
 
     @Test
-    public void shouldGetNamespace() {
+    public void shouldGetNamespace_WhenIsValid() {
         //when
-        String namespace = TcmUtils.getNamespace("tcm:0-1-2");
-        String namespace1 = TcmUtils.getNamespace("ish:0-42-2");
-        String namespace2 = TcmUtils.getNamespace("ish:0-1");
-        String namespace3 = TcmUtils.getNamespace("ish:0");
-        String namespace4 = TcmUtils.getNamespace("qwe");
-
         //then
-        assertEquals("tcm", namespace);
-        assertEquals("ish", namespace1);
-        assertEquals("ish", namespace2);
-        assertEquals(null, namespace3);
-        assertEquals(null, namespace4);
+        assertEquals("tcm", TcmUtils.getNamespace("tcm:0-1-2"));
+        assertEquals("ish", TcmUtils.getNamespace("ish:0-42-2"));
+        assertEquals("ish", TcmUtils.getNamespace("ish:0-1"));
+    }
+
+    @Test
+    public void shouldNotGetNamespace_WhenUriIsInvalidOrNull() {
+        //when
+        //then
+        assertEquals(null, TcmUtils.getNamespace("ish:0"));
+        assertEquals(null, TcmUtils.getNamespace("qwe"));
+        assertEquals(null, TcmUtils.getNamespace(null));
     }
 
     @Test

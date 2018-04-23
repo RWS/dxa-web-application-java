@@ -21,7 +21,7 @@ import static org.junit.Assert.assertTrue;
 public class TcmUtilsTest {
 
     @Test
-    public void shouldBuildPublicationTcmUri() throws Exception {
+    public void shouldBuildPublicationTcmUri() {
         //given
         String expected = "tcm:0-2-1";
 
@@ -35,7 +35,7 @@ public class TcmUtilsTest {
     }
 
     @Test
-    public void shouldBuildPublicationTcmUri_WithCustomNamespace() throws Exception {
+    public void shouldBuildPublicationTcmUri_WithCustomNamespace() {
         //given
         String expected = "ish:0-2-1";
 
@@ -49,7 +49,7 @@ public class TcmUtilsTest {
     }
 
     @Test
-    public void shouldBuildTemplateTcmUri() throws Exception {
+    public void shouldBuildTemplateTcmUri() {
         //given
         String expected = "tcm:1-2-32";
 
@@ -63,7 +63,7 @@ public class TcmUtilsTest {
     }
 
     @Test
-    public void shouldBuildTemplateTcmUri_WithCustomNamespace() throws Exception {
+    public void shouldBuildTemplateTcmUri_WithCustomNamespace() {
         //given
         String expected = "ish:1-2-32";
 
@@ -77,7 +77,7 @@ public class TcmUtilsTest {
     }
 
     @Test
-    public void shouldBuildShortTcmUri() throws Exception {
+    public void shouldBuildShortTcmUri() {
         //given
         String expected = "tcm:1-2";
 
@@ -91,7 +91,7 @@ public class TcmUtilsTest {
     }
 
     @Test
-    public void shouldBuildShortTcmUri_WhenParamsOfDifferentType() throws Exception {
+    public void shouldBuildShortTcmUri_WhenParamsOfDifferentType() {
         //given
         String expected = "tcm:1-2";
 
@@ -103,7 +103,7 @@ public class TcmUtilsTest {
     }
 
     @Test
-    public void shouldBuildTcmUri_WhenParamsOfDifferentType_WithCustomNamespace() throws Exception {
+    public void shouldBuildTcmUri_WhenParamsOfDifferentType_WithCustomNamespace() {
         //given
         String expected = "ish:1-2-3";
 
@@ -115,7 +115,7 @@ public class TcmUtilsTest {
     }
 
     @Test
-    public void shouldBuildShortTcmUri_WithCustomNamespace() throws Exception {
+    public void shouldBuildShortTcmUri_WithCustomNamespace() {
         //given
         String expected = "ish:1-2";
 
@@ -151,7 +151,7 @@ public class TcmUtilsTest {
     }
 
     @Test
-    public void shouldBuildTcmUri() throws Exception {
+    public void shouldBuildTcmUri() {
         //given
         String expected = "tcm:1-2-3";
 
@@ -165,7 +165,7 @@ public class TcmUtilsTest {
     }
 
     @Test
-    public void shouldBuildTcmUri_WithCustomNamespace() throws Exception {
+    public void shouldBuildTcmUri_WithCustomNamespace() {
         //given
         String expected = "ish:1-2-3";
 
@@ -189,6 +189,24 @@ public class TcmUtilsTest {
         assertEquals(1, itemId);
         assertEquals(1, itemId2);
         assertEquals(42, itemId42);
+    }
+
+
+    @Test
+    public void shouldGetNamespace() {
+        //when
+        String namespace = TcmUtils.getNamespace("tcm:0-1-2");
+        String namespace1 = TcmUtils.getNamespace("ish:0-42-2");
+        String namespace2 = TcmUtils.getNamespace("ish:0-1");
+        String namespace3 = TcmUtils.getNamespace("ish:0");
+        String namespace4 = TcmUtils.getNamespace("qwe");
+
+        //then
+        assertEquals("tcm", namespace);
+        assertEquals("ish", namespace1);
+        assertEquals("ish", namespace2);
+        assertEquals(null, namespace3);
+        assertEquals(null, namespace4);
     }
 
     @Test

@@ -247,7 +247,7 @@ public class DeserializationTest {
         x2InnerCmd.put("listCmd", new ListWrapper.ContentModelDataListWrapper(Lists.newArrayList(cmdInList, cmdInList)));
 
         x2InnerCmd.put("listKmd", new ListWrapper.KeywordModelDataListWrapper(
-                Lists.newArrayList(new KeywordModelData("id", "desc", "key", "taxId", "title"))));
+                Lists.newArrayList(new KeywordModelData("id", "tcm", "desc", "key", "taxId", "title"))));
         rootCmd.put("cmd", innerCmd);
 
         Date date = new Date();

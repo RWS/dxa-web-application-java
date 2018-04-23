@@ -14,6 +14,8 @@ public class PageTemplateData {
 
     private String id;
 
+    private String namespace;
+
     private String title;
 
     private String fileExtension;

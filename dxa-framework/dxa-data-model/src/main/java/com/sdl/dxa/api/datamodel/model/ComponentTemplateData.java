@@ -14,6 +14,8 @@ public class ComponentTemplateData {
 
     private String id;
 
+    private String namespace;
+
     private String title;
 
     private DateTime revisionDate;

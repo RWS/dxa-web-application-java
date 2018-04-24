@@ -18,6 +18,8 @@ public class KeywordModelData extends ViewModelData {
 
     private String id;
 
+    private String namespace;
+
     private String description;
 
     private String key;

@@ -40,6 +40,7 @@ public class EntityModelData extends ViewModelData implements CanWrapContentAndM
         this.id = id;
         this.linkUrl = linkUrl;
         this.content = content;
+        this.namespace = namespace;
         this.binaryContent = binaryContent;
         this.externalContent = externalContent;
     }
@@ -49,6 +50,7 @@ public class EntityModelData extends ViewModelData implements CanWrapContentAndM
         this.id = id;
         this.linkUrl = linkUrl;
         this.content = content;
+        this.namespace = namespace;
         this.binaryContent = binaryContent;
         this.externalContent = externalContent;
     }

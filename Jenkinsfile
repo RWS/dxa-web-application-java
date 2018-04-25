@@ -111,6 +111,7 @@ node("dxadocker") {
                     catch(Exception e) {
                         echo "WARNING: No Job stash/${brName}/model_service available to trigger, proceeding with develop"
                         build job: 'stash/develop/model_service', parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
+                    }
                 }
             }
             stage("Maven javadoc:aggregate") {

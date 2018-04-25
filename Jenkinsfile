@@ -52,6 +52,20 @@ node("dxadocker") {
                 bat "gradlew.bat -Pcommand=\"install javadoc:jar -Pcoverage-per-test,local-m2-remote,nexus-sdl\" -PmavenProperties=\"-e -Dmaven.repo.local=${lpr}\" -Dmaven.repo.local=${lpr} -Pbatch buildModules"
         }
     }
+    stage("Build-webapp") {
+        def buildFolder = pwd()+"\\build"
+            withEnv([
+                "installer_path=${buildFolder}\\installer",
+                "webapp_folder=${buildFolder}\\web-application-java\\dxa-webapp",
+                "maven_repo_local=${lpr}",
+                "modules=core,context-expressions,search,googleanalytics,mediamanager,51degrees,smarttarget,audience-manager",
+                "profiles=%modules:,=-module,%-module",
+                "all_modules=%modules%,cid,test",
+                "all_profiles=%all_modules:,=-module,%-module"
+                ]) {
+                    bat 'build-automation\\src\\main\\resources\\build-web-application-java.cmd'
+                }
+    }
     stage("Build-webapp-archetype-compare") {
         def buildFolder = pwd()+"\\build"
             withEnv([

@@ -63,9 +63,9 @@ public class CacheTest {
         pagesCopyingCache.setKeyGenerator(keyGenerator);
         entitiesCache.setKeyGenerator(keyGenerator);
         MvcModelData mvcData = new MvcModelData("a", "a", "a", "c", "v", null);
-        PageModelData pageData = (PageModelData) new PageModelData("1", null, null, null, null, null, "/url")
+        PageModelData pageData = (PageModelData) new PageModelData("1", "tcm", null, null, null, null, null, "/url")
                 .setMvcData(mvcData);
-        EntityModelData entityMvcData = (EntityModelData) new EntityModelData("2", null, null, null, null, mvcData, "1", "/url", null, null, null)
+        EntityModelData entityMvcData = (EntityModelData) new EntityModelData("2", null, null, null, null, mvcData, "1", "tcm", "/url", null, null, null)
                 .setMvcData(mvcData);
 
         //when

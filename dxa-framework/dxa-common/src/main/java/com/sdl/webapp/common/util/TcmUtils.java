@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.util;
 
+import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 
@@ -8,6 +9,7 @@ import java.util.regex.Pattern;
 
 /**
  * Simple utility functions to process TCM-URIs.
+ *
  * @dxa.publicApi
  */
 @Slf4j
@@ -148,7 +150,7 @@ public final class TcmUtils {
     /**
      * Build a page TCM URI looking like <code>NAMESPACE:PUB_ID-ITEM_ID-32</code>.
      *
-     * @param namespace Custom namespace. At this moment only [tcm, ish] are supported
+     * @param namespace     Custom namespace. At this moment only [tcm, ish] are supported
      * @param publicationId publication ID
      * @param itemId        item ID
      * @return TCM URI for page
@@ -283,22 +285,23 @@ public final class TcmUtils {
      * @return item type ID or <code>-1</code> if URI is not valid or null
      */
     public static int getItemType(String tcmUri) {
-        int itemType = extractGroupFromTcm(tcmUri, "itemType");
-        return itemType == -2 ? COMPONENT_ITEM_TYPE : itemType;
+        ExtractResult extractResult = extractGroupFromTcm(tcmUri, "itemType");
+        return extractResult.status == ExtractStatus.NO_MATCH ? COMPONENT_ITEM_TYPE : extractResult.getInt();
     }
 
-    private static int extractGroupFromTcm(String tcmUri, String group) {
-        int failed = -1;
+    private static ExtractResult extractGroupFromTcm(String tcmUri, String group) {
         if (tcmUri == null) {
-            return failed;
+            return new ExtractResult(ExtractStatus.FAILED, null);
         }
 
         Matcher matcher = URI_SCHEMA.matcher(tcmUri);
         if (matcher.matches()) {
             String match = matcher.group(group);
-            return match != null ? Integer.parseInt(match) : -2;
+            return match == null ?
+                    new ExtractResult(ExtractStatus.NO_MATCH, null) :
+                    new ExtractResult(ExtractStatus.SUCCESS, match);
         }
-        return failed;
+        return new ExtractResult(ExtractStatus.FAILED, null);
     }
 
     /**
@@ -308,7 +311,7 @@ public final class TcmUtils {
      * @return publication ID or <code>-1</code> if URI is not valid or null
      */
     public static int getPublicationId(String tcmUri) {
-        return extractGroupFromTcm(tcmUri, "publicationId");
+        return extractGroupFromTcm(tcmUri, "publicationId").getInt();
     }
 
     /**
@@ -331,7 +334,18 @@ public final class TcmUtils {
      * @return item ID or <code>-1</code> if URI is not valid or null
      */
     public static int getItemId(String tcmUri) {
-        return extractGroupFromTcm(tcmUri, "itemId");
+        return extractGroupFromTcm(tcmUri, "itemId").getInt();
+    }
+
+    /**
+     * Extracts namespace from a valid TCM URI.
+     *
+     * @param tcmUri tcm uri to process
+     * @return namespace or <code>-1</code> if URI is not valid or null
+     */
+    public static String getNamespace(String tcmUri) {
+        ExtractResult extractResult = extractGroupFromTcm(tcmUri, "namespace");
+        return extractResult.status == ExtractStatus.SUCCESS ? extractResult.result : null;
     }
 
     /**
@@ -385,6 +399,22 @@ public final class TcmUtils {
      */
     public static boolean isTcmUri(@Nullable Object tcmUri) {
         return tcmUri != null && URI_SCHEMA.matcher(String.valueOf(tcmUri)).matches();
+    }
+
+    private enum ExtractStatus {
+        FAILED, NO_MATCH, SUCCESS
+    }
+
+    @Value
+    private static class ExtractResult {
+
+        private ExtractStatus status;
+
+        private String result;
+
+        public int getInt() {
+            return status != ExtractStatus.SUCCESS || result == null ? -1 : Integer.parseInt(result);
+        }
     }
 
     /**

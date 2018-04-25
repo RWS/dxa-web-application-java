@@ -42,7 +42,31 @@ node("dxadocker") {
                 bat "gradlew.bat -Pcommand=\"org.jacoco:jacoco-maven-plugin:prepare-agent install javadoc:jar -Pcoverage-per-test,local-m2-remote,nexus-sdl\" -PmavenProperties=\"-e -Dmaven.repo.local=${lpr}\" -Dmaven.repo.local=${lpr} -Pbatch buildDxa"
         }
     }
-     stage("Trigger model-service build") {
+    stage("Maven javadoc:aggregate") {
+        dir("build\\web-application-java") {
+                bat "mvn -f dxa-framework\\pom.xml -Dmaven.repo.local=${lpr} javadoc:aggregate@publicApi"
+        }
+    }
+    stage("Gradle buildModules") {
+        dir("build\\dxa-modules\\webapp-java") {
+                bat "gradlew.bat -Pcommand=\"install javadoc:jar -Pcoverage-per-test,local-m2-remote,nexus-sdl\" -PmavenProperties=\"-e -Dmaven.repo.local=${lpr}\" -Dmaven.repo.local=${lpr} -Pbatch buildModules"
+        }
+    }
+//    stage("Build-webapp-archetype-compare") {
+//        def buildFolder = pwd()+"\\build"
+//            withEnv([
+//                "maven_repo_local=${lpr}",
+//                "webapp_folder=${buildFolder}\\web-application-java\\dxa-webapp",
+//                "framework_folder=${buildFolder}\\web-application-java\\dxa-framework",
+//                "installer_path=${buildFolder}\\installer"
+//                ]) {
+//                    bat 'build-automation\\src\\main\\resources\\copy-build-results-java.cmd'
+//                }
+//    }
+    stage("Archive artefacts") {
+            archiveArtifacts artifacts: "local-project-repo\\**,not-public-repo\\**,dxa-webapp.war,docs\\**", excludes: 'target\\**\\local-project-repo\\**\\*,target\\**\\gradle\\**\\*,target\\**\\.gradle\\**\\*,target\\**\\*-javadoc.jar,target\\**\\*-sources.jar'
+    }
+    stage("Trigger model-service build") {
         def brName = env.BRANCH_NAME.split('/')[-1]
         if (brName.contains("PR-")) {
             echo "WARNING: This is pull-request branch. Model service wouldn't be triggered"
@@ -57,30 +81,6 @@ node("dxadocker") {
                 build job: 'stash/develop/model_service', parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
             }
         }
-    }
-    stage("Maven javadoc:aggregate") {
-        dir("build\\web-application-java") {
-                bat "mvn -f dxa-framework\\pom.xml -Dmaven.repo.local=${lpr} javadoc:aggregate@publicApi"
-        }
-    }
-    stage("Gradle buildModules") {
-        dir("build\\dxa-modules\\webapp-java") {
-                bat "gradlew.bat -Pcommand=\"install javadoc:jar -Pcoverage-per-test,local-m2-remote,nexus-sdl\" -PmavenProperties=\"-e -Dmaven.repo.local=${lpr}\" -Dmaven.repo.local=${lpr} -Pbatch buildModules"
-        }
-    }
-    stage("Build-webapp-archetype-compare") {
-        def buildFolder = pwd()+"\\build"
-            withEnv([
-                "maven_repo_local=${lpr}", 
-                "webapp_folder=${buildFolder}\\web-application-java\\dxa-webapp", 
-                "framework_folder=${buildFolder}\\web-application-java\\dxa-framework", 
-                "installer_path=${buildFolder}\\installer"
-                ]) {
-                    bat 'build-automation\\src\\main\\resources\\copy-build-results-java.cmd'
-                }
-    }
-    stage("Archive artefacts") {
-            archiveArtifacts artifacts: "local-project-repo\\**,not-public-repo\\**,dxa-webapp.war,docs\\**", excludes: 'target\\**\\local-project-repo\\**\\*,target\\**\\gradle\\**\\*,target\\**\\.gradle\\**\\*,target\\**\\*-javadoc.jar,target\\**\\*-sources.jar'
     }
 }
 }

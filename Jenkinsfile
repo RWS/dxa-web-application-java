@@ -52,17 +52,17 @@ node("dxadocker") {
                 bat "gradlew.bat -Pcommand=\"install javadoc:jar -Pcoverage-per-test,local-m2-remote,nexus-sdl\" -PmavenProperties=\"-e -Dmaven.repo.local=${lpr}\" -Dmaven.repo.local=${lpr} -Pbatch buildModules"
         }
     }
-//    stage("Build-webapp-archetype-compare") {
-//        def buildFolder = pwd()+"\\build"
-//            withEnv([
-//                "maven_repo_local=${lpr}",
-//                "webapp_folder=${buildFolder}\\web-application-java\\dxa-webapp",
-//                "framework_folder=${buildFolder}\\web-application-java\\dxa-framework",
-//                "installer_path=${buildFolder}\\installer"
-//                ]) {
-//                    bat 'build-automation\\src\\main\\resources\\copy-build-results-java.cmd'
-//                }
-//    }
+    stage("Build-webapp-archetype-compare") {
+        def buildFolder = pwd()+"\\build"
+            withEnv([
+                "maven_repo_local=${lpr}",
+                "webapp_folder=${buildFolder}\\web-application-java\\dxa-webapp",
+                "framework_folder=${buildFolder}\\web-application-java\\dxa-framework",
+                "installer_path=${buildFolder}\\installer"
+                ]) {
+                    bat 'build-automation\\src\\main\\resources\\copy-build-results-java.cmd'
+                }
+    }
     stage("Archive artefacts") {
             archiveArtifacts artifacts: "local-project-repo\\**,not-public-repo\\**,dxa-webapp.war,docs\\**", excludes: 'target\\**\\local-project-repo\\**\\*,target\\**\\gradle\\**\\*,target\\**\\.gradle\\**\\*,target\\**\\*-javadoc.jar,target\\**\\*-sources.jar'
     }

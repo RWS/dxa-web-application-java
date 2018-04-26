@@ -101,20 +101,6 @@ node("dxadocker") {
                         bat "gradlew.bat -Pcommand=\"org.jacoco:jacoco-maven-plugin:prepare-agent install javadoc:jar -Pcoverage-per-test,local-m2-remote,nexus-sdl\" -PmavenProperties=\"-e -Dmaven.repo.local=${lpr}\" -Dmaven.repo.local=${lpr} -Pbatch buildDxa"
                 }
             }
-            stage("Trigger model-service build") {
-                def brName = env.BRANCH_NAME.split('/')[-1]
-                if (brName.contains("PR-")) {
-                    echo "WARNING: This is pull-request branch. Model service wouldn't be triggered"
-                } else {
-                    try {
-                        build job: "stash/${brName}/model_service", parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
-                    }
-                    catch(Exception e) {
-                        echo "WARNING: No Job stash/${brName}/model_service available to trigger, proceeding with develop"
-                        build job: 'stash/develop/model_service', parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
-                    }
-                }
-            }
             stage("Maven javadoc:aggregate") {
                 dir("build\\web-application-java") {
                         bat "mvn -f dxa-framework\\pom.xml -Dmaven.repo.local=${lpr} javadoc:aggregate@publicApi"
@@ -153,6 +139,20 @@ node("dxadocker") {
             stage("Archive artefacts") {
                     archiveArtifacts artifacts: "local-project-repo\\**,not-public-repo\\**,dxa-webapp.war,docs\\**", excludes: 'target\\**\\local-project-repo\\**\\*,target\\**\\gradle\\**\\*,target\\**\\.gradle\\**\\*,target\\**\\*-javadoc.jar,target\\**\\*-sources.jar'
             }
+             stage("Trigger model-service build") {
+                    def brName = env.BRANCH_NAME.split('/')[-1]
+                    if (brName.contains("PR-")) {
+                        echo "WARNING: This is pull-request branch. Model service wouldn't be triggered"
+                    } else {
+                        try {
+                            build job: "stash/${brName}/model_service", parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
+                        }
+                        catch(Exception e) {
+                            echo "WARNING: No Job stash/${brName}/model_service available to trigger, proceeding with develop"
+                            build job: 'stash/develop/model_service', parameters: [booleanParam(name: 'deploy', value: true)], propagate: false, wait: false
+                        }
+                    }
+                }
         }
 //    } catch (Exception ex) {
 //        def userInput = input(

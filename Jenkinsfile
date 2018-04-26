@@ -65,8 +65,9 @@ def branchCheckout(stashUrl, branchName) {
 // Allocation of node for execution of build steps
 node("dxadocker") {
 
-    try
-    {
+///// Uncomment Try...Catch to retain containers for debugging.
+//    try
+//    {
 
         // Global variable for location of local-project-repo
         def lpr = ""
@@ -153,13 +154,13 @@ node("dxadocker") {
                     archiveArtifacts artifacts: "local-project-repo\\**,not-public-repo\\**,dxa-webapp.war,docs\\**", excludes: 'target\\**\\local-project-repo\\**\\*,target\\**\\gradle\\**\\*,target\\**\\.gradle\\**\\*,target\\**\\*-javadoc.jar,target\\**\\*-sources.jar'
             }
         }
-    } catch (Exception ex) {
-        def userInput = input(
-            id: 'userInput', message: 'Delete Container?', parameters: [
-            [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'Any result to delete container.', name: 'del']
-            ])
-        throw new Exception('Build Broken')
-    } finally {
-        echo "Done!"
-    }
+//    } catch (Exception ex) {
+//        def userInput = input(
+//            id: 'userInput', message: 'Delete Container?', parameters: [
+//            [$class: 'BooleanParameterDefinition', defaultValue: true, description: 'Any result to delete container.', name: 'del']
+//            ])
+//        throw new Exception('Build Broken')
+//    } finally {
+//        echo "Done!"
+//    }
 }

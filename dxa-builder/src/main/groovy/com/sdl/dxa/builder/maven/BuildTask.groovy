@@ -57,13 +57,14 @@ class BuildTask implements Callable<Output> {
                 output.lines << it
             }
         }
+        execute.waitFor()
         output.code = execute.exitValue()
         output.timeSeconds = System.currentTimeSeconds() - start
         callback(output)
     }
 
     static String determineShell() {
-        OperatingSystem.current().windows ? "cmd /c " : "";
+        OperatingSystem.current().windows ? "cmd /c " : ""
     }
 }
 

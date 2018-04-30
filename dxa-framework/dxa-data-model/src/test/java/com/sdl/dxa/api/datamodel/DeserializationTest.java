@@ -61,6 +61,7 @@ public class DeserializationTest {
         assertEquals("640", page.getId());
         assertEquals("Home", page.getTitle());
         assertEquals("/autotest-r2/index", page.getUrlPath());
+        assertEquals("tcm", page.getNamespace()); //default namespace, check entities[0] for ish
 
         assertThat(page.getMeta(), hasEntry("twitter:card", "summary"));
         assertThat(page.getMeta(), hasEntry("og:title", "Home"));
@@ -153,6 +154,7 @@ public class DeserializationTest {
         EntityModelData entity = region.getEntities().get(0);
 
         assertEquals("1024", entity.getId());
+        assertEquals("ish", entity.getNamespace()); //namespace set in json
         assertEquals("linkUrl", entity.getLinkUrl());
         assertEquals("ViewName", entity.getMvcData().getViewName());
         assertEquals("10029", entity.getSchemaId());

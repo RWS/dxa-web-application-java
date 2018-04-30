@@ -1,6 +1,7 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.sdl.dxa.api.datamodel.Constants;
 import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import lombok.Builder;
@@ -53,6 +54,10 @@ public class EntityModelData extends ViewModelData implements CanWrapContentAndM
         this.namespace = namespace;
         this.binaryContent = binaryContent;
         this.externalContent = externalContent;
+    }
+
+    public String getNamespace() {
+        return namespace == null ? Constants.DEFAULT_NAMESPACE : namespace;
     }
 
     @Override

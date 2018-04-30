@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.util;
 
+import com.sdl.dxa.api.datamodel.Constants;
 import lombok.Value;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +38,7 @@ public final class TcmUtils {
 
     public static final int KEYWORD_ITEM_TYPE = 1024;
 
-    private static final String DEFAULT_NAMESPACE = "tcm";
+    private static final String DEFAULT_NAMESPACE = Constants.DEFAULT_NAMESPACE;
 
     private static final String NS_ID_ID = "%s:%s-%s";
 

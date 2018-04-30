@@ -26,6 +26,7 @@
       "Entities": [
         {
           "Id": "1024",
+          "Namespace": "ish",
           "LinkUrl": "linkUrl",
           "BinaryContent": {
             "FileName": "fileName",

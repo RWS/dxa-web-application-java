@@ -143,6 +143,15 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>ugc-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-ugc</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
 
     </profiles>
 

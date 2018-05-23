@@ -40,6 +40,7 @@
         <dxa-module-context-expressions>${dxa.version}</dxa-module-context-expressions>
         <dxa-module-51degrees.version>${dxa.version}</dxa-module-51degrees.version>
         <dxa-module-audience-manager.version>${dxa.version}</dxa-module-audience-manager.version>
+        <dxa-module-ugc.version>${dxa.version}</dxa-module-ugc.version>
         <dxa-module-test.version>${dxa.version}</dxa-module-test.version>
         <!-- /DXA Versions -->
 
@@ -306,6 +307,12 @@
                 <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-audience-manager</artifactId>
                 <version>${dxa-module-audience-manager.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-ugc</artifactId>
+                <version>${dxa-module-ugc.version}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>

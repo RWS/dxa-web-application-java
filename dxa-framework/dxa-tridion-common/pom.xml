@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>dxa-tridion-common</artifactId>
-    <name>DXA - Tridion Common</name>
+    <name>dxa-tridion-common</name>
     <description>Tridion Common contains common code for Tridion for other DXA artifacts expect model-specific (like
         DD4T)
     </description>

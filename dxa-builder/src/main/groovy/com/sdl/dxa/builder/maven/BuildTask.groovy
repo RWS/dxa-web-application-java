@@ -3,6 +3,7 @@ package com.sdl.dxa.builder.maven
 import org.gradle.internal.os.OperatingSystem
 
 import java.util.concurrent.Callable
+import java.util.concurrent.TimeUnit
 
 class BuildTask implements Callable<Output> {
     String name, commandToExecute
@@ -40,30 +41,42 @@ class BuildTask implements Callable<Output> {
 
     Output runMaven(String command, String pomPath) {
         def start = System.currentTimeSeconds()
-        def toRun = "${determineShell()} mvn ${command}"
+        def toRun = "${determineShell()} ${command}"
         if (pomPath != null) {
             toRun += " -f \"${pomPath}\""
         }
 
         def output = new Output(command: toRun, lines: [], code: 0)
 
-        println "Running in background ${toRun}"
+        println "Running in background (timeout 10 minutes): ${toRun}"
 
-        def execute = toRun.execute()
-        execute.in.eachLine {
+        def execute = null
+        try {
+            execute = toRun.execute()
+            def out = new StringBuffer(), err = new StringBuffer()
+            execute.consumeProcessOutput(out, err)
+            execute.waitFor(10, TimeUnit.MINUTES)
             if (verbose) {
-                println it
+                println "$toRun:: OUT: $out --eof;"
+                println "$toRun:: ERR: $err --eof;"
             } else {
-                output.lines << it
+                output.lines.addAll(out.readLines())
+                output.lines.addAll(err.readLines())
             }
+            output.code = execute.exitValue()
+            output
+        } catch (Exception e) {
+            output.lines = Collections.singletonList(e.message)
+            output.code = execute == null ? -255 : execute.exitValue()
+            output
+        } finally {
+            output.timeSeconds = System.currentTimeSeconds() - start
+            callback(output)
         }
-        output.code = execute.exitValue()
-        output.timeSeconds = System.currentTimeSeconds() - start
-        callback(output)
     }
 
     static String determineShell() {
-        OperatingSystem.current().windows ? "cmd /c " : "";
+        OperatingSystem.current().windows ? "cmd /c" : ""
     }
 }
 
@@ -71,5 +84,5 @@ class Output {
     List<String> lines
     int code
     String command
-    int timeSeconds
+    long timeSeconds
 }

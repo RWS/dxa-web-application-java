@@ -3,6 +3,7 @@ package com.sdl.dxa.builder.configuration.parameters
 abstract class Property {
     List<String> files
     String name
+    String displayName
     boolean append
     boolean caseSensitive
     Map<String, String> valueMapping

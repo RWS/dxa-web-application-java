@@ -61,6 +61,7 @@ public class DeserializationTest {
         assertEquals("640", page.getId());
         assertEquals("Home", page.getTitle());
         assertEquals("/autotest-r2/index", page.getUrlPath());
+        assertEquals("tcm", page.getNamespace()); //default namespace, check entities[0] for ish
 
         assertThat(page.getMeta(), hasEntry("twitter:card", "summary"));
         assertThat(page.getMeta(), hasEntry("og:title", "Home"));
@@ -153,6 +154,7 @@ public class DeserializationTest {
         EntityModelData entity = region.getEntities().get(0);
 
         assertEquals("1024", entity.getId());
+        assertEquals("ish", entity.getNamespace()); //namespace set in json
         assertEquals("linkUrl", entity.getLinkUrl());
         assertEquals("ViewName", entity.getMvcData().getViewName());
         assertEquals("10029", entity.getSchemaId());
@@ -247,7 +249,7 @@ public class DeserializationTest {
         x2InnerCmd.put("listCmd", new ListWrapper.ContentModelDataListWrapper(Lists.newArrayList(cmdInList, cmdInList)));
 
         x2InnerCmd.put("listKmd", new ListWrapper.KeywordModelDataListWrapper(
-                Lists.newArrayList(new KeywordModelData("id", "desc", "key", "taxId", "title"))));
+                Lists.newArrayList(new KeywordModelData("id", "tcm", "desc", "key", "taxId", "title"))));
         rootCmd.put("cmd", innerCmd);
 
         Date date = new Date();

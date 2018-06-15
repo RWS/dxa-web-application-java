@@ -1,6 +1,7 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.sdl.dxa.api.datamodel.Constants;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -21,6 +22,8 @@ public class PageModelData extends ViewModelData {
 
     private String id;
 
+    private String namespace;
+
     private String structureGroupId;
 
     private Map<String, String> meta;
@@ -32,6 +35,10 @@ public class PageModelData extends ViewModelData {
     private List<RegionModelData> regions;
 
     private String urlPath;
+
+    public String getNamespace() {
+        return namespace == null ? Constants.DEFAULT_NAMESPACE : namespace;
+    }
 
     @Override
     public ModelDataWrapper getDataWrapper() {

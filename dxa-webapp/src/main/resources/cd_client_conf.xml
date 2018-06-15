@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ServiceConfig CacheEnabled="true" ConnectionTimeout="10000"
+<ServiceConfig CacheEnabled="${CIL_CACHE_ENABLED:-true}" ConnectionTimeout="10000"
                CacheUri="ehcache.xml"
                CacheExpirationDuration="60" ServiceAvailabilityCheck="true"
                CacheProviderClass="com.sdl.web.client.cache.GeneralCacheProvider" CacheConnectionTimeout="10000">
     <!-- Specify your CIS Environment's Discovery Service URL below -->
-    <DiscoveryService ServiceUri="*DISCOVERY_SERVICE_URL*"/>
+    <DiscoveryService ServiceUri="${DISCOVERY_URL:-http://localhost:8082/discovery.svc}"/>
 
-    <TokenService ClientId="cduser" ClientSecret="encrypted:o/cgCBwmULeOyUZghFaKJA=="/>
+    <TokenService ClientId="cduser" ClientSecret="${TOKEN_CDUSER_SECRET:-encrypted:o/cgCBwmULeOyUZghFaKJA==}"/>
 </ServiceConfig>
 

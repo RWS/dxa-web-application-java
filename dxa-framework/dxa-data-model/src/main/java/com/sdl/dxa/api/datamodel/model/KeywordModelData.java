@@ -1,6 +1,7 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.sdl.dxa.api.datamodel.Constants;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +19,8 @@ public class KeywordModelData extends ViewModelData {
 
     private String id;
 
+    private String namespace;
+
     private String description;
 
     private String key;
@@ -25,6 +28,10 @@ public class KeywordModelData extends ViewModelData {
     private String taxonomyId;
 
     private String title;
+
+    public String getNamespace() {
+        return namespace == null ? Constants.DEFAULT_NAMESPACE : namespace;
+    }
 
     @Override
     public ModelDataWrapper getDataWrapper() {

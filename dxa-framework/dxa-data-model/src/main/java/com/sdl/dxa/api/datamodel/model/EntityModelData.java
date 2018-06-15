@@ -1,6 +1,7 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.sdl.dxa.api.datamodel.Constants;
 import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
 import lombok.Builder;
@@ -22,6 +23,8 @@ public class EntityModelData extends ViewModelData implements CanWrapContentAndM
 
     private String id;
 
+    private String namespace;
+
     private ComponentTemplateData componentTemplate;
 
     private String linkUrl;
@@ -33,22 +36,28 @@ public class EntityModelData extends ViewModelData implements CanWrapContentAndM
     private ExternalContentData externalContent;
 
     @Builder
-    public EntityModelData(String schemaId, String htmlClasses, Map<String, Object> xpmMetadata, ContentModelData metadata, Map<String, Object> extensionData, MvcModelData mvcData, String id, String linkUrl, ContentModelData content, BinaryContentData binaryContent, ExternalContentData externalContent) {//NOSONAR
+    public EntityModelData(String schemaId, String htmlClasses, Map<String, Object> xpmMetadata, ContentModelData metadata, Map<String, Object> extensionData, MvcModelData mvcData, String id, String namespace, String linkUrl, ContentModelData content, BinaryContentData binaryContent, ExternalContentData externalContent) {//NOSONAR
         super(schemaId, htmlClasses, xpmMetadata, metadata, extensionData, mvcData);
         this.id = id;
         this.linkUrl = linkUrl;
         this.content = content;
+        this.namespace = namespace;
         this.binaryContent = binaryContent;
         this.externalContent = externalContent;
     }
 
     @Builder
-    public EntityModelData(String id, String linkUrl, ContentModelData content, BinaryContentData binaryContent, ExternalContentData externalContent) {
+    public EntityModelData(String id, String namespace, String linkUrl, ContentModelData content, BinaryContentData binaryContent, ExternalContentData externalContent) {
         this.id = id;
         this.linkUrl = linkUrl;
         this.content = content;
+        this.namespace = namespace;
         this.binaryContent = binaryContent;
         this.externalContent = externalContent;
+    }
+
+    public String getNamespace() {
+        return namespace == null ? Constants.DEFAULT_NAMESPACE : namespace;
     }
 
     @Override

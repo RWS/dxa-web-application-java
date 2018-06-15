@@ -13,36 +13,36 @@ class MavenBuildTaskTest {
     Project project
 
     @Before
-    public void before() {
+    void before() {
         project = ProjectBuilder.builder().build()
         task = project.task('maven.build', type: MavenBuildTask) as MavenBuildTask
         task.run()
     }
 
     @Test
-    public void canAddTaskToProject() {
+    void canAddTaskToProject() {
         assertTrue(task instanceof MavenBuildTask)
     }
 
     @Test
-    public void shouldBuildTaskForCustomCommand() {
-        'assert'("hello ${Defaults.MAVEN_PROPERTIES}", '')(task.buildTask('>> hello', {}, true))
-        'assert'("hello ${Defaults.MAVEN_PROPERTIES}", '')(task.buildTask('    >    >     hello    ', {}, true))
-        'assert'("hello ${Defaults.MAVEN_PROPERTIES}", '')(task.buildTask('>>hello', {}, true))
+    void shouldBuildTaskForCustomCommand() {
+        'assert'("mvn hello ${Defaults.MAVEN_PROPERTIES}", '')(task.buildTask('>> hello', {}, true))
+        'assert'("mvn hello ${Defaults.MAVEN_PROPERTIES}", '')(task.buildTask('    >    >     hello    ', {}, true))
+        'assert'("mvn hello ${Defaults.MAVEN_PROPERTIES}", '')(task.buildTask('>>hello', {}, true))
     }
 
     @Test
-    public void shouldBuildTaskForCustomCommandForProject() {
-        'assert'("hello ${Defaults.MAVEN_PROPERTIES}", 'project')(task.buildTask('> project > hello', {}, true))
-        'assert'("hello ${Defaults.MAVEN_PROPERTIES}", 'project')(task.buildTask('       >         project           >         hello        ', {
+    void shouldBuildTaskForCustomCommandForProject() {
+        'assert'("mvn hello ${Defaults.MAVEN_PROPERTIES}", 'project')(task.buildTask('> project > hello', {}, true))
+        'assert'("mvn hello ${Defaults.MAVEN_PROPERTIES}", 'project')(task.buildTask('       >         project           >         hello        ', {
         }, true))
-        'assert'("hello ${Defaults.MAVEN_PROPERTIES}", 'project')(task.buildTask('>project>hello', {}, true))
+        'assert'("mvn hello ${Defaults.MAVEN_PROPERTIES}", 'project')(task.buildTask('>project>hello', {}, true))
     }
 
     @Test
-    public void shouldBuildTaskForProject() {
-        'assert'("install ${task.mavenProperties}", 'project')(task.buildTask('project', {}, true))
-        'assert'("install ${task.mavenProperties}", 'project')(task.buildTask('  project  ', {}, true))
+    void shouldBuildTaskForProject() {
+        'assert'("mvn install ${task.mavenProperties}", 'project')(task.buildTask('project', {}, true))
+        'assert'("mvn install ${task.mavenProperties}", 'project')(task.buildTask('  project  ', {}, true))
     }
 
     private static Closure 'assert'(String command, name) {

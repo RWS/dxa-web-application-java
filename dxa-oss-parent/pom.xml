@@ -12,7 +12,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-oss-parent</artifactId>
-    <version>2.0.0</version>
+    <version>2.1.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>DXA - OSS Parent, BOM</name>
@@ -40,6 +40,7 @@
         <dxa-module-context-expressions>${dxa.version}</dxa-module-context-expressions>
         <dxa-module-51degrees.version>${dxa.version}</dxa-module-51degrees.version>
         <dxa-module-audience-manager.version>${dxa.version}</dxa-module-audience-manager.version>
+        <dxa-module-ugc.version>${dxa.version}</dxa-module-ugc.version>
         <dxa-module-test.version>${dxa.version}</dxa-module-test.version>
         <!-- /DXA Versions -->
 
@@ -161,7 +162,7 @@
         <!-- DD4T dependencies -->
         <!-- These are not really used in the framework and are needed only for Model Service adapter -->
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
-        <dd4t-latest.version>2.1.0</dd4t-latest.version>
+        <dd4t-latest.version>2.1.2</dd4t-latest.version>
 
     </properties>
 
@@ -306,6 +307,12 @@
                 <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-audience-manager</artifactId>
                 <version>${dxa-module-audience-manager.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-ugc</artifactId>
+                <version>${dxa-module-ugc.version}</version>
                 <scope>runtime</scope>
             </dependency>
             <dependency>

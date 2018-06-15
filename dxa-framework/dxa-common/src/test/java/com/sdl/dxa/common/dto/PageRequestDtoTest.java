@@ -25,7 +25,7 @@ public class PageRequestDtoTest {
 
     @Test
     public void shouldSetPublicationId_AndPagePath() {
-        //given 
+        //given
 
         //when
         PageRequestDto dto = PageRequestDto.builder(42, "/").build();
@@ -33,6 +33,30 @@ public class PageRequestDtoTest {
         //then
         assertEquals(42, dto.getPublicationId());
         assertEquals("/", dto.getPath());
+    }
+
+    @Test
+    public void shouldSetPublicationId_AndPageId() {
+        //given
+
+        //when
+        PageRequestDto dto = PageRequestDto.builder(42, 123).build();
+
+        //then
+        assertEquals(42, dto.getPublicationId());
+        assertEquals(123, dto.getPageId());
+    }
+
+    @Test
+    public void shouldSetPublicationId_AndPageId_Str() {
+        //given
+
+        //when
+        PageRequestDto dto = PageRequestDto.builder("42", 123).build();
+
+        //then
+        assertEquals(42, dto.getPublicationId());
+        assertEquals(123, dto.getPageId());
     }
 
     @Test

@@ -3,7 +3,10 @@ package com.sdl.dxa.builder.maven
 import groovy.util.logging.Slf4j
 import org.gradle.api.DefaultTask
 import org.gradle.api.tasks.TaskAction
+import org.gradle.internal.os.OperatingSystem
 
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
@@ -124,8 +127,15 @@ class MavenBuildTask extends DefaultTask {
         return wrapCommand(command ?: defaultCommand)
     }
 
+    private static String selectExecutable() {
+        (OperatingSystem.current().isWindows() ? [".\\mvn.cmd", ".\\mvn.bat"] : ["./mvn.sh", "./mvn"]).stream()
+                .filter({ it -> Files.exists(Paths.get(it)) })
+                .findFirst()
+                .orElse("mvn")
+    }
+
     private String wrapCommand(String command) {
-        return "${command} ${mavenProperties}"
+        return "${selectExecutable()} ${command} ${mavenProperties}"
     }
 
     private static void printMvnVersion() {

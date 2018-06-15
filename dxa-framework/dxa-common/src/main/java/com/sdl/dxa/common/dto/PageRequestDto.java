@@ -16,9 +16,11 @@ public class PageRequestDto {
 
     private int publicationId;
 
-    private String uriType;
+    private int pageId;
 
     private String path;
+
+    private String uriType;
 
     private PageInclusion includePages;
 
@@ -29,6 +31,14 @@ public class PageRequestDto {
     private int expansionDepth;
 
     private DepthCounter depthCounter;
+
+    public static PageRequestDtoBuilder builder(String publicationId, int pageId) {
+        return builder(Integer.valueOf(publicationId), pageId);
+    }
+
+    public static PageRequestDtoBuilder builder(int publicationId, int pageId) {
+        return hiddenBuilder().publicationId(publicationId).pageId(pageId);
+    }
 
     public static PageRequestDtoBuilder builder(String publicationId, String path) {
         return builder(Integer.valueOf(publicationId), path);

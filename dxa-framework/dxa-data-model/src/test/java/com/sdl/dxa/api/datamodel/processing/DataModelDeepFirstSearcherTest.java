@@ -29,7 +29,7 @@ public class DataModelDeepFirstSearcherTest {
         PageModelData page = (PageModelData) new PageModelData()
                 .setId("p")
                 .setRegions(Lists.newArrayList(new RegionModelData(null, null,
-                        Lists.newArrayList(new EntityModelData(null, null, null, metadata, null, null, "e", null, content, null, null)),
+                        Lists.newArrayList(new EntityModelData(null, null, null, metadata, null, null, "e", "tcm", null, content, null, null)),
                         Lists.newArrayList(new RegionModelData(null, null, null, metadata, null, null, null, null, null, null)))))
                 .setMetadata(metadata);
 

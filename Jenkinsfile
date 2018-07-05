@@ -154,15 +154,6 @@ node("dxadocker") {
                     }
                 }
         }
-        post {
-            always {
-                step([$class: 'Mailer',
-                      notifyEveryUnstableBuild: true,
-                      recipients: "mborysenko@sdl.com",
-                      sendToIndividuals: true])
-            }
-        }
-}
 //    } catch (Exception ex) {
 //        def userInput = input(
 //            id: 'userInput', message: 'Delete Container?', parameters: [

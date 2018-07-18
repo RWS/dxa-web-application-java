@@ -51,7 +51,7 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
             @Value("${dxa.model.service.url.entity.model}") String entityModelUrl,
             @Value("${dxa.model.service.url.api.navigation}") String navigationApiUrl,
             @Value("${dxa.model.service.url.api.navigation.subtree}") String onDemandApiUrl,
-            @Value("${dxa.model.service.key:dxa-model-service}") String modelServiceKey,
+            @Value("${dxa.model.service.key:#{null}}") String modelServiceKey,
             @Value("${dxa.model.service.url:#{null}}") String modelServiceUrl) throws ConfigurationException {
         if (isTokenConfigurationAvailable()) {
             this.oAuthTokenProvider = new OAuthTokenProvider(getOauthTokenProviderConfiguration());
@@ -70,7 +70,7 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
             this.serviceUrl = modelServiceUrl;
         } else {
             Assert.notNull(modelServiceKey, "At least one of two properties required: dxa.model.service.key, dxa.model.service.url");
-            this.serviceUrl = getServiceUrl(); // preload url
+            getServiceUrl(); // preload url
         }
     }
 

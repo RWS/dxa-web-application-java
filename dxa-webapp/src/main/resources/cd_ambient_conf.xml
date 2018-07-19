@@ -15,6 +15,8 @@
     <!-- Claims for forwarding on to the Content Services -->
     <ForwardedClaims CookieName="TAFContext">
         <Claim Uri="taf:session:preview:preview_session"/>
+        <Claim Uri="taf:request:parameters"/>
+        <Claim Uri="taf:ish:userconditions"/>
         <!--
         <Claim Uri="taf:claim:ambientdata:sessioncartridge:useragent:browser"/>
         <Claim Uri="taf:claim:ambientdata:footprintcartridge:acceptlanguage"/>
@@ -48,6 +50,8 @@
 
         <!-- Ambient data framework claims forwarding is allowed only for claims listed in this section.   -->
         <GloballyAcceptedClaims>
+            <Claim Uri="taf:request:parameters"/>
+            <Claim Uri="taf:ish:userconditions"/>
             <Claim Uri="taf:session:preview:preview_session"/>
             <!--
             <Claim Uri="taf:claim:ambientdata:sessioncartridge:useragent:browser"/>
@@ -70,14 +74,18 @@
     </Security>
 
     <!-- Cookies settings -->
-    <!--
     <Cookies>
         <CookieClaim DefaultValue="true" Name="CookieClaim"/>
         <Cookie Type="Tracking" Name="myTrackingCookie" Path="/"/>
         <Cookie Type="Session" Name="mySessionCookie" Path="/"/>
         <Cookie Type="ADF" Name="TAFContext" />
     </Cookies>
-    -->
+
+    <!-- The claim store provider that will be used. -->
+    <!-- For Java -->
+    <ClaimStoreProvider>com.tridion.ambientdata.claimstore.providers.JavaClaimStoreProvider</ClaimStoreProvider>
+    <!-- For .NET -->
+    <!--<ClaimStoreProvider>com.tridion.ambientdata.claimstore.providers.DotNetClaimStoreProvider</ClaimStoreProvider>-->
 
     <!-- Instance ID -->
     <!--

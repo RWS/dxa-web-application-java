@@ -92,4 +92,8 @@ public class EntityModelData extends ViewModelData implements CanWrapContentAndM
         this.externalContent = emd.externalContent;
         return this;
     }
+
+    public Boolean isDynamic() {
+        return this.getId().matches("\\d+-\\d+");
+    }
 }

@@ -381,7 +381,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
 
         try {
             PageMetaFactory pageMetaFactory = new PageMetaFactory(requestDto.getLocalizationId());
-            PageMeta[] taxonomyPages = pageMetaFactory.getTaxonomyPages(keyword, true);
+            PageMeta[] taxonomyPages = pageMetaFactory.getTaxonomyPages(keyword, false);
             items = Arrays.stream(taxonomyPages)
                     .map(page -> createSitemapItemFromPage(page, taxonomyId))
                     .collect(Collectors.toList());

@@ -364,7 +364,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
     }
 
     protected String getKeywordMetaUri(String taxonomyId, SitemapRequestDto requestDto, List<SitemapItemModelData> children, Keyword keyword, boolean needsToAddChildren) {
-        if (keyword ==null) return "";
+        if (keyword == null) return "";
         if (needsToAddChildren) {
             List<SitemapItemModelData> pageSitemapItems = getChildrenPages(keyword, taxonomyId, requestDto);
             children.addAll(pageSitemapItems);

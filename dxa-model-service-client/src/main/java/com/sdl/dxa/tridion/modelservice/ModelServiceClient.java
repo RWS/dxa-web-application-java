@@ -7,6 +7,7 @@ import com.sdl.web.client.impl.OAuthTokenProvider;
 import com.tridion.ambientdata.AmbientDataContext;
 import com.tridion.ambientdata.claimstore.ClaimStore;
 import com.tridion.ambientdata.web.WebClaims;
+import com.tridion.ambientdata.web.WebContext;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
@@ -19,8 +20,10 @@ import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import javax.cache.annotation.CacheResult;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -60,11 +63,11 @@ public class ModelServiceClient {
     private <T> T _makeRequest(String serviceUrl, Class<T> type, boolean isRetry, Object... params) throws ItemNotFoundInModelServiceException {
         try {
             HttpHeaders headers = new HttpHeaders();
-
+            processTafCookies(headers);
             processPreviewToken(headers);
             processAccessToken(headers, isRetry);
 
-            ResponseEntity<T> response = restTemplate.exchange(serviceUrl, HttpMethod.GET, new HttpEntity<>(headers), type, params);
+            ResponseEntity<T> response = restTemplate.exchange(serviceUrl, HttpMethod.GET, new HttpEntity<>(null, headers), type, params);
             return response.getBody();
         } catch (HttpStatusCodeException e) {
             HttpStatus statusCode = e.getStatusCode();
@@ -87,6 +90,22 @@ public class ModelServiceClient {
             String message = "Internal server error requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";
             log.warn(message);
             throw new ModelServiceInternalServerErrorException(message, e);
+        }
+    }
+
+    private void processTafCookies(HttpHeaders headers) {
+
+        for (Map.Entry<URI, Object> entry : WebContext.getCurrentClaimStore().getAll().entrySet()) {
+            String key = entry.getKey().toString();
+            if (key.startsWith("taf:")) {
+                try {
+                    byte[] bytes = entry.getValue().toString().getBytes("UTF-8");
+                    String value = Base64.getEncoder().encodeToString(bytes);
+                    headers.add(HttpHeaders.COOKIE, String.format("%s=%s", key.replace(":", "."), value));
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException("UTF-8 is not found. This is impossible.");
+                }
+            }
         }
     }
 

@@ -7,4 +7,8 @@ public class PublicationMappingNotFoundException extends LocalizationResolverExc
     public PublicationMappingNotFoundException(String message) {
         super(message);
     }
+
+    public PublicationMappingNotFoundException(String message, Throwable cause) {
+        super(message, cause);
+    }
 }

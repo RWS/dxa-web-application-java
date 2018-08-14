@@ -9,6 +9,7 @@ import com.sdl.webapp.common.api.mapping.semantic.config.EntitySemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
+import com.sdl.webapp.common.api.model.KeywordModel;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
@@ -20,6 +21,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -183,10 +186,20 @@ public class SemanticMapperImpl implements SemanticMapper {
                                 break;
                             }
                         } else if (propertyName.equals(ALL_PROPERTY)) {
-                            foundMatch = true;
-                            Map<String, String> fieldData = null;
-                            try {
-                                fieldData = fieldDataProvider.getAllFieldData();
+                            foundMatch = true;  
+                            
+                            Map<String, ?> fieldData = null; 
+                            
+                            try 
+                            {                   
+                                if(IsTypeOfMap(String.class, KeywordModel.class, field)) 
+                                {
+                                    fieldData = fieldDataProvider.<KeywordModel>getAllFieldData(KeywordModel.class);
+                                }
+                                else
+                                {
+                                    fieldData  = fieldDataProvider.getAllFieldData(String.class);
+                                }                  
                             } catch (SemanticMappingException e) {
                                 LOG.error("Exception while getting all property data for: " + field, e);
                             }
@@ -215,6 +228,23 @@ public class SemanticMapperImpl implements SemanticMapper {
         }
         LOG.trace("entity: {}", entity);
         return entity;
+    }
+
+    private static boolean IsTypeOfMap(Type mapKeyType, Type mapValueType, Field field)
+    {
+        if( field.getType() == Map.class)
+        {
+            ParameterizedType type = (ParameterizedType) field.getGenericType();
+            Type key = type.getActualTypeArguments()[0];
+            Type value = type.getActualTypeArguments()[1];
+
+            if (key == mapKeyType && value ==mapValueType)
+            {
+                return  true;
+            }
+        }
+
+        return  false;
     }
 
 

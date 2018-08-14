@@ -2,6 +2,7 @@ package com.sdl.dxa.tridion.mapping.impl;
 
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
+import com.sdl.dxa.api.datamodel.model.KeywordModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
@@ -15,6 +16,7 @@ import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldPath;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
+import com.sdl.webapp.common.api.model.KeywordModel;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -150,36 +152,50 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
         throw new UnsupportedTargetTypeException(targetType);
     }
 
-    @Override
-    public Map<String, String> getAllFieldData() throws SemanticMappingException {
-        final Map<String, String> fieldData = new HashMap<>();
-
+     @Override
+    public <T> Map<String, T> getAllFieldData(Class<T> targetType) throws SemanticMappingException {
+        
+        final Map<String, T> fieldData = new HashMap<>();
+         
         Stream<Map.Entry<String, Object>> content = getEntryStream(dataWrapper.getContent());
         Stream<Map.Entry<String, Object>> metadata = getEntryStream(dataWrapper.getMetadata());
-
-        for (Map.Entry<String, Object> entry : Stream.concat(content, metadata)
-                .collect(Collectors.toSet())) {
-            _getAllFieldsData(entry, fieldData);
-        }
-
-        return fieldData;
+                
+        for (Map.Entry<String, Object> entry : Stream.concat(content, metadata).collect(Collectors.toSet())) 
+          {
+             this.<T>_getAllFieldsData(entry, fieldData, targetType);
+          }
+          
+         return fieldData;
     }
-
+    
     private Stream<Map.Entry<String, Object>> getEntryStream(ContentModelData contentModelData) {
         return contentModelData != null ? contentModelData.entrySet().stream() : Stream.empty();
     }
-
-    private void _getAllFieldsData(Map.Entry<String, Object> entry, Map<String, String> fieldData) throws FieldConverterException {
+    
+    private <T> void _getAllFieldsData(Map.Entry<String, Object> entry, Map<String, T> fieldData ,Class<T> targetType) throws FieldConverterException {
         if ("settings".equals(entry.getKey())) {
             throw new UnsupportedOperationException("'settings' field handling"); //todo dxa2 implement
         }
 
         Object value = entry.getValue();
-        if (!fieldData.containsKey(entry.getKey()) && value != null) {
-            Optional<String> emdTcmUri = getEntityModelDataTcmUriOrNull(value);
-            fieldData.put(entry.getKey(), emdTcmUri.orElse(
-                    (String) genericSemanticModelDataConverter.convert(value, TypeDescriptor.valueOf(String.class), null,
+        if (!fieldData.containsKey(entry.getKey()) && value != null) 
+        {            
+            if (targetType == KeywordModel.class ) 
+            {
+                if (value instanceof KeywordModelData) 
+                {
+                    T keyword = (T) genericSemanticModelDataConverter.convert(value, TypeDescriptor.valueOf(KeywordModel.class), null, pipeline, this);
+                    
+                    fieldData.put(entry.getKey(), keyword);
+                }             
+            }
+            else if(targetType == String.class)
+            {
+                Optional<T> emdTcmUri = (Optional<T>) getEntityModelDataTcmUriOrNull(value);
+                fieldData.put(entry.getKey(), emdTcmUri.orElse(
+                    (T) genericSemanticModelDataConverter.convert(value, TypeDescriptor.valueOf(String.class), null,
                             pipeline, this)));
+            }   
         }
     }
 

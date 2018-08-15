@@ -1,10 +1,12 @@
 package com.sdl.dxa.common.dto;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @EqualsAndHashCode
+@ToString
 public final class DepthCounter {
 
     public static final DepthCounter UNLIMITED_DEPTH = new DepthCounter(Integer.MAX_VALUE);

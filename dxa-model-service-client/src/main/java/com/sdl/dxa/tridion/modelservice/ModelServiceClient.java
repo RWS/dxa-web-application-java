@@ -90,17 +90,18 @@ public class ModelServiceClient {
     }
 
     private void processTafCookies(HttpHeaders headers) {
-
-        for (Map.Entry<URI, Object> entry : WebContext.getCurrentClaimStore().getAll().entrySet()) {
+        ClaimStore claimStore = WebContext.getCurrentClaimStore();
+        if (claimStore == null) return;
+        for (Map.Entry<URI, Object> entry : claimStore.getAll().entrySet()) {
             String key = entry.getKey().toString();
-            if (key.startsWith("taf:")) {
-                try {
-                    byte[] bytes = entry.getValue().toString().getBytes("UTF-8");
-                    String value = Base64.getEncoder().encodeToString(bytes);
-                    headers.add(HttpHeaders.COOKIE, String.format("%s=%s", key.replace(":", "."), value));
-                } catch (UnsupportedEncodingException e) {
-                    throw new RuntimeException("UTF-8 is not found. This is impossible.");
-                }
+            if (!key.startsWith("taf:")) continue;
+            try {
+                byte[] bytes = entry.getValue().toString().getBytes("UTF-8");
+                String value = Base64.getEncoder().encodeToString(bytes);
+                headers.add(HttpHeaders.COOKIE, String.format("%s=%s", key.replace(":", "."), value));
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeException("UTF-8 encoder is not found. " +
+                        "This should be impossible. Are you using JVM?", e);
             }
         }
     }
@@ -130,11 +131,10 @@ public class ModelServiceClient {
 
     private Optional<String> _getClaimValue(URI uri, String key, Function<Object, Optional<String>> deriveValue) {
         ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
-        if (claimStore != null) {
-            Map claims = claimStore.get(uri, Map.class);
-            if (claims != null && claims.containsKey(key)) {
-                return deriveValue.apply(claims.get(key));
-            }
+        if (claimStore == null) return Optional.empty();
+        Map claims = claimStore.get(uri, Map.class);
+        if (claims != null && claims.containsKey(key)) {
+            return deriveValue.apply(claims.get(key));
         }
         return Optional.empty();
     }

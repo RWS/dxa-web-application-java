@@ -48,7 +48,7 @@ public final class InitializationUtils {
     // keep the order for internal usage
     private static List<Resource> resources;
 
-    private static Properties properties;
+    private volatile static Properties properties;
 
     private InitializationUtils() {
     }

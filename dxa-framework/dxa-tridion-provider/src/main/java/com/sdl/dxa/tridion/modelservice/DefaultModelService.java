@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.modelservice;
 
+import com.google.common.base.Strings;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
@@ -56,7 +57,7 @@ public class DefaultModelService implements PageModelService, EntityModelService
             T page = modelServiceClient.getForType(serviceUrl, type,
                     pageRequest.getUriType(),
                     pageRequest.getPublicationId(),
-                    pageRequest.getPath(),
+                    removeLeadingAndEndingSlash(pageRequest.getPath()),
                     pageRequest.getIncludePages());
             log.trace("Loaded '{}' for pageRequest '{}'", page, pageRequest);
             return page;
@@ -65,6 +66,11 @@ public class DefaultModelService implements PageModelService, EntityModelService
         } catch (ItemNotFoundInModelServiceException e) {
             throw new PageNotFoundException("Cannot load page '" + pageRequest + "'", e);
         }
+    }
+
+    private String removeLeadingAndEndingSlash(String path) {
+        if (Strings.isNullOrEmpty(path)) return "";
+        return path.replaceAll("^/+([^/].*)", "$1").replaceAll("(.*[^/])/+$", "$1");
     }
 
     /**

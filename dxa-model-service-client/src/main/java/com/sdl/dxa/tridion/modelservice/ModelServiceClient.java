@@ -52,10 +52,7 @@ public class ModelServiceClient {
     }
 
     @CacheResult(cacheName = "model-service",
-            exceptionCacheName = "failures", cachedExceptions = {
-            ItemNotFoundInModelServiceException.class,
-            ModelServiceBadRequestException.class
-    })
+                 exceptionCacheName = "failures", cachedExceptions = {ItemNotFoundInModelServiceException.class})
     public <T> T getForType(String serviceUrl, Class<T> type, Object... params) throws ItemNotFoundInModelServiceException {
         return _makeRequest(serviceUrl, type, false, params);
     }
@@ -66,29 +63,29 @@ public class ModelServiceClient {
             processTafCookies(headers);
             processPreviewToken(headers);
             processAccessToken(headers, isRetry);
-
+            log.warn("Sending GET request to " + serviceUrl + " with parameters: " + Arrays.toString(params));
             ResponseEntity<T> response = restTemplate.exchange(serviceUrl, HttpMethod.GET, new HttpEntity<>(null, headers), type, params);
             return response.getBody();
         } catch (HttpStatusCodeException e) {
             HttpStatus statusCode = e.getStatusCode();
-            log.info("Got response with a status code {}", statusCode);
+            log.info("Got error response with a status code {} and body '{}' with message '{}' and response headers: {}", statusCode, e.getResponseBodyAsString(), e.getMessage(), e.getResponseHeaders() );
 
             if (statusCode.is4xxClientError()) {
                 if (statusCode == HttpStatus.NOT_FOUND) {
                     String message = "Item not found requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";
-                    log.info(message);
+                    log.info(message, e);
                     throw new ItemNotFoundInModelServiceException(message, e);
                 } else if (statusCode == HttpStatus.UNAUTHORIZED && !isRetry) {
-                    log.info("Got 401 status code, reason: {}, check if token is expired and retry if so", statusCode.getReasonPhrase());
+                    log.warn("Got 401 status code, reason: {}, check if token is expired and retry if so ", statusCode.getReasonPhrase(), e);
                     return _makeRequest(serviceUrl, type, true, params);
                 } else {
-                    String message = "Wrong request to the model service: " + serviceUrl + ", reason: " + statusCode.getReasonPhrase() + "error code: " + statusCode.value();
-                    log.info(message);
+                    String message = "Wrong request to the model service: " + serviceUrl + ", reason: " + statusCode.getReasonPhrase() + " error code: " + statusCode.value();
+                    log.error(message, e);
                     throw new ModelServiceBadRequestException(message, e);
                 }
             }
-            String message = "Internal server error requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";
-            log.warn(message);
+            String message = "Internal server error (status code: " + statusCode + ", " + e.getResponseBodyAsString() + ") requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";
+            log.error(message);
             throw new ModelServiceInternalServerErrorException(message, e);
         }
     }
@@ -104,7 +101,7 @@ public class ModelServiceClient {
                 String value = Base64.getEncoder().encodeToString(bytes);
                 headers.add(HttpHeaders.COOKIE, String.format("%s=%s", key.replace(":", "."), value));
             } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("UTF-8 encoder is not found. This should be impossible. Are you using JVM?");
+                throw new RuntimeException("UTF-8 encoder is not found. This should be impossible. Are you using JVM?", e);
             }
         }
     }

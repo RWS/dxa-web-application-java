@@ -53,7 +53,7 @@ public class DefaultModelServiceTest {
         PageModelData modelData = new PageModelData();
         modelData.setId("123");
         when(modelServiceClient.getForType(eq("/model-service/page"), eq(PageModelData.class), eq("tcm"), eq(42),
-                eq("/path"), eq(PageRequestDto.PageInclusion.INCLUDE))).thenReturn(modelData);
+                eq("path"), eq(PageRequestDto.PageInclusion.INCLUDE))).thenReturn(modelData);
 
         //when
         PageModelData pageModelData = service.loadPageModel(pageRequest);
@@ -69,7 +69,7 @@ public class DefaultModelServiceTest {
                 .uriType("tcm").includePages(PageRequestDto.PageInclusion.INCLUDE)
                 .build();
         when(modelServiceClient.getForType(eq("/model-service/page?raw=true"), eq(String.class), eq("tcm"), eq(666),
-                eq("/path"), eq(PageRequestDto.PageInclusion.INCLUDE))).thenReturn("hello");
+                eq("path"), eq(PageRequestDto.PageInclusion.INCLUDE))).thenReturn("hello");
 
         //when
         String pageModelData = service.loadPageContent(pageRequest);

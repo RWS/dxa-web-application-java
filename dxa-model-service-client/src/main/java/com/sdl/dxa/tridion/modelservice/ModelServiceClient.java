@@ -63,13 +63,11 @@ public class ModelServiceClient {
             processTafCookies(headers);
             processPreviewToken(headers);
             processAccessToken(headers, isRetry);
-            log.warn("Sending GET request to " + serviceUrl + " with parameters: " + Arrays.toString(params));
+            log.debug("Sending GET request to " + serviceUrl + " with parameters: " + Arrays.toString(params));
             ResponseEntity<T> response = restTemplate.exchange(serviceUrl, HttpMethod.GET, new HttpEntity<>(null, headers), type, params);
             return response.getBody();
         } catch (HttpStatusCodeException e) {
             HttpStatus statusCode = e.getStatusCode();
-            log.info("Got error response with a status code {} and body '{}' with message '{}' and response headers: {}", statusCode, e.getResponseBodyAsString(), e.getMessage(), e.getResponseHeaders() );
-
             if (statusCode.is4xxClientError()) {
                 if (statusCode == HttpStatus.NOT_FOUND) {
                     String message = "Item not found requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";
@@ -79,6 +77,7 @@ public class ModelServiceClient {
                     log.warn("Got 401 status code, reason: {}, check if token is expired and retry if so ", statusCode.getReasonPhrase(), e);
                     return _makeRequest(serviceUrl, type, true, params);
                 } else {
+                    log.warn("Got error response with a status code {} and body '{}' with message '{}' and response headers: {}", statusCode, e.getResponseBodyAsString(), e.getMessage(), e.getResponseHeaders() );
                     String message = "Wrong request to the model service: " + serviceUrl + ", reason: " + statusCode.getReasonPhrase() + " error code: " + statusCode.value();
                     log.error(message, e);
                     throw new ModelServiceBadRequestException(message, e);
@@ -91,17 +90,17 @@ public class ModelServiceClient {
     }
 
     private void processTafCookies(HttpHeaders headers) {
-        ClaimStore claimStore = WebContext.getCurrentClaimStore();
-        if (claimStore == null) return;
-        for (Map.Entry<URI, Object> entry : claimStore.getAll().entrySet()) {
+
+        for (Map.Entry<URI, Object> entry : WebContext.getCurrentClaimStore().getAll().entrySet()) {
             String key = entry.getKey().toString();
-            if (!key.startsWith("taf:")) continue;
-            try {
-                byte[] bytes = entry.getValue().toString().getBytes("UTF-8");
-                String value = Base64.getEncoder().encodeToString(bytes);
-                headers.add(HttpHeaders.COOKIE, String.format("%s=%s", key.replace(":", "."), value));
-            } catch (UnsupportedEncodingException e) {
-                throw new RuntimeException("UTF-8 encoder is not found. This should be impossible. Are you using JVM?", e);
+            if (key.startsWith("taf:")) {
+                try {
+                    byte[] bytes = entry.getValue().toString().getBytes("UTF-8");
+                    String value = Base64.getEncoder().encodeToString(bytes);
+                    headers.add(HttpHeaders.COOKIE, String.format("%s=%s", key.replace(":", "."), value));
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeException("UTF-8 is not found. This is impossible.");
+                }
             }
         }
     }
@@ -131,10 +130,11 @@ public class ModelServiceClient {
 
     private Optional<String> _getClaimValue(URI uri, String key, Function<Object, Optional<String>> deriveValue) {
         ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
-        if (claimStore == null) return Optional.empty();
-        Map claims = claimStore.get(uri, Map.class);
-        if (claims != null && claims.containsKey(key)) {
-            return deriveValue.apply(claims.get(key));
+        if (claimStore != null) {
+            Map claims = claimStore.get(uri, Map.class);
+            if (claims != null && claims.containsKey(key)) {
+                return deriveValue.apply(claims.get(key));
+            }
         }
         return Optional.empty();
     }

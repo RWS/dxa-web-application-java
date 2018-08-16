@@ -44,6 +44,7 @@ public final class MimeUtils {
         MIME_TYPES.put("dtd", "application/xml-dtd");
         MIME_TYPES.put("dvi", "application/x-dvi");
         MIME_TYPES.put("dxr", "application/x-director");
+        MIME_TYPES.put("eot", "application/vnd.ms-fontobject");
         MIME_TYPES.put("eps", "application/postscript");
         MIME_TYPES.put("etx", "text/x-setext");
         MIME_TYPES.put("exe", "application/octet-stream");
@@ -95,6 +96,7 @@ public final class MimeUtils {
         MIME_TYPES.put("nc", "application/x-netcdf");
         MIME_TYPES.put("oda", "application/oda");
         MIME_TYPES.put("ogg", "application/ogg");
+        MIME_TYPES.put("otf", "application/x-font-opentype");
         MIME_TYPES.put("pbm", "image/x-portable-bitmap");
         MIME_TYPES.put("pdb", "chemical/x-pdb");
         MIME_TYPES.put("pdf", "application/pdf");
@@ -106,7 +108,6 @@ public final class MimeUtils {
         MIME_TYPES.put("ppt", "application/vnd.ms-powerpoint");
         MIME_TYPES.put("ps", "application/postscript");
         MIME_TYPES.put("qt", "video/quicktime");
-        MIME_TYPES.put("ra", "audio/x-pn-realaudio");
         MIME_TYPES.put("ra", "audio/x-realaudio");
         MIME_TYPES.put("ram", "audio/x-pn-realaudio");
         MIME_TYPES.put("ras", "image/x-cmu-raster");
@@ -114,11 +115,11 @@ public final class MimeUtils {
         MIME_TYPES.put("rgb", "image/x-rgb");
         MIME_TYPES.put("rm", "audio/x-pn-realaudio");
         MIME_TYPES.put("roff", "application/x-troff");
-        MIME_TYPES.put("rpm", "application/x-rpm");
         MIME_TYPES.put("rpm", "audio/x-pn-realaudio");
         MIME_TYPES.put("rtf", "application/rtf");
         MIME_TYPES.put("rtx", "text/richtext");
         MIME_TYPES.put("ser", "application/java-serialized-object");
+        MIME_TYPES.put("sfnt", "application/font-sfnt");
         MIME_TYPES.put("sgml", "text/sgml");
         MIME_TYPES.put("sgm", "text/sgml");
         MIME_TYPES.put("sh", "application/x-sh");
@@ -150,6 +151,7 @@ public final class MimeUtils {
         MIME_TYPES.put("tif", "image/tiff");
         MIME_TYPES.put("tr", "application/x-troff");
         MIME_TYPES.put("tsv", "text/tab-separated-values");
+        MIME_TYPES.put("ttf", "application/x-font-truetype");
         MIME_TYPES.put("txt", "text/plain");
         MIME_TYPES.put("ustar", "application/x-ustar");
         MIME_TYPES.put("vcd", "application/x-cdlink");
@@ -161,6 +163,8 @@ public final class MimeUtils {
         MIME_TYPES.put("wmlsc", "application/vnd.wap.wmlscriptc");
         MIME_TYPES.put("wmls", "text/vnd.wap.wmlscript");
         MIME_TYPES.put("wml", "text/vnd.wap.wml");
+        MIME_TYPES.put("woff", "application/font-woff");
+        MIME_TYPES.put("woff2", "application/font-woff2");
         MIME_TYPES.put("wrl", "model/vrml");
         MIME_TYPES.put("wtls-ca-certificate", "application/vnd.wap.wtls-ca-certificate");
         MIME_TYPES.put("xbm", "image/x-xbitmap");
@@ -168,7 +172,6 @@ public final class MimeUtils {
         MIME_TYPES.put("xhtml", "application/xhtml+xml");
         MIME_TYPES.put("xls", "application/vnd.ms-excel");
         MIME_TYPES.put("xml", "application/xml");
-        MIME_TYPES.put("xpm", "image/x-xpixmap");
         MIME_TYPES.put("xpm", "image/x-xpixmap");
         MIME_TYPES.put("xsl", "application/xml");
         MIME_TYPES.put("xslt", "application/xslt+xml");

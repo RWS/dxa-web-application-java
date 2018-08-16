@@ -110,7 +110,10 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                 log.debug("Expected class is not set explicitly, trying to get it from MvcData");
                 modelType = viewModelRegistry.getViewModelType(mvcData);
             }
-
+            if (modelType == null) throw new IllegalStateException("Could not determine ModelType " +
+                    (expectedClass != null
+                            ? " from pre-selected class " + expectedClass.getCanonicalName()
+                            : " from MvcData class " + mvcData.getClass().getCanonicalName()));
             LocalizationAwareCacheKey key = entitiesCache.getSpecificKey(modelData);
             synchronized (this) {
                 if (entitiesCache.containsKey(key)) {
@@ -157,8 +160,9 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             return semanticMapper.createEntity(viewModelType, semanticFields,
                     DefaultSemanticFieldDataProvider.getFor(modelData, semanticSchema));
         } catch (SemanticMappingException e) {
-            log.warn("Cannot do a semantic mapping for class '{}', model data '{}', localization '{}'", viewModelType, modelData, localization);
-            throw e;
+            String message = "Cannot do a semantic mapping for class '" + viewModelType +
+                    "', model data '" + modelData + "', localization '" + localization + "'";
+            throw new SemanticMappingException(message, e);
         }
     }
 

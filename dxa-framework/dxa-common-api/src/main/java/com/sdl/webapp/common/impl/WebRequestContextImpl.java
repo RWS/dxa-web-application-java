@@ -205,20 +205,20 @@ public class WebRequestContextImpl implements WebRequestContext {
             resolveLocalization = localizationResolver.getLocalization(getFullUrl());
         } catch (LocalizationResolverException e) {
             if (unknownLocalizationHandler != null) {
-                log.info("Localization is not resolved for {}, Localization handler is set, trying to resolve using it", getFullUrl());
+                log.error("Localization is not resolved for {}, Localization handler is set, trying to resolve using it", getFullUrl(), e);
                 resolveLocalization = unknownLocalizationHandler.handleUnknown(e, servletRequest);
                 if (resolveLocalization == null) {
-                    log.info("Unknown Localization handler is set but localization wasn't resolved with it, fallback");
+                    log.error("Unknown Localization handler is set but localization wasn't resolved with it, fallback", e);
                     LocalizationNotResolvedException fallbackException = unknownLocalizationHandler.getFallbackException(e, servletRequest);
                     if (fallbackException != null) {
                         throw fallbackException;
                     }
-                    log.info("Fallback exception from Unknown Localization Handler is null, fallback to default handling");
+                    log.error("Fallback exception from Unknown Localization Handler is null, fallback to default handling.", e);
                 }
             }
-            if (resolveLocalization == null) {
-                throw new LocalizationNotFoundException("Localization not found", e);
-            }
+        }
+        if (resolveLocalization == null) {
+            throw new LocalizationNotFoundException("Localization not found for " + getFullUrl());
         }
         if (log.isTraceEnabled()) {
             log.trace("Localization for {} is: [{}] {}", getFullUrl(), resolveLocalization.getId(), resolveLocalization.getPath());
@@ -261,7 +261,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         return resolvePixelRatio;
     }
 
-    private class Width {
+    private static class Width {
 
         static final int DEFAULT_WIDTH = 1024;
 

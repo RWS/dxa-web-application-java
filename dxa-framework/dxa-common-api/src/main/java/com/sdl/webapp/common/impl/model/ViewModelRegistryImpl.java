@@ -17,7 +17,9 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -74,14 +76,21 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     @Cacheable
     public Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames, @Nullable Class<? extends EntityModel> expectedClass) throws DxaException {
         Class<? extends ViewModel> viewModelType;
+        List<Exception> exceptions = new ArrayList<>();
         for (String fullyQualifiedName : semanticTypeNames) {
-            viewModelType = getMappedModelTypes(fullyQualifiedName, expectedClass);
+            try {
+                viewModelType = getMappedModelTypes(fullyQualifiedName, expectedClass);
+            } catch (IllegalStateException ex) {
+                //means mapping not found
+                exceptions.add(ex);
+                continue;
+            }
             if (viewModelType != null) {
                 return viewModelType;
             }
         }
         throw new DxaException("Cannot determine view model type for semantic schema names: '" + semanticTypeNames + "'. Please make sure " +
-                "that an entry is registered for this view name in the ViewModelRegistry.");
+                "that an entry is registered for this view name in the ViewModelRegistry. Collected exceptions: " + exceptions);
     }
 
     @Override
@@ -151,7 +160,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             return entry.get();
         }
 
-        return entries.stream()
+        Class<? extends ViewModel> classForModelData = entries.stream()
                 .filter(mvcData -> {
                     MvcData key = mvcData.getKey();
                     return key.getViewName().equals(viewData.getViewName()) &&
@@ -160,6 +169,8 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                 .map(Map.Entry::getValue)
                 .findFirst()
                 .orElse(null);
+        if (classForModelData != null) return classForModelData;
+        throw new IllegalStateException("Cannot detect ViewModel for ViewData " + viewData);
     }
 
     /**

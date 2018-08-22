@@ -1,5 +1,6 @@
 package com.sdl.dxa.api.datamodel.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.sdl.dxa.api.datamodel.Constants;
 import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
@@ -91,5 +92,10 @@ public class EntityModelData extends ViewModelData implements CanWrapContentAndM
         this.binaryContent = emd.binaryContent;
         this.externalContent = emd.externalContent;
         return this;
+    }
+
+    @JsonIgnore
+    public Boolean isDynamic() {
+        return this.getId().matches("\\d+-\\d+");
     }
 }

@@ -10,6 +10,8 @@ import org.springframework.web.WebApplicationInitializer;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 
+import java.util.Properties;
+
 import static com.sdl.webapp.common.util.InitializationUtils.loadDxaProperties;
 import static com.sdl.webapp.common.util.InitializationUtils.registerFilter;
 
@@ -18,14 +20,15 @@ public class ExternalFiltersWebConfiguration implements WebApplicationInitialize
 
     @Override
     public void onStartup(ServletContext servletContext) throws ServletException {
-        log.trace("Registration for XPM and preview filters if needed...");
-        if (Boolean.parseBoolean(loadDxaProperties().getProperty("dxa.web.xpm.enabled"))) {
-            log.debug("dxa.web.xpm.enabled = true, thus registering XPM");
+        log.info("Registration for XPM and preview filters if needed...");
+        Properties properties = loadDxaProperties();
+        if (Boolean.parseBoolean(properties.getProperty("dxa.web.xpm.enabled"))) {
+            log.info("dxa.web.xpm.enabled = true, thus registering XPM");
             registerXpm(servletContext);
         }
 
-        if (Boolean.parseBoolean(loadDxaProperties().getProperty("dxa.web.adf.enabled"))) {
-            log.debug("dxa.web.adf.enabled = true, thus registering ADF");
+        if (Boolean.parseBoolean(properties.getProperty("dxa.web.adf.enabled"))) {
+            log.info("dxa.web.adf.enabled = true, thus registering ADF");
             registerAdf(servletContext);
         }
     }

@@ -347,20 +347,30 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
 
         if (requestDto.getExpandLevels().isNotTooDeep()) {
             keyword.getKeywordChildren().forEach(child -> children.add(createTaxonomyNode(child, requestDto.nextExpandLevel())));
-
-            if (keyword.getReferencedContentCount() > 0 && requestDto.getNavigationFilter().getDescendantLevels() != 0) {
-                List<SitemapItemModelData> pageSitemapItems = getChildrenPages(keyword, taxonomyId, requestDto);
-
-                taxonomyNodeUrl = findIndexPageUrl(pageSitemapItems).orElse(null);
-                log.trace("taxonomyNodeUrl = {}", taxonomyNodeUrl);
-
-                children.addAll(pageSitemapItems);
-            }
         }
+
+        taxonomyNodeUrl = getKeywordMetaUri(taxonomyId, requestDto, children, keyword, needsToAddChildren(keyword, requestDto));
+        log.trace("taxonomyNodeUrl = {}", taxonomyNodeUrl);
 
         children.forEach(child -> child.setTitle(removeSequenceFromPageTitle(child.getTitle())));
 
         return createTaxonomyNodeFromKeyword(keyword, taxonomyId, taxonomyNodeUrl, new TreeSet<>(children));
+    }
+
+    private boolean needsToAddChildren(@NotNull Keyword keyword, @NotNull SitemapRequestDto requestDto) {
+        return requestDto.getExpandLevels().isNotTooDeep() &&
+            keyword.getReferencedContentCount() > 0 &&
+            requestDto.getNavigationFilter().getDescendantLevels() != 0;
+    }
+
+    protected String getKeywordMetaUri(String taxonomyId, SitemapRequestDto requestDto, List<SitemapItemModelData> children, Keyword keyword, boolean needsToAddChildren) {
+        if (keyword == null) return "";
+        if (needsToAddChildren) {
+            List<SitemapItemModelData> pageSitemapItems = getChildrenPages(keyword, taxonomyId, requestDto);
+            children.addAll(pageSitemapItems);
+            return findIndexPageUrl(pageSitemapItems).orElse(null);
+        }
+        return "";
     }
 
     private List<SitemapItemModelData> getChildrenPages(@NotNull Keyword keyword, @NotNull String taxonomyId, @NotNull SitemapRequestDto requestDto) {

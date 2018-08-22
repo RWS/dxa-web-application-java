@@ -49,10 +49,7 @@ public class ModelServiceClient {
     }
 
     @CacheResult(cacheName = "model-service",
-            exceptionCacheName = "failures", cachedExceptions = {
-            ItemNotFoundInModelServiceException.class,
-            ModelServiceBadRequestException.class
-    })
+                 exceptionCacheName = "failures", cachedExceptions = {ItemNotFoundInModelServiceException.class})
     public <T> T getForType(String serviceUrl, Class<T> type, Object... params) throws ItemNotFoundInModelServiceException {
         return _makeRequest(serviceUrl, type, false, params);
     }
@@ -60,34 +57,40 @@ public class ModelServiceClient {
     private <T> T _makeRequest(String serviceUrl, Class<T> type, boolean isRetry, Object... params) throws ItemNotFoundInModelServiceException {
         try {
             HttpHeaders headers = new HttpHeaders();
-
+            processModuleSpecificCookies(headers);
             processPreviewToken(headers);
             processAccessToken(headers, isRetry);
-
-            ResponseEntity<T> response = restTemplate.exchange(serviceUrl, HttpMethod.GET, new HttpEntity<>(headers), type, params);
+            log.debug("Sending GET request to " + serviceUrl + " with parameters: " + Arrays.toString(params));
+            ResponseEntity<T> response = restTemplate.exchange(serviceUrl, HttpMethod.GET, new HttpEntity<>(null, headers), type, params);
             return response.getBody();
         } catch (HttpStatusCodeException e) {
             HttpStatus statusCode = e.getStatusCode();
-            log.info("Got response with a status code {}", statusCode);
-
             if (statusCode.is4xxClientError()) {
                 if (statusCode == HttpStatus.NOT_FOUND) {
                     String message = "Item not found requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";
-                    log.info(message);
+                    log.info(message, e);
                     throw new ItemNotFoundInModelServiceException(message, e);
                 } else if (statusCode == HttpStatus.UNAUTHORIZED && !isRetry) {
-                    log.info("Got 401 status code, reason: {}, check if token is expired and retry if so", statusCode.getReasonPhrase());
+                    log.warn("Got 401 status code, reason: {}, check if token is expired and retry if so ", statusCode.getReasonPhrase(), e);
                     return _makeRequest(serviceUrl, type, true, params);
                 } else {
-                    String message = "Wrong request to the model service: " + serviceUrl + ", reason: " + statusCode.getReasonPhrase() + "error code: " + statusCode.value();
-                    log.info(message);
+                    log.warn("Got error response with a status code {} and body '{}' with message '{}' and response headers: {}", statusCode, e.getResponseBodyAsString(), e.getMessage(), e.getResponseHeaders() );
+                    String message = "Wrong request to the model service: " + serviceUrl + ", reason: " + statusCode.getReasonPhrase() + " error code: " + statusCode.value();
+                    log.error(message, e);
                     throw new ModelServiceBadRequestException(message, e);
                 }
             }
-            String message = "Internal server error requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";
-            log.warn(message);
+            String message = "Internal server error (status code: " + statusCode + ", " + e.getResponseBodyAsString() + ") requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";
+            log.error(message);
             throw new ModelServiceInternalServerErrorException(message, e);
         }
+    }
+
+    /**
+     * This method is subject to extend the behaviour of ModelService Client.
+     * @param headers Http Headers to be extended in particular module
+     */
+    protected void processModuleSpecificCookies(HttpHeaders headers) {
     }
 
     private void processPreviewToken(HttpHeaders headers) {
@@ -115,11 +118,10 @@ public class ModelServiceClient {
 
     private Optional<String> _getClaimValue(URI uri, String key, Function<Object, Optional<String>> deriveValue) {
         ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
-        if (claimStore != null) {
-            Map claims = claimStore.get(uri, Map.class);
-            if (claims != null && claims.containsKey(key)) {
-                return deriveValue.apply(claims.get(key));
-            }
+        if (claimStore == null) return Optional.empty();
+        Map claims = claimStore.get(uri, Map.class);
+        if (claims != null && claims.containsKey(key)) {
+            return deriveValue.apply(claims.get(key));
         }
         return Optional.empty();
     }

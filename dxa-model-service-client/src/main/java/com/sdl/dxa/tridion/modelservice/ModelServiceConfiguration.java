@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.modelservice;
 
+import com.google.common.base.Strings;
 import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.web.client.impl.OAuthTokenProvider;
 import com.sdl.web.content.client.configuration.impl.BaseClientConfigurationLoader;
@@ -65,13 +66,17 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
         this.navigationApiUrl = navigationApiUrl;
         this.onDemandApiUrl = onDemandApiUrl;
 
-        if (modelServiceUrl != null) {
+        if (!Strings.isNullOrEmpty(modelServiceUrl)) {
             log.debug("Using Model Service Url {} from properties", modelServiceUrl);
             this.serviceUrl = modelServiceUrl;
         } else {
-            Assert.notNull(modelServiceKey, "At least one of two properties required: dxa.model.service.key, dxa.model.service.url");
-            getServiceUrl(); // preload url
+            Assert.notNull(modelServiceKey, "At least 'dxa.model.service.key' property is required");
+            this.serviceUrl = getServiceUrl(); // preload url
         }
+        if (Strings.isNullOrEmpty(serviceUrl)) {
+            throw new IllegalStateException("Model service URL is not defined");
+        }
+        log.debug("Model Service Url is {}", serviceUrl);
     }
 
     @Override

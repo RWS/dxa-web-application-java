@@ -48,7 +48,7 @@ public final class InitializationUtils {
     // keep the order for internal usage
     private static List<Resource> resources;
 
-    private static Properties properties;
+    private volatile static Properties properties;
 
     private InitializationUtils() {
     }
@@ -109,7 +109,7 @@ public final class InitializationUtils {
             List<Resource> availableResources = new ArrayList<>();
             //note that the order of properties is important because of overriding of properties
             availableResources.add(new ClassPathResource("dxa.defaults.properties"));
-            availableResources.addAll(Arrays.asList(patternResolver.getResources("classpath*:/dxa.modules.*.properties")));
+            availableResources.addAll(Arrays.asList(patternResolver.getResources("classpath*:/dxa.modules.**.properties")));
             ClassPathResource dxaProperties = new ClassPathResource("dxa.properties");
             if (dxaProperties.exists()) {
                 availableResources.add(dxaProperties);

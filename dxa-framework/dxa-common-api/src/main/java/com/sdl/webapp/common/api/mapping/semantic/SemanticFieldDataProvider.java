@@ -39,10 +39,11 @@ public interface SemanticFieldDataProvider {
     /**
      * Gets the data for the semantic field with the special property name "_all".
      *
-     * @return The data for the "_all" field.
+     * @param targetType The expected type of the field to be returned.
+     * @return The data for the "_all" fields having the same types as specified using "targetType"
      * @throws com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException If an error occurs and the data for the field cannot be retrieved.
-     */
-    Map<String, String> getAllFieldData() throws SemanticMappingException;
+     */    
+    <T> Map<String, T> getAllFieldData(Class<T> targetType) throws SemanticMappingException;
 
     /**
      * Get semantic schema for current data provider. Default implementation returns {@code null} and needed for compatibility.

@@ -10,7 +10,6 @@ import java.util.Map;
  * SemanticMapper is intended to help getting a DXA entity filled up with data using semantic mappings of a model.
  * @dxa.publicApi
  */
-@FunctionalInterface
 public interface SemanticMapper {
 
     /**
@@ -28,4 +27,9 @@ public interface SemanticMapper {
     <T extends ViewModel> T createEntity(Class<? extends T> entityClass,
                                          Map<FieldSemantics, SemanticField> semanticFields,
                                          SemanticFieldDataProvider fieldDataProvider) throws SemanticMappingException;
+
+    <T extends ViewModel> void mapSemanticFields(Class<? extends T> entityClass,
+                                                         Map<FieldSemantics, SemanticField> semanticFields,
+                                                         SemanticFieldDataProvider fieldDataProvider,
+                                                         T entity);
 }

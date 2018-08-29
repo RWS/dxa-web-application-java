@@ -42,6 +42,7 @@
         <dxa-module-audience-manager.version>${dxa.version}</dxa-module-audience-manager.version>
         <dxa-module-ugc.version>${dxa.version}</dxa-module-ugc.version>
         <dxa-module-test.version>${dxa.version}</dxa-module-test.version>
+        <dxa-module-tridion-docs-mashup.version>${dxa.version}</dxa-module-tridion-docs-mashup.version>
         <!-- /DXA Versions -->
 
         <!-- Apache -->
@@ -319,6 +320,12 @@
                 <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-test</artifactId>
                 <version>${dxa-module-test.version}</version>
+                <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-tridion-docs-mashup</artifactId>
+                <version>${dxa-module-tridion-docs-mashup.version}</version>
                 <scope>runtime</scope>
             </dependency>
             <!--endregion-->

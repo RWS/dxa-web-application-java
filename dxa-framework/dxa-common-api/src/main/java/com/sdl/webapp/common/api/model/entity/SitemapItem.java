@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -29,6 +30,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Data
 @ToString(exclude = {"parent"})
 @EqualsAndHashCode(callSuper = true, of = {"title", "originalTitle", "type", "publishedDate"})
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Slf4j
 @NoArgsConstructor
 public class SitemapItem extends AbstractEntityModel {

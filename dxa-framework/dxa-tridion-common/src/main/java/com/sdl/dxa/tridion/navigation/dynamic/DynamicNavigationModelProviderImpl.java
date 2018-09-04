@@ -347,7 +347,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
         }
 
         String taxonomyNodeUrl = getKeywordMetaUri(taxonomyId, requestDto, children, keyword, needsToAddChildren(keyword, requestDto));
-        log.trace("taxonomyNodeUrl = {}", taxonomyNodeUrl);
+        log.trace("taxonomyNodeUrl = {} found for taxonomyId = {}", taxonomyNodeUrl, taxonomyId);
 
         children.forEach(child -> child.setTitle(removeSequenceFromPageTitle(child.getTitle())));
 

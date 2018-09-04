@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.ComparisonChain;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -19,18 +20,14 @@ import java.util.TreeSet;
  * @dxa.publicApi
  */
 @Data
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @EqualsAndHashCode(callSuper = true)
 public class TaxonomyNode extends SitemapItem {
 
-    private static final Comparator<SitemapItem> SITEMAP_SORT_BY_TITLE_AND_ID = new NullSafeComparator<>(new Comparator<SitemapItem>() {
-        @Override
-        public int compare(SitemapItem o1, SitemapItem o2) {
-            return ComparisonChain.start()
-                    .compare(o1.getOriginalTitle(), o2.getOriginalTitle())
-                    .compare(o1.getId(), o2.getId())
-                    .result();
-        }
-    }, true);
+    private static final Comparator<SitemapItem> SITEMAP_SORT_BY_TITLE_AND_ID = new NullSafeComparator<>((o1, o2) -> ComparisonChain.start()
+            .compare(o1.getOriginalTitle(), o2.getOriginalTitle())
+            .compare(o1.getId(), o2.getId())
+            .result(), true);
 
     @JsonProperty("Key")
     private String key;

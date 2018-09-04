@@ -172,6 +172,15 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>tridion-docs-mashup-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-tridion-docs-mashup</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
 
     </profiles>
 

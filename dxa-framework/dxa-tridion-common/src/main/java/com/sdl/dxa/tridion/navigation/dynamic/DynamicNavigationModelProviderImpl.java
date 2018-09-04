@@ -410,7 +410,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
                 .setPublishedDate(new DateTime(page.getLastPublicationDate()));
     }
 
-    private TaxonomyNodeModelData createTaxonomyNodeFromKeyword(@NotNull Keyword keyword, String taxonomyId, String taxonomyNodeUrl, SortedSet<SitemapItemModelData> children) {
+    protected TaxonomyNodeModelData createTaxonomyNodeFromKeyword(@NotNull Keyword keyword, String taxonomyId, String taxonomyNodeUrl, SortedSet<SitemapItemModelData> children) {
         boolean isRoot = Objects.equals(keyword.getTaxonomyURI(), keyword.getKeywordURI());
         String keywordId = String.valueOf(TcmUtils.getItemId(keyword.getKeywordURI()));
 

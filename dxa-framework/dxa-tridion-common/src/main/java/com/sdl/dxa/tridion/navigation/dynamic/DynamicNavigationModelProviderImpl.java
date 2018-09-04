@@ -1,10 +1,12 @@
 package com.sdl.dxa.tridion.navigation.dynamic;
 
+import com.google.common.base.Strings;
 import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.common.util.PathUtils;
+import com.sdl.dxa.exception.DxaTridionCommonException;
 import com.sdl.web.api.dynamic.taxonomies.WebTaxonomyFactory;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.TaxonomyUrisHolder;
@@ -83,8 +85,6 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
     @Override
     @Cacheable(value = "sitemaps", key = "{ #root.methodName, #requestDto }")
     public Optional<TaxonomyNodeModelData> getNavigationModel(@NotNull SitemapRequestDto requestDto) {
-        Assert.notNull(requestDto.getLocalizationId(), "Localization ID is required to load dynamic navigation");
-
         List<Keyword> roots = getTaxonomyRoots(requestDto, keyword -> keyword.getKeywordName().contains(taxonomyNavigationMarker));
         if (roots.isEmpty()) {
             log.error("No Navigation Taxonomy Found in Localization [{}]. Ensure a Taxonomy with '{}' in its title is published",
@@ -157,7 +157,6 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
      */
     @NotNull
     private List<Keyword> getTaxonomyRoots(@NotNull SitemapRequestDto requestDto, @NotNull() Predicate<Keyword> filter) {
-        Assert.notNull(requestDto.getLocalizationId(), "Localization ID is required to load taxonomy roots");
         Assert.notNull(requestDto.getNavigationFilter(), "Navigation Filter is required to load taxonomy roots");
 
         NavigationFilter navigationFilter = requestDto.getNavigationFilter();
@@ -341,15 +340,13 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
         log.debug("Creating taxonomy node for keyword {} and request {}", keyword.getTaxonomyURI(), requestDto);
         String taxonomyId = String.valueOf(TcmUtils.getItemId(keyword.getTaxonomyURI()));
 
-        String taxonomyNodeUrl = null;
-
         List<SitemapItemModelData> children = new ArrayList<>();
 
         if (requestDto.getExpandLevels().isNotTooDeep()) {
             keyword.getKeywordChildren().forEach(child -> children.add(createTaxonomyNode(child, requestDto.nextExpandLevel())));
         }
 
-        taxonomyNodeUrl = getKeywordMetaUri(taxonomyId, requestDto, children, keyword, needsToAddChildren(keyword, requestDto));
+        String taxonomyNodeUrl = getKeywordMetaUri(taxonomyId, requestDto, children, keyword, needsToAddChildren(keyword, requestDto));
         log.trace("taxonomyNodeUrl = {}", taxonomyNodeUrl);
 
         children.forEach(child -> child.setTitle(removeSequenceFromPageTitle(child.getTitle())));
@@ -376,20 +373,17 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
     private List<SitemapItemModelData> getChildrenPages(@NotNull Keyword keyword, @NotNull String taxonomyId, @NotNull SitemapRequestDto requestDto) {
         log.trace("Getting SitemapItems for all classified Pages (ordered by Page Title, including sequence prefix if any), " +
                 "keyword {}, taxonomyId {}, localization {}", keyword, taxonomyId, requestDto.getLocalizationId());
-
         List<SitemapItemModelData> items = new ArrayList<>();
-
         try {
             PageMetaFactory pageMetaFactory = new PageMetaFactory(requestDto.getLocalizationId());
             PageMeta[] taxonomyPages = pageMetaFactory.getTaxonomyPages(keyword, false);
-            items = Arrays.stream(taxonomyPages)
+            return Arrays.stream(taxonomyPages)
                     .map(page -> createSitemapItemFromPage(page, taxonomyId))
                     .collect(Collectors.toList());
         } catch (StorageException e) {
-            log.error("Error loading taxonomy pages for taxonomyId = {}, localizationId = {} and keyword {}", taxonomyId, requestDto.getLocalizationId(), keyword, e);
+            String message = "Error loading taxonomy pages for taxonomyId = " + taxonomyId + ", localizationId = " + requestDto.getLocalizationId() + " and keyword = " + keyword;
+            throw new DxaTridionCommonException(message, e);
         }
-
-        return items;
     }
 
     private Optional<String> findIndexPageUrl(@NonNull List<SitemapItemModelData> pageSitemapItems) {
@@ -422,10 +416,16 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
                 .setKey(keyword.getKeywordKey())
                 .setId(isRoot ? getTaxonomySitemapIdentifier(taxonomyId) : getTaxonomySitemapIdentifier(taxonomyId, KEYWORD, keywordId))
                 .setType(sitemapItemTypeTaxonomyNode)
-                .setUrl(stripDefaultExtension(taxonomyNodeUrl))
+                .setUrl(complementUrlWithSlash(stripDefaultExtension(taxonomyNodeUrl)))
                 .setTitle(keyword.getKeywordName())
                 .setVisible(isVisibleItem(keyword.getKeywordName(), taxonomyNodeUrl))
                 .setItems(children);
+    }
+
+    private String complementUrlWithSlash(String possibleUrl) {
+        if (Strings.isNullOrEmpty(possibleUrl)) return possibleUrl;
+        if (!possibleUrl.startsWith("/")) return "/" + possibleUrl;
+        return possibleUrl;
     }
 
     private boolean isVisibleItem(String pageName, String pageUrl) {

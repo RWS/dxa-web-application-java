@@ -4,6 +4,7 @@ import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
+import com.sdl.dxa.exception.DxaTridionCommonException;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -220,16 +221,13 @@ public class DynamicNavigationProviderTest {
 
     //region On-demand API
 
-    @Test
-    public void shouldReturnEmptyList_IfNothingFound() {
+    @Test(expected = DxaTridionCommonException.class)
+    public void shouldThrowException_IfNothingFound() {
         //given
         when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.empty());
 
         //when
-        Collection<SitemapItem> items = dynamicNavigationProvider.getNavigationSubtree("t1", NavigationFilter.DEFAULT, localization);
-
-        //then
-        assertTrue(items.isEmpty());
+        dynamicNavigationProvider.getNavigationSubtree("t1", NavigationFilter.DEFAULT, localization);
     }
 
     @Test(expected = BadRequestException.class)
@@ -243,7 +241,7 @@ public class DynamicNavigationProviderTest {
         //then
     }
 
-    @Test
+    @Test(expected = DxaTridionCommonException.class)
     public void shouldPassTheRequest_ToTheService() {
         //given
         when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.empty());
@@ -252,6 +250,17 @@ public class DynamicNavigationProviderTest {
 
         //when
         dynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+    }
+
+    @Test
+    public void shouldConvertServiceResponse_AndReturnTheResult() {
+        //given
+        NavigationFilter navigationFilter = new NavigationFilter().setDescendantLevels(666).setWithAncestors(true);
+        String sitemapItemId = "whatever";
+        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.of(Collections.singletonList(navigationModel)));
+
+        //when
+        Collection<SitemapItem> subtree = dynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
 
         //then
         verify(onDemandNavigationModelProvider).getNavigationSubtree(argThat(new ArgumentMatcher<SitemapRequestDto>() {
@@ -265,17 +274,7 @@ public class DynamicNavigationProviderTest {
                 return true;
             }
         }));
-    }
 
-    @Test
-    public void shouldConvertServiceResponse_AndReturnTheResult() {
-        //given
-        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.of(Collections.singletonList(navigationModel)));
-
-        //when
-        Collection<SitemapItem> subtree = dynamicNavigationProvider.getNavigationSubtree("whatever", NavigationFilter.DEFAULT, localization);
-
-        //then
         assertEquals(1, subtree.size());
         SitemapItem root = subtree.iterator().next();
         assertEquals("t1", root.getId());

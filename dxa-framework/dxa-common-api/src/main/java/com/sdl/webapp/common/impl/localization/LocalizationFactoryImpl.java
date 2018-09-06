@@ -244,7 +244,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
             }
         } catch (ContentProviderException | IOException e) {
             throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + locId +
-                    "] " + locPath, e);
+                    "] for path '" + locPath + "'", e);
         }
     }
 

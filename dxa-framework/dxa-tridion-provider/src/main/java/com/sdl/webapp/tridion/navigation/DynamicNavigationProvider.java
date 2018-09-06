@@ -5,6 +5,7 @@ import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.common.util.PathUtils;
+import com.sdl.dxa.exception.DxaTridionCommonException;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -131,8 +132,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
         subtree = onDemandNavigationModelProvider.getNavigationSubtree(requestDto);
 
         if (!subtree.isPresent()) {
-            log.debug("Nothing found for the given request {}", requestDto);
-            return Collections.emptyList();
+            throw new DxaTridionCommonException("Nothing found for the given " + requestDto);
         }
 
         return subtree.get().stream()

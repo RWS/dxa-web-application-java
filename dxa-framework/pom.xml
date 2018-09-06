@@ -13,7 +13,7 @@
     <artifactId>dxa-framework</artifactId>
     <packaging>pom</packaging>
 
-    <name>DXA - API framework parent</name>
+    <name>DXA - Framework</name>
     <description>Parent for Digital Experience Accelerator API framework</description>
 
     <modules>

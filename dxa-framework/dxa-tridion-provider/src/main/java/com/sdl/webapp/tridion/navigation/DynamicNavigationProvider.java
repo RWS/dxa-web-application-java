@@ -1,5 +1,6 @@
 package com.sdl.webapp.tridion.navigation;
 
+import com.google.common.base.Strings;
 import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.DepthCounter;
@@ -196,7 +197,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
         SitemapItem item = _instantiateSitemap(model);
         item.setId(model.getId());
         item.setVisible(model.isVisible());
-        item.setUrl(model.getUrl());
+        if (!Strings.isNullOrEmpty(model.getUrl())) item.setUrl("/" + model.getUrl());
         item.setTitle(model.getTitle());
         item.setOriginalTitle(model.getOriginalTitle());
         item.setPublishedDate(model.getPublishedDate());

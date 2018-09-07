@@ -242,8 +242,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
                 new DepthFilter(requestDto.getNavigationFilter().getDescendantLevels(), DepthFilter.FILTER_DOWN), uris.getKeywordUri());
 
         if (keyword == null) {
-            String message = "Keyword '" + uris.getKeywordUri() + "' in Taxonomy '" + uris.getTaxonomyUri() + "' was not found.";
-            log.warn(message);
+            log.warn("Keyword '" + uris.getKeywordUri() + "' in Taxonomy '" + uris.getTaxonomyUri() + "' was not found.");
             return Optional.empty();
         }
 

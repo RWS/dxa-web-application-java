@@ -197,7 +197,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
         SitemapItem item = _instantiateSitemap(model);
         item.setId(model.getId());
         item.setVisible(model.isVisible());
-        if (!Strings.isNullOrEmpty(model.getUrl())) item.setUrl("/" + model.getUrl());
+        if (!Strings.isNullOrEmpty(model.getUrl())) item.setUrl("/" + model.getUrl().replaceAll("^/?(.*)", "$1"));
         item.setTitle(model.getTitle());
         item.setOriginalTitle(model.getOriginalTitle());
         item.setPublishedDate(model.getPublishedDate());

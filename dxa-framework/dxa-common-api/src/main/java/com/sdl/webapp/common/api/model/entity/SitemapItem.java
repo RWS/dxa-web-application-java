@@ -30,7 +30,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Data
 @ToString(exclude = {"parent"})
 @EqualsAndHashCode(callSuper = true, of = {"title", "originalTitle", "type", "publishedDate"})
-@JsonInclude(JsonInclude.Include.NON_NULL)
 @Slf4j
 @NoArgsConstructor
 public class SitemapItem extends AbstractEntityModel {
@@ -38,7 +37,8 @@ public class SitemapItem extends AbstractEntityModel {
     @JsonProperty("Title")
     private String title;
 
-    @JsonProperty("Url")
+    @JsonProperty(value = "Url", defaultValue = "")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String url;
 
     @JsonProperty("Type")

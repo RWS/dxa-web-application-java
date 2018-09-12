@@ -1,6 +1,7 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ComparisonChain;
@@ -39,8 +40,9 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
     @JsonProperty("OriginalTitle")
     private String originalTitle;
 
-    @JsonProperty("Url")
-    private String url;
+    @JsonProperty(value = "Url")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    private String url = "";
 
     @JsonProperty("Visible")
     private boolean visible;

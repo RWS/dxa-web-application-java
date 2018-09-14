@@ -40,9 +40,9 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
     @JsonProperty("OriginalTitle")
     private String originalTitle;
 
-    @JsonProperty(value = "Url")
+    @JsonProperty(value = "Url", defaultValue = "")
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    private String url = "";
+    private String url;
 
     @JsonProperty("Visible")
     private boolean visible;

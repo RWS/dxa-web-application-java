@@ -332,39 +332,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
             log.warn("Keyword {} in taxonomy {} wasn't found", uris.getKeywordUri(), uris.getTaxonomyUri());
             return Optional.empty();
         }
-        return Optional.of(createTaxonomyNodeWithFixedChild(taxonomyRoot, requestDto.toBuilder().expandLevels(DepthCounter.UNLIMITED_DEPTH).build()));
-    }
-
-    /**
-     * This method is like to createTaxonomyNode method, except the fact it ignores second child of taxonomy root,
-     * because keyword has all children at the same level, tree is defined via items parent element.
-     * @param keyword
-     * @param requestDto
-     * @return
-     */
-    private TaxonomyNodeModelData createTaxonomyNodeWithFixedChild(@NotNull Keyword keyword, @NotNull SitemapRequestDto requestDto) {
-        log.debug("Creating / fixing taxonomy node for keyword {} and request {}", keyword.getTaxonomyURI(), requestDto);
-        String taxonomyId = String.valueOf(TcmUtils.getItemId(keyword.getTaxonomyURI()));
-
-        List<SitemapItemModelData> children = new ArrayList<>();
-
-        if (requestDto.getExpandLevels().isNotTooDeep()) {
-            List<Keyword> keywordChildren = keyword.getKeywordChildren();
-            if (keywordChildren.size() == 2) {
-                children.add(createTaxonomyNode(keywordChildren.get(0), requestDto.nextExpandLevel()));
-            } else {
-                for (Keyword child : keywordChildren) {
-                    children.add(createTaxonomyNode(child, requestDto.nextExpandLevel()));
-                }
-            }
-        }
-
-        String taxonomyNodeUrl = getKeywordMetaUri(taxonomyId, requestDto, children, keyword, needsToAddChildren(keyword, requestDto));
-        log.trace("taxonomyNodeUrl = {} found for taxonomyId = {}", taxonomyNodeUrl, taxonomyId);
-
-        children.forEach(child -> child.setTitle(removeSequenceFromPageTitle(child.getTitle())));
-
-        return createTaxonomyNodeFromKeyword(keyword, taxonomyId, taxonomyNodeUrl, new TreeSet<>(children));
+        return Optional.of(createTaxonomyNode(taxonomyRoot, requestDto.toBuilder().expandLevels(DepthCounter.UNLIMITED_DEPTH).build()));
     }
 
     private TaxonomyNodeModelData createTaxonomyNode(@NotNull Keyword keyword, @NotNull SitemapRequestDto requestDto) {
@@ -454,7 +422,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
     }
 
     private String complementUrlWithSlash(String possibleUrl) {
-        if (Strings.isNullOrEmpty(possibleUrl)) return possibleUrl;
+        if (Strings.isNullOrEmpty(possibleUrl)) return "";
         if (!possibleUrl.startsWith("/")) return "/" + possibleUrl;
         return possibleUrl;
     }

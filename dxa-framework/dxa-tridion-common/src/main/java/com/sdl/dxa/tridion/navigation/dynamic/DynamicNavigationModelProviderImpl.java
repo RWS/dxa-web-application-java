@@ -332,7 +332,6 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
             log.warn("Keyword {} in taxonomy {} wasn't found", uris.getKeywordUri(), uris.getTaxonomyUri());
             return Optional.empty();
         }
-
         return Optional.of(createTaxonomyNode(taxonomyRoot, requestDto.toBuilder().expandLevels(DepthCounter.UNLIMITED_DEPTH).build()));
     }
 
@@ -423,7 +422,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
     }
 
     private String complementUrlWithSlash(String possibleUrl) {
-        if (Strings.isNullOrEmpty(possibleUrl)) return possibleUrl;
+        if (Strings.isNullOrEmpty(possibleUrl)) return "";
         if (!possibleUrl.startsWith("/")) return "/" + possibleUrl;
         return possibleUrl;
     }

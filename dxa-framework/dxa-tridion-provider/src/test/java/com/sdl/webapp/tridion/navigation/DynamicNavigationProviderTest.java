@@ -15,6 +15,8 @@ import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.controller.exception.BadRequestException;
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
+import com.sdl.webapp.tridion.fields.exceptions.TaxonomyNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -221,8 +223,8 @@ public class DynamicNavigationProviderTest {
 
     //region On-demand API
 
-    @Test(expected = DxaTridionCommonException.class)
-    public void shouldThrowException_IfNothingFound() {
+    @Test(expected = TaxonomyNotFoundException.class)
+    public void shouldThrowException_IfNothingFound() throws DxaItemNotFoundException {
         //given
         when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.empty());
 
@@ -231,7 +233,7 @@ public class DynamicNavigationProviderTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void shouldProceedWithException_IfBadRequest() {
+    public void shouldProceedWithException_IfBadRequest() throws DxaItemNotFoundException {
         //given
         when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenThrow(new BadRequestException());
 
@@ -241,8 +243,8 @@ public class DynamicNavigationProviderTest {
         //then
     }
 
-    @Test(expected = DxaTridionCommonException.class)
-    public void shouldPassTheRequest_ToTheService() {
+    @Test(expected = TaxonomyNotFoundException.class)
+    public void shouldPassTheRequest_ToTheService() throws DxaItemNotFoundException {
         //given
         when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.empty());
         NavigationFilter navigationFilter = new NavigationFilter().setDescendantLevels(666).setWithAncestors(true);
@@ -253,7 +255,7 @@ public class DynamicNavigationProviderTest {
     }
 
     @Test
-    public void shouldConvertServiceResponse_AndReturnTheResult() {
+    public void shouldConvertServiceResponse_AndReturnTheResult() throws DxaItemNotFoundException {
         //given
         NavigationFilter navigationFilter = new NavigationFilter().setDescendantLevels(666).setWithAncestors(true);
         String sitemapItemId = "whatever";
@@ -287,7 +289,7 @@ public class DynamicNavigationProviderTest {
     }
 
     @Test
-    public void shouldHandleMultipleItems_AndReturnTheResult() {
+    public void shouldHandleMultipleItems_AndReturnTheResult() throws DxaItemNotFoundException {
         //given
         when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.of(Arrays.asList(
                 new SitemapItemModelData().setId("t1-p1").setVisible(true).setUrl("/index").setTitle("001 Index"),

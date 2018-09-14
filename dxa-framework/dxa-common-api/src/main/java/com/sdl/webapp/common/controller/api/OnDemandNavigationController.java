@@ -4,6 +4,7 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.OnDemandNavigationProvider;
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -43,7 +44,7 @@ public class OnDemandNavigationController {
     @RequestMapping
     public Collection<SitemapItem> handle(@RequestParam(value = "includeAncestors", required = false, defaultValue = "false") boolean includeAncestors,
                                           @RequestParam(value = "descendantLevels", required = false, defaultValue = "1") int descendantLevels,
-                                          HttpServletRequest request) {
+                                          HttpServletRequest request) throws DxaItemNotFoundException {
 
         return handleInternal(null, includeAncestors, descendantLevels, request);
     }
@@ -53,12 +54,12 @@ public class OnDemandNavigationController {
     public Collection<SitemapItem> handle(@PathVariable("sitemapItemId") String sitemapItemId,
                                           @RequestParam(value = "includeAncestors", required = false, defaultValue = "false") boolean includeAncestors,
                                           @RequestParam(value = "descendantLevels", required = false, defaultValue = "1") int descendantLevels,
-                                          HttpServletRequest request) {
+                                          HttpServletRequest request) throws DxaItemNotFoundException {
         return handleInternal(sitemapItemId, includeAncestors, descendantLevels, request);
     }
 
     private Collection<SitemapItem> handleInternal(String sitemapItemId, boolean includeAncestors, int descendantLevels,
-                                                   HttpServletRequest request) {
+                                                   HttpServletRequest request) throws DxaItemNotFoundException {
         if (onDemandNavigationProvider == null) {
             String message = "On-Demand Navigation is not enabled because current navigation provider doesn't support it. " +
                     "If you are using your own navigation provider, you should Implement OnDemandNavigationProvider interface, " +

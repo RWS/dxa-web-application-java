@@ -2,6 +2,7 @@ package com.sdl.webapp.common.api.navigation;
 
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import lombok.NonNull;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
@@ -22,7 +23,8 @@ public interface OnDemandNavigationProvider {
      * @param navigationFilter the {@link NavigationFilter} used to specify which information to put in the subtree
      * @param localization     context localization
      * @return collection of {@link SitemapItem} representing the requested subtree, never returns <code>null</code>
+     * @throws DxaItemNotFoundException if such item is not found
      */
     @Contract("_, _, _ -> !null")
-    Collection<SitemapItem> getNavigationSubtree(@Nullable String sitemapItemId, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization);
+    Collection<SitemapItem> getNavigationSubtree(@Nullable String sitemapItemId, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) throws DxaItemNotFoundException;
 }

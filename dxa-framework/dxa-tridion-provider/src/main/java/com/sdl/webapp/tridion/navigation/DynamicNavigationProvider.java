@@ -6,7 +6,6 @@ import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.common.util.PathUtils;
-import com.sdl.dxa.exception.DxaTridionCommonException;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -18,6 +17,8 @@ import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.api.navigation.OnDemandNavigationProvider;
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
+import com.sdl.webapp.tridion.fields.exceptions.TaxonomyNotFoundException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -121,7 +122,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
     }
 
     @Override
-    public Collection<SitemapItem> getNavigationSubtree(@Nullable String sitemapItemId, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) {
+    public Collection<SitemapItem> getNavigationSubtree(@Nullable String sitemapItemId, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) throws DxaItemNotFoundException {
         Optional<Collection<SitemapItemModelData>> subtree;
         SitemapRequestDto requestDto = SitemapRequestDto
                 .builder(Integer.parseInt(localization.getId()))
@@ -133,7 +134,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
         subtree = onDemandNavigationModelProvider.getNavigationSubtree(requestDto);
 
         if (!subtree.isPresent()) {
-            throw new DxaTridionCommonException("Nothing found for the given " + requestDto);
+            throw new TaxonomyNotFoundException("Keyword '" + requestDto.getSitemapId() + "' in publication '" + requestDto.getLocalizationId() + "' was not found.");
         }
 
         return subtree.get().stream()

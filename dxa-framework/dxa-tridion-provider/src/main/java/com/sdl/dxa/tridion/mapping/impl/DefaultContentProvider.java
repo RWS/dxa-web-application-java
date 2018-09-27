@@ -8,7 +8,7 @@ import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.modelservice.DefaultModelService;
+import com.sdl.dxa.tridion.modelservice.PCAModelService;
 import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
 import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
 import com.sdl.web.api.broker.querying.sorting.SortParameter;
@@ -75,7 +75,7 @@ public class DefaultContentProvider implements ContentProvider {
 
     private final ModelBuilderPipeline builderPipeline;
 
-    private final DefaultModelService modelService;
+    private final PCAModelService modelService;
 
     private final WebRequestContext webRequestContext;
 
@@ -90,7 +90,7 @@ public class DefaultContentProvider implements ContentProvider {
                                   StaticContentResolver staticContentResolver,
                                   LinkResolver linkResolver,
                                   ModelBuilderPipeline builderPipeline,
-                                  DefaultModelService modelService) {
+                                  PCAModelService modelService) {
         this.webRequestContext = webRequestContext;
         this.linkResolver = linkResolver;
         this.staticContentResolver = staticContentResolver;

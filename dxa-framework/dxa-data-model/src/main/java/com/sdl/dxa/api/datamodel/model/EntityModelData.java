@@ -1,6 +1,7 @@
 package com.sdl.dxa.api.datamodel.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.sdl.dxa.api.datamodel.Constants;
 import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
@@ -20,6 +21,7 @@ import java.util.Map;
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EntityModelData extends ViewModelData implements CanWrapContentAndMetadata {
 
     private String id;

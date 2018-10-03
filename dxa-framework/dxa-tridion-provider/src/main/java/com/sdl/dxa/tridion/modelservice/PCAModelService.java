@@ -83,7 +83,7 @@ public class PCAModelService implements PageModelService, EntityModelService {
 
     private <T> T _loadPage(String serviceUrl, Class<T> type, PageRequestDto pageRequest) throws ContentProviderException {
         try {
-            JsonNode pageNode = pcaClient.getPageModelData(ContentNamespace.Sites,  pageRequest.getPublicationId(), getPathUrl(pageRequest.getPath()), ContentType.MODEL, DataModelType.R2, PageInclusion.INCLUDE, false, new ContextData());
+            JsonNode pageNode = pcaClient.getPageModelData(ContentNamespace.Sites,  pageRequest.getPublicationId(), getPathUrl(pageRequest.getPath()), ContentType.MODEL, DataModelType.R2, PageInclusion.INCLUDE, false, null);
             ObjectMapper mapper = new ObjectMapper();
             mapper.registerModule(new JodaModule());
             mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);

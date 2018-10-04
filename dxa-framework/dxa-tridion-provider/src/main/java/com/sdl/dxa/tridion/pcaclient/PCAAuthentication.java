@@ -23,7 +23,7 @@ public class PCAAuthentication implements Authentication {
         try {
             tokenProvider = new OAuthTokenProvider(configurationLoader.getOauthTokenProviderConfiguration());
         } catch (ConfigurationException e) {
-            LOG.error("Unable to read configuration for token provider.", e);
+            LOG.warn("Unable to read configuration for token provider.", e);
         }
     }
 

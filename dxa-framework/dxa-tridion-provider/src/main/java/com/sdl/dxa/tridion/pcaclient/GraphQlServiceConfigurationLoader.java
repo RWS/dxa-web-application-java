@@ -30,6 +30,7 @@ public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLo
     }
 
     synchronized void initialize() {
+        if (initialized) return;
         try {
             Optional<ContentServiceCapability> contentServiceCapability = getContentServiceCapability();
             String contentServiceUrl;

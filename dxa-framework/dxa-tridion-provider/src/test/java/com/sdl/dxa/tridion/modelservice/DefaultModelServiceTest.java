@@ -32,7 +32,7 @@ public class DefaultModelServiceTest {
     private ModelServiceClient modelServiceClient;
 
     @InjectMocks
-    private PCAModelService service;
+    private DefaultModelService service;
 
     public DefaultModelServiceTest() throws ConfigurationException {
     }

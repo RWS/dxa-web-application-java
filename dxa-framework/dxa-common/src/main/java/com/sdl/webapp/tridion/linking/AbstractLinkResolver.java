@@ -57,8 +57,7 @@ public abstract class AbstractLinkResolver implements LinkResolver {
         if (contextId != null && TcmUtils.isTcmUri(contextId)) {
             pageId = TcmUtils.getItemId(contextId);
         }
-        else
-        {
+        else{
             pageId = NumberUtils.toInt(contextId,-1);
         }
         Function<ResolvingData, Optional<String>> resolver;

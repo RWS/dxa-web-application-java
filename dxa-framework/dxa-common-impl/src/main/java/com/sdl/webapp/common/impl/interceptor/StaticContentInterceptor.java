@@ -8,6 +8,7 @@ import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.util.MimeUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.joda.time.Hours;
 import org.joda.time.Weeks;
 import org.slf4j.Logger;
@@ -27,6 +28,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
+import java.util.regex.Pattern;
 
 /**
  * Static content interceptor. This interceptor checks if the request is for static content, and if it is, it sends
@@ -38,6 +40,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentInterceptor.class);
     private static final String CACHE_CONTROL_WEEK = "public, max-age=" + Weeks.ONE.toStandardSeconds().getSeconds();
     private static final String CACHE_CONTROL_HOUR = "public, max-age=" + Hours.ONE.toStandardSeconds().getSeconds();
+    private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
 
     @Autowired
     private ContentProvider contentProvider;
@@ -89,9 +92,10 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
 
     /**
      * {@inheritDoc}
+     * @throws IOException
      */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException, IOException {
         final String requestPath = webRequestContext.getRequestPath();
         LOG.trace("preHandle: {}", requestPath);
 
@@ -103,12 +107,16 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
             final ServletServerHttpResponse res = new ServletServerHttpResponse(response);
 
             try {
+                if (localization.isNonPublishedAsset(requestPath))
+                {
+                    fallbackForContentProvider(req, removeVersionNumber(requestPath), res);
+                }
                 StaticContentItem staticContentItem = null;
 
                 try {
                     staticContentItem = contentProvider.getStaticContent(requestPath, localization.getId(), localization.getPath());
                 } catch (StaticContentNotFoundException e) {
-                    fallbackForContentProvider(req, requestPath, res);
+                    fallbackForContentProvider(req, removeVersionNumber(requestPath), res);
                 }
 
                 if (staticContentItem != null) {
@@ -131,7 +139,10 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
             res.close();
             return false;
         }
-
         return true;
+    }
+
+    protected static String removeVersionNumber(String path) {
+        return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
 }

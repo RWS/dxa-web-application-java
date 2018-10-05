@@ -33,6 +33,14 @@ public interface Localization {
     boolean isStaticContent(String url);
 
     /**
+     * Determines if the specified URL refers to static content within the webapp
+     *
+     * @return {@code true} if the specified URL refers to static content within the webapp, {@code false} otherwise.
+     * @param url a {@link java.lang.String} object.
+     */
+    boolean isNonPublishedAsset(String url);
+
+    /**
      * <p>isDefault.</p>
      *
      * @return {@code true} when this is the default localization, {@code false} otherwise.
@@ -119,6 +127,5 @@ public interface Localization {
      * @return The list of configured data formats
      */
     List<String> getDataFormats();
-
 
 }

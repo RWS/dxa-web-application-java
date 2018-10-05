@@ -61,7 +61,6 @@ public abstract class AbstractLinkResolver implements LinkResolver {
         {
             pageId = NumberUtils.toInt(contextId,-1);
         }
-        log.error("Resolving link with context page ID: {}",pageId);
         Function<ResolvingData, Optional<String>> resolver;
         switch (TcmUtils.getItemType(uri)) {
             case TcmUtils.COMPONENT_ITEM_TYPE:

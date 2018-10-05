@@ -7,6 +7,7 @@ import com.sdl.webapp.common.util.TcmUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
@@ -51,10 +52,16 @@ public abstract class AbstractLinkResolver implements LinkResolver {
         if (uri == null || !TcmUtils.isTcmUri(uri)) {
             return uri;
         }
+        //Page ID is either tcm uri or int (in string form) -1 means no page context
         int pageId = -1;
         if (contextId != null && TcmUtils.isTcmUri(contextId)) {
             pageId = TcmUtils.getItemId(contextId);
         }
+        else
+        {
+            pageId = NumberUtils.toInt(contextId,-1);
+        }
+        log.error("Resolving link with context page ID: {}",pageId);
         Function<ResolvingData, Optional<String>> resolver;
         switch (TcmUtils.getItemType(uri)) {
             case TcmUtils.COMPONENT_ITEM_TYPE:

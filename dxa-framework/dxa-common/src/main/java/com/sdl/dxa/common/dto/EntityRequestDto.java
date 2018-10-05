@@ -23,6 +23,8 @@ public class EntityRequestDto {
 
     private int templateId;
 
+    private int contextId;//The context page id (if applicable)
+
     /**
      * DXA format of entity ID contains component and template IDs separated with "{@code -}".
      */
@@ -44,6 +46,10 @@ public class EntityRequestDto {
 
     public static EntityRequestDtoBuilder builder(int publicationId, String entityId) {
         return hiddenBuilder().publicationId(publicationId).entityId(entityId);
+    }
+
+    public static EntityRequestDtoBuilder builder(int publicationId, String entityId, int contextId) {
+        return hiddenBuilder().publicationId(publicationId).entityId(entityId, contextId);
     }
 
     public static EntityRequestDtoBuilder builder(int publicationId, int componentId) {
@@ -88,6 +94,8 @@ public class EntityRequestDto {
 
         private ContentType contentType = ContentType.MODEL;
 
+        private int contextId = -1;
+
         private EntityRequestDtoBuilder() {
         }
 
@@ -100,6 +108,10 @@ public class EntityRequestDto {
         }
 
         public EntityRequestDtoBuilder entityId(@NotNull String entityId) {
+            return entityId(entityId, contextId);
+        }
+
+        public EntityRequestDtoBuilder entityId(@NotNull String entityId, int contextId) {
             Assert.isTrue(entityId.matches("\\d+-\\d+"), "Entity ID should be of format CompId-TemplateId");
             List<String> parts = Splitter.on("-").splitToList(entityId);
             int componentId = Integer.parseInt(parts.get(0));
@@ -108,6 +120,7 @@ public class EntityRequestDto {
             this.entityId = templateId == 0 ? parts.get(0) : entityId;
             this.componentId = componentId;
             this.templateId = templateId;
+            this.contextId = contextId;
             return this;
         }
     }

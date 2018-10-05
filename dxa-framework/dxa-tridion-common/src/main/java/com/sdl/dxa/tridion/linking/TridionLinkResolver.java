@@ -15,7 +15,7 @@ public class TridionLinkResolver extends AbstractLinkResolver {
     @Override
     protected Function<ResolvingData, Optional<String>> _componentResolver() {
         return resolvingData -> Optional.ofNullable(
-                new ComponentLinkImpl(resolvingData.getPublicationId()).getLink(resolvingData.getItemId()).getURL());
+                new ComponentLinkImpl(resolvingData.getPublicationId()).getLink(resolvingData.getPageId(), resolvingData.getItemId(), -1, null, "", false, false).getURL());
     }
 
     @Override

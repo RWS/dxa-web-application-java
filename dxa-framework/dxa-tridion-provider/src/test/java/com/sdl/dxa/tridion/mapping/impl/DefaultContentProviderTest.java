@@ -5,7 +5,7 @@ import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.modelservice.DefaultModelService;
+import com.sdl.dxa.tridion.modelservice.PCAModelService;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -37,7 +37,7 @@ import static org.mockito.Mockito.when;
 public class DefaultContentProviderTest {
 
     @Mock
-    private DefaultModelService defaultModelService;
+    private PCAModelService defaultModelService;
 
     @Mock
     private WebRequestContext webRequestContext;

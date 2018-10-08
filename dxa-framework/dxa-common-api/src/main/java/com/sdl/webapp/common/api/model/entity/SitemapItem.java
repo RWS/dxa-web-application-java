@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -36,7 +37,8 @@ public class SitemapItem extends AbstractEntityModel {
     @JsonProperty("Title")
     private String title;
 
-    @JsonProperty("Url")
+    @JsonProperty(value = "Url", defaultValue = "")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String url;
 
     @JsonProperty("Type")

@@ -1,5 +1,6 @@
 package com.sdl.webapp.tridion.navigation;
 
+import com.google.common.base.Strings;
 import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.DepthCounter;
@@ -16,6 +17,8 @@ import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.api.navigation.OnDemandNavigationProvider;
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
+import com.sdl.webapp.tridion.fields.exceptions.TaxonomyNotFoundException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -119,7 +122,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
     }
 
     @Override
-    public Collection<SitemapItem> getNavigationSubtree(@Nullable String sitemapItemId, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) {
+    public Collection<SitemapItem> getNavigationSubtree(@Nullable String sitemapItemId, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) throws DxaItemNotFoundException {
         Optional<Collection<SitemapItemModelData>> subtree;
         SitemapRequestDto requestDto = SitemapRequestDto
                 .builder(Integer.parseInt(localization.getId()))
@@ -131,8 +134,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
         subtree = onDemandNavigationModelProvider.getNavigationSubtree(requestDto);
 
         if (!subtree.isPresent()) {
-            log.debug("Nothing found for the given request {}", requestDto);
-            return Collections.emptyList();
+            throw new TaxonomyNotFoundException("Keyword '" + requestDto.getSitemapId() + "' in publication '" + requestDto.getLocalizationId() + "' was not found.");
         }
 
         return subtree.get().stream()
@@ -196,7 +198,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
         SitemapItem item = _instantiateSitemap(model);
         item.setId(model.getId());
         item.setVisible(model.isVisible());
-        item.setUrl(model.getUrl());
+        if (!Strings.isNullOrEmpty(model.getUrl())) item.setUrl("/" + model.getUrl().replaceAll("^/?(.*)", "$1"));
         item.setTitle(model.getTitle());
         item.setOriginalTitle(model.getOriginalTitle());
         item.setPublishedDate(model.getPublishedDate());

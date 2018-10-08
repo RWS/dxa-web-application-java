@@ -28,6 +28,14 @@ public interface SemanticMapper {
                                          Map<FieldSemantics, SemanticField> semanticFields,
                                          SemanticFieldDataProvider fieldDataProvider) throws SemanticMappingException;
 
+    /**
+     * Fills the fields of the entity by performing semantic mapping.
+     * @param entityClass       The type of the entity.
+     * @param semanticFields    The semantic fields to be used when performing semantic mapping.
+     * @param fieldDataProvider A field data provider which provides the actual data for the fields when they are
+     *                          mapped.
+     * @param <T>               Entity class.
+     */
     <T extends ViewModel> void mapSemanticFields(Class<? extends T> entityClass,
                                                          Map<FieldSemantics, SemanticField> semanticFields,
                                                          SemanticFieldDataProvider fieldDataProvider,

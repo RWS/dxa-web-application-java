@@ -1,12 +1,8 @@
 package com.sdl.dxa.tridion.navigation;
 
-import com.google.common.base.Converter;
 import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
-import com.sdl.dxa.tridion.modelservice.ModelServiceClient;
-import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
-import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.web.pca.client.contentmodel.ContextData;
@@ -24,12 +20,9 @@ import org.springframework.stereotype.Service;
 import com.sdl.web.pca.client.PublicContentApi;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -62,10 +55,12 @@ public class PCADynamicNavigationModelProvider implements NavigationModelProvide
 
     TaxonomyNodeModelData convert(TaxonomySitemapItem source) {
         TaxonomyNodeModelData target = new TaxonomyNodeModelData();
+        target.setTitle(source.getOriginalTitle());
         BeanUtils.copyProperties(source, target, "publishedDate", "items");
         target.setWithChildren(source.getHasChildNodes());
         target.setTaxonomyAbstract(source.getAbstract());
-        target.setPublishedDate(DateTime.parse(source.getPublishedDate())); //"publishedDate": "2018-06-25T14:01:16.95+03:00",
+        target.setPublishedDate(DateTime.parse(source.getPublishedDate()));
+        if (source.getItems() == null) return target;
         SortedSet<SitemapItemModelData> children = new TreeSet<>();
         for (SitemapItem child : source.getItems()) {
             if (child instanceof TaxonomySitemapItem) {

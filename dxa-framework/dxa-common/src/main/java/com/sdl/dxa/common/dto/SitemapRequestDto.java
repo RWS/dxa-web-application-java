@@ -32,7 +32,7 @@ public class SitemapRequestDto {
         return new SitemapRequestDtoBuilder();
     }
 
-    public synchronized SitemapRequestDto nextExpandLevel() {
+    public SitemapRequestDto nextExpandLevel() {
         return this.toBuilder().expandLevels(new DepthCounter(expandLevels.getCounter() - 1)).build();
     }
 

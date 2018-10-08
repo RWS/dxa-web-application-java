@@ -5,6 +5,7 @@ import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
+import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.SitemapItem;
@@ -17,7 +18,6 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
-import com.sdl.web.pca.client.PublicContentApi;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,17 +31,17 @@ import java.util.TreeSet;
 @Primary
 public class PCADynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
 
-    private final PublicContentApi pcaClient;
+    private final PCAClientProvider provider;
 
     @Autowired
-    public PCADynamicNavigationModelProvider(PublicContentApi pcaClient) {
-        this.pcaClient = pcaClient;
+    public PCADynamicNavigationModelProvider(PCAClientProvider provider) {
+        this.provider = provider;
     }
 
     @Override
     public Optional<TaxonomyNodeModelData> getNavigationModel(@NotNull SitemapRequestDto requestDto) {
         try {
-            TaxonomySitemapItem taxonomySitemapItem = pcaClient.getSitemap(ContentNamespace.Sites,
+            TaxonomySitemapItem taxonomySitemapItem = provider.getClient().getSitemap(ContentNamespace.Sites,
                     requestDto.getLocalizationId(),
                     requestDto.getExpandLevels().getCounter(),
                     new ContextData());
@@ -75,15 +75,17 @@ public class PCADynamicNavigationModelProvider implements NavigationModelProvide
     @Override
     public Optional<Collection<SitemapItemModelData>> getNavigationSubtree(@NotNull SitemapRequestDto requestDto) {
         try {
-            TaxonomySitemapItem[] taxonomySitemapItem = pcaClient.getSitemapSubtree(ContentNamespace.Sites,
+            TaxonomySitemapItem[] taxonomySitemapItem = provider.getClient().getSitemapSubtree(ContentNamespace.Sites,
                     requestDto.getLocalizationId(),
                     requestDto.getSitemapId(),
                     requestDto.getExpandLevels().getCounter(),
                     requestDto.getNavigationFilter().isWithAncestors(),
                     new ContextData());
             List<SitemapItemModelData> result = new ArrayList<>();
-            for (TaxonomySitemapItem item : taxonomySitemapItem) {
-                result.add(convert(item));
+            if (taxonomySitemapItem != null) {
+                for (TaxonomySitemapItem item : taxonomySitemapItem) {
+                    result.add(convert(item));
+                }
             }
             return Optional.of(result);
         } catch (PublicContentApiException e) {

@@ -25,6 +25,9 @@ public class EntitiesCache extends SimpleCacheWrapper<EntityModelData, EntityMod
 
     @Override
     public LocalizationAwareCacheKey getSpecificKey(EntityModelData entityModelData, Object... other) {
-        return getKey(entityModelData.getId(), entityModelData.getSchemaId(), entityModelData.getMvcData());
+        if (other.length == 0 || (other.length == 1 && other[0] == null) ){
+            return getKey(entityModelData.getId(), entityModelData.getSchemaId(), entityModelData.getMvcData());
+        }
+        return getKey(entityModelData.getId(), entityModelData.getSchemaId(), entityModelData.getMvcData(),other);
     }
 }

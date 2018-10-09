@@ -3,12 +3,15 @@ package com.sdl.dxa.tridion.navigation;
 
 import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
+import com.sdl.dxa.common.dto.ClaimHolder;
 import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
 import com.sdl.web.pca.client.PublicContentApi;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
+import com.sdl.web.pca.client.contentmodel.generated.ClaimValue;
+import com.sdl.web.pca.client.contentmodel.generated.ClaimValueType;
 import com.sdl.web.pca.client.contentmodel.generated.SitemapItem;
 import com.sdl.web.pca.client.contentmodel.generated.TaxonomySitemapItem;
 import com.sdl.web.pca.client.exception.PublicContentApiException;
@@ -21,13 +24,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -59,6 +63,9 @@ public class PCADynamicNavigationModelProviderTest {
     private static final int LOCALIZATION_ID = 1234;
     private static final int DEPTH_COUNTER = 9;
     private static final String SITEMAP_ID = "sitemap Id";
+    public static final String STRING = "string";
+    public static final String CLAIM_URI = "claim:uri";
+    public static final String CLAIM_VALUE = "claim:value";
     private static TaxonomyNodeModelData[] EMPTY = new TaxonomyNodeModelData[0];
 
     @Mock
@@ -230,5 +237,54 @@ public class PCADynamicNavigationModelProviderTest {
         assertFalse(provider.getNavigationSubtree(requestDto).isPresent());
 
         verify(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER), eq(true), any(ContextData.class));
+    }
+
+    @Test
+    public void testConvertClaimHolderToClaimValue() {
+        ClaimHolder holder = createClaimHolder();
+
+        ClaimValue claimValue = provider.convertClaimHolderToClaimValue(holder);
+
+        assertEquals(ClaimValueType.STRING, claimValue.getType());
+        assertEquals(CLAIM_URI, claimValue.getUri());
+        assertEquals(CLAIM_VALUE, claimValue.getValue());
+    }
+
+    @NotNull
+    private ClaimHolder createClaimHolder() {
+        ClaimHolder holder = new ClaimHolder();
+        holder.setClaimType(STRING);
+        holder.setUri(CLAIM_URI);
+        holder.setValue(CLAIM_VALUE);
+        return holder;
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testConvertClaimHolderToClaimValueException() {
+        ClaimHolder holder = new ClaimHolder();
+
+        provider.convertClaimHolderToClaimValue(holder);
+    }
+
+    @Test
+    public void createContextDataEmpty() {
+        Map<String, ClaimHolder> claims = new HashMap<>();
+
+        ContextData contextData = provider.createContextData(claims);
+
+        assertTrue(contextData.getClaimValues().isEmpty());
+    }
+
+    @Test
+    public void createContextData() {
+        Map<String, ClaimHolder> claims = new HashMap<>();
+        claims.put(CLAIM_URI, createClaimHolder());
+
+        ContextData contextData = provider.createContextData(claims);
+
+        assertFalse(contextData.getClaimValues().isEmpty());
+        assertEquals(CLAIM_URI, contextData.getClaimValues().get(0).getUri());
+        assertEquals(CLAIM_VALUE, contextData.getClaimValues().get(0).getValue());
+        assertEquals(ClaimValueType.STRING, contextData.getClaimValues().get(0).getType());
     }
 }

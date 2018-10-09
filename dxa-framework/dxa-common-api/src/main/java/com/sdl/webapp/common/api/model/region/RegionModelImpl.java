@@ -64,7 +64,7 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
     private static final String XPM_COMPONENT_TYPE_MARKUP = "{schema: \"%s\", template: \"%s\"}";
 
     private static final String XPM_OCCURRENCE_CONSTRAINT_UNLIMITED_MARKUP = "minOccurs: %s";
-    private static final String XPM_OCCURRENCE_CONSTRAINT_MARKUP= "minOccurs: %s, maxOccurs: %s";
+    private static final String XPM_OCCURRENCE_CONSTRAINT_MARKUP = "minOccurs: %s, maxOccurs: %s";
 
     @JsonProperty("Name")
     @Getter

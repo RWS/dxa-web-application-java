@@ -183,10 +183,14 @@ public class RegionModelSetImplTest {
         }
 
         @Override
-        public String getSchemaId() { return schemaId; }
+        public String getSchemaId() {
+            return schemaId;
+        }
 
         @Override
-        public void setSchemaId(String schemaId) { this.schemaId = schemaId; }
+        public void setSchemaId(String schemaId) {
+            this.schemaId = schemaId;
+        }
 
         @Override
         public List<EntityModel> getEntities() {

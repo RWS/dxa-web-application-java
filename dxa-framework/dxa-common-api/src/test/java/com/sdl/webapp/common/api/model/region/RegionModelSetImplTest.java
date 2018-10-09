@@ -175,9 +175,21 @@ public class RegionModelSetImplTest {
 
         private String name;
 
+        private String schemaId;
+
         public RegionModelImplTest(String name) {
 
             this.name = name;
+        }
+
+        @Override
+        public String getSchemaId() {
+            return schemaId;
+        }
+
+        @Override
+        public void setSchemaId(String schemaId) {
+            this.schemaId = schemaId;
         }
 
         @Override

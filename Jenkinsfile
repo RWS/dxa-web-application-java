@@ -117,7 +117,7 @@ node("dxadocker") {
                         "installer_path=${buildFolder}\\installer",
                         "webapp_folder=${buildFolder}\\web-application-java\\dxa-webapp", 
                         "maven_repo_local=${lpr}", 
-                        "modules=core,context-expressions,search,googleanalytics,mediamanager,51degrees,smarttarget,audience-manager,ugc",
+                        "modules=core,context-expressions,search,googleanalytics,mediamanager,51degrees,smarttarget,audience-manager,ugc,tridion-docs-mashup",
                         "mvn_profiles=%modules:,=-module,%-module",  // $env:profiles is reserved by powershell!
                         "all_modules=%modules%,cid,test,tridion-docs",
                         "all_profiles=%all_modules:,=-module,%-module"

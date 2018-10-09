@@ -4,6 +4,7 @@ import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
+import com.sdl.dxa.exception.DxaTridionCommonException;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -14,6 +15,8 @@ import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.controller.exception.BadRequestException;
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
+import com.sdl.webapp.tridion.fields.exceptions.TaxonomyNotFoundException;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
 import org.junit.Test;
@@ -220,20 +223,17 @@ public class DynamicNavigationProviderTest {
 
     //region On-demand API
 
-    @Test
-    public void shouldReturnEmptyList_IfNothingFound() {
+    @Test(expected = TaxonomyNotFoundException.class)
+    public void shouldThrowException_IfNothingFound() throws DxaItemNotFoundException {
         //given
         when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.empty());
 
         //when
-        Collection<SitemapItem> items = dynamicNavigationProvider.getNavigationSubtree("t1", NavigationFilter.DEFAULT, localization);
-
-        //then
-        assertTrue(items.isEmpty());
+        dynamicNavigationProvider.getNavigationSubtree("t1", NavigationFilter.DEFAULT, localization);
     }
 
     @Test(expected = BadRequestException.class)
-    public void shouldProceedWithException_IfBadRequest() {
+    public void shouldProceedWithException_IfBadRequest() throws DxaItemNotFoundException {
         //given
         when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenThrow(new BadRequestException());
 
@@ -243,8 +243,8 @@ public class DynamicNavigationProviderTest {
         //then
     }
 
-    @Test
-    public void shouldPassTheRequest_ToTheService() {
+    @Test(expected = TaxonomyNotFoundException.class)
+    public void shouldPassTheRequest_ToTheService() throws DxaItemNotFoundException {
         //given
         when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.empty());
         NavigationFilter navigationFilter = new NavigationFilter().setDescendantLevels(666).setWithAncestors(true);
@@ -252,6 +252,17 @@ public class DynamicNavigationProviderTest {
 
         //when
         dynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+    }
+
+    @Test
+    public void shouldConvertServiceResponse_AndReturnTheResult() throws DxaItemNotFoundException {
+        //given
+        NavigationFilter navigationFilter = new NavigationFilter().setDescendantLevels(666).setWithAncestors(true);
+        String sitemapItemId = "whatever";
+        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.of(Collections.singletonList(navigationModel)));
+
+        //when
+        Collection<SitemapItem> subtree = dynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
 
         //then
         verify(onDemandNavigationModelProvider).getNavigationSubtree(argThat(new ArgumentMatcher<SitemapRequestDto>() {
@@ -265,17 +276,7 @@ public class DynamicNavigationProviderTest {
                 return true;
             }
         }));
-    }
 
-    @Test
-    public void shouldConvertServiceResponse_AndReturnTheResult() {
-        //given
-        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.of(Collections.singletonList(navigationModel)));
-
-        //when
-        Collection<SitemapItem> subtree = dynamicNavigationProvider.getNavigationSubtree("whatever", NavigationFilter.DEFAULT, localization);
-
-        //then
         assertEquals(1, subtree.size());
         SitemapItem root = subtree.iterator().next();
         assertEquals("t1", root.getId());
@@ -288,7 +289,7 @@ public class DynamicNavigationProviderTest {
     }
 
     @Test
-    public void shouldHandleMultipleItems_AndReturnTheResult() {
+    public void shouldHandleMultipleItems_AndReturnTheResult() throws DxaItemNotFoundException {
         //given
         when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.of(Arrays.asList(
                 new SitemapItemModelData().setId("t1-p1").setVisible(true).setUrl("/index").setTitle("001 Index"),

@@ -32,21 +32,17 @@ public final class XpmAwareJsonFilter implements DxaViewModelJsonPropertyFilter 
 
     @Override
     public boolean include(PropertyWriter writer) {
-        if (!enabled) {
+        if (!enabled || webRequestContext == null || webRequestContext.isPreview()) {
             return true;
         }
-
         boolean isXpmAware;
         if (writer instanceof BeanPropertyWriter) {
             isXpmAware = writer.getMember().hasAnnotation(JsonXpmAware.class);
-            log.trace("Property {} is BeanPropertyWriter", writer.getFullName());
+            log.trace("Property {} is BeanPropertyWriter. Annotation set: {}", writer.getFullName(), isXpmAware);
         } else {
             isXpmAware = "XpmMetadata".equals(writer.getName()) || "XpmPropertyMetadata".equals(writer.getName());
-            log.trace("Property {} XPM awareness is guessed by name", writer.getFullName());
+            log.trace("Property {} XPM awareness is guessed by name. Annotation set: {}", writer.getFullName(), isXpmAware);
         }
-
-        log.trace("Property {} XPM aware (annotation set): {}", writer.getFullName(), isXpmAware);
-
-        return !isXpmAware || webRequestContext == null || webRequestContext.isPreview();
+        return !isXpmAware;
     }
 }

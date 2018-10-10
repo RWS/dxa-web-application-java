@@ -34,12 +34,12 @@ import java.util.TreeSet;
 @Slf4j
 @Service
 @Primary
-public class PCADynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
+public class PCARestDynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
 
     private final PCAClientProvider provider;
 
     @Autowired
-    public PCADynamicNavigationModelProvider(PCAClientProvider provider) {
+    public PCARestDynamicNavigationModelProvider(PCAClientProvider provider) {
         this.provider = provider;
     }
 

@@ -46,7 +46,7 @@ public class PCAModelService implements PageModelService, EntityModelService {
     @Autowired
     public PCAModelService(ModelServiceConfiguration configuration) {
         this.configuration = configuration;
-        GraphQLClient graphQLClient = new DefaultGraphQLClient("http://localhost:8081/udp/content/",null);
+        GraphQLClient graphQLClient = new DefaultGraphQLClient("http://localhost:8081/cd/api/",null);
         this.pcaClient = new DefaultPublicContentApi(graphQLClient);
     }
 

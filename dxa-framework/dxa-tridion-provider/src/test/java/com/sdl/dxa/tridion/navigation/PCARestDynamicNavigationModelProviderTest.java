@@ -47,7 +47,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PCADynamicNavigationModelProviderTest {
+public class PCARestDynamicNavigationModelProviderTest {
+    private static final TaxonomyNodeModelData[] EMPTY = new TaxonomyNodeModelData[0];
     private static final int CLASSIFIED_ITEMS_COUNT = 5;
     private static final String DESCRIPTION = "Description";
     private static final String ID = "Id";
@@ -63,10 +64,9 @@ public class PCADynamicNavigationModelProviderTest {
     private static final int LOCALIZATION_ID = 1234;
     private static final int DEPTH_COUNTER = 9;
     private static final String SITEMAP_ID = "sitemap Id";
-    public static final String STRING = "string";
-    public static final String CLAIM_URI = "claim:uri";
-    public static final String CLAIM_VALUE = "claim:value";
-    private static TaxonomyNodeModelData[] EMPTY = new TaxonomyNodeModelData[0];
+    private static final String STRING = "string";
+    private static final String CLAIM_URI = "claim:uri";
+    private static final String CLAIM_VALUE = "claim:value";
 
     @Mock
     private PCAClientProvider clientProvider;
@@ -76,7 +76,7 @@ public class PCADynamicNavigationModelProviderTest {
 
     @Spy
     @InjectMocks
-    private PCADynamicNavigationModelProvider provider;
+    private PCARestDynamicNavigationModelProvider provider;
 
     private SitemapRequestDto requestDto;
 
@@ -148,8 +148,7 @@ public class PCADynamicNavigationModelProviderTest {
 
         return source;
     }
-
-
+    
     @Test
     public void checkFieldsInConvert() {
         TaxonomySitemapItem source = createTaxonomySitemapItem(ID, true);

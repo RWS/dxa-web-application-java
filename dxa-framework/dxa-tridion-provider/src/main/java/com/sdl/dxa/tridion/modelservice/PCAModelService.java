@@ -1,19 +1,15 @@
 package com.sdl.dxa.tridion.modelservice;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.common.base.Strings;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.modelservice.service.EntityModelService;
 import com.sdl.dxa.modelservice.service.PageModelService;
-import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import com.sdl.dxa.tridion.modelservice.exceptions.ModelServiceInternalServerErrorException;
 import com.sdl.web.pca.client.DefaultGraphQLClient;
 import com.sdl.web.pca.client.DefaultPublicContentApi;
@@ -25,7 +21,7 @@ import com.sdl.web.pca.client.contentmodel.enums.ContentType;
 import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
 import com.sdl.web.pca.client.contentmodel.enums.DcpType;
 import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
-import com.sdl.web.pca.client.contentmodel.generated.Page;
+import com.sdl.web.pca.client.exception.PublicContentApiException;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
@@ -50,7 +46,7 @@ public class PCAModelService implements PageModelService, EntityModelService {
     @Autowired
     public PCAModelService(ModelServiceConfiguration configuration) {
         this.configuration = configuration;
-        GraphQLClient graphQLClient = new DefaultGraphQLClient("http://localhost:8081/udp/content/",null);
+        GraphQLClient graphQLClient = new DefaultGraphQLClient("http://localhost:8081/cd/api/",null);
         this.pcaClient = new DefaultPublicContentApi(graphQLClient);
     }
 
@@ -90,26 +86,9 @@ public class PCAModelService implements PageModelService, EntityModelService {
             T  result = (T)mapper.readValue(pageNode.toString(),PageModelData.class);
             log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
             return result;
-        } catch (ModelServiceInternalServerErrorException e) {
-            throw new ContentProviderException("Cannot load page from model service", e);
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-            return null;
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
+        } catch (PublicContentApiException | ModelServiceInternalServerErrorException | IOException e) {
+            throw new ContentProviderException("Cannot load page from model service for " + pageRequest, e);
         }
-        /*catch (ItemNotFoundInModelServiceException e) {
-            throw new PageNotFoundException("Cannot load page '" + pageRequest + "'", e);
-        }*/
-    }
-
-    private String removeLeadingAndEndingSlash(String path) {
-        if (Strings.isNullOrEmpty(path)) return "";
-        return path.replaceAll("^/+([^/].*)", "$1").replaceAll("(.*[^/])/+$", "$1");
     }
 
     /**
@@ -132,8 +111,7 @@ public class PCAModelService implements PageModelService, EntityModelService {
 
             log.trace("Loaded '{}' for entityId '{}'", modelData, entityRequest.getComponentId());
             return modelData;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (PublicContentApiException | IOException e) {
             throw new DxaItemNotFoundException("Entity " + entityRequest + " not found in the Model Service", e);
         }
     }

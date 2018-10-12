@@ -111,7 +111,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                 modelType = viewModelRegistry.getViewModelType(mvcData);
             }
 
-            LocalizationAwareCacheKey key = entitiesCache.getSpecificKey(modelData);
+            LocalizationAwareCacheKey key = entitiesCache.getSpecificKey(modelData,expectedClass);
             synchronized (this) {
                 if (entitiesCache.containsKey(key)) {
                     //noinspection unchecked

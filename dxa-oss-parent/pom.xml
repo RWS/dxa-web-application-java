@@ -60,7 +60,7 @@
         <joda-time-version>2.10</joda-time-version>
 
         <jackson.version>2.9.6</jackson.version>
-        <woodstox-version>5.1.0</woodstox-version>
+        <woodstox-version>4.4.1</woodstox-version>
         <lombok.version>1.16.12</lombok.version>
 
         <!-- Logging -->

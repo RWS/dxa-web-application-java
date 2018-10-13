@@ -98,6 +98,7 @@
         <powermock.version>1.7.4</powermock.version>
         <ehcache.version>3.6.1</ehcache.version>
         <cache-api.version>1.1.0</cache-api.version>
+        <jsonassert.version>1.5.0</jsonassert.version>
 
         <!-- DD4T PROPERTIES -->
         <net.sf.ehcache.version>2.10.5</net.sf.ehcache.version>
@@ -368,7 +369,11 @@
                     </exclusion>
                 </exclusions>
             </dependency>
-
+            <dependency>
+                <groupId>com.sdl.tridion.xo</groupId>
+                <artifactId>xo-compatible-client</artifactId>
+                <version>${cd-cil.version}</version>
+            </dependency>
             <dependency>
                 <groupId>com.sdl.delivery</groupId>
                 <artifactId>udp-context-client</artifactId>
@@ -794,6 +799,11 @@
                 <groupId>org.dd4t</groupId>
                 <artifactId>dd4t-providers-web8</artifactId>
                 <version>${dd4t-latest.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <version>${jsonassert.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

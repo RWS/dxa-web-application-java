@@ -43,6 +43,7 @@
         <dxa-module-ugc.version>${dxa.version}</dxa-module-ugc.version>
         <dxa-module-test.version>${dxa.version}</dxa-module-test.version>
         <dxa-module-tridion-docs-mashup.version>${dxa.version}</dxa-module-tridion-docs-mashup.version>
+        <dxa-module-tridion-docs.version>${dxa.version}</dxa-module-tridion-docs.version>
         <!-- /DXA Versions -->
 
         <!-- Apache -->
@@ -324,6 +325,11 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-tridion-docs</artifactId>
+                <version>${dxa-module-tridion-docs.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-ugc</artifactId>
                 <version>${dxa-module-ugc.version}</version>
                 <scope>runtime</scope>
@@ -361,6 +367,12 @@
                         <artifactId>web-ambient-engine</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+
+            <dependency>
+                <groupId>com.sdl.delivery</groupId>
+                <artifactId>udp-context-client</artifactId>
+                <version>${cd-cil.version}</version>
             </dependency>
 
             <dependency>

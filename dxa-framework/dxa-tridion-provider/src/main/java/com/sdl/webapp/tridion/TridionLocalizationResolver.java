@@ -115,7 +115,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
         try {
             return localizationFactory.createLocalization(id, path);
         } catch (LocalizationFactoryException e) {
-            throw new LocalizationResolverException("Exception while creating localization: [" + id + "] " + path, e);
+            throw new LocalizationResolverException("Could not create a localization for pubId: [" + id + "] and path: [" + path + "]", e);
         }
     }
 

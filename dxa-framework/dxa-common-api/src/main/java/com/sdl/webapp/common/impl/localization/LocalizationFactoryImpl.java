@@ -100,7 +100,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         loadIncludes(id, path, builder);
 
         final Localization localization = builder.build();
-        LOG.trace("Created localization: {}", localization);
+        LOG.info("Localization: " + localization + " is created");
 
         return localization;
     }
@@ -139,9 +139,11 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                 builder.setHtmlDesignPublished(true);
                 return true;
             }
-        } catch (StaticContentNotFoundException e) {
-            LOG.debug("No published version.json found for localization [{}] {}", id, path);
-        } catch (ContentProviderException | IOException e) {
+        }
+        catch (StaticContentNotFoundException e) {
+            LOG.error("No published version.json found for localization ["+id+"] " + path, e);
+        }
+        catch (ContentProviderException | IOException e) {
             throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + id +
                     "] " + path, e);
         }
@@ -149,8 +151,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     }
 
     private boolean loadVersionFromWebapp(String id, String path, LocalizationImpl.Builder builder) throws LocalizationFactoryException {
-        final File file = new File(new File(webApplicationContext.getServletContext().getRealPath("/")),
-                DEFAULT_VERSION_PATH);
+        final File file = new File(new File(webApplicationContext.getServletContext().getRealPath("/")), DEFAULT_VERSION_PATH);
         if (!file.exists()) {
             throw new LocalizationFactoryException("File not found: " + file.getPath());
         }
@@ -171,12 +172,18 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         // first, try to load the current asset version from the dxa.properties file.
         // if that is not found, try to load from the broker version.json file, or finally from the web app version.json file
         if (loadVersionFromProperties(id, path, builder)) {
+            LOG.trace("Version: " + builder.getVersion() + " loaded from properties for id: " + id);
             return;
         }
         if (loadVersionFromBroker(id, path, builder)) {
+            LOG.trace("Version: " + builder.getVersion() + " loaded from broker for id: " + id);
             return;
         }
-        loadVersionFromWebapp(id, path, builder);
+        if (loadVersionFromWebapp(id, path, builder)) {
+            LOG.trace("Version: " + builder.getVersion() + " loaded from webapp for id: " + id);
+            return;
+        }
+        LOG.info("Version is not loaded at all for id: " + id);
     }
 
     private void loadResources(String id, String path, LocalizationImpl.Builder builder)
@@ -264,23 +271,21 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         final Map<String, String> map = new HashMap<>();
 
         final JsonNode filesNode = rootNode.get(FILES_NODE_NAME);
-        if (filesNode != null) {
-            for (JsonNode subFileNode : filesNode) {
-                final String subFilePath = subFileNode.asText();
-                if (!Strings.isNullOrEmpty(subFilePath)) {
-                    final String prefix = subFilePath.substring(subFilePath.lastIndexOf('/') + 1,
-                            subFilePath.lastIndexOf('.') + 1);
-
-                    final Iterator<Map.Entry<String, JsonNode>> i = parseJsonFileTree(contentProvider,
-                            subFilePath, locId, locPath).fields();
-                    while (i.hasNext()) {
-                        final Map.Entry<String, JsonNode> entry = i.next();
-                        map.put(prefix + entry.getKey(), entry.getValue().asText());
-                    }
-                }
+        if (filesNode == null) {
+            return map;
+        }
+        for (JsonNode subFileNode : filesNode) {
+            final String subFilePath = subFileNode.asText();
+            if (Strings.isNullOrEmpty(subFilePath)) {
+                continue;
+            }
+            String prefix = subFilePath.substring(subFilePath.lastIndexOf('/') + 1, subFilePath.lastIndexOf('.') + 1);
+            Iterator<Map.Entry<String, JsonNode>> i = parseJsonFileTree(contentProvider, subFilePath, locId, locPath).fields();
+            while (i.hasNext()) {
+                final Map.Entry<String, JsonNode> entry = i.next();
+                map.put(prefix + entry.getKey(), entry.getValue().asText());
             }
         }
-
         return map;
     }
 }

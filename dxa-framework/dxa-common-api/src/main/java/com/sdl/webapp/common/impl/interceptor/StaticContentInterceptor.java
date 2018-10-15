@@ -74,22 +74,24 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
 
     private static void fallbackForContentProvider(ServletServerHttpRequest req, String requestPath, ServletServerHttpResponse res, boolean isPreview)
             throws IOException, StaticContentNotFoundException {
-        LOG.debug("Static resource not found in static content provider. Fallback to webapp content...");
+        LOG.warn("Static resource not found in static content provider for " + requestPath + ". Fallback to webapp content...");
 
         URL contentResource = req.getServletRequest().getServletContext().getResource(requestPath);
         if (contentResource == null) {
             contentResource = req.getServletRequest().getServletContext().getClassLoader().getResource(requestPath);
         }
 
-        if (contentResource != null) {
-            String mimeType = MimeUtils.getMimeType(contentResource);
-            res.getHeaders().setContentType(MediaType.parseMediaType(mimeType));
+        if (contentResource == null) {
+            return;
+        }
+        String mimeType = MimeUtils.getMimeType(contentResource);
+        res.getHeaders().setContentType(MediaType.parseMediaType(mimeType));
 
-            if (isToBeRefreshed(res, req.getHeaders().getIfModifiedSince(),
-                    ManagementFactory.getRuntimeMXBean().getStartTime(), false, isPreview)) {
-                try (final InputStream in = contentResource.openStream(); final OutputStream out = res.getBody()) {
-                    IOUtils.copy(in, out);
-                }
+        if (isToBeRefreshed(res, req.getHeaders().getIfModifiedSince(),
+                ManagementFactory.getRuntimeMXBean().getStartTime(), false, isPreview)) {
+            try (final InputStream in = contentResource.openStream();
+                 final OutputStream out = res.getBody()) {
+                IOUtils.copy(in, out);
             }
         }
     }

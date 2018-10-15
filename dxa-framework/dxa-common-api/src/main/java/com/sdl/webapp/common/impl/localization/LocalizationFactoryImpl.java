@@ -250,8 +250,8 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                 return objectMapper.readTree(in);
             }
         } catch (ContentProviderException | IOException e) {
-            throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + locId +
-                    "] for path '" + locPath + "'", e);
+            throw new LocalizationFactoryException("Could not read configuration of localization for pubId: [" + locId +
+                    "] and path [" + locPath + "]", e);
         }
     }
 

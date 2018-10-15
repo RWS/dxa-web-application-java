@@ -132,10 +132,11 @@ public class StaticContentResolver {
         int itemId;
 
         synchronized (LOCK) {
-            binaryMeta = dynamicMetaRetriever.getBinaryMetaByURL(_prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl()));
+            String urlPath = _prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl());
+            binaryMeta = dynamicMetaRetriever.getBinaryMetaByURL(urlPath);
             if (binaryMeta == null) {
-                throw new StaticContentNotFoundException("No binary meta found for: [" + publicationId + "] " +
-                        pathInfo.getFileName());
+                throw new StaticContentNotFoundException("No binary meta found for pubId: [" +
+                        publicationId + "] and urlPath: " + urlPath);
             }
             itemId = (int) binaryMeta.getURI().getItemId();
             componentMeta = factory.getMeta(itemId);

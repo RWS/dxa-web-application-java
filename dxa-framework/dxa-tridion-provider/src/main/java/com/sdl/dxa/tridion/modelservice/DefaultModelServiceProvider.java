@@ -1,31 +1,13 @@
 package com.sdl.dxa.tridion.modelservice;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.MapperFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.google.common.base.Strings;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
-import com.sdl.dxa.modelservice.service.EntityModelService;
-import com.sdl.dxa.modelservice.service.PageModelService;
+import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import com.sdl.dxa.tridion.modelservice.exceptions.ModelServiceInternalServerErrorException;
-import com.sdl.web.pca.client.DefaultGraphQLClient;
-import com.sdl.web.pca.client.DefaultPublicContentApi;
-import com.sdl.web.pca.client.GraphQLClient;
-import com.sdl.web.pca.client.PublicContentApi;
-import com.sdl.web.pca.client.contentmodel.ContextData;
-import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
-import com.sdl.web.pca.client.contentmodel.enums.ContentType;
-import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
-import com.sdl.web.pca.client.contentmodel.enums.DcpType;
-import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
-import com.sdl.web.pca.client.contentmodel.generated.Page;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
@@ -33,25 +15,24 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import java.io.IOException;
-
 @Slf4j
-@Service(value = "PCAModelService")
+@Service(value = "DefaultModelService")
+@Profile("cil.providers.active")
 @Primary
-public class PCAModelService implements PageModelService, EntityModelService {
+public class DefaultModelServiceProvider implements ModelServiceProvider {
 
     private final ModelServiceConfiguration configuration;
 
-    private final PublicContentApi pcaClient;
+    private final ModelServiceClient modelServiceClient;
 
     @Autowired
-    public PCAModelService(ModelServiceConfiguration configuration) {
+    public DefaultModelServiceProvider(ModelServiceConfiguration configuration, ModelServiceClient modelServiceClient) {
         this.configuration = configuration;
-        GraphQLClient graphQLClient = new DefaultGraphQLClient("http://localhost:8081/udp/content/",null);
-        this.pcaClient = new DefaultPublicContentApi(graphQLClient);
+        this.modelServiceClient = modelServiceClient;
     }
 
     @NotNull
@@ -69,42 +50,26 @@ public class PCAModelService implements PageModelService, EntityModelService {
      * @throws ContentProviderException if couldn't load or parse the page content
      */
     @NotNull
+    @Override
     public String loadPageContent(PageRequestDto pageRequest) throws ContentProviderException {
         String serviceUrl = UriComponentsBuilder.fromUriString(configuration.getPageModelUrl()).queryParam("raw", "true").build().toUriString();
         return _loadPage(serviceUrl, String.class, pageRequest);
     }
 
-    private String getPathUrl(String path)
-    {
-        if(path.equals("/"))
-            path=path+"index.html";
-        return path;
-    }
-
     private <T> T _loadPage(String serviceUrl, Class<T> type, PageRequestDto pageRequest) throws ContentProviderException {
         try {
-            JsonNode pageNode = pcaClient.getPageModelData(ContentNamespace.Sites,  pageRequest.getPublicationId(), getPathUrl(pageRequest.getPath()), ContentType.MODEL, DataModelType.R2, PageInclusion.INCLUDE, false, null);
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.registerModule(new JodaModule());
-            mapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-            T  result = (T)mapper.readValue(pageNode.toString(),PageModelData.class);
-            log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
-            return result;
+            T page = modelServiceClient.getForType(serviceUrl, type,
+                    pageRequest.getUriType(),
+                    pageRequest.getPublicationId(),
+                    removeLeadingAndEndingSlash(pageRequest.getPath()),
+                    pageRequest.getIncludePages());
+            log.trace("Loaded '{}' for pageRequest '{}'", page, pageRequest);
+            return page;
         } catch (ModelServiceInternalServerErrorException e) {
             throw new ContentProviderException("Cannot load page from model service", e);
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-            return null;
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
-            return null;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-        /*catch (ItemNotFoundInModelServiceException e) {
+        } catch (ItemNotFoundInModelServiceException e) {
             throw new PageNotFoundException("Cannot load page '" + pageRequest + "'", e);
-        }*/
+        }
     }
 
     private String removeLeadingAndEndingSlash(String path) {
@@ -118,6 +83,7 @@ public class PCAModelService implements PageModelService, EntityModelService {
      * @param entityId entity ID in a format of {@code componentId-templateId}
      */
     @NotNull
+    @Override
     public EntityModelData loadEntity(String publicationId, @NotNull String entityId) throws ContentProviderException {
         return loadEntity(EntityRequestDto.builder(publicationId, entityId).entityId(entityId).build());
     }
@@ -126,14 +92,14 @@ public class PCAModelService implements PageModelService, EntityModelService {
     @Override
     public EntityModelData loadEntity(EntityRequestDto entityRequest) throws ContentProviderException {
         try {
-            JsonNode node = pcaClient.getEntityModelData(ContentNamespace.Sites,8,1458,9195,ContentType.MODEL,DataModelType.R2,DcpType.DEFAULT, false, new ContextData());
-            ObjectMapper MAPPER = new ObjectMapper();
-            EntityModelData modelData = MAPPER.readValue(node.toString(),EntityModelData.class);
-
+            EntityModelData modelData = modelServiceClient.getForType(configuration.getEntityModelUrl(), EntityModelData.class,
+                    entityRequest.getUriType(),
+                    entityRequest.getPublicationId(),
+                    entityRequest.getComponentId(),
+                    entityRequest.getTemplateId());
             log.trace("Loaded '{}' for entityId '{}'", modelData, entityRequest.getComponentId());
             return modelData;
-        } catch (IOException e) {
-            e.printStackTrace();
+        } catch (ItemNotFoundInModelServiceException e) {
             throw new DxaItemNotFoundException("Entity " + entityRequest + " not found in the Model Service", e);
         }
     }

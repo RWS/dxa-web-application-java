@@ -2,7 +2,7 @@ package com.sdl.webapp.tridion.navigation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.dxa.common.dto.PageRequestDto;
-import com.sdl.dxa.tridion.modelservice.DefaultModelService;
+import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -40,7 +40,7 @@ public class StaticNavigationProvider implements NavigationProvider {
 
     private final LinkResolver linkResolver;
 
-    private final DefaultModelService modelService;
+    private final ModelServiceProvider modelService;
 
     @Value("${dxa.tridion.navigation.modelUrl}")
     private String navigationModelUrl;
@@ -48,7 +48,7 @@ public class StaticNavigationProvider implements NavigationProvider {
     @Autowired
     public StaticNavigationProvider(ObjectMapper objectMapper,
                                     LinkResolver linkResolver,
-                                    DefaultModelService modelService) {
+                                    ModelServiceProvider modelService) {
         this.objectMapper = objectMapper;
         this.linkResolver = linkResolver;
         this.modelService = modelService;

@@ -1,6 +1,5 @@
 package com.sdl.dxa.api.datamodel.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.sdl.dxa.api.datamodel.Constants;
 import com.sdl.dxa.api.datamodel.model.util.ModelDataWrapper;
@@ -19,7 +18,6 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @Accessors(chain = true)
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class PageModelData extends ViewModelData {
 
     private String id;

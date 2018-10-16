@@ -6,10 +6,9 @@ import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.caching.wrapper.CopyingCache;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
+import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.modelservice.DefaultModelService;
-import com.sdl.dxa.tridion.modelservice.PCAModelService;
 import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
 import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
 import com.sdl.web.api.broker.querying.sorting.SortParameter;
@@ -48,7 +47,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -71,13 +69,13 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
  * @dxa.publicApi
  */
 @Service(value = "DefaultContentProvider")
-@Profile("default.content.provider")
+@Profile("cil.providers.active")
 @Slf4j
 public class DefaultContentProvider implements ContentProvider {
 
     private final ModelBuilderPipeline builderPipeline;
 
-    private final DefaultModelService modelService;
+    private final ModelServiceProvider modelService;
 
     private final WebRequestContext webRequestContext;
 
@@ -92,7 +90,7 @@ public class DefaultContentProvider implements ContentProvider {
                                   StaticContentResolver staticContentResolver,
                                   LinkResolver linkResolver,
                                   ModelBuilderPipeline builderPipeline,
-                                  DefaultModelService modelService) {
+                                  ModelServiceProvider modelService) {
         this.webRequestContext = webRequestContext;
         this.linkResolver = linkResolver;
         this.staticContentResolver = staticContentResolver;

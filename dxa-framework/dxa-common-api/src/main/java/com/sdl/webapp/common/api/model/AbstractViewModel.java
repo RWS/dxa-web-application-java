@@ -2,6 +2,7 @@ package com.sdl.webapp.common.api.model;
 
 import com.fasterxml.jackson.annotation.JsonFilter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
@@ -33,6 +34,7 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 public abstract class AbstractViewModel implements ViewModel {
 
     @JsonProperty("ExtensionData")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
     private Map<String, Object> extensionData;
 

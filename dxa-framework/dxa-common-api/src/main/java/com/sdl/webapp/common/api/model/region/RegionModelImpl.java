@@ -227,7 +227,7 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
         if (xpmMetadata != null) {
             pathToRegion = (String)xpmMetadata.get("FullyQualifiedName");
             if(pathToRegion != null) {
-                pathToRegion = String.format(" path: \"%s\",", pathToRegion);
+                pathToRegion = String.format(" path: \"%s\",", pathToRegion.replace("\\", "\\\\"));
             }
         }
         pathToRegion = pathToRegion != null ? pathToRegion : "";

@@ -44,6 +44,7 @@
         <dxa-module-test.version>${dxa.version}</dxa-module-test.version>
         <dxa-module-tridion-docs-mashup.version>${dxa.version}</dxa-module-tridion-docs-mashup.version>
         <dxa-module-tridion-docs.version>${dxa.version}</dxa-module-tridion-docs.version>
+        <dxa-module-tridion-docs-common.version>${dxa.version}</dxa-module-tridion-docs-common.version>
         <!-- /DXA Versions -->
 
         <!-- Apache -->
@@ -155,6 +156,12 @@
         <!-- These are not really used in the framework and are needed only for Model Service adapter -->
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
         <dd4t-latest.version>2.1.5</dd4t-latest.version>
+
+        <!-- DXA 2.1 -->
+        <xmlunit.version>2.3.0</xmlunit.version>
+        <hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
+        <graphql-client.version>1.0.0-SNAPSHOT</graphql-client.version>
+        <sitemapgen4j.version>1.0.6</sitemapgen4j.version>
     </properties>
 
     <scm>
@@ -347,6 +354,11 @@
                 <version>${dxa-module-tridion-docs-mashup.version}</version>
                 <scope>runtime</scope>
             </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-tridion-docs-common</artifactId>
+                <version>${dxa.version}</version>
+            </dependency>
             <!--endregion-->
 
             <dependency>
@@ -376,7 +388,13 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.delivery</groupId>
-                <artifactId>udp-context-client</artifactId>
+                <artifactId>cil</artifactId>
+                <version>${cd-cil.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.delivery</groupId>
+                <artifactId>udp-common-config-legacy</artifactId>
                 <version>${cd-cil.version}</version>
             </dependency>
 
@@ -804,6 +822,38 @@
                 <groupId>org.skyscreamer</groupId>
                 <artifactId>jsonassert</artifactId>
                 <version>${jsonassert.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xmlunit</groupId>
+                <artifactId>xmlunit-core</artifactId>
+                <version>${xmlunit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.xmlunit</groupId>
+                <artifactId>xmlunit-matchers</artifactId>
+                <version>${xmlunit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.web.pca</groupId>
+                <artifactId>graphql-client</artifactId>
+                <version>${graphql-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.dfabulich</groupId>
+                <artifactId>sitemapgen4j</artifactId>
+                <version>${sitemapgen4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

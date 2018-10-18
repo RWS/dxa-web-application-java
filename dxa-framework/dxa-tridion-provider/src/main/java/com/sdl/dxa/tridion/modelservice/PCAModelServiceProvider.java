@@ -1,16 +1,13 @@
 package com.sdl.dxa.tridion.modelservice;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.google.common.base.Strings;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.json.Polymorphic;
 import com.sdl.dxa.api.datamodel.json.PolymorphicObjectMixin;
@@ -21,7 +18,6 @@ import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
 import com.sdl.web.pca.client.PublicContentApi;
-import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
@@ -30,7 +26,6 @@ import com.sdl.web.pca.client.contentmodel.enums.DcpType;
 import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
-import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,20 +37,25 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 
+import static com.sdl.dxa.common.util.PathUtils.normalizePathToDefaults;
 import static org.springframework.util.ClassUtils.forName;
 import static org.springframework.util.ClassUtils.getDefaultClassLoader;
 
 @Slf4j
-@Service(value = "PCAModelService")
+@Service(value = "PCAModelServiceProvider")
 @Profile("!cil.providers.active")
 @Primary
 public class PCAModelServiceProvider implements ModelServiceProvider {
 
-    private final PCAClientProvider pcaClientProvider;
+    private PCAClientProvider pcaClientProvider;
 
-    private final PublicContentApi pcaClient;
+    private PublicContentApi pcaClient;
 
-    private final ObjectMapper mapper;
+    private ObjectMapper mapper;
+
+    PCAModelServiceProvider() {
+        this.mapper = getObjectMapper();
+    }
 
     @Autowired
     public PCAModelServiceProvider(PCAClientProvider pcaClientProvider) {
@@ -66,8 +66,8 @@ public class PCAModelServiceProvider implements ModelServiceProvider {
 
     @NotNull
     @Override
-    public PageModelData loadPageModel(PageRequestDto pageRequest) {
-        return _loadPage(PageModelData.class, pageRequest);
+    public PageModelData loadPageModel(PageRequestDto pageRequest) throws ContentProviderException {
+        return _loadPage(PageModelData.class, pageRequest, ContentType.MODEL);
     }
 
     /**
@@ -80,37 +80,65 @@ public class PCAModelServiceProvider implements ModelServiceProvider {
      */
     @NotNull
     @Override
-    public String loadPageContent(PageRequestDto pageRequest) {
-        return _loadPage(String.class, pageRequest);
+    public String loadPageContent(PageRequestDto pageRequest) throws ContentProviderException {
+        return _loadPage(String.class, pageRequest, ContentType.RAW);
     }
 
-    private String getPathUrl(String path) {
-        if (path.equals("/"))
-            path = path + "index.html";
-        return path;
-    }
-
-    private <T> T _loadPage(Class<T> type, PageRequestDto pageRequest) {
+    // DXA supports "extensionless URLs" and "index pages".
+    // For example: the index Page at root level (aka the Home Page) has a CM URL path of /index.html
+    // It can be addressed in the DXA web application in several ways:
+    //      1. /index.html – exactly the same as the CM URL
+    //      2. /index – the file extension doesn't have to be specified explicitly {"extensionless URLs")
+    //      3. / - the file name of an index page doesn't have to be specified explicitly either.
+    // Note that the third option is the most clean one and considered the "canonical URL" in DXA; links to an index Page will be generated like that.
+    // The problem with these "URL compression" features is that if a URL does not end with a slash (nor an extension), you don't
+    // know upfront if the URL addresses a regular Page or an index Page (within a nested SG).
+    // To determine this, DXA first tries the regular Page and if it doesn't exist, it appends /index.html and tries again.
+    // TODO: The above should be handled by PCA (See CRQ-11703)
+    private <T> T _loadPage(Class<T> type, PageRequestDto pageRequest, ContentType contentType) throws ContentProviderException {
         try {
-            JsonNode pageNode = pcaClient.getPageModelData(ContentNamespace.Sites, pageRequest.getPublicationId(),
-                    getPathUrl(pageRequest.getPath()), ContentType.RAW, DataModelType.R2, PageInclusion.INCLUDE,
-                    ContentIncludeMode.INCLUDE, null);
-            T result = (T) mapper.readValue(pageNode.toString(), PageModelData.class);
+            JsonNode pageNode = pcaClient.getPageModelData(
+                    ContentNamespace.Sites,
+                    pageRequest.getPublicationId(),
+                    normalizePathToDefaults(pageRequest.getPath()),
+                    contentType,
+                    DataModelType.valueOf(pageRequest.getDataModelType().toString()),
+                    PageInclusion.valueOf(pageRequest.getIncludePages().toString()),
+                    ContentIncludeMode.INCLUDE,
+                    null
+            );
+            T result = mapToType(type, pageNode);
             log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
             return result;
-        } catch (JsonParseException e) {
-            e.printStackTrace();
-        } catch (JsonMappingException e) {
-            e.printStackTrace();
         } catch (IOException e) {
-            e.printStackTrace();
+            log.debug("Page not found by path {}, trying to find by path {}",
+                    normalizePathToDefaults(pageRequest.getPath()),
+                    normalizePathToDefaults(pageRequest.getPath(), true));
+            try {
+                JsonNode pageNode = pcaClient.getPageModelData(
+                        ContentNamespace.Sites,
+                        pageRequest.getPublicationId(),
+                        normalizePathToDefaults(pageRequest.getPath(), true),
+                        contentType,
+                        DataModelType.valueOf(pageRequest.getDataModelType().toString()),
+                        PageInclusion.valueOf(pageRequest.getIncludePages().toString()),
+                        ContentIncludeMode.INCLUDE,
+                        null
+                );
+                T result = mapToType(type, pageNode);
+                log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
+                return result;
+            } catch (IOException ex) {
+                throw new ContentProviderException("Unable to load page, by request " + pageRequest, ex);
+            }
         }
-        return null;
     }
 
-    private String removeLeadingAndEndingSlash(String path) {
-        if (Strings.isNullOrEmpty(path)) return "";
-        return path.replaceAll("^/+([^/].*)", "$1").replaceAll("(.*[^/])/+$", "$1");
+    private <T> T mapToType(Class<T> type, JsonNode result) throws IOException {
+        if (type.equals(String.class)) {
+            return (T) result.toString();
+        }
+        return mapper.readValue(result.toString(), type);
     }
 
     /**
@@ -119,6 +147,7 @@ public class PCAModelServiceProvider implements ModelServiceProvider {
      * @param entityId entity ID in a format of {@code componentId-templateId}
      */
     @NotNull
+    @Override
     public EntityModelData loadEntity(String publicationId, @NotNull String entityId) throws ContentProviderException {
         return loadEntity(EntityRequestDto.builder(publicationId, entityId).entityId(entityId).build());
     }
@@ -127,20 +156,27 @@ public class PCAModelServiceProvider implements ModelServiceProvider {
     @Override
     public EntityModelData loadEntity(EntityRequestDto entityRequest) throws ContentProviderException {
         try {
-            //todo finish this class
-            JsonNode node = pcaClient.getEntityModelData(ContentNamespace.Sites, 8, 1458, 9195,
-                    ContentType.MODEL, DataModelType.R2, DcpType.DEFAULT, ContentIncludeMode.EXCLUDE, new ContextData());
-            EntityModelData modelData = mapper.readValue(node.toString(), EntityModelData.class);
+            JsonNode node = pcaClient.getEntityModelData(
+                    ContentNamespace.Sites,
+                    entityRequest.getPublicationId(),
+                    entityRequest.getComponentId(),
+                    entityRequest.getTemplateId(),
+                    ContentType.valueOf(entityRequest.getContentType().toString()),
+                    DataModelType.valueOf(entityRequest.getDataModelType().toString()),
+                    DcpType.valueOf(entityRequest.getDcpType().toString()),
+                    ContentIncludeMode.INCLUDE_AND_RENDER,
+                    null
+            );
 
+            EntityModelData modelData = mapper.readValue(node.toString(), EntityModelData.class);
             log.trace("Loaded '{}' for entityId '{}'", modelData, entityRequest.getComponentId());
             return modelData;
         } catch (IOException e) {
-            e.printStackTrace();
-            throw new DxaItemNotFoundException("Entity " + entityRequest + " not found in the Model Service", e);
+            throw new ContentProviderException("Entity " + entityRequest + " not found", e);
         }
     }
 
-    private ObjectMapper getObjectMapper() {
+    ObjectMapper getObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
 
         objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategy.UpperCamelCaseStrategy());

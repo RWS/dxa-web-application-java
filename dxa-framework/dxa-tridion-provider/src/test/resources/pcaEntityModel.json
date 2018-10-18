@@ -1,0 +1,112 @@
+{
+  "SchemaId": "80",
+  "XpmMetadata": {
+    "ComponentID": "tcm:8-1458",
+    "ComponentModified": "2016-08-18T13:32:19.467",
+    "ComponentTemplateID": "tcm:8-9195-32",
+    "ComponentTemplateModified": "2015-09-24T16:00:50.727",
+    "IsRepositoryPublished": true
+  },
+  "Metadata": {
+    "standardMeta": {
+      "$type": "ContentModelData",
+      "description": "In sodales elementum lorem, at sollicitudin quam placerat in. Suspendisse vitae purus eu dolor mattis mollis. Nulla sit amet orci ac arcu suscipit commodo ut in tellus. Praesent ultrices lacus massa, at consequat augue consectetur a. ",
+      "introText": "In sodales elementum lorem, at sollicitudin quam placerat in. Suspendisse vitae purus eu dolor mattis mollis. "
+    }
+  },
+  "MvcData": {
+    "ViewName": "Article"
+  },
+  "Id": "1458-9195",
+  "Namespace": "tcm",
+  "ComponentTemplate": {
+    "Id": "9195",
+    "Namespace": "tcm",
+    "Title": "Article [SmartTarget:Example1]",
+    "RevisionDate": "2015-09-24T16:00:50.727Z",
+    "OutputFormat": "HTML Fragment",
+    "Metadata": {
+      "view": "Article",
+      "regionView": "SmartTarget:SmartTargetRegion",
+      "regionName": "Example1"
+    }
+  },
+  "LinkUrl": "/about",
+  "Content": {
+    "articleBody": {
+      "$type": "ContentModelData[]",
+      "$values": [
+        {
+          "caption": "Phasellus accumsan, ante non aliquet dignissim",
+          "media": {
+            "$type": "EntityModelData",
+            "SchemaId": "2829",
+            "Metadata": {
+              "youTubeId": "2YBtspm8j8M",
+              "headline": "Company News"
+            },
+            "Id": "4480",
+            "Namespace": "tcm",
+            "ComponentTemplate": {
+              "Id": "10247",
+              "Namespace": "tcm",
+              "RevisionDate": "0001-01-01T00:00:00.000Z"
+            },
+            "LinkUrl": "/",
+            "BinaryContent": {
+              "FileName": "company-news-placeholder.png",
+              "FileSize": 674712,
+              "MimeType": "image/png",
+              "Url": "/media/company-news-placeholder_tcm8-4480.png"
+            }
+          },
+          "subheading": "Vision and Mission",
+          "content": {
+            "$type": "RichTextData",
+            "Fragments": [
+              "<p>Lorem ipsum dolor sit amet, <a title=\"Contact Tab Content\" href=\"/about/contact\">consectetur adipiscing</a> elit. Sed diam purus, tincidunt volutpat mauris a, lacinia luctus velit. Nam dui purus, pretium sit amet sagittis vel, lobortis eu est. Morbi sagittis pellentesque facilisis. Phasellus accumsan, ante non aliquet dignissim, turpis diam placerat odio, sit amet rutrum tortor magna nec diam. Nulla adipiscing in quam sit amet faucibus. Nunc congue velit ac leo sodales, quis mattis massa tincidunt.</p>\n<p>Nullam fringilla volutpat arcu, vitae ultricies ante lobortis ac. Quisque elementum nunc congue, luctus mi quis, vestibulum lacus. Vestibulum nec dui nibh. Mauris consectetur risus dui, eget ultricies sapien imperdiet vitae. Praesent metus tortor, adipiscing sed feugiat vitae, accumsan vitae ipsum. Morbi sodales, sapien nec vehicula blandit, turpis nisl mattis metus, vel ultrices eros magna sit amet odio.</p>"
+            ]
+          }
+        },
+        {
+          "subheading": "History",
+          "content": {
+            "$type": "RichTextData",
+            "Fragments": [
+              "\n            <p>Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Ut porttitor nisi nunc. Aenean commodo arcu vehicula enim tincidunt sodales. Proin tristique mi id nisi dignissim, eget congue purus blandit. Vestibulum dignissim sollicitudin sapien, eget pellentesque dui pellentesque sodales. In hac habitasse platea dictumst. Cras placerat at libero at porta. Vivamus eget magna eros:</p>\n            <ul>\n              <li>Integer scelerisque ipsum quis sodales congue.</li>\n              <li>Nunc sollicitudin orci sit amet risus dapibus, a vehicula ipsum ultrices.</li>\n              <li>Sed ut felis at sem blandit auctor.</li>\n            </ul>\n          "
+            ]
+          }
+        },
+        {
+          "caption": "Maecenas quis sem sit amet risus pellentesque laoreet eget at quam",
+          "media": {
+            "$type": "EntityModelData",
+            "SchemaId": "79",
+            "Id": "762",
+            "Namespace": "tcm",
+            "ComponentTemplate": {
+              "Id": "10247",
+              "Namespace": "tcm",
+              "RevisionDate": "0001-01-01T00:00:00.000Z"
+            },
+            "LinkUrl": "",
+            "BinaryContent": {
+              "FileName": "planes.jpg",
+              "FileSize": 641261,
+              "MimeType": "image/jpeg",
+              "Url": "/media/planes_tcm8-762.jpg"
+            }
+          },
+          "subheading": "Leadership",
+          "content": {
+            "$type": "RichTextData",
+            "Fragments": [
+              "\n            <p>Maecenas quis mi ipsum. Morbi dapibus diam fermentum urna porta, a rutrum quam blandit. Phasellus fermentum vitae nisl non lacinia. Nulla in nulla sit amet eros suscipit consectetur a quis orci. Mauris id turpis vitae magna ultricies accumsan. Nunc velit quam, congue vel magna at, mattis dapibus orci.</p>\n            <ul>\n              <li>Nulla varius nibh ut massa ornare, rhoncus dictum quam mollis.</li>\n              <li>Suspendisse placerat nulla sed feugiat eleifend.</li>\n              <li>Vestibulum molestie mi sit amet porttitor lacinia.</li>\n              <li>Integer scelerisque ipsum quis sodales congue.</li>\n              <li>Nunc sollicitudin orci sit amet risus dapibus, a vehicula ipsum ultrices.</li>\n              <li>Sed ut felis at sem blandit auctor.</li>\n            </ul>\n          "
+            ]
+          }
+        }
+      ]
+    },
+    "headline": "Company Information"
+  }
+}

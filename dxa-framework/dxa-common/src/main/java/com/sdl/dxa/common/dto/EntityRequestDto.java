@@ -2,6 +2,7 @@ package com.sdl.dxa.common.dto;
 
 import com.google.common.base.Splitter;
 import lombok.Builder;
+import lombok.ToString;
 import lombok.Value;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
@@ -13,6 +14,7 @@ import java.util.List;
  */
 @Value
 @Builder(toBuilder = true, builderMethodName = "hiddenBuilder")
+@ToString
 public class EntityRequestDto {
 
     protected static final String COMPONENT_TEMPLATE_IDS_FORMAT = "%s-%s";

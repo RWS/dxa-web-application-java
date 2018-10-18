@@ -77,7 +77,7 @@ public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLo
         properties.putAll(getCommonProperties());
         properties.put("ServiceUri", ClientsUtil.makeEndWithoutSlash(StringUtils.replace(this.serviceUrl,
                 "content.svc",
-                "client/v4/content.svc")));
+                endpointContext)));
         return properties;
     }
 

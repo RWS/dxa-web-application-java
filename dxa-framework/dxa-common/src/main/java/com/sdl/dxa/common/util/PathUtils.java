@@ -87,6 +87,10 @@ public final class PathUtils {
      * @return a normalized path
      */
     public static String normalizePathToDefaults(String path) {
+        return normalizePathToDefaults(path, false);
+    }
+
+    public static String normalizePathToDefaults(String path, boolean tryIndexPage) {
         log.trace("normalizePathToDefaults({})", path);
         String processingPath = path;
 
@@ -99,7 +103,9 @@ public final class PathUtils {
         }
 
         if (!hasExtension(processingPath)) {
-            processingPath = processingPath + DEFAULT_PAGE_EXTENSION;
+            processingPath = tryIndexPage
+                    ? processingPath + "/" + DEFAULT_PAGE_NAME + DEFAULT_PAGE_EXTENSION
+                    : processingPath + DEFAULT_PAGE_EXTENSION;
         }
 
         log.trace("return {}", processingPath);

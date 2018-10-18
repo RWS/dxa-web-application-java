@@ -194,7 +194,7 @@ public class PCAModelServiceProvider implements ModelServiceProvider {
                         Class<?> aClass = forName(type.getBeanClassName(), getDefaultClassLoader());
                         objectMapper.addMixIn(aClass, PolymorphicObjectMixin.class);
                     } catch (ClassNotFoundException e) {
-                        log.warn("Class not found while mapping model data to typeIDs. Should never happen.", e);
+                        throw new RuntimeException("Class not found while mapping model data to typeIDs. Should never happen.", e);
                     }
                 });
         objectMapper.addMixIn(Object.class, PolymorphicObjectMixin.class);

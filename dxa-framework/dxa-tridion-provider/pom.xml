@@ -27,6 +27,7 @@
         <dependency>
             <groupId>com.sdl.delivery</groupId>
             <artifactId>udp-context-client</artifactId>
+            <version>${cd-cil.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>

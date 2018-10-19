@@ -43,32 +43,34 @@
         <dxa-module-ugc.version>${dxa.version}</dxa-module-ugc.version>
         <dxa-module-test.version>${dxa.version}</dxa-module-test.version>
         <dxa-module-tridion-docs-mashup.version>${dxa.version}</dxa-module-tridion-docs-mashup.version>
+        <dxa-module-tridion-docs.version>${dxa.version}</dxa-module-tridion-docs.version>
+        <dxa-module-tridion-docs-common.version>${dxa.version}</dxa-module-tridion-docs-common.version>
         <!-- /DXA Versions -->
 
         <!-- Apache -->
-        <commons-io-version>2.5</commons-io-version>
-        <commons-lang3.version>3.5</commons-lang3.version>
-        <commons-collections.version>3.2.2</commons-collections.version>
-        <commons-validator.version>1.5.1</commons-validator.version>
-        <httpcomponents-client-version>4.5.2</httpcomponents-client-version>
-        <httpcomponents.core.version>4.4.6</httpcomponents.core.version>
+        <commons-io-version>2.6</commons-io-version>
+        <commons-lang3.version>3.8.1</commons-lang3.version>
+        <commons-collections4.version>4.2</commons-collections4.version>
+        <commons-validator.version>1.6</commons-validator.version>
+        <httpcomponents-client-version>4.5.6</httpcomponents-client-version>
+        <httpcomponents.core.version>4.4.10</httpcomponents.core.version>
 
-        <guava-version>20.0</guava-version>
+        <guava-version>26.0-jre</guava-version>
 
         <!-- Joda Time -->
-        <joda-time-version>2.9.7</joda-time-version>
+        <joda-time-version>2.10</joda-time-version>
 
-        <jackson.version>2.9.4</jackson.version>
+        <jackson.version>2.9.6</jackson.version>
         <woodstox-version>4.4.1</woodstox-version>
         <lombok.version>1.16.12</lombok.version>
 
         <!-- Logging -->
-        <logback.version>1.1.8</logback.version>
-        <slf4j-version>1.7.21</slf4j-version>
+        <logback.version>1.2.3</logback.version>
+        <slf4j-version>1.7.25</slf4j-version>
 
         <!-- Servlet and JSP APIs -->
-        <servlet-api-version>3.1.0</servlet-api-version>
-        <jsp-api-version>2.3.1</jsp-api-version>
+        <servlet-api-version>4.0.1</servlet-api-version>
+        <jsp-api-version>2.3.3</jsp-api-version>
         <jstl-version>1.2</jstl-version>
 
         <!-- JUnit and other test libraries -->
@@ -77,32 +79,32 @@
         <mockito-version>1.10.19</mockito-version>
 
         <!-- Spring -->
-        <spring.version>4.3.8.RELEASE</spring.version>
-        <spring-security.version>4.1.4.RELEASE</spring-security.version>
+        <spring.version>4.3.19.RELEASE</spring.version>
+        <spring-security.version>4.2.8.RELEASE</spring-security.version>
 
         <!--was 1.7.3-->
-        <jsoup.version>1.8.3</jsoup.version>
-        <rome.version>1.7.1</rome.version>
+        <jsoup.version>1.11.3</jsoup.version>
+        <rome.version>1.11.0</rome.version>
         <xalan-version>2.7.2</xalan-version>
 
         <dozer.version>5.5.1</dozer.version>
         <device-detection.version>3.2.4.5</device-detection.version>
 
-        <aspectj.version>1.8.9</aspectj.version>
-        <findbugs.annotations.version>2.0.1</findbugs.annotations.version>
-        <openpojo.version>0.8.4</openpojo.version>
-        <jb-annotations.version>13.0</jb-annotations.version>
+        <aspectj.version>1.9.1</aspectj.version>
+        <findbugs.annotations.version>3.0.1</findbugs.annotations.version>
+        <openpojo.version>0.8.10</openpojo.version>
+        <jb-annotations.version>16.0.3</jb-annotations.version>
         <jaxen.version>1.1.6</jaxen.version>
-        <jdom2.version>2.0.5</jdom2.version>
-        <powermock.version>1.6.6</powermock.version>
-        <odata_client.version>2.3.4</odata_client.version>
-        <ehcache.version>3.1.3</ehcache.version>
-        <cache-api.version>1.0.0</cache-api.version>
+        <jdom2.version>2.0.6</jdom2.version>
+        <powermock.version>1.7.4</powermock.version>
+        <ehcache.version>3.6.1</ehcache.version>
+        <cache-api.version>1.1.0</cache-api.version>
+        <jsonassert.version>1.5.0</jsonassert.version>
 
         <!-- DD4T PROPERTIES -->
-        <net.sf.ehcache.version>2.9.0</net.sf.ehcache.version>
+        <net.sf.ehcache.version>2.10.5</net.sf.ehcache.version>
         <activation.version>1.1.1</activation.version>
-        <activemq.version>5.10.0</activemq.version>
+        <activemq.version>5.15.6</activemq.version>
 
         <!-- Web 8: 3.4 -->
         <!--<commons-lang3.version>3.3.2</commons-lang3.version>-->
@@ -114,27 +116,17 @@
         <commons-codec.version>1.8</commons-codec.version>
 
         <easylicense.version>2.5</easylicense.version>
-        <easymock.version>3.2</easymock.version>
         <el-impl.version>2.2</el-impl.version>
         <ehcache.jcache.version>1.0.1</ehcache.jcache.version>
-        <fast-classpath-scanner.version>2.4.7</fast-classpath-scanner.version>
-        <gson.version>2.3.1</gson.version>
+        <fast-classpath-scanner.version>3.1.15</fast-classpath-scanner.version>
+        <gson.version>2.8.5</gson.version>
 
         <!-- Web 8: 18.0 -->
         <guava.version>15.0</guava.version>
 
-        <!--<jackson.version>2.6.4</jackson.version>-->
         <javax.jms.version>1.1-rev-1</javax.jms.version>
-        <!--<javax.servlet-api.version>3.0.1</javax.servlet-api.version>-->
         <jetty-util.version>6.1.26</jetty-util.version>
         <javax.validation.version>1.1.0.Final</javax.validation.version>
-        <!--<jcl-over-slf4j.version>1.6.4</jcl-over-slf4j.version>-->
-        <jcl-over-slf4j.version>1.7.21</jcl-over-slf4j.version>
-        <!--<joda-time.version>2.8.2</joda-time.version>-->
-        <jsoup.version>1.8.3</jsoup.version>
-        <!--<jsp-api.version>2.2</jsp-api.version>-->
-        <!--<jstl.version>1.2</jstl.version>-->
-        <!--<junit.version>4.11</junit.version>-->
         <resteasy.version>3.0.8.Final</resteasy.version>
 
 
@@ -155,7 +147,7 @@
         <!--<tridion.web8.common.config.version>8.1.1-1002</tridion.web8.common.config.version>-->
         <!--<tridion.web8.discovery.client.version>8.1.1-1009</tridion.web8.discovery.client.version>-->
 
-        <urlrewritefilter.version>4.0.3</urlrewritefilter.version>
+        <urlrewritefilter.version>4.0.4</urlrewritefilter.version>
         <xml-apis.version>1.4.01</xml-apis.version>
 
         <!---->
@@ -163,8 +155,13 @@
         <!-- DD4T dependencies -->
         <!-- These are not really used in the framework and are needed only for Model Service adapter -->
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
-        <dd4t-latest.version>2.1.2</dd4t-latest.version>
+        <dd4t-latest.version>2.1.5</dd4t-latest.version>
 
+        <!-- DXA 2.1 -->
+        <xmlunit.version>2.3.0</xmlunit.version>
+        <hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
+        <pca-client.version>1.0.0-SNAPSHOT</pca-client.version>
+        <sitemapgen4j.version>1.0.6</sitemapgen4j.version>
     </properties>
 
     <scm>
@@ -176,6 +173,14 @@
 
     <developers>
         <developer>
+            <id>okondratiuk</id>
+            <name>Oleksii Kondratiuk</name>
+            <email>okondratiuk@sdl.com</email>
+            <timezone>+2</timezone>
+            <organization>SDL Group</organization>
+            <organizationUrl>http://www.sdl.com</organizationUrl>
+        </developer>
+        <developer>
             <id>rpannekoek</id>
             <name>Rick Pannekoek</name>
             <email>rpannekoek@sdl.com</email>
@@ -184,10 +189,26 @@
             <organizationUrl>http://www.sdl.com</organizationUrl>
         </developer>
         <developer>
-            <id>azarakovskiy</id>
-            <name>Alexey Zarakovskiy</name>
-            <email>azarakovskiy@sdl.com</email>
-            <timezone>+1</timezone>
+            <id>mbilenko</id>
+            <name>Mykola Bilenko</name>
+            <email>mbilenko@sdl.com</email>
+            <timezone>+2</timezone>
+            <organization>SDL Group</organization>
+            <organizationUrl>http://www.sdl.com</organizationUrl>
+        </developer>
+        <developer>
+            <id>mborysenko</id>
+            <name>Maksym Borysenko</name>
+            <email>mborysenko@sdl.com</email>
+            <timezone>+2</timezone>
+            <organization>SDL Group</organization>
+            <organizationUrl>http://www.sdl.com</organizationUrl>
+        </developer>
+        <developer>
+            <id>inikonov</id>
+            <name>Igor Nikonov</name>
+            <email>inikonov@sdl.com</email>
+            <timezone>+2</timezone>
             <organization>SDL Group</organization>
             <organizationUrl>http://www.sdl.com</organizationUrl>
         </developer>
@@ -312,6 +333,11 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-tridion-docs</artifactId>
+                <version>${dxa-module-tridion-docs.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-ugc</artifactId>
                 <version>${dxa-module-ugc.version}</version>
                 <scope>runtime</scope>
@@ -327,6 +353,11 @@
                 <artifactId>dxa-module-tridion-docs-mashup</artifactId>
                 <version>${dxa-module-tridion-docs-mashup.version}</version>
                 <scope>runtime</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.dxa.modules</groupId>
+                <artifactId>dxa-module-tridion-docs-common</artifactId>
+                <version>${dxa.version}</version>
             </dependency>
             <!--endregion-->
 
@@ -349,6 +380,22 @@
                         <artifactId>web-ambient-engine</artifactId>
                     </exclusion>
                 </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.tridion.xo</groupId>
+                <artifactId>xo-compatible-client</artifactId>
+                <version>${cd-cil.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.delivery</groupId>
+                <artifactId>cil</artifactId>
+                <version>${cd-cil.version}</version>
+                <type>pom</type>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.delivery</groupId>
+                <artifactId>udp-common-config-legacy</artifactId>
+                <version>${cd-cil.version}</version>
             </dependency>
 
             <dependency>
@@ -585,9 +632,9 @@
                 <version>${commons-lang3.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-collections</groupId>
-                <artifactId>commons-collections</artifactId>
-                <version>${commons-collections.version}</version>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4.version}</version>
             </dependency>
             <dependency>
                 <groupId>commons-validator</groupId>
@@ -770,6 +817,48 @@
                 <groupId>org.dd4t</groupId>
                 <artifactId>dd4t-providers-web8</artifactId>
                 <version>${dd4t-latest.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <version>${jsonassert.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-validator</artifactId>
+                <version>${hibernate-validator.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.xmlunit</groupId>
+                <artifactId>xmlunit-core</artifactId>
+                <version>${xmlunit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.xmlunit</groupId>
+                <artifactId>xmlunit-matchers</artifactId>
+                <version>${xmlunit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.google.code.gson</groupId>
+                <artifactId>gson</artifactId>
+                <version>${gson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.web.pca</groupId>
+                <artifactId>graphql-client</artifactId>
+                <version>${pca-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.web.pca</groupId>
+                <artifactId>pca-client</artifactId>
+                <version>${pca-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.dfabulich</groupId>
+                <artifactId>sitemapgen4j</artifactId>
+                <version>${sitemapgen4j.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

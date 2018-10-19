@@ -231,7 +231,8 @@ public class DefaultPageModelTest {
         String asString = objectMapper.writeValueAsString(pageModel);
 
         //then
-        Matcher matcher = Pattern.compile(".*\"Id\"[:\\s]*\"1\".*", Pattern.MULTILINE).matcher(asString.replace("\r\n", ""));
+        Matcher matcher = Pattern.compile(".*\"Id\"[:\\s]*\"1\".*", Pattern.MULTILINE).matcher(asString
+                .replace("\r", "").replace("\n", ""));
         assertTrue(matcher.matches());
     }
 

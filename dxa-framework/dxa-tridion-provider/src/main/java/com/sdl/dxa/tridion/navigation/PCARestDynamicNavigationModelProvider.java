@@ -10,6 +10,7 @@ import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
+import com.sdl.web.pca.client.contentmodel.generated.Ancestor;
 import com.sdl.web.pca.client.contentmodel.generated.ClaimValue;
 import com.sdl.web.pca.client.contentmodel.generated.ClaimValueType;
 import com.sdl.web.pca.client.contentmodel.generated.SitemapItem;
@@ -113,7 +114,7 @@ public class PCARestDynamicNavigationModelProvider implements NavigationModelPro
                     requestDto.getLocalizationId(),
                     requestDto.getSitemapId(),
                     requestDto.getExpandLevels().getCounter(),
-                    requestDto.getNavigationFilter().isWithAncestors(),
+                    requestDto.getNavigationFilter().isWithAncestors() ? Ancestor.INCLUDE : Ancestor.NONE,
                     createContextData(requestDto.getClaims()));
             List<SitemapItemModelData> result = new ArrayList<>();
             if (taxonomySitemapItem != null) {

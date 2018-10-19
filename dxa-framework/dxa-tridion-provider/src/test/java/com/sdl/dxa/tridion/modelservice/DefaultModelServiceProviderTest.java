@@ -21,9 +21,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-//TODO: should be fixed in scope of TSI-3492
-@Ignore
-public class DefaultModelServiceTest {
+public class DefaultModelServiceProviderTest {
 
     @Mock
     private ModelServiceConfiguration configuration;
@@ -35,9 +33,9 @@ public class DefaultModelServiceTest {
     private ModelServiceClient modelServiceClient;
 
     @InjectMocks
-    private DefaultModelService service;
+    private DefaultModelServiceProvider service;
 
-    public DefaultModelServiceTest() throws ConfigurationException {
+    public DefaultModelServiceProviderTest() throws ConfigurationException {
     }
 
     @Before

@@ -6,9 +6,9 @@ import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.caching.wrapper.CopyingCache;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
-import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
+import com.sdl.dxa.tridion.modelservice.PCAModelServiceProvider;
 import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
 import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
 import com.sdl.web.api.broker.querying.sorting.SortParameter;
@@ -68,14 +68,14 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
  *
  * @dxa.publicApi
  */
-@Service(value = "DefaultContentProvider")
-@Profile("cil.providers.active")
+@Service(value = "PCAContentProvider")
+@Profile("!cil.providers.active")
 @Slf4j
-public class DefaultContentProvider implements ContentProvider {
+public class PCAContentProvider implements ContentProvider {
 
     private final ModelBuilderPipeline builderPipeline;
 
-    private final ModelServiceProvider modelService;
+    private final PCAModelServiceProvider modelService;
 
     private final WebRequestContext webRequestContext;
 
@@ -86,11 +86,11 @@ public class DefaultContentProvider implements ContentProvider {
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
     @Autowired
-    public DefaultContentProvider(WebRequestContext webRequestContext,
-                                  StaticContentResolver staticContentResolver,
-                                  LinkResolver linkResolver,
-                                  ModelBuilderPipeline builderPipeline,
-                                  ModelServiceProvider modelService) {
+    public PCAContentProvider(WebRequestContext webRequestContext,
+                              StaticContentResolver staticContentResolver,
+                              LinkResolver linkResolver,
+                              ModelBuilderPipeline builderPipeline,
+                              PCAModelServiceProvider modelService) {
         this.webRequestContext = webRequestContext;
         this.linkResolver = linkResolver;
         this.staticContentResolver = staticContentResolver;

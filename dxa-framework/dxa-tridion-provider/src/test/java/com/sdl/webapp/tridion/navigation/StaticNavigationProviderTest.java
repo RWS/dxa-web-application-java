@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.sdl.dxa.DxaSpringInitialization;
 import com.sdl.dxa.common.dto.PageRequestDto;
-import com.sdl.dxa.tridion.modelservice.DefaultModelService;
+import com.sdl.dxa.tridion.modelservice.DefaultModelServiceProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -61,7 +61,7 @@ public class StaticNavigationProviderTest {
     private LinkResolver linkResolver;
 
     @Mock
-    private DefaultModelService defaultModelService;
+    private DefaultModelServiceProvider defaultModelService;
 
     @InjectMocks
     @Spy

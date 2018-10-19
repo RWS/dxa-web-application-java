@@ -33,9 +33,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.sdl.web.pca.client.contentmodel.generated.Ancestor.INCLUDE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -81,7 +81,7 @@ public class PCARestDynamicNavigationModelProviderTest {
     private SitemapRequestDto requestDto;
 
     @Before
-    public void setUp(){
+    public void setUp() {
         when(clientProvider.getClient()).thenReturn(pcaClient);
         NavigationFilter withAncestorsFilter = new NavigationFilter();
         withAncestorsFilter.setWithAncestors(true);
@@ -148,7 +148,7 @@ public class PCARestDynamicNavigationModelProviderTest {
 
         return source;
     }
-    
+
     @Test
     public void checkFieldsInConvert() {
         TaxonomySitemapItem source = createTaxonomySitemapItem(ID, true);
@@ -198,8 +198,9 @@ public class PCARestDynamicNavigationModelProviderTest {
     }
 
     @Test
-    public void getNavigationModel(){
-        doReturn(createTaxonomySitemapItem(ID, false)).when(pcaClient).getSitemap(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any(ContextData.class));
+    public void getNavigationModel() {
+        doReturn(createTaxonomySitemapItem(ID, false)).when(pcaClient).getSitemap(eq(ContentNamespace.Sites),
+                eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any(ContextData.class));
 
         TaxonomyNodeModelData result = provider.getNavigationModel(requestDto).get();
 
@@ -208,8 +209,9 @@ public class PCARestDynamicNavigationModelProviderTest {
     }
 
     @Test
-    public void getNavigationModelException(){
-        doThrow(new PublicContentApiException()).when(pcaClient).getSitemap(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any(ContextData.class));
+    public void getNavigationModelException() {
+        doThrow(new PublicContentApiException()).when(pcaClient).getSitemap(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID),
+                eq(DEPTH_COUNTER), any(ContextData.class));
 
         assertFalse(provider.getNavigationModel(requestDto).isPresent());
 
@@ -218,24 +220,28 @@ public class PCARestDynamicNavigationModelProviderTest {
     }
 
     @Test
-    public void getNavigationSubtree(){
-        TaxonomySitemapItem[] result = new TaxonomySitemapItem[] {createTaxonomySitemapItem(ID, true)};
-        doReturn(result).when(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER), eq(true), any(ContextData.class));
+    public void getNavigationSubtree() {
+        TaxonomySitemapItem[] result = new TaxonomySitemapItem[]{createTaxonomySitemapItem(ID, true)};
+        doReturn(result).when(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID),
+                eq(DEPTH_COUNTER), eq(INCLUDE), any(ContextData.class));
 
         Collection<SitemapItemModelData> sitemapItemModelData = provider.getNavigationSubtree(requestDto).get();
 
         verifyCreatedObject(sitemapItemModelData.toArray(EMPTY)[0], true, true);
-        verify(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER), eq(true), any(ContextData.class));
+        verify(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER),
+                eq(INCLUDE), any(ContextData.class));
         verify(provider, times(5)).convert(any(TaxonomySitemapItem.class));
     }
 
     @Test
-    public void getNavigationSubtreeException(){
-        doThrow(new PublicContentApiException()).when(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER), eq(true), any(ContextData.class));
+    public void getNavigationSubtreeException() {
+        doThrow(new PublicContentApiException()).when(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID),
+                eq(SITEMAP_ID), eq(DEPTH_COUNTER), eq(INCLUDE), any(ContextData.class));
 
         assertFalse(provider.getNavigationSubtree(requestDto).isPresent());
 
-        verify(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER), eq(true), any(ContextData.class));
+        verify(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER),
+                eq(INCLUDE), any(ContextData.class));
     }
 
     @Test

@@ -22,6 +22,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ import java.util.TreeSet;
 
 @Slf4j
 @Service
+@Profile("!cil.providers.active")
 @Primary
 public class PCARestDynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
 

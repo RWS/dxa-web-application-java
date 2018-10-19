@@ -160,7 +160,7 @@
         <!-- DXA 2.1 -->
         <xmlunit.version>2.3.0</xmlunit.version>
         <hibernate-validator.version>5.2.4.Final</hibernate-validator.version>
-        <graphql-client.version>1.0.0-SNAPSHOT</graphql-client.version>
+        <pca-client.version>1.0.0-SNAPSHOT</pca-client.version>
         <sitemapgen4j.version>1.0.6</sitemapgen4j.version>
     </properties>
 
@@ -848,7 +848,12 @@
             <dependency>
                 <groupId>com.sdl.web.pca</groupId>
                 <artifactId>graphql-client</artifactId>
-                <version>${graphql-client.version}</version>
+                <version>${pca-client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sdl.web.pca</groupId>
+                <artifactId>pca-client</artifactId>
+                <version>${pca-client.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.github.dfabulich</groupId>

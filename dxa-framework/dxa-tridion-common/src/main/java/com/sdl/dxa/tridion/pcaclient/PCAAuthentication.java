@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.sdl.dxa.tridion.common.ConfigurationConstants.AUTHORIZATION_HEADER;
+
 @Service("PCAAuthentication")
 public class PCAAuthentication implements Authentication {
     private static final Logger LOG = LoggerFactory.getLogger(PCAAuthentication.class);
@@ -31,7 +33,7 @@ public class PCAAuthentication implements Authentication {
     public void applyManualAuthentication(HttpRequest request) {
         if (tokenProvider != null) {
             LOG.trace("Request is secured, adding security token.");
-            request.addHeader("Authorization", "Bearer" + tokenProvider.getToken());
+            request.addHeader(AUTHORIZATION_HEADER, "Bearer" + tokenProvider.getToken());
         } else {
             LOG.trace("Request is not secured. Token provider is not available.");
         }

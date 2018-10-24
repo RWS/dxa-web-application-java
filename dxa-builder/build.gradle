@@ -137,16 +137,19 @@ publishing {
                 license.appendNode('url', 'http://www.apache.org/licenses/LICENSE-2.0.txt')
 
                 def developers = root.appendNode('developers')
-                def addDeveloper = { developer, id, name, email ->
+                def addDeveloper = { developer, id, name, email, timezone ->
                     developer.appendNode('id', id)
                     developer.appendNode('name', name)
                     developer.appendNode('email', email)
-                    developer.appendNode('timezone', '+1')
+                    developer.appendNode('timezone', timezone)
                     developer.appendNode('organization', 'SDL Group')
                     developer.appendNode('organizationUrl', 'http://www.sdl.com')
                 }
-                addDeveloper(developers.appendNode('developer'), 'rpannekoek', 'Rick Pannekoek', 'rpannekoek@sdl.com')
-                addDeveloper(developers.appendNode('developer'), 'azarakovskiy', 'Alexey Zarakovskiy', 'azarakovskiy@sdl.com')
+                addDeveloper(developers.appendNode('developer'), 'rpannekoek', 'Rick Pannekoek', 'rpannekoek@sdl.com', '+1')
+                addDeveloper(developers.appendNode('developer'), 'okondratiuk', 'Oleksii Kondratiuk', 'okondratiuk@sdl.com', '+2')
+                addDeveloper(developers.appendNode('developer'), 'mbilenko', 'Mykola Bilenko', 'mbilenko@sdl.com', '+2')
+                addDeveloper(developers.appendNode('developer'), 'mborysenko', 'Maksym Borysenko', 'mborysenko@sdl.com', '+2')
+                addDeveloper(developers.appendNode('developer'), 'inikonov', 'Igor Nikonov', 'inikonov@sdl.com', '+2')
 
                 def scm = root.appendNode('scm')
                 scm.appendNode('url', 'https://github.com/sdl/dxa-web-application-java')
@@ -202,10 +205,10 @@ publishing {
 dependencies {
     compile gradleApi()
     compile localGroovy()
-    compile 'org.jdom:jdom2:2.0.5'
+    compile 'org.jdom:jdom2:2.0.6'
     compile 'jaxen:jaxen:1.1.6'
     compile group: 'commons-configuration', name: 'commons-configuration', version: '1.10'
-    compile group: 'commons-validator', name: 'commons-validator', version: '1.5.1'
+    compile group: 'commons-validator', name: 'commons-validator', version: '1.6'
     testCompile group: 'junit', name: 'junit', version: '4.11'
     testCompile group: 'org.mockito', name: 'mockito-all', version: '1.10.19'
 }

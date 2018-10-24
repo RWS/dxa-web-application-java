@@ -5,8 +5,7 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
-import com.sdl.dxa.modelservice.service.EntityModelService;
-import com.sdl.dxa.modelservice.service.PageModelService;
+import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import com.sdl.dxa.tridion.modelservice.exceptions.ModelServiceInternalServerErrorException;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -15,19 +14,23 @@ import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
-@Service
-public class DefaultModelService implements PageModelService, EntityModelService {
+@Service(value = "DefaultModelService")
+@Profile("cil.providers.active")
+@Primary
+public class DefaultModelServiceProvider implements ModelServiceProvider {
 
     private final ModelServiceConfiguration configuration;
 
     private final ModelServiceClient modelServiceClient;
 
     @Autowired
-    public DefaultModelService(ModelServiceConfiguration configuration, ModelServiceClient modelServiceClient) {
+    public DefaultModelServiceProvider(ModelServiceConfiguration configuration, ModelServiceClient modelServiceClient) {
         this.configuration = configuration;
         this.modelServiceClient = modelServiceClient;
     }
@@ -47,6 +50,7 @@ public class DefaultModelService implements PageModelService, EntityModelService
      * @throws ContentProviderException if couldn't load or parse the page content
      */
     @NotNull
+    @Override
     public String loadPageContent(PageRequestDto pageRequest) throws ContentProviderException {
         String serviceUrl = UriComponentsBuilder.fromUriString(configuration.getPageModelUrl()).queryParam("raw", "true").build().toUriString();
         return _loadPage(serviceUrl, String.class, pageRequest);
@@ -79,6 +83,7 @@ public class DefaultModelService implements PageModelService, EntityModelService
      * @param entityId entity ID in a format of {@code componentId-templateId}
      */
     @NotNull
+    @Override
     public EntityModelData loadEntity(String publicationId, @NotNull String entityId) throws ContentProviderException {
         return loadEntity(EntityRequestDto.builder(publicationId, entityId).entityId(entityId).build());
     }

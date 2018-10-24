@@ -206,7 +206,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                             {
                                 if(IsTypeOfMap(String.class, KeywordModel.class, field))
                                 {
-                                    fieldData = fieldDataProvider.<KeywordModel>getAllFieldData(KeywordModel.class);
+                                    fieldData = fieldDataProvider.getAllFieldData(KeywordModel.class);
                                 }
                                 else
                                 {
@@ -248,7 +248,7 @@ public class SemanticMapperImpl implements SemanticMapper {
             Type key = type.getActualTypeArguments()[0];
             Type value = type.getActualTypeArguments()[1];
 
-            if (key == mapKeyType && value ==mapValueType)
+            if (key == mapKeyType && value == mapValueType)
             {
                 return  true;
             }

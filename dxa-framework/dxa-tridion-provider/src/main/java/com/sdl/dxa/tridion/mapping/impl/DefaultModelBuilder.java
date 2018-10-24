@@ -114,7 +114,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                     (expectedClass != null
                             ? " from pre-selected class " + expectedClass.getCanonicalName()
                             : " from MvcData class " + mvcData.getClass().getCanonicalName()));
-            LocalizationAwareCacheKey key = entitiesCache.getSpecificKey(modelData);
+            LocalizationAwareCacheKey key = entitiesCache.getSpecificKey(modelData,expectedClass);
             synchronized (this) {
                 if (entitiesCache.containsKey(key)) {
                     //noinspection unchecked
@@ -327,6 +327,28 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
             RegionModel regionModel = (RegionModel) viewModelType.getConstructor(String.class)
                     .newInstance(dashify(regionModelData.getName()));
+
+            String schemaId = regionModelData.getSchemaId();
+            regionModel.setSchemaId(schemaId);
+
+            if(schemaId != null && !schemaId.isEmpty()){
+                Localization localization = webRequestContext.getLocalization();
+                SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(schemaId));
+                try {
+                    Map<FieldSemantics, SemanticField> semanticFields = getAllSemanticFields(semanticSchema, regionModelData);
+
+                    semanticMapper.mapSemanticFields(viewModelType,
+                            semanticFields,
+                            DefaultSemanticFieldDataProvider.getFor(regionModelData, semanticSchema),
+                            regionModel);
+                }
+                catch (Exception e) {
+                    String message = "Cannot do a semantic mapping for class '" + viewModelType +
+                            "', model data '" + regionModelData + "', localization '" + localization + "'";
+                    log.error(message);
+                }
+            }
+
             fillViewModel(regionModel, regionModelData);
             regionModel.setMvcData(mvcData);
             ((AbstractViewModel) regionModel).setXpmMetadata(regionModel.getXpmMetadata());

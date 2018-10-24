@@ -68,7 +68,14 @@ public class RegionXpmMarkup implements MarkupDecorator {
             final int minOccurs = 0;
             final int maxOccurs = 0;
 
-            final XpmRegion xpmRegion = this.xpmRegionConfig.getXpmRegion(region.getName(), webRequestContext.getLocalization());
+            String regionId;
+            String schemaId = region.getSchemaId();
+            if (schemaId != null && !schemaId.isEmpty()) {
+                regionId = schemaId;
+            } else {
+                regionId = region.getName();
+            }
+            final XpmRegion xpmRegion = this.xpmRegionConfig.getXpmRegion(regionId, webRequestContext.getLocalization());
             if (xpmRegion != null) {
 
                 boolean markupInjected = false;

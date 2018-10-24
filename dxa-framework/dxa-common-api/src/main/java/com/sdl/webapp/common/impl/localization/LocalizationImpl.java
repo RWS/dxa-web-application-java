@@ -263,5 +263,9 @@ public class LocalizationImpl implements Localization {
         public Localization build() {
             return new LocalizationImpl(this);
         }
+
+        public String getVersion() {
+            return version;
+        }
     }
 }

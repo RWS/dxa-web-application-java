@@ -13,6 +13,20 @@ public interface RegionModel extends ViewModel, FeedItemsProvider, CanFilterEnti
     String getName();
 
     /**
+     * <p>getSchemaId.</p>
+     *
+     * @return a {@link String} schema id.
+     */
+    String getSchemaId();
+
+    /**
+     * <p>setSchemaId.</p>
+     *
+     * @param schemaId a {@link String} object.
+     */
+    void setSchemaId(String schemaId);
+
+    /**
      * Returns a list of {@link EntityModel} objects that are inside this region.
      *
      * @return a list of {@link EntityModel}

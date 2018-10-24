@@ -69,7 +69,8 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
  * @dxa.publicApi
  */
 @Service(value = "DefaultContentProvider")
-@Profile("cil.providers.active")
+//update after TSi-3660
+//@Profile("cil.providers.active")
 @Slf4j
 public class DefaultContentProvider implements ContentProvider {
 

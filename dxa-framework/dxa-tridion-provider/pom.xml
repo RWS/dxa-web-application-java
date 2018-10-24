@@ -138,11 +138,6 @@
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-joda</artifactId>
         </dependency>
-        <!-- pca Model -->
-        <dependency>
-            <groupId>com.sdl.web.pca</groupId>
-            <artifactId>pca-client</artifactId>
-            <version>1.0.0-SNAPSHOT</version>
-        </dependency>
+
     </dependencies>
 </project>

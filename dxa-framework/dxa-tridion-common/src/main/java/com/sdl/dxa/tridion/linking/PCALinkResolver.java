@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.linking;
 
+import com.sdl.dxa.exception.DxaTridionCommonException;
 import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
 import com.sdl.web.pca.client.PublicContentApi;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
@@ -13,12 +14,11 @@ import java.util.Optional;
 import java.util.function.Function;
 
 @Component
-@Profile("PCALinkResolver")
+@Profile("!cil.providers.active")
 public class PCALinkResolver extends AbstractLinkResolver {
 
     @Autowired
     private PCAClientProvider pcaClientProvider;
-    //private PublicContentApi pcaClient;
 
     @Override
     protected Function<ResolvingData, Optional<String>> _componentResolver() {
@@ -28,10 +28,10 @@ public class PCALinkResolver extends AbstractLinkResolver {
 
     private ContentNamespace resolveNamespace(String uri)
     {
-        if(uri.contains("tcm:"))
+        if(uri.startsWith("tcm:"))
             return ContentNamespace.Sites;
         else
-            return ContentNamespace.Docs;
+            throw new DxaTridionCommonException("Not a valid Tridion Sites request");
     }
 
     @Override

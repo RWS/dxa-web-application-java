@@ -30,8 +30,10 @@ public class PCALinkResolver extends AbstractLinkResolver {
     {
         if(uri.startsWith("tcm:"))
             return ContentNamespace.Sites;
+        else if(uri.startsWith("ish:"))
+            return ContentNamespace.Docs;
         else
-            throw new DxaTridionCommonException("Not a valid Tridion Sites request");
+            throw new DxaTridionCommonException("Not a valid Tridion CmUri request");
     }
 
     @Override
@@ -45,6 +47,6 @@ public class PCALinkResolver extends AbstractLinkResolver {
     protected Function<ResolvingData, Optional<String>> _binaryResolver() {
 
         return resolvingData -> Optional.ofNullable(
-                pcaClientProvider.getClient().resolveBinaryLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), "[#def#]", false));
+                pcaClientProvider.getClient().resolveBinaryLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), null, false));
     }
 }

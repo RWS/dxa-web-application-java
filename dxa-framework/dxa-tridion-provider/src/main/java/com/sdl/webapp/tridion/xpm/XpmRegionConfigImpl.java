@@ -15,6 +15,7 @@ import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -45,7 +46,8 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
      * @param objectMapper    a {@link com.fasterxml.jackson.databind.ObjectMapper} object.
      */
     @Autowired
-    public XpmRegionConfigImpl(ContentProvider contentProvider, ObjectMapper objectMapper) {
+    public XpmRegionConfigImpl(@Qualifier("DefaultContentProvider") ContentProvider contentProvider,
+                               ObjectMapper objectMapper) {
         this.contentProvider = contentProvider;
         this.objectMapper = objectMapper;
     }

@@ -13,6 +13,7 @@ import org.joda.time.Weeks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -42,6 +43,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
 
     @Autowired
+    @Qualifier("DefaultContentProvider")
     private ContentProvider contentProvider;
 
     @Autowired

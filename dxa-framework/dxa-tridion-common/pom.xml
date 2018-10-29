@@ -25,6 +25,11 @@
             <artifactId>cil</artifactId>
             <type>pom</type>
         </dependency>
+        <!-- pca Model -->
+        <dependency>
+            <groupId>com.sdl.web.pca</groupId>
+            <artifactId>pca-client</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.cache</groupId>
             <artifactId>cache-api</artifactId>
@@ -54,7 +59,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>${servlet-api-version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

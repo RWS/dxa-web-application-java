@@ -1,10 +1,12 @@
 package com.sdl.dxa.common.dto;
 
 import lombok.Builder;
+import lombok.ToString;
 import lombok.Value;
 
 @Value
 @Builder(toBuilder = true, builderMethodName = "hiddenBuilder")
+@ToString
 public class StaticContentRequestDto {
 
     private String binaryPath;

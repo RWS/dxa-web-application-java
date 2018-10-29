@@ -9,6 +9,7 @@ import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -20,7 +21,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultModelServiceTest {
+public class DefaultModelServiceProviderTest {
 
     @Mock
     private ModelServiceConfiguration configuration;
@@ -32,9 +33,9 @@ public class DefaultModelServiceTest {
     private ModelServiceClient modelServiceClient;
 
     @InjectMocks
-    private DefaultModelService service;
+    private DefaultModelServiceProvider service;
 
-    public DefaultModelServiceTest() throws ConfigurationException {
+    public DefaultModelServiceProviderTest() throws ConfigurationException {
     }
 
     @Before

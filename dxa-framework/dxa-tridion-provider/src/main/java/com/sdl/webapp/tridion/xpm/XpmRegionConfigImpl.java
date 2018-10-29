@@ -9,11 +9,13 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.xpm.ComponentType;
+import com.sdl.webapp.common.api.xpm.OccurrenceConstraint;
 import com.sdl.webapp.common.api.xpm.XpmRegion;
 import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -44,7 +46,8 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
      * @param objectMapper    a {@link com.fasterxml.jackson.databind.ObjectMapper} object.
      */
     @Autowired
-    public XpmRegionConfigImpl(ContentProvider contentProvider, ObjectMapper objectMapper) {
+    public XpmRegionConfigImpl(@Qualifier("DefaultContentProvider") ContentProvider contentProvider,
+                               ObjectMapper objectMapper) {
         this.contentProvider = contentProvider;
         this.objectMapper = objectMapper;
     }
@@ -69,22 +72,23 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
     }
 
     private List<XpmRegion> loadXpmRegions(Localization localization) {
-        final StaticContentItem item;
+        StaticContentItem item = null;
+        String message = "Could not read XPM regions configuration for pubId: " + localization.getId();
         try {
             item = contentProvider.getStaticContent(REGIONS_PATH, localization.getId(), localization.getPath());
         } catch (ContentProviderException e) {
-            LOG.error("Exception while reading XPM regions configuration", e);
+            LOG.error(message, e);
             return null;
         }
-
-        try (final InputStream in = item.getContent()) {
+        try (final InputStream in = item.getContent();) {
             SimpleModule module = new SimpleModule("ComponentTypeMapper", Version.unknownVersion());
             module.addAbstractTypeMapping(ComponentType.class, ComponentTypeImpl.class);
+            module.addAbstractTypeMapping(OccurrenceConstraint.class, OccurrenceConstraintImpl.class);
             objectMapper.registerModule(module); // important, otherwise won't have any effect on mapper's configuration
             return objectMapper.readValue(in, new TypeReference<List<XpmRegionImpl>>() {
             });
         } catch (IOException e) {
-            LOG.error("Exception while reading XPM regions configuration", e);
+            LOG.error(message, e);
             return null;
         }
     }

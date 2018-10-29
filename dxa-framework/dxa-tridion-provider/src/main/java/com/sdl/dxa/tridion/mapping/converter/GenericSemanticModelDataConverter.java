@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.mapping.converter;
 
+import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
@@ -67,6 +68,7 @@ public class GenericSemanticModelDataConverter {
 
     @NotNull
     private SemanticModelConverter getSourceConverter(Class<?> sourceType) throws UnsupportedTargetTypeException {
+
         SemanticModelConverter semanticModelConverter = converters.get(sourceType);
 
         if (semanticModelConverter == null) {

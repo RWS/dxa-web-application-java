@@ -48,8 +48,8 @@ public class PCALinkResolverTest {
 
     @Test
     public void resolveLink() {
-/*        String pageLinkresult = linkResovler.resolveLink("tcm:2-3-64", "2", false);
-        assertEquals(pageLinkresult, "/index.html");*/
+        String pageLinkresult = linkResovler.resolveLink("tcm:2-3-64", "2", false);
+        assertEquals(pageLinkresult, "/index.html");
 
         String componentLinkresult = linkResovler.resolveLink("tcm:2-3", "2", false);
         assertEquals(componentLinkresult, "/resolved-component-2");

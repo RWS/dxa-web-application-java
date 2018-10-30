@@ -33,6 +33,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -54,6 +55,7 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
  */
 @Service(value = "PCAContentProvider")
 @Profile("!cil.providers.active")
+@Primary
 @Slf4j
 public class PCAContentProvider implements ContentProvider {
 

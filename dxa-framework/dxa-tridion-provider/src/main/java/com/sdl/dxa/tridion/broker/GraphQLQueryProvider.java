@@ -1,7 +1,6 @@
 package com.sdl.dxa.tridion.broker;
 
 import com.google.common.base.Strings;
-import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
 import com.sdl.web.pca.client.PublicContentApi;
 import com.sdl.web.pca.client.contentmodel.Pagination;
 import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
@@ -43,44 +42,22 @@ public class GraphQLQueryProvider implements QueryProvider {
 
     @Override
     public List<Item> executeQueryItems(SimpleBrokerQuery queryParams) {
-        //TODO: find out how to deal with following 2 vars:
-//        boolean hasMore = false;
-//        String cursor = "";
-
         InputItemFilter filter = buildFilter(queryParams);
-//        InputItemFilter filter = BuildFilter(queryParams);
-//        InputSortParam sort = BuildSort(queryParams);
         InputSortParam sort = buildSort(queryParams);
-//        var client = PCAClientFactory.Instance.CreateClient();//        int pageSize = queryParams.PageSize > 0 ? queryParams.PageSize + 1 : queryParams.PageSize;
         int pageSize = queryParams.getPageSize() > 0 ? queryParams.getPageSize() + 1 : queryParams.getPageSize();
         Pagination pagination = new Pagination();
         pagination.setFirst(pageSize);
         pagination.setAfter(queryParams.getCursor());
-//        var results = client.ExecuteItemQuery(filter, sort, new Pagination
-//        {
-//            First = pageSize,
-//                    After = queryParams.Cursor
-//        }, null, ContentIncludeMode.Exclude, false, null);
         ItemConnection results = client.executeItemQuery(filter, sort, pagination, null, ContentIncludeMode.EXCLUDE, false, null);
-//        var resultList = results.Edges.Select(edge => edge.Node).ToList();
         List<Item> resultList = results.getEdges().stream().map(edge -> edge.getNode()).collect(Collectors.toList());
-//        if (pageSize == -1)
-//        {
-//            // returning all items with pageSize = -1
-//            Cursor = null;
-//            return resultList;
-//        }
+
         if (pageSize == -1) {
             cursor = null;
             return resultList;
         }
-//        HasMore = results.Edges.Count > queryParams.PageSize;
         hasMore = results.getEdges().size() > queryParams.getPageSize();
-//        int n = HasMore ? queryParams.PageSize : results.Edges.Count;
         int n = hasMore ? queryParams.getPageSize() : results.getEdges().size();
-//        Cursor = n > 0 ? results.Edges[n - 1].Cursor : null;
-        cursor = n > 0 ? results.getEdges().get(n -1).getCursor() : null;
-//        return HasMore ? resultList.GetRange(0, queryParams.PageSize) : resultList;
+        cursor = n > 0 ? results.getEdges().get(n - 1).getCursor() : null;
 
         return hasMore ? resultList.subList(0, queryParams.getPageSize()) : resultList;
     }

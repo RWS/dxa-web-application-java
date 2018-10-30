@@ -71,7 +71,6 @@ public class PageController extends BaseController {
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
     @Autowired
-    @Qualifier("DefaultContentProvider")
     private ContentProvider contentProvider;
 
     @Autowired

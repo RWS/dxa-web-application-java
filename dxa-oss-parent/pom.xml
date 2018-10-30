@@ -102,7 +102,6 @@
         <jsonassert.version>1.5.0</jsonassert.version>
 
         <!-- DD4T PROPERTIES -->
-        <net.sf.ehcache.version>2.10.5</net.sf.ehcache.version>
         <activation.version>1.1.1</activation.version>
         <activemq.version>5.15.6</activemq.version>
 
@@ -795,11 +794,6 @@
                 <groupId>org.apache.activemq</groupId>
                 <artifactId>activemq-client</artifactId>
                 <version>${activemq.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache</artifactId>
-                <version>${net.sf.ehcache.version}</version>
             </dependency>
 
             <!-- DD4T dependencies for Model Service adapter only! -->

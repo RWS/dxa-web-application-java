@@ -31,4 +31,17 @@ public interface XpmRegion {
      */
     void setComponentTypes(List<ComponentType> componentTypes);
 
+    /***
+     * getOccurrenceConstraint
+     * @return a {@link OccurrenceConstraint} object;
+     */
+    OccurrenceConstraint getOccurrenceConstraint();
+
+    /**
+     * <p>setOccurrenceConstraint.</p>
+     *
+     * @param occurrenceConstraint a {@link OccurrenceConstraint} object.
+     */
+    void setOccurrenceConstraint(OccurrenceConstraint occurrenceConstraint);
+
 }

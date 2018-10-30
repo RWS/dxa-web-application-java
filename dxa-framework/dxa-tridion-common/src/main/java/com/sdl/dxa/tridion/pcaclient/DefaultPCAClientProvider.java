@@ -8,8 +8,10 @@ import com.sdl.web.pca.client.auth.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import static com.sdl.dxa.tridion.common.ConfigurationConstants.CONNECTION_TIMEOUT;
+
 @Service("PCAClientProvider")
-public class DefaultPCAClientProvider implements PCAClientProvider{
+public class DefaultPCAClientProvider implements PCAClientProvider {
 
     private PublicContentApi publicContentApi;
 
@@ -20,7 +22,7 @@ public class DefaultPCAClientProvider implements PCAClientProvider{
         this.graphQLClient = new DefaultGraphQLClient(configurationLoader.getServiceUrl(), null, auth);
         this.publicContentApi = new DefaultPublicContentApi(graphQLClient,
                 Integer.valueOf(configurationLoader.getConfiguration()
-                        .getOrDefault("ConnectionTimeout", 0).toString()));
+                        .getOrDefault(CONNECTION_TIMEOUT, 0).toString()));
     }
 
     @Override

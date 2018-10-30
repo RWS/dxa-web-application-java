@@ -1,5 +1,6 @@
 package com.sdl.dxa.common.dto;
 
+import com.google.common.primitives.Ints;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -35,7 +36,11 @@ public class PageRequestDto {
     private DepthCounter depthCounter;
 
     public static PageRequestDtoBuilder builder(String publicationId, int pageId) {
-        return builder(Integer.valueOf(publicationId), pageId);
+        Integer pubId = Ints.tryParse(publicationId);
+        if (pubId == null) {
+            throw new IllegalArgumentException("Cannot get integer from given publication id [" + publicationId + "]");
+        }
+        return builder(pubId, pageId);
     }
 
     public static PageRequestDtoBuilder builder(int publicationId, int pageId) {

@@ -102,6 +102,18 @@ public class SemanticMapperImpl implements SemanticMapper {
             throws SemanticMappingException {
         final T entity = createInstance(entityClass);
 
+        mapSemanticFields(entityClass, semanticFields, fieldDataProvider, entity);
+
+        LOG.trace("entity: {}", entity);
+        return entity;
+    }
+
+    @Override
+    public <T extends ViewModel> void mapSemanticFields(Class<? extends T> entityClass,
+                                                         Map<FieldSemantics, SemanticField> semanticFields,
+                                                         SemanticFieldDataProvider fieldDataProvider,
+                                                         T entity)
+    {
         final Map<String, String> xpmPropertyMetadata = new HashMap<>();
 
         // Map all the fields (including fields inherited from superclasses) of the entity
@@ -186,20 +198,20 @@ public class SemanticMapperImpl implements SemanticMapper {
                                 break;
                             }
                         } else if (propertyName.equals(ALL_PROPERTY)) {
-                            foundMatch = true;  
-                            
-                            Map<String, ?> fieldData = null; 
-                            
-                            try 
-                            {                   
-                                if(IsTypeOfMap(String.class, KeywordModel.class, field)) 
+                            foundMatch = true;
+
+                            Map<String, ?> fieldData = null;
+
+                            try
+                            {
+                                if(IsTypeOfMap(String.class, KeywordModel.class, field))
                                 {
                                     fieldData = fieldDataProvider.getAllFieldData(KeywordModel.class);
                                 }
                                 else
                                 {
                                     fieldData  = fieldDataProvider.getAllFieldData(String.class);
-                                }                  
+                                }
                             } catch (SemanticMappingException e) {
                                 LOG.error("Exception while getting all property data for: " + field, e);
                             }
@@ -226,8 +238,6 @@ public class SemanticMapperImpl implements SemanticMapper {
         if (AbstractEntityModel.class.isAssignableFrom(entity.getClass())) {
             ((AbstractEntityModel) entity).setXpmPropertyMetadata(xpmPropertyMetadata);
         }
-        LOG.trace("entity: {}", entity);
-        return entity;
     }
 
     private static boolean IsTypeOfMap(Type mapKeyType, Type mapValueType, Field field)

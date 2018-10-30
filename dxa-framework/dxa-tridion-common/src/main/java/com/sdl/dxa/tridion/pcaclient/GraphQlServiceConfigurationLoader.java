@@ -14,6 +14,10 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.Properties;
 
+import static com.sdl.dxa.tridion.common.ConfigurationConstants.CONTENT_SERVICE;
+import static com.sdl.dxa.tridion.common.ConfigurationConstants.CONTENT_SERVICE_CONTEXT_PATH;
+import static com.sdl.dxa.tridion.common.ConfigurationConstants.SERVICE_URI;
+
 @Service("GraphQlServiceConfigurationLoader")
 public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLoader implements PCAClientConfigurationLoader {
     private static final Logger LOG = LoggerFactory.getLogger(GraphQlServiceConfigurationLoader.class);
@@ -42,15 +46,15 @@ public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLo
                 LOG.info("Successfully got capability uri: {}.", contentServiceUrl);
             } else {
                 ConfigurationHolder rootConfigHolder = getRootConfigHolder();
-                if (!rootConfigHolder.hasConfiguration("/ContentService")) {
+                if (!rootConfigHolder.hasConfiguration("/" + CONTENT_SERVICE)) {
                     throw new ConfigurationException("Unable to load content service url!");
                 }
-                ConfigurationHolder configuration = rootConfigHolder.getConfiguration("/ContentService");
-                contentServiceUrl = configuration.getValue("ServiceUri");
+                ConfigurationHolder configuration = rootConfigHolder.getConfiguration("/" + CONTENT_SERVICE);
+                contentServiceUrl = configuration.getValue(SERVICE_URI);
                 LOG.info("Successfully got capability uri: {} using fallback variant.", contentServiceUrl);
             }
             this.serviceUrl = ClientsUtil.makeEndWithoutSlash(StringUtils.replace(contentServiceUrl,
-                    "content.svc",
+                    CONTENT_SERVICE_CONTEXT_PATH,
                     endpointContext));
             LOG.debug("The Public Content API endpoint is '{}'", serviceUrl);
         } catch (ConfigurationException e) {
@@ -75,8 +79,8 @@ public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLo
         initialize();
         Properties properties = new Properties();
         properties.putAll(getCommonProperties());
-        properties.put("ServiceUri", ClientsUtil.makeEndWithoutSlash(StringUtils.replace(this.serviceUrl,
-                "content.svc",
+        properties.put(SERVICE_URI, ClientsUtil.makeEndWithoutSlash(StringUtils.replace(this.serviceUrl,
+                CONTENT_SERVICE_CONTEXT_PATH,
                 endpointContext)));
         return properties;
     }

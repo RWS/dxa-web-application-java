@@ -22,7 +22,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
-import static org.apache.commons.collections.MapUtils.isEmpty;
+import static org.apache.commons.collections4.MapUtils.isEmpty;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.argThat;

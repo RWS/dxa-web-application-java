@@ -27,6 +27,7 @@ import com.sdl.webapp.common.util.TcmUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -70,6 +71,7 @@ public class PageController extends BaseController {
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
     @Autowired
+    @Qualifier("DefaultContentProvider")
     private ContentProvider contentProvider;
 
     @Autowired

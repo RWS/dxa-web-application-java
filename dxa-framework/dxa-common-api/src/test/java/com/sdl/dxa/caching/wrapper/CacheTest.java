@@ -20,6 +20,7 @@ import javax.cache.Cache;
 import java.util.function.Supplier;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
@@ -65,16 +66,21 @@ public class CacheTest {
         MvcModelData mvcData = new MvcModelData("a", "a", "a", "c", "v", null);
         PageModelData pageData = (PageModelData) new PageModelData("1", "tcm", null, null, null, null, null, "/url")
                 .setMvcData(mvcData);
+        EntityModelData entityData = (EntityModelData) new EntityModelData("2", null, null, null, null, null, "1", "tcm", "/url", null, null, null);
         EntityModelData entityMvcData = (EntityModelData) new EntityModelData("2", null, null, null, null, mvcData, "1", "tcm", "/url", null, null, null)
                 .setMvcData(mvcData);
 
         //when
         Object pagesCopyingCacheKey = pagesCopyingCache.getSpecificKey(pageData);
         Object entitiesCacheKey = entitiesCache.getSpecificKey(entityMvcData);
-
+        Object entitiesNoMvcCacheKey = entitiesCache.getSpecificKey(entityData);
+        Class expectedClass = localization.getClass();
+        Object entitiesExpectedClassCacheKey = entitiesCache.getSpecificKey(entityData,expectedClass);
         //then
         assertEquals(keyGenerator.generate("/url", mvcData), pagesCopyingCacheKey);
         assertEquals(keyGenerator.generate("1", "2", mvcData), entitiesCacheKey);
+        assertEquals(keyGenerator.generate("1", "2", null), entitiesNoMvcCacheKey);
+        assertNotEquals(keyGenerator.generate("1", "2", null), entitiesExpectedClassCacheKey);
     }
 
     private void shouldReturnNeededCache(Supplier<SimpleCacheWrapper<?, ?>> supplier, String cacheName) {

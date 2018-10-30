@@ -14,6 +14,7 @@ import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.api.xpm.ComponentType;
+import com.sdl.webapp.common.api.xpm.OccurrenceConstraint;
 import com.sdl.webapp.common.api.xpm.XpmRegion;
 import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -24,10 +25,7 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.REGION;
@@ -61,15 +59,20 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
     @Deprecated
     public static final String INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY = XpmUtils.RegionXpmBuilder.INCLUDED_FROM_PAGE_FILE_NAME_XPM_METADATA_KEY;
 
-    private static final String XPM_REGION_MARKUP = "<!-- Start Region: {title: \"%s\", allowedComponentTypes: [%s], minOccurs: %s} -->";
+    private static final String XPM_REGION_MARKUP = "<!-- Start Region: {title: \"%s\",%s allowedComponentTypes: [%s], %s} -->";
 
     private static final String XPM_COMPONENT_TYPE_MARKUP = "{schema: \"%s\", template: \"%s\"}";
+
+    private static final String XPM_OCCURRENCE_CONSTRAINT_UNLIMITED_MARKUP = "minOccurs: %s";
+    private static final String XPM_OCCURRENCE_CONSTRAINT_MARKUP = "minOccurs: %s, maxOccurs: %s";
 
     @JsonProperty("Name")
     @Getter
     // TODO: Should we really expose a setter for the region name when we already set that in the constructor?
     @Setter
     private String name;
+
+    private String schemaId;
 
     @JsonProperty("Entities")
     @Getter
@@ -140,6 +143,14 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
         return ApplicationContextHolder.getContext().getBean(XpmRegionConfig.class);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getSchemaId() { return schemaId; }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setSchemaId(String schemaId) { this.schemaId = schemaId; }
+
     /**
      * {@inheritDoc}
      */
@@ -183,11 +194,43 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
     @Override
     public String getXpmMarkup(Localization localization) {
         XpmRegionConfig xpmRegionConfig = getXpmRegionConfig();
-        XpmRegion xpmRegion = xpmRegionConfig.getXpmRegion(this.name, localization);
+
+        XpmRegion xpmRegion;
+        if (this.schemaId != null && !this.schemaId.isEmpty()) {
+            xpmRegion = xpmRegionConfig.getXpmRegion(this.schemaId, localization);
+        }
+        else {
+            xpmRegion = xpmRegionConfig.getXpmRegion(this.name, localization);
+        }
 
         if (xpmRegion == null) {
             return "";
         }
+
+        int minOccurs = 0;
+        int maxOccurs = -1;
+        OccurrenceConstraint occurrenceConstraint = xpmRegion.getOccurrenceConstraint();
+        if (occurrenceConstraint != null) {
+            minOccurs = occurrenceConstraint.getMinOccurs();
+            maxOccurs = occurrenceConstraint.getMaxOccurs();
+        }
+
+        String occurrenceConstraintStr;
+        if (maxOccurs == -1) {
+            occurrenceConstraintStr = String.format(XPM_OCCURRENCE_CONSTRAINT_UNLIMITED_MARKUP, minOccurs);
+        } else {
+            occurrenceConstraintStr = String.format(XPM_OCCURRENCE_CONSTRAINT_MARKUP, minOccurs, maxOccurs);
+        }
+
+        String pathToRegion = null;
+        Map<String, Object> xpmMetadata = this.getXpmMetadata();
+        if (xpmMetadata != null) {
+            pathToRegion = (String)xpmMetadata.get("FullyQualifiedName");
+            if(pathToRegion != null) {
+                pathToRegion = String.format(" path: \"%s\",", pathToRegion.replace("\\", "\\\\"));
+            }
+        }
+        pathToRegion = pathToRegion != null ? pathToRegion : "";
 
         List<String> types = new ArrayList<>();
 
@@ -195,11 +238,12 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
             types.add(String.format(XPM_COMPONENT_TYPE_MARKUP, ct.getSchemaId(), ct.getTemplateId()));
         }
 
-        // TODO: obtain MinOccurs & MaxOccurs from regions.json
         return String.format(
                 XPM_REGION_MARKUP,
                 this.name,
+                pathToRegion,
                 Joiner.on(", ").join(types),
+                occurrenceConstraintStr,
                 0);
     }
 

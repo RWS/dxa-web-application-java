@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implementation of {@code LocalizationResolver} that uses the Tridion API to determine the localization for a request.
+ * Implementation of {@code LocalizationResolver} that uses the PCA Client API to determine the localization for a request.
  */
 @Component
 @Profile("!cil.providers.active")

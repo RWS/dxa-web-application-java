@@ -51,8 +51,6 @@ public class PCALocalizationResolverTest {
 
         String testUrl ="http://localhost:8882/";
 
-        /*when(localization.getId()).thenReturn("5");
-        when(localization.getId()).thenReturn("/");*/
         when(localizationFactory.createLocalization("5","/")).thenReturn(localization);
 
         when(publicationMapping.getPublicationId()).thenReturn(5);

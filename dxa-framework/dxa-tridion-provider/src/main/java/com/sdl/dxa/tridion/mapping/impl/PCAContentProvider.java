@@ -47,6 +47,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -69,6 +70,7 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
  * @dxa.publicApi
  */
 @Service(value = "PCAContentProvider")
+@Primary
 //turned off at the moment
 @Profile("turnedoff.providers.active")
 @Slf4j

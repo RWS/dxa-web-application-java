@@ -1,8 +1,10 @@
 package com.sdl.webapp.tridion;
 
 import com.google.common.base.Strings;
+import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
 import com.sdl.web.api.dynamic.DynamicMappingsRetriever;
-import com.sdl.web.api.dynamic.mapping.PublicationMapping;
+import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
+import com.sdl.web.pca.client.contentmodel.generated.PublicationMapping;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
@@ -14,6 +16,7 @@ import lombok.SneakyThrows;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
@@ -27,10 +30,11 @@ import java.util.Map;
  * Implementation of {@code LocalizationResolver} that uses the Tridion API to determine the localization for a request.
  */
 @Component
-@Profile("cil.providers.active")
-public class TridionLocalizationResolver implements LocalizationResolver {
+@Profile("!cil.providers.active")
+@Primary
+public class PCALocalizationResolver implements LocalizationResolver {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TridionLocalizationResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PCALocalizationResolver.class);
 
     private final Map<String, Localization> localizations = Collections.synchronizedMap(new HashMap<String, Localization>());
 
@@ -38,7 +42,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     private LocalizationFactory localizationFactory;
 
     @Autowired
-    private DynamicMappingsRetriever dynamicMappingsRetriever;
+    private PCAClientProvider pcaClientProvider;
 
     /**
      * Gets the publication mapping path. The returned path always starts with a "/" and does not end with a "/", unless
@@ -99,7 +103,8 @@ public class TridionLocalizationResolver implements LocalizationResolver {
 
     protected PublicationMappingData getPublicationMappingData(String url) throws PublicationMappingNotFoundException {
         try {
-            PublicationMapping publicationMapping = dynamicMappingsRetriever.getPublicationMapping(url);
+            // Publication Mapping is more specific to Tridion Sites, hence Tridion Sites is passed which is similar to .NET implementation
+            PublicationMapping publicationMapping = pcaClientProvider.getClient().getPublicationMapping(ContentNamespace.Sites,url);
 
             if (publicationMapping == null) {
                 throw new PublicationMappingNotFoundException("Publication mapping not found. There is no any publication mapping " +
@@ -108,7 +113,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
 
             return new PublicationMappingData(String.valueOf(publicationMapping.getPublicationId()),
                     getPublicationMappingPath(publicationMapping.getPath()));
-        } catch (ConfigurationException ex) {
+        } catch (Exception ex) {
             throw new PublicationMappingNotFoundException("Error found during fetch publication mapping not found for URL: " + url, ex);
         }
     }

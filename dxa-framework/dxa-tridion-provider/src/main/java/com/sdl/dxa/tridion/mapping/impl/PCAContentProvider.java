@@ -27,6 +27,7 @@ import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.exceptions.DxaRuntimeException;
 import com.sdl.webapp.common.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -158,8 +159,7 @@ public class PCAContentProvider implements ContentProvider {
                         try {
                             return builderPipeline.createEntityModel(createEntityModelData((Component) c), resultType);
                         } catch (DxaException e) {
-                            //TODO fix exception throwing
-                            throw new RuntimeException(e);
+                            throw new DxaRuntimeException(e);
                         }
                     }).collect(Collectors.toList()),
                     brokerQuery.hasMore()
@@ -247,8 +247,6 @@ public class PCAContentProvider implements ContentProvider {
         public int getStart() {
             return startIndex;
         }
-
-
     }
 
     /**

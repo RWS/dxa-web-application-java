@@ -37,22 +37,29 @@ public class PCALinkResolverTest {
     @Before
     public void setup(){
         when(pcaClientProvider.getClient()).thenReturn(publicContentApi);
-
-        when(pcaClientProvider.getClient().resolvePageLink(ContentNamespace.Sites,2,3,false)).thenReturn("/index.html");
-
-        when(pcaClientProvider.getClient().resolveComponentLink(ContentNamespace.Sites,2,3,null,null,false)).thenReturn("/resolved-component-2");
-
-        when(pcaClientProvider.getClient().resolveBinaryLink(ContentNamespace.Sites,2,3,null,false)).thenReturn("/media/baloon.png");
-
     }
 
     @Test
-    public void resolveLink() {
+    public void resolvePageLink() {
+
+        when(pcaClientProvider.getClient().resolvePageLink(ContentNamespace.Sites,2,3,false)).thenReturn("/index.html");
+
         String pageLinkresult = linkResovler.resolveLink("tcm:2-3-64", "2", false);
         assertEquals(pageLinkresult, "/index.html");
+    }
+
+    @Test
+    public void resolveComponentLink() {
+        when(pcaClientProvider.getClient().resolveComponentLink(ContentNamespace.Sites,2,3,null,null,false)).thenReturn("/resolved-component-2");
+
 
         String componentLinkresult = linkResovler.resolveLink("tcm:2-3", "2", false);
         assertEquals(componentLinkresult, "/resolved-component-2");
+    }
+
+    @Test
+    public void resolveBinaryLink() {
+        when(pcaClientProvider.getClient().resolveBinaryLink(ContentNamespace.Sites,2,3,null,false)).thenReturn("/media/baloon.png");
 
         String binaryLinkresult = linkResovler.resolveLink("tcm:2-3", "2", true);
         assertEquals(binaryLinkresult, "/media/baloon.png");

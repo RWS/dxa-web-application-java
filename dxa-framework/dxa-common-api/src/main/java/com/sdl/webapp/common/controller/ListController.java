@@ -37,8 +37,7 @@ public class ListController extends EntityController {
     private final ContentProvider contentProvider;
 
     @Autowired
-    public ListController(WebRequestContext webRequestContext,
-                          @Qualifier("DefaultContentProvider") ContentProvider contentProvider) {
+    public ListController(WebRequestContext webRequestContext, ContentProvider contentProvider) {
         this.webRequestContext = webRequestContext;
         this.contentProvider = contentProvider;
     }

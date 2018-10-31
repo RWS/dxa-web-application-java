@@ -65,7 +65,6 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
     private static final String FILES_NODE_NAME = "files";
 
     @Autowired
-    @Qualifier("DefaultContentProvider")
     private ContentProvider contentProvider;
 
     @Autowired

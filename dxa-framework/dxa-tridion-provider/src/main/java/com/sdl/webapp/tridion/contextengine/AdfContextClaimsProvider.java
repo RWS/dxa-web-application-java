@@ -67,6 +67,11 @@ public class AdfContextClaimsProvider implements ContextClaimsProvider {
 
     protected Map<URI, Object> getCurrentClaims() {
         ClaimStore currentClaimStore = AmbientDataContext.getCurrentClaimStore();
-        return currentClaimStore == null ? Collections.emptyMap() : currentClaimStore.getAll();
+        if (currentClaimStore == null)
+        {
+            log.warn("Claimstore is not available. Check the AmbientFrameworkModule is configured in Web.Config");
+            return Collections.emptyMap();
+        }
+        return currentClaimStore.getAll();
     }
 }

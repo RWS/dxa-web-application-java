@@ -71,6 +71,7 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
  */
 @Service(value = "DefaultContentProvider")
 @Profile("cil.providers.active")
+@Primary
 @Slf4j
 public class DefaultContentProvider implements ContentProvider {
 

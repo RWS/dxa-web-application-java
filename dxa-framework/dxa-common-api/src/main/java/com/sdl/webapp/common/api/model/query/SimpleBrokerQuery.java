@@ -23,5 +23,7 @@ public class SimpleBrokerQuery extends AbstractQuery {
 
     private String sort;
 
+    private String cursor;
+
     private Multimap<String, String> keywordFilters = ArrayListMultimap.create();
 }

@@ -55,7 +55,6 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
  */
 @Service(value = "PCAContentProvider")
 @Profile("!cil.providers.active")
-@Primary
 @Slf4j
 public class PCAContentProvider implements ContentProvider {
 

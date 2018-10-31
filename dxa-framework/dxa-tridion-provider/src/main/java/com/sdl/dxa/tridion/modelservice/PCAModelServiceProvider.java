@@ -44,7 +44,6 @@ import static org.springframework.util.ClassUtils.getDefaultClassLoader;
 @Slf4j
 @Service(value = "PCAModelServiceProvider")
 @Profile("!cil.providers.active")
-@Primary
 public class PCAModelServiceProvider implements ModelServiceProvider {
 
     private PCAClientProvider pcaClientProvider;

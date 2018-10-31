@@ -5,6 +5,7 @@ import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
 import com.sdl.web.api.dynamic.DynamicMappingsRetriever;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.PublicationMapping;
+import com.sdl.web.pca.client.exception.PublicContentApiException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
@@ -31,7 +32,6 @@ import java.util.Map;
  */
 @Component
 @Profile("!cil.providers.active")
-@Primary
 public class PCALocalizationResolver implements LocalizationResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(PCALocalizationResolver.class);
@@ -113,7 +113,7 @@ public class PCALocalizationResolver implements LocalizationResolver {
 
             return new PublicationMappingData(String.valueOf(publicationMapping.getPublicationId()),
                     getPublicationMappingPath(publicationMapping.getPath()));
-        } catch (Exception ex) {
+        } catch (PublicContentApiException ex) {
             throw new PublicationMappingNotFoundException("Error found during fetch publication mapping not found for URL: " + url, ex);
         }
     }

@@ -44,7 +44,6 @@ import static com.sdl.dxa.common.util.PathUtils.isHomePath;
  * <p>Falls back to {@link StaticNavigationProvider} when dynamic navigation is not available.</p>
  */
 @Slf4j
-@Primary
 @Service
 @Profile("dynamic.navigation.provider")
 public class DynamicNavigationProvider implements NavigationProvider, OnDemandNavigationProvider {

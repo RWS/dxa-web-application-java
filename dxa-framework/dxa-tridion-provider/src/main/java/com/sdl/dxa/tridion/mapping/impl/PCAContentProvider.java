@@ -6,14 +6,15 @@ import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.caching.wrapper.CopyingCache;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
+import com.sdl.dxa.modelservice.service.ModelServiceProvider;
+import com.sdl.dxa.tridion.broker.GraphQLQueryProvider;
+import com.sdl.dxa.tridion.broker.QueryProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.modelservice.PCAModelServiceProvider;
-import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
-import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
-import com.sdl.web.api.broker.querying.sorting.SortParameter;
-import com.sdl.web.api.meta.WebComponentMetaFactory;
-import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
+import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
+import com.sdl.web.pca.client.contentmodel.generated.Component;
+import com.sdl.web.pca.client.contentmodel.generated.CustomMetaEdge;
+import com.sdl.web.pca.client.contentmodel.generated.Item;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProvider;
@@ -24,43 +25,27 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.DynamicList;
-import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.exceptions.DxaRuntimeException;
 import com.sdl.webapp.common.util.FileUtils;
-import com.tridion.broker.StorageException;
-import com.tridion.broker.querying.MetadataType;
-import com.tridion.broker.querying.Query;
-import com.tridion.broker.querying.criteria.Criteria;
-import com.tridion.broker.querying.criteria.content.ItemSchemaCriteria;
-import com.tridion.broker.querying.criteria.content.PageURLCriteria;
-import com.tridion.broker.querying.criteria.content.PublicationCriteria;
-import com.tridion.broker.querying.criteria.operators.AndCriteria;
-import com.tridion.broker.querying.criteria.taxonomy.TaxonomyKeywordCriteria;
-import com.tridion.broker.querying.filter.LimitFilter;
-import com.tridion.broker.querying.filter.PagingFilter;
-import com.tridion.broker.querying.sorting.SortDirection;
-import com.tridion.meta.ComponentMeta;
-import com.tridion.meta.NameValuePair;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.context.request.RequestContextHolder;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import javax.servlet.http.HttpSession;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 
 /**
@@ -69,20 +54,22 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
  * @dxa.publicApi
  */
 @Service(value = "PCAContentProvider")
-//turned off at the moment
-@Profile("turnedoff.providers.active")
+@Profile("!cil.providers.active")
+@Primary
 @Slf4j
 public class PCAContentProvider implements ContentProvider {
 
-    private final ModelBuilderPipeline builderPipeline;
+    private ModelBuilderPipeline builderPipeline;
 
-    private final PCAModelServiceProvider modelService;
+    private ModelServiceProvider modelService;
 
-    private final WebRequestContext webRequestContext;
+    private WebRequestContext webRequestContext;
 
-    private final LinkResolver linkResolver;
+    private LinkResolver linkResolver;
 
-    private final StaticContentResolver staticContentResolver;
+    private StaticContentResolver staticContentResolver;
+
+    private PCAClientProvider clientProvider;
 
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
@@ -91,76 +78,14 @@ public class PCAContentProvider implements ContentProvider {
                               StaticContentResolver staticContentResolver,
                               LinkResolver linkResolver,
                               ModelBuilderPipeline builderPipeline,
-                              PCAModelServiceProvider modelService) {
+                              ModelServiceProvider modelService,
+                              PCAClientProvider clientProvider) {
         this.webRequestContext = webRequestContext;
         this.linkResolver = linkResolver;
         this.staticContentResolver = staticContentResolver;
         this.builderPipeline = builderPipeline;
         this.modelService = modelService;
-    }
-
-    protected PageModel _loadPage(String path, Localization localization) throws ContentProviderException {
-        PageModelData modelData = modelService.loadPageModel(
-                PageRequestDto.builder(localization.getId(), path)
-                        .includePages(INCLUDE)
-                        .build());
-        return builderPipeline.createPageModel(modelData);
-    }
-
-    @NotNull
-    protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
-        EntityModelData modelData = modelService.loadEntity(webRequestContext.getLocalization().getId(), componentId);
-        try {
-            return builderPipeline.createEntityModel(modelData);
-        } catch (DxaException e) {
-            throw new ContentProviderException("Cannot build the entity model for componentId" + componentId, e);
-        }
-    }
-
-    protected <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws DxaException {
-        List<T> entities = new ArrayList<>();
-        for (ComponentMetadata metadata : components) {
-            entities.add(builderPipeline.createEntityModel(EntityModelData.builder()
-                    .id(metadata.getId())
-                    .metadata(getContentModelData(metadata))
-                    .schemaId(metadata.getSchemaId())
-                    .build(), entityClass));
-        }
-        return entities;
-    }
-
-    @NotNull
-    private ContentModelData getContentModelData(ComponentMetadata metadata) {
-        ContentModelData outer = new ContentModelData();
-        ContentModelData standardMetaContents = new ContentModelData();
-        String dateTimeStringFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
-
-        metadata.getCustom().entrySet()
-                .forEach(entry -> {
-                    ComponentMetadata.MetaEntry data = entry.getValue();
-                    if (data != null && data.getValue() != null) {
-                        Object value = data.getValue();
-                        String field;
-                        if (data.getMetaType() == ComponentMetadata.MetaType.DATE) {
-                            field = new DateTime(value).toString(dateTimeStringFormat);
-                        } else {
-                            field = value.toString();
-                        }
-
-                        standardMetaContents.put(entry.getKey(), field);
-                    }
-                });
-
-        if (!standardMetaContents.containsKey("dateCreated")) {
-            standardMetaContents.put("dateCreated", new DateTime(metadata.getLastPublicationDate()).toString(dateTimeStringFormat));
-        }
-
-        if (!standardMetaContents.containsKey("name")) {
-            standardMetaContents.put("name", metadata.getTitle());
-        }
-
-        outer.put("standardMeta", standardMetaContents);
-        return outer;
+        this.clientProvider = clientProvider;
     }
 
     @Autowired(required = false)
@@ -211,11 +136,118 @@ public class PCAContentProvider implements ContentProvider {
             log.info("Localization should not be null to populate dynamic list {}, skipping", dynamicList);
             return;
         }
-        SimpleBrokerQuery query = dynamicList.getQuery(localization);
-        try {
-            dynamicList.setQueryResults(_convertEntities(executeMetadataQuery(query), dynamicList.getEntityType(), localization), query.isHasMore());
-        } catch (DxaException e) {
-            throw new ContentProviderException("Cannot populate a dynamic list " + dynamicList.getId() + " localization " + localization.getId(), e);
+        SimpleBrokerQuery simpleBrokerQuery = dynamicList.getQuery(localization);
+
+        // get our cursor indexer for this list
+        CursorIndexer cursors = CursorIndexer.getCursorIndexer(dynamicList.getId());
+
+        // given our start index into the paged list we need to translate that to a cursor
+        int start = simpleBrokerQuery.getStartAt();
+
+        simpleBrokerQuery.setCursor(cursors.get(start));
+        // the cursor retrieved may of came from a different start index so we update start
+        simpleBrokerQuery.setStartAt(start);
+        dynamicList.setStart(cursors.getStart());
+
+        QueryProvider brokerQuery = new GraphQLQueryProvider(clientProvider.getClient());
+
+        List<Item> components = brokerQuery.executeQueryItems(simpleBrokerQuery);
+        log.debug("Broker query returned {} results. hasMore={}", components.size(), brokerQuery.hasMore());
+
+        if (components.size() > 0) {
+            Class<T> resultType = dynamicList.getEntityType();
+            dynamicList.setQueryResults(
+                    components.stream().map(c -> {
+                        try {
+                            return builderPipeline.createEntityModel(createEntityModelData((Component) c), resultType);
+                        } catch (DxaException e) {
+                            throw new DxaRuntimeException(e);
+                        }
+                    }).collect(Collectors.toList()),
+                    brokerQuery.hasMore()
+            );
+        }
+
+        if (brokerQuery.hasMore()) {
+            cursors.cursors.put(simpleBrokerQuery.getStartAt() + simpleBrokerQuery.getPageSize(), brokerQuery.getCursor());
+        }
+    }
+
+    private EntityModelData createEntityModelData(Component component) {
+        ContentModelData standardMeta = new ContentModelData();
+
+        for (CustomMetaEdge meta : component.getCustomMetas().getEdges()) {
+            standardMeta.put(meta.getNode().getKey(), meta.getNode().getValue());
+        }
+        // The semantic mapping requires that some metadata fields exist. This may not be the case so we map some component meta properties onto them
+        // if they don't exist.
+        if (!standardMeta.containsKey("dateCreated")) {
+            standardMeta.put("dateCreated", component.getLastPublishDate());
+        }
+        final String dateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+        standardMeta.put("dateCreated", new DateTime(component.getLastPublishDate()).toString(dateTimeFormat));
+
+        if (!standardMeta.containsKey("name")) {
+            standardMeta.put("name", component.getTitle());
+        }
+
+        EntityModelData result = new EntityModelData();
+        result.setId("" + component.getItemId());
+        result.setSchemaId("" + component.getSchemaId());
+        ContentModelData meta = new ContentModelData();
+        meta.put("standardMeta", standardMeta);
+        result.setMetadata(meta);
+        return result;
+    }
+
+    private static class CursorIndexer {
+        public static final String SESSION_KEY = "dxa_indexer";
+        private Map<Integer, String> cursors = new HashMap<>();
+        private int startIndex;
+
+        public CursorIndexer() {
+        }
+
+        public static CursorIndexer getCursorIndexer(String id) {
+            HttpSession session = (HttpSession) RequestContextHolder.getRequestAttributes().getSessionMutex();
+            Map<String, CursorIndexer> indexer = (Map<String, CursorIndexer>) session.getAttribute(SESSION_KEY);
+            if (indexer == null) {
+                indexer = new HashMap<>();
+            }
+            if (!indexer.containsKey(id)) {
+                indexer.put(id, new CursorIndexer());
+            }
+            session.setAttribute(SESSION_KEY, indexer);
+            return indexer.get(id);
+        }
+
+        public String get(int index) {
+             if (index == 0) {
+                startIndex = 0;
+                return null;
+            }
+            if (cursors.size() == 0) {
+                startIndex = 0;
+                return null;
+            }
+            if (cursors.containsKey(index)) {
+                startIndex = index;
+                return cursors.get(index);
+            }
+            int min = 0;
+            for (Integer x : cursors.keySet()) {
+                if (x >= min && x < index) min = x;
+            }
+            startIndex = min;
+            return startIndex == 0 ? null : cursors.get(startIndex);
+        }
+
+        public void set(int index, String value) {
+            cursors.put(index, value);
+        }
+
+        public int getStart() {
+            return startIndex;
         }
     }
 
@@ -236,139 +268,21 @@ public class PCAContentProvider implements ContentProvider {
                         .build());
     }
 
-    protected List<String> executeQuery(SimpleBrokerQuery simpleBrokerQuery) {
-        Query query = buildQuery(simpleBrokerQuery);
+    protected PageModel _loadPage(String path, Localization localization) throws ContentProviderException {
+        PageModelData modelData = modelService.loadPageModel(
+                PageRequestDto.builder(localization.getId(), path)
+                        .includePages(INCLUDE)
+                        .build());
+        return builderPipeline.createPageModel(modelData);
+    }
+
+    @NotNull
+    protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
+        EntityModelData modelData = modelService.loadEntity(webRequestContext.getLocalization().getId(), componentId);
         try {
-            return Arrays.asList(query.executeQuery());
-        } catch (StorageException e) {
-            log.warn("Exception while execution of broker query", e);
-            return Collections.emptyList();
-        }
-    }
-
-    protected Query buildQuery(SimpleBrokerQuery simpleBrokerQuery) {
-        Query query = new Query(buildCriteria(simpleBrokerQuery));
-
-        if (!isNullOrEmpty(simpleBrokerQuery.getSort()) &&
-                !Objects.equals(simpleBrokerQuery.getSort().toLowerCase(), "none")) {
-            query.addSorting(getSortParameter(simpleBrokerQuery));
-        }
-
-        int maxResults = simpleBrokerQuery.getResultLimit();
-        if (maxResults > 0) {
-            query.setResultFilter(new LimitFilter(maxResults));
-        }
-
-        int pageSize = simpleBrokerQuery.getPageSize();
-        if (pageSize > 0) {
-            // We set the page size to one more than what we need, to see if there are more pages to come...
-            query.setResultFilter(new PagingFilter(simpleBrokerQuery.getStartAt(), pageSize + 1));
-        }
-
-        return query;
-    }
-
-    /**
-     * Executes the given query on a specific version of Tridion and returns a list of metadata.
-     *
-     * @param simpleBrokerQuery query to execute
-     * @return a list of metadata, never returns <code>null</code>
-     */
-    @Contract("_ -> !null")
-    protected List<ComponentMetadata> executeMetadataQuery(SimpleBrokerQuery simpleBrokerQuery) {
-        List<String> ids = executeQuery(simpleBrokerQuery);
-
-        final WebComponentMetaFactory cmf = new WebComponentMetaFactoryImpl(simpleBrokerQuery.getPublicationId());
-        simpleBrokerQuery.setHasMore(ids.size() > simpleBrokerQuery.getPageSize());
-
-        return ids.stream()
-                .filter(id -> cmf.getMeta(id) != null)
-                .limit(simpleBrokerQuery.getPageSize())
-                .map(id -> convert(cmf.getMeta(id)))
-                .collect(Collectors.toList());
-    }
-
-    private Criteria buildCriteria(@NotNull SimpleBrokerQuery query) {
-        final List<Criteria> children = new ArrayList<>();
-
-        if (query.getSchemaId() > 0) {
-            children.add(new ItemSchemaCriteria(query.getSchemaId()));
-        }
-
-        if (query.getPublicationId() > 0) {
-            children.add(new PublicationCriteria(query.getPublicationId()));
-        }
-
-        if (query.getPath() != null) {
-            children.add(new PageURLCriteria(query.getPath()));
-        }
-
-        if (query.getKeywordFilters() != null) {
-            query.getKeywordFilters().entries().forEach(entry -> {
-                children.add(new TaxonomyKeywordCriteria(entry.getKey(), entry.getValue(), true));
-            });
-        }
-
-        return new AndCriteria(children);
-    }
-
-    private SortParameter getSortParameter(SimpleBrokerQuery simpleBrokerQuery) {
-        SortDirection dir = simpleBrokerQuery.getSort().toLowerCase().endsWith("asc") ?
-                SortDirection.ASCENDING : SortDirection.DESCENDING;
-        return new SortParameter(getSortColumn(simpleBrokerQuery), dir);
-    }
-
-    private ComponentMetadata convert(ComponentMeta compMeta) {
-        Map<String, ComponentMetadata.MetaEntry> custom = new HashMap<>(compMeta.getCustomMeta().getNameValues().size());
-        for (Map.Entry<String, NameValuePair> entry : compMeta.getCustomMeta().getNameValues().entrySet()) {
-            ComponentMetadata.MetaType metaType;
-            switch (entry.getValue().getMetadataType()) {
-                case DATE:
-                    metaType = ComponentMetadata.MetaType.DATE;
-                    break;
-                case FLOAT:
-                    metaType = ComponentMetadata.MetaType.FLOAT;
-                    break;
-                default:
-                    metaType = ComponentMetadata.MetaType.STRING;
-            }
-            custom.put(entry.getKey(), ComponentMetadata.MetaEntry.builder()
-                    .metaType(metaType)
-                    .value(entry.getValue().getFirstValue())
-                    .build());
-        }
-
-        return ComponentMetadata.builder()
-                .id(String.valueOf(compMeta.getId()))
-                .componentUrl(linkResolver.resolveLink("tcm:" + compMeta.getPublicationId() + '-' + compMeta.getId(), null))
-                .publicationId(String.valueOf(compMeta.getPublicationId()))
-                .owningPublicationId(String.valueOf(compMeta.getOwningPublicationId()))
-                .schemaId(String.valueOf(compMeta.getSchemaId()))
-                .title(compMeta.getTitle())
-                .modificationDate(compMeta.getModificationDate())
-                .initialPublicationDate(compMeta.getInitialPublicationDate())
-                .lastPublicationDate(compMeta.getLastPublicationDate())
-                .creationDate(compMeta.getCreationDate())
-                .author(compMeta.getAuthor())
-                .multimedia(compMeta.isMultimedia())
-                .custom(custom)
-                .build();
-    }
-
-    private BrokerSortColumn getSortColumn(SimpleBrokerQuery simpleBrokerQuery) {
-        final String sortTrim = simpleBrokerQuery.getSort().trim();
-        final int pos = sortTrim.indexOf(' ');
-        final String sortCol = pos > 0 ? sortTrim.substring(0, pos) : sortTrim;
-        switch (sortCol.toLowerCase()) {
-            case "title":
-                return SortParameter.ITEMS_TITLE;
-
-            case "pubdate":
-                return SortParameter.ITEMS_LAST_PUBLISHED_DATE;
-
-            default:
-                // Default is to assume that its a custom metadata date field
-                return new CustomMetaKeyColumn(simpleBrokerQuery.getSort(), MetadataType.DATE);
+            return builderPipeline.createEntityModel(modelData);
+        } catch (DxaException e) {
+            throw new ContentProviderException("Cannot build the entity model for componentId" + componentId, e);
         }
     }
 }

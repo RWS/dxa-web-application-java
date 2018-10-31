@@ -30,7 +30,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Service;
@@ -44,7 +43,6 @@ import static org.springframework.util.ClassUtils.getDefaultClassLoader;
 @Slf4j
 @Service(value = "PCAModelServiceProvider")
 @Profile("!cil.providers.active")
-@Primary
 public class PCAModelServiceProvider implements ModelServiceProvider {
 
     private PCAClientProvider pcaClientProvider;
@@ -129,7 +127,7 @@ public class PCAModelServiceProvider implements ModelServiceProvider {
                 log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
                 return result;
             } catch (IOException ex) {
-                throw new ContentProviderException("Unable to load page, by request " + pageRequest, ex);
+                throw new PageNotFoundException("Unable to load page, by request " + pageRequest, ex);
             }
         }
     }

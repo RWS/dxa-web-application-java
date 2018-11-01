@@ -45,6 +45,7 @@ import static com.sdl.dxa.common.util.PathUtils.isHomePath;
  */
 @Slf4j
 @Service
+@Primary
 @Profile("dynamic.navigation.provider")
 public class DynamicNavigationProvider implements NavigationProvider, OnDemandNavigationProvider {
 

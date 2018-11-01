@@ -13,9 +13,12 @@ public final class DepthCounter {
 
     private int counter;
 
+    private boolean unlimited;
+
     public DepthCounter(int counter) {
-        if (counter < 0) {
+        if (counter < 0 || counter == Integer.MAX_VALUE) {
             log.trace("Started a counter with value < 0, consider it unlimited");
+            this.unlimited = true;
         }
         log.trace("Started counter with max depth = {}", counter);
         this.counter = counter >= 0 ? counter : Integer.MAX_VALUE;
@@ -29,11 +32,24 @@ public final class DepthCounter {
         return isNotTooDeep() && counter-- > 0;
     }
 
+    public synchronized boolean depthIncreaseAndCheckIfSafe(int levels) {
+        if (isNotTooDeep() && counter >= levels) {
+            this.counter = counter - levels;
+            return true;
+        } else {
+            return false;
+        }
+    }
+
     public synchronized void depthDecrease() {
         counter++;
     }
 
     public synchronized int getCounter() {
         return counter;
+    }
+
+    public boolean isUnlimited() {
+        return unlimited;
     }
 }

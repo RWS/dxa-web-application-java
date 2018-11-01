@@ -110,11 +110,4 @@ public class PCAContentProviderTest {
         assertEquals(42, result.getLastModified());
         assertEquals("testType", result.getContentType());
     }
-
-    @Test
-    public void populateDynamicList() throws Exception {
-        DynamicList dynamicList = mock(DynamicList.class);
-        contentProvider.populateDynamicList(dynamicList, localization);
-    }
-
 }

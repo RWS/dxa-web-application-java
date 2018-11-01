@@ -37,8 +37,9 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 @Slf4j
-@Service
-@Profile("!cil.providers.active")
+//TODO fix by TSI-3494
+//@Service
+//@Profile("!cil.providers.active")
 @Primary
 public class PCARestDynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
 

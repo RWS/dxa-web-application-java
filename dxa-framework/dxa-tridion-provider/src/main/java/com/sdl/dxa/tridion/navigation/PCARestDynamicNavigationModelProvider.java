@@ -14,6 +14,7 @@ import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.Ancestor;
 import com.sdl.web.pca.client.contentmodel.generated.ClaimValue;
 import com.sdl.web.pca.client.contentmodel.generated.ClaimValueType;
+import com.sdl.web.pca.client.contentmodel.generated.PageSitemapItem;
 import com.sdl.web.pca.client.contentmodel.generated.SitemapItem;
 import com.sdl.web.pca.client.contentmodel.generated.TaxonomySitemapItem;
 import com.sdl.web.pca.client.exception.PublicContentApiException;
@@ -33,8 +34,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 @Slf4j
 @Service
@@ -58,7 +57,7 @@ public class PCARestDynamicNavigationModelProvider implements NavigationModelPro
     public Optional<TaxonomyNodeModelData> getNavigationModel(@NotNull SitemapRequestDto requestDto) {
         try {
             Optional<TaxonomySitemapItem> navigation = getNavigationModelInternal(requestDto);
-            return navigation.map(item -> convert(item));
+            return navigation.map(item -> (TaxonomyNodeModelData) convert(item));
         } catch (PublicContentApiException e) {
             log.warn("Cannot find/load/convert dynamic navigation in the PCA for the request " + requestDto, e);
             return Optional.empty();
@@ -166,27 +165,42 @@ public class PCARestDynamicNavigationModelProvider implements NavigationModelPro
         return claimValue;
     }
 
-    // garbage
-    TaxonomyNodeModelData convert(TaxonomySitemapItem source) {
-        if (source == null) {
-            return null;
+    SitemapItemModelData convert(SitemapItem source) {
+        SitemapItemModelData target;
+        if (source instanceof TaxonomySitemapItem) {
+            target = new TaxonomyNodeModelData();
+        } else if (source instanceof PageSitemapItem) {
+            target = new SitemapItemModelData();
+        } else {
+            throw new PublicContentApiException("Unsupported sitemap type " + source.getClass().getCanonicalName());
         }
-        TaxonomyNodeModelData target = new TaxonomyNodeModelData();
-        target.setTitle(source.getOriginalTitle());
-        BeanUtils.copyProperties(source, target, "publishedDate", "items");
-        target.setWithChildren(source.getHasChildNodes());
-        target.setTaxonomyAbstract(source.getAbstract());
+
+        target.setId(source.getId());
+        target.setOriginalTitle(source.getOriginalTitle());
+        target.setTitle(source.getTitle());
+        target.setType(source.getType());
         target.setPublishedDate(DateTime.parse(source.getPublishedDate()));
-        if (source.getItems() == null) return target;
-        SortedSet<SitemapItemModelData> children = new TreeSet<>();
-        for (SitemapItem child : source.getItems()) {
-            if (child instanceof TaxonomySitemapItem) {
-                children.add(convert((TaxonomySitemapItem) child));
-            } else {
-                throw new IllegalArgumentException("This copier takes only TaxonomySitemapItem as a child, but was " + child.getClass().getCanonicalName());
+        target.setUrl(source.getUrl());
+        target.setVisible(source.getVisible());
+
+        if (source instanceof TaxonomySitemapItem) {
+            TaxonomyNodeModelData targetNode = (TaxonomyNodeModelData) target;
+            TaxonomySitemapItem sourceNode = (TaxonomySitemapItem) source;
+
+            targetNode.setKey(sourceNode.getKey());
+            targetNode.setClassifiedItemsCount(sourceNode.getClassifiedItemsCount());
+            targetNode.setDescription(sourceNode.getDescription());
+            targetNode.setWithChildren(sourceNode.getHasChildNodes());
+            targetNode.setTaxonomyAbstract(sourceNode.getAbstract());
+
+            if (sourceNode.getItems() == null || sourceNode.getItems().isEmpty()) {
+                return targetNode;
+            }
+
+            for (SitemapItem item : sourceNode.getItems()) {
+                targetNode.getItems().add(convert(item));
             }
         }
-        target.setItems(children);
         return target;
     }
 

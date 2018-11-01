@@ -1,18 +1,13 @@
 package com.sdl.dxa.tridion.navigation;
 
-import com.google.common.base.Joiner;
 import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
-import com.sdl.dxa.common.dto.ClaimHolder;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
-import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.Ancestor;
-import com.sdl.web.pca.client.contentmodel.generated.ClaimValue;
-import com.sdl.web.pca.client.contentmodel.generated.ClaimValueType;
 import com.sdl.web.pca.client.contentmodel.generated.SitemapItem;
 import com.sdl.web.pca.client.contentmodel.generated.TaxonomySitemapItem;
 import com.sdl.web.pca.client.exception.PublicContentApiException;
@@ -28,10 +23,11 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.SortedSet;
 import java.util.TreeSet;
+
+import static com.sdl.dxa.tridion.common.ContextDataCreator.createContextData;
 
 @Slf4j
 @Service
@@ -59,33 +55,6 @@ public class PCARestDynamicNavigationModelProvider implements NavigationModelPro
             log.warn("Cannot find/load/convert dynamic navigation in the PCA for the request " + requestDto, e);
             return Optional.empty();
         }
-    }
-
-    @NotNull
-    ContextData createContextData(Map<String, ClaimHolder> claims) {
-        ContextData contextData = new ContextData();
-        if (claims.isEmpty()) {
-            return contextData;
-        }
-        for (ClaimHolder holder : claims.values()) {
-            contextData.addClaimValule(convertClaimHolderToClaimValue(holder));
-        }
-        return contextData;
-    }
-
-    ClaimValue convertClaimHolderToClaimValue(ClaimHolder holder) {
-        ClaimValue claimValue = new ClaimValue();
-        BeanUtils.copyProperties(holder, claimValue);
-        String message = "ClaimValueType is not recognized, was used in " +
-                holder + ", expected one of " + Joiner.on(";").join(ClaimValueType.values());
-        if (holder.getClaimType() == null) throw new IllegalArgumentException(message);
-        for (ClaimValueType type : ClaimValueType.values()) {
-            if (holder.getClaimType().toUpperCase().equals(type.name())) {
-                claimValue.setType(type);
-            }
-        }
-        if (claimValue.getType() == null) throw new IllegalArgumentException(message);
-        return claimValue;
     }
 
     TaxonomyNodeModelData convert(TaxonomySitemapItem source) {

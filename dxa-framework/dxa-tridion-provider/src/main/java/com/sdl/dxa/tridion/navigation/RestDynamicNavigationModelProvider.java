@@ -22,7 +22,8 @@ import java.util.Optional;
 
 @Slf4j
 @Service
-@Profile("cil.providers.active")
+//TODO fix by TSI-3494
+//@Profile("cil.providers.active")
 @Primary
 public class RestDynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
 

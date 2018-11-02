@@ -15,7 +15,7 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PCALinkResolverTest {
+public class GraphQLLinkResolverTest {
 
     @Mock
     private ApiClientProvider apiClientProvider;
@@ -24,7 +24,7 @@ public class PCALinkResolverTest {
     private ApiClient publicContentApi;
 
     @InjectMocks
-    private PCALinkResolver linkResovler = new PCALinkResolver();
+    private GraphQLLinkResolver linkResovler = new GraphQLLinkResolver();
 
     @Before
     public void setup(){

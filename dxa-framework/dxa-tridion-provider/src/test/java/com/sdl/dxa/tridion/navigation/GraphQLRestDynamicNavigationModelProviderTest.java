@@ -47,7 +47,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PCARestDynamicNavigationModelProviderTest {
+public class GraphQLRestDynamicNavigationModelProviderTest {
     private static final TaxonomyNodeModelData[] EMPTY = new TaxonomyNodeModelData[0];
     private static final int CLASSIFIED_ITEMS_COUNT = 5;
     private static final String DESCRIPTION = "Description";
@@ -76,7 +76,7 @@ public class PCARestDynamicNavigationModelProviderTest {
 
     @Spy
     @InjectMocks
-    private PCARestDynamicNavigationModelProvider provider;
+    private GraphQLRestDynamicNavigationModelProvider provider;
 
     private SitemapRequestDto requestDto;
 

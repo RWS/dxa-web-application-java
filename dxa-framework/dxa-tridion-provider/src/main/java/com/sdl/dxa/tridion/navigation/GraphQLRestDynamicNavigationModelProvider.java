@@ -36,12 +36,12 @@ import java.util.TreeSet;
 //@Service
 //@Profile("!cil.providers.active")
 @Primary
-public class PCARestDynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
+public class GraphQLRestDynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
 
     private final ApiClientProvider provider;
 
     @Autowired
-    public PCARestDynamicNavigationModelProvider(ApiClientProvider provider) {
+    public GraphQLRestDynamicNavigationModelProvider(ApiClientProvider provider) {
         this.provider = provider;
     }
 
@@ -55,7 +55,7 @@ public class PCARestDynamicNavigationModelProvider implements NavigationModelPro
             TaxonomyNodeModelData converted = convert(taxonomySitemapItem);
             return Optional.of(converted);
         } catch (ApiClientException e) {
-            log.warn("Cannot find/load/convert dynamic navigation in the PCA for the request " + requestDto, e);
+            log.warn("Cannot find/load/convert dynamic navigation in the Api Client for the request " + requestDto, e);
             return Optional.empty();
         }
     }
@@ -125,7 +125,7 @@ public class PCARestDynamicNavigationModelProvider implements NavigationModelPro
             }
             return Optional.of(result);
         } catch (ApiClientException e) {
-            log.warn("Cannot find/load/convert dynamic subtree navigation in PCA for the request " + requestDto, e);
+            log.warn("Cannot find/load/convert dynamic subtree navigation in Api Client for the request " + requestDto, e);
             return Optional.empty();
         }
     }

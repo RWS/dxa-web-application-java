@@ -25,13 +25,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implementation of {@code LocalizationResolver} that uses the PCA Client API to determine the localization for a request.
+ * Implementation of {@code LocalizationResolver} that uses the Api Client to determine the localization for a request.
  */
 @Component
 @Profile("!cil.providers.active")
-public class PCALocalizationResolver implements LocalizationResolver {
+public class GraphQLLocalizationResolver implements LocalizationResolver {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PCALocalizationResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GraphQLLocalizationResolver.class);
 
     private final Map<String, Localization> localizations = Collections.synchronizedMap(new HashMap<String, Localization>());
 

@@ -41,9 +41,9 @@ import static org.springframework.util.ClassUtils.forName;
 import static org.springframework.util.ClassUtils.getDefaultClassLoader;
 
 @Slf4j
-@Service(value = "PCAModelServiceProvider")
+@Service(value = "GraphQLModelServiceProvider")
 @Profile("!cil.providers.active")
-public class PCAModelServiceProvider implements ModelServiceProvider {
+public class GraphQLModelServiceProvider implements ModelServiceProvider {
 
     private ApiClientProvider apiClientProvider;
 
@@ -51,12 +51,12 @@ public class PCAModelServiceProvider implements ModelServiceProvider {
 
     private ObjectMapper mapper;
 
-    PCAModelServiceProvider() {
+    GraphQLModelServiceProvider() {
         this.mapper = getObjectMapper();
     }
 
     @Autowired
-    public PCAModelServiceProvider(ApiClientProvider apiClientProvider) {
+    public GraphQLModelServiceProvider(ApiClientProvider apiClientProvider) {
         this.apiClientProvider = apiClientProvider;
         this.pcaClient = apiClientProvider.getClient();
         this.mapper = getObjectMapper();
@@ -92,7 +92,7 @@ public class PCAModelServiceProvider implements ModelServiceProvider {
     // The problem with these "URL compression" features is that if a URL does not end with a slash (nor an extension), you don't
     // know upfront if the URL addresses a regular Page or an index Page (within a nested SG).
     // To determine this, DXA first tries the regular Page and if it doesn't exist, it appends /index.html and tries again.
-    // TODO: The above should be handled by PCA (See CRQ-11703)
+    // TODO: The above should be handled by GraphQL (See CRQ-11703)
     private <T> T _loadPage(Class<T> type, PageRequestDto pageRequest, ContentType contentType) throws ContentProviderException {
         try {
             JsonNode pageNode = pcaClient.getPageModelData(

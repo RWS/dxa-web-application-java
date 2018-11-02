@@ -58,7 +58,7 @@ public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLo
                     endpointContext));
             LOG.debug("The Public Content API endpoint is '{}'", serviceUrl);
         } catch (ConfigurationException e) {
-            throw new ApiClientConfigurationException("Exception during loading PCA client configuration, " +
+            throw new ApiClientConfigurationException("Exception during loading Api Client configuration, " +
                     "endpoint: [" + endpointContext + "]", e);
         }
         initialized = true;

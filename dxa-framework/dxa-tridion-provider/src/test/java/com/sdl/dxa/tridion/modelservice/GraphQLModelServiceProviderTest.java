@@ -30,14 +30,14 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PCAModelServiceProviderTest {
+public class GraphQLModelServiceProviderTest {
     private ObjectMapper mapper;
 
     @Mock
     private ApiClient pcaClient;
 
     @InjectMocks
-    private PCAModelServiceProvider modelServiceProvider = new PCAModelServiceProvider();
+    private GraphQLModelServiceProvider modelServiceProvider = new GraphQLModelServiceProvider();
 
     @Before
     public void setup() {

@@ -53,11 +53,11 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
  *
  * @dxa.publicApi
  */
-@Service(value = "PCAContentProvider")
+@Service(value = "GraphQLContentProvider")
 @Profile("!cil.providers.active")
 @Primary
 @Slf4j
-public class PCAContentProvider implements ContentProvider {
+public class GraphQLContentProvider implements ContentProvider {
 
     private ModelBuilderPipeline builderPipeline;
 
@@ -74,7 +74,7 @@ public class PCAContentProvider implements ContentProvider {
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
     @Autowired
-    public PCAContentProvider(WebRequestContext webRequestContext,
+    public GraphQLContentProvider(WebRequestContext webRequestContext,
                               StaticContentResolver staticContentResolver,
                               LinkResolver linkResolver,
                               ModelBuilderPipeline builderPipeline,

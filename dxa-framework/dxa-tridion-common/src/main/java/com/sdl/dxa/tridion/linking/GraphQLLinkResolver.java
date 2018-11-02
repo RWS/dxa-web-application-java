@@ -13,7 +13,7 @@ import java.util.function.Function;
 
 @Component
 @Profile("!cil.providers.active")
-public class PCALinkResolver extends AbstractLinkResolver {
+public class GraphQLLinkResolver extends AbstractLinkResolver {
 
     @Autowired
     private ApiClientProvider apiClientProvider;

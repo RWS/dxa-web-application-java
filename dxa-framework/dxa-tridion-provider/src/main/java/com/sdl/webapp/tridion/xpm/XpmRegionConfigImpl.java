@@ -46,7 +46,7 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
      * @param objectMapper    a {@link com.fasterxml.jackson.databind.ObjectMapper} object.
      */
     @Autowired
-    public XpmRegionConfigImpl(@Qualifier("DefaultContentProvider") ContentProvider contentProvider,
+    public XpmRegionConfigImpl(ContentProvider contentProvider,
                                ObjectMapper objectMapper) {
         this.contentProvider = contentProvider;
         this.objectMapper = objectMapper;

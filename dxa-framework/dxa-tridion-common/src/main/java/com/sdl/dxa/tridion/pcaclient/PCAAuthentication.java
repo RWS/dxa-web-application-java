@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.pcaclient;
 
+import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.web.client.impl.OAuthTokenProvider;
 import com.sdl.web.pca.client.auth.Authentication;
@@ -26,6 +27,8 @@ public class PCAAuthentication implements Authentication {
             tokenProvider = new OAuthTokenProvider(configurationLoader.getOauthTokenProviderConfiguration());
         } catch (ConfigurationException e) {
             LOG.warn("Unable to read configuration for token provider.", e);
+        } catch (ODataClientRuntimeException e) {
+            LOG.warn("Unable to initialize Token Provider.", e);
         }
     }
 

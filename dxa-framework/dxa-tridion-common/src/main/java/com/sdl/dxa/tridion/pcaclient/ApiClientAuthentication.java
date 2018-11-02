@@ -12,17 +12,17 @@ import org.springframework.stereotype.Service;
 
 import static com.sdl.dxa.tridion.common.ConfigurationConstants.AUTHORIZATION_HEADER;
 
-@Service("PCAAuthentication")
-public class PCAAuthentication implements Authentication {
-    private static final Logger LOG = LoggerFactory.getLogger(PCAAuthentication.class);
+@Service("ApiClientAuthentication")
+public class ApiClientAuthentication implements Authentication {
+    private static final Logger LOG = LoggerFactory.getLogger(ApiClientAuthentication.class);
 
     private OAuthTokenProvider tokenProvider;
 
-    PCAAuthentication() {
+    ApiClientAuthentication() {
     }
 
     @Autowired
-    public PCAAuthentication(GraphQlServiceConfigurationLoader configurationLoader) {
+    public ApiClientAuthentication(GraphQlServiceConfigurationLoader configurationLoader) {
         try {
             tokenProvider = new OAuthTokenProvider(configurationLoader.getOauthTokenProviderConfiguration());
         } catch (ConfigurationException e) {

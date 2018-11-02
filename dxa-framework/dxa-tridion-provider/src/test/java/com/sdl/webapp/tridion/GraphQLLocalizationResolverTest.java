@@ -1,14 +1,13 @@
 package com.sdl.webapp.tridion;
 
-import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
-import com.sdl.web.pca.client.PublicContentApi;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.PublicationMapping;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
 import com.sdl.webapp.common.api.localization.LocalizationResolverException;
-import com.sdl.webapp.common.impl.localization.LocalizationImpl;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,16 +20,16 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PCALocalizationResolverTest {
+public class GraphQLLocalizationResolverTest {
 
     @InjectMocks
-    private PCALocalizationResolver pcaLocalizationResolver = new PCALocalizationResolver();
+    private GraphQLLocalizationResolver pcaLocalizationResolver = new GraphQLLocalizationResolver();
 
     @Mock
-    private PCAClientProvider pcaClientProvider;
+    private ApiClientProvider apiClientProvider;
 
     @Mock
-    private PublicContentApi publicContentApi;
+    private ApiClient publicContentApi;
 
     @Mock
     PublicationMapping publicationMapping;
@@ -43,7 +42,7 @@ public class PCALocalizationResolverTest {
 
     @Before
     public void setup(){
-        when(pcaClientProvider.getClient()).thenReturn(publicContentApi);
+        when(apiClientProvider.getClient()).thenReturn(publicContentApi);
     }
 
     @Test
@@ -55,7 +54,7 @@ public class PCALocalizationResolverTest {
 
         when(publicationMapping.getPublicationId()).thenReturn(5);
         when(publicationMapping.getPath()).thenReturn("/");
-        when(pcaClientProvider.getClient().getPublicationMapping(ContentNamespace.Sites,testUrl)).thenReturn(publicationMapping);
+        when(apiClientProvider.getClient().getPublicationMapping(ContentNamespace.Sites,testUrl)).thenReturn(publicationMapping);
 
         Assert.assertNotNull(pcaLocalizationResolver.getLocalization(testUrl));
     }

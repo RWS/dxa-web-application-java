@@ -8,7 +8,7 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
-import com.sdl.web.pca.client.PublicContentApi;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
@@ -30,14 +30,14 @@ import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PCAModelServiceProviderTest {
+public class GraphQLModelServiceProviderTest {
     private ObjectMapper mapper;
 
     @Mock
-    private PublicContentApi pcaClient;
+    private ApiClient pcaClient;
 
     @InjectMocks
-    private PCAModelServiceProvider modelServiceProvider = new PCAModelServiceProvider();
+    private GraphQLModelServiceProvider modelServiceProvider = new GraphQLModelServiceProvider();
 
     @Before
     public void setup() {

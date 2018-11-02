@@ -61,7 +61,7 @@ public class GraphQlServiceConfigurationLoaderTest {
         assertEquals("http://localhost:8082/cd/api", serviceUrl);
     }
 
-    @Test(expected = PCAConfigurationException.class)
+    @Test(expected = ApiClientConfigurationException.class)
     public void initializeNotFromRootConfiguration() throws Exception {
         doReturn(Optional.empty()).when(configurationLoader).getContentServiceCapability();
         when(rootConfigurationHolder.hasConfiguration("/ContentService")).thenReturn(false);

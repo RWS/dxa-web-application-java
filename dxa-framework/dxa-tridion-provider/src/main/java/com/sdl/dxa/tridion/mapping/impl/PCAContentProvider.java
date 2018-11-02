@@ -11,7 +11,7 @@ import com.sdl.dxa.tridion.broker.GraphQLQueryProvider;
 import com.sdl.dxa.tridion.broker.QueryProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.contentmodel.generated.Component;
 import com.sdl.web.pca.client.contentmodel.generated.CustomMetaEdge;
 import com.sdl.web.pca.client.contentmodel.generated.Item;
@@ -69,7 +69,7 @@ public class PCAContentProvider implements ContentProvider {
 
     private StaticContentResolver staticContentResolver;
 
-    private PCAClientProvider clientProvider;
+    private ApiClientProvider clientProvider;
 
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
@@ -79,7 +79,7 @@ public class PCAContentProvider implements ContentProvider {
                               LinkResolver linkResolver,
                               ModelBuilderPipeline builderPipeline,
                               ModelServiceProvider modelService,
-                              PCAClientProvider clientProvider) {
+                              ApiClientProvider clientProvider) {
         this.webRequestContext = webRequestContext;
         this.linkResolver = linkResolver;
         this.staticContentResolver = staticContentResolver;

@@ -1,7 +1,7 @@
 package com.sdl.dxa.tridion.broker;
 
 import com.google.common.base.Strings;
-import com.sdl.web.pca.client.PublicContentApi;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.Pagination;
 import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
 import com.sdl.web.pca.client.contentmodel.generated.FilterItemType;
@@ -20,13 +20,13 @@ import java.util.stream.Collectors;
 
 public class GraphQLQueryProvider implements QueryProvider {
 
-    private PublicContentApi client;
+    private ApiClient client;
 
     private boolean hasMore;
 
     private String cursor;
 
-    public GraphQLQueryProvider(PublicContentApi client) {
+    public GraphQLQueryProvider(ApiClient client) {
         this.client = client;
     }
 

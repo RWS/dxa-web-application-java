@@ -8,7 +8,7 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
-import com.sdl.web.pca.client.PublicContentApi;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
@@ -34,7 +34,7 @@ public class PCAModelServiceProviderTest {
     private ObjectMapper mapper;
 
     @Mock
-    private PublicContentApi pcaClient;
+    private ApiClient pcaClient;
 
     @InjectMocks
     private PCAModelServiceProvider modelServiceProvider = new PCAModelServiceProvider();

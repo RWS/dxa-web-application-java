@@ -16,8 +16,8 @@ import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
-import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
-import com.sdl.web.pca.client.PublicContentApi;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
@@ -45,9 +45,9 @@ import static org.springframework.util.ClassUtils.getDefaultClassLoader;
 @Profile("!cil.providers.active")
 public class PCAModelServiceProvider implements ModelServiceProvider {
 
-    private PCAClientProvider pcaClientProvider;
+    private ApiClientProvider apiClientProvider;
 
-    private PublicContentApi pcaClient;
+    private ApiClient pcaClient;
 
     private ObjectMapper mapper;
 
@@ -56,9 +56,9 @@ public class PCAModelServiceProvider implements ModelServiceProvider {
     }
 
     @Autowired
-    public PCAModelServiceProvider(PCAClientProvider pcaClientProvider) {
-        this.pcaClientProvider = pcaClientProvider;
-        this.pcaClient = pcaClientProvider.getClient();
+    public PCAModelServiceProvider(ApiClientProvider apiClientProvider) {
+        this.apiClientProvider = apiClientProvider;
+        this.pcaClient = apiClientProvider.getClient();
         this.mapper = getObjectMapper();
     }
 

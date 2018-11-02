@@ -1,33 +1,33 @@
 package com.sdl.dxa.tridion.pcaclient;
 
 import com.sdl.web.pca.client.DefaultGraphQLClient;
-import com.sdl.web.pca.client.DefaultPublicContentApi;
+import com.sdl.web.pca.client.DefaultApiClient;
 import com.sdl.web.pca.client.GraphQLClient;
-import com.sdl.web.pca.client.PublicContentApi;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.auth.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import static com.sdl.dxa.tridion.common.ConfigurationConstants.CONNECTION_TIMEOUT;
 
-@Service("PCAClientProvider")
-public class DefaultPCAClientProvider implements PCAClientProvider {
+@Service("DefaultApiClientProvider")
+public class DefaultApiClientProvider implements ApiClientProvider {
 
-    private PublicContentApi publicContentApi;
+    private ApiClient apiClient;
 
     private GraphQLClient graphQLClient;
 
     @Autowired
-    public DefaultPCAClientProvider(PCAClientConfigurationLoader configurationLoader, Authentication auth) {
+    public DefaultApiClientProvider(ApiClientConfigurationLoader configurationLoader, Authentication auth) {
         this.graphQLClient = new DefaultGraphQLClient(configurationLoader.getServiceUrl(), null, auth);
-        this.publicContentApi = new DefaultPublicContentApi(graphQLClient,
+        this.apiClient = new DefaultApiClient(graphQLClient,
                 Integer.valueOf(configurationLoader.getConfiguration()
                         .getOrDefault(CONNECTION_TIMEOUT, 0).toString()));
     }
 
     @Override
-    public PublicContentApi getClient() {
-        return publicContentApi;
+    public ApiClient getClient() {
+        return apiClient;
     }
 
     @Override

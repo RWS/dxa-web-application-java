@@ -1,20 +1,20 @@
 package com.sdl.dxa.tridion.pcaclient;
 
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.GraphQLClient;
-import com.sdl.web.pca.client.PublicContentApi;
 
 /**
  * Provides instance of PCA and GraphQL client which is works with environment configured in cd_client_conf.xml
  * configuration file.
  */
-public interface PCAClientProvider {
+public interface ApiClientProvider {
 
     /**
-     * Returns configured instance of PublicContentApi client.
+     * Returns configured instance of ApiClient client.
      *
      * @return
      */
-    PublicContentApi getClient();
+    ApiClient getClient();
 
     /**
      * Returns configured instance of GraphQLClient client.

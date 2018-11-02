@@ -2,6 +2,7 @@ package com.sdl.dxa.tridion.content;
 
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
+import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
 import com.sdl.web.pca.client.contentmodel.generated.Publication;
@@ -10,12 +11,7 @@ import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotLoadedException;
 import com.sdl.webapp.common.util.ImageUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +20,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
-import java.io.IOException;
 
 import static com.sdl.dxa.tridion.common.ContextDataCreator.createContextData;
 import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
@@ -38,6 +33,9 @@ public class ApiStaticContentResolver extends GenericStaticContentResolver imple
 
     @Autowired
     private PCAClientProvider pcaClientProvider;
+
+    @Autowired
+    private BinaryContentDownloader contentDownloader;
 
     @Autowired
     public ApiStaticContentResolver(WebApplicationContext webApplicationContext) {
@@ -81,31 +79,27 @@ public class ApiStaticContentResolver extends GenericStaticContentResolver imple
     private void refreshBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, BinaryComponent binaryComponent) throws ContentProviderException {
         String downloadUrl = binaryComponent.getVariants().getEdges().get(0).getNode().getDownloadUrl();
 
-        CloseableHttpClient httpclient = HttpClients.createDefault();
-        HttpGet httpget = new HttpGet(downloadUrl);
-        CloseableHttpResponse response = null;
-        try {
-            response = httpclient.execute(httpget);
-            byte[] content = IOUtils.toByteArray(response.getEntity().getContent());
-            refreshBinary(file, pathInfo, content);
-        } catch (IOException e) {
-            throw new StaticContentNotLoadedException("Cannot content for file " + file, e);
-        } finally {
-            try {
-                response.close();
-            } catch (IOException e) {
-                throw new StaticContentNotLoadedException("Cannot content for file " + file, e);
-            }
-        }
+        byte[] content = contentDownloader.downloadContent(file, downloadUrl);
+
+        refreshBinary(file, pathInfo, content);
     }
 
     @Override
     protected String _resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
+        ContextData contextData = createContextData(requestDto.getClaims());
         Publication publication = pcaClientProvider.getClient().getPublication(ContentNamespace.Sites,
                 publicationId,
                 "",
-                createContextData(requestDto.getClaims()));
+                contextData);
         return publication.getPublicationUrl();
+    }
+
+    public void setPcaClientProvider(PCAClientProvider pcaClientProvider) {
+        this.pcaClientProvider = pcaClientProvider;
+    }
+
+    public void setContentDownloader(BinaryContentDownloader contentDownloader) {
+        this.contentDownloader = contentDownloader;
     }
 }

@@ -34,12 +34,18 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
+import static java.lang.String.format;
 
 @Slf4j
 @Service
 @Profile("!cil.providers.active")
 @Primary
 public class PCARestDynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
+
+    private static final String CLAIM_TYPE_NOT_FOUND_ERROR = "ClaimValueType is not recognized, was used in '%s'" +
+            ", expected one of " + Joiner.on(";").join(ClaimValueType.values());
 
     private final PCAClientProvider provider;
 
@@ -64,14 +70,49 @@ public class PCARestDynamicNavigationModelProvider implements NavigationModelPro
         }
     }
 
-    private Optional<TaxonomySitemapItem> getNavigationModelInternal(@NotNull SitemapRequestDto requestDto) {
-        int depth;
-        DepthCounter expandLevels = requestDto.getExpandLevels();
-        if (expandLevels.isUnlimited()) {
-            depth = defaultDescendantDepth;
-        } else {
-            depth = expandLevels.getCounter();
+    @Override
+    public Optional<Collection<SitemapItemModelData>> getNavigationSubtree(@NotNull SitemapRequestDto requestDto) {
+        try {
+            List<SitemapItem> navigation = getNavigationSubtreeInternal(requestDto);
+            Collection<SitemapItemModelData> result = convert(navigation);
+
+            // this needed because this interface method has a wrong result type
+            // usually, empty collections means 'NO DATA',
+            if (result.isEmpty()) {
+                return Optional.empty();
+            } else {
+                return Optional.of(result);
+            }
+        } catch (PublicContentApiException e) {
+            log.warn("Cannot find/load/convert dynamic subtree navigation in PCA for the request " + requestDto, e);
+            return Optional.empty();
         }
+    }
+
+    private List<SitemapItem> getNavigationSubtreeInternal(@NotNull SitemapRequestDto requestDto) {
+        int depth = getDepth(requestDto);
+
+        TaxonomySitemapItem[] taxonomySitemapItem = provider.getClient().getSitemapSubtree(ContentNamespace.Sites,
+                requestDto.getLocalizationId(),
+                requestDto.getSitemapId(),
+                depth,
+                requestDto.getNavigationFilter().isWithAncestors() ? Ancestor.INCLUDE : Ancestor.NONE,
+                createContextData(requestDto.getClaims()));
+
+
+        List<SitemapItemModelData> result = new ArrayList<>();
+
+
+        if (taxonomySitemapItem != null) {
+            for (TaxonomySitemapItem item : taxonomySitemapItem) {
+                result.add(convert(item));
+            }
+        }
+        return Optional.of(result);
+    }
+
+    private Optional<TaxonomySitemapItem> getNavigationModelInternal(@NotNull SitemapRequestDto requestDto) {
+        int depth = getDepth(requestDto);
 
         TaxonomySitemapItem taxonomySitemapItem = provider.getClient().getSitemap(
                 ContentNamespace.Sites,
@@ -107,6 +148,8 @@ public class PCARestDynamicNavigationModelProvider implements NavigationModelPro
         return Optional.of(taxonomySitemapItem);
     }
 
+
+
     private List<TaxonomySitemapItem> getLeafNodes(SitemapItem rootNode) {
         List<TaxonomySitemapItem> leafNodes = new ArrayList<>();
         if (!(rootNode instanceof TaxonomySitemapItem)) {
@@ -138,31 +181,19 @@ public class PCARestDynamicNavigationModelProvider implements NavigationModelPro
         return leafNodes;
     }
 
-    @NotNull
-    ContextData createContextData(Map<String, ClaimHolder> claims) {
-        ContextData contextData = new ContextData();
-        if (claims.isEmpty()) {
-            return contextData;
+    private int getDepth(@NotNull SitemapRequestDto requestDto) {
+        int depth;
+        DepthCounter expandLevels = requestDto.getExpandLevels();
+        if (expandLevels.isUnlimited()) {
+            depth = defaultDescendantDepth;
+        } else {
+            depth = expandLevels.getCounter();
         }
-        for (ClaimHolder holder : claims.values()) {
-            contextData.addClaimValule(convertClaimHolderToClaimValue(holder));
-        }
-        return contextData;
+        return depth;
     }
 
-    ClaimValue convertClaimHolderToClaimValue(ClaimHolder holder) {
-        ClaimValue claimValue = new ClaimValue();
-        BeanUtils.copyProperties(holder, claimValue);
-        String message = "ClaimValueType is not recognized, was used in " +
-                holder + ", expected one of " + Joiner.on(";").join(ClaimValueType.values());
-        if (holder.getClaimType() == null) throw new IllegalArgumentException(message);
-        for (ClaimValueType type : ClaimValueType.values()) {
-            if (holder.getClaimType().toUpperCase().equals(type.name())) {
-                claimValue.setType(type);
-            }
-        }
-        if (claimValue.getType() == null) throw new IllegalArgumentException(message);
-        return claimValue;
+    Collection<SitemapItemModelData> convert(List<SitemapItem> source) {
+        return source.stream().map(sitemapItem -> convert(sitemapItem)).collect(Collectors.toList());
     }
 
     SitemapItemModelData convert(SitemapItem source) {
@@ -205,25 +236,29 @@ public class PCARestDynamicNavigationModelProvider implements NavigationModelPro
     }
 
     @NotNull
-    @Override
-    public Optional<Collection<SitemapItemModelData>> getNavigationSubtree(@NotNull SitemapRequestDto requestDto) {
-        try {
-            TaxonomySitemapItem[] taxonomySitemapItem = provider.getClient().getSitemapSubtree(ContentNamespace.Sites,
-                    requestDto.getLocalizationId(),
-                    requestDto.getSitemapId(),
-                    requestDto.getExpandLevels().getCounter(),
-                    requestDto.getNavigationFilter().isWithAncestors() ? Ancestor.INCLUDE : Ancestor.NONE,
-                    createContextData(requestDto.getClaims()));
-            List<SitemapItemModelData> result = new ArrayList<>();
-            if (taxonomySitemapItem != null) {
-                for (TaxonomySitemapItem item : taxonomySitemapItem) {
-                    result.add(convert(item));
-                }
-            }
-            return Optional.of(result);
-        } catch (PublicContentApiException e) {
-            log.warn("Cannot find/load/convert dynamic subtree navigation in PCA for the request " + requestDto, e);
-            return Optional.empty();
+    ContextData createContextData(Map<String, ClaimHolder> claims) {
+        ContextData contextData = new ContextData();
+        if (claims.isEmpty()) {
+            return contextData;
         }
+        for (ClaimHolder holder : claims.values()) {
+            contextData.addClaimValule(convertClaimHolderToClaimValue(holder));
+        }
+        return contextData;
     }
+
+    ClaimValue convertClaimHolderToClaimValue(ClaimHolder holder) {
+        ClaimValue claimValue = new ClaimValue();
+        BeanUtils.copyProperties(holder, claimValue);
+        for (ClaimValueType type : ClaimValueType.values()) {
+            if (type.name().equalsIgnoreCase(holder.getClaimType())) {
+                claimValue.setType(type);
+            }
+        }
+        if (claimValue.getType() == null) {
+            throw new IllegalArgumentException(format(CLAIM_TYPE_NOT_FOUND_ERROR, holder));
+        }
+        return claimValue;
+    }
+
 }

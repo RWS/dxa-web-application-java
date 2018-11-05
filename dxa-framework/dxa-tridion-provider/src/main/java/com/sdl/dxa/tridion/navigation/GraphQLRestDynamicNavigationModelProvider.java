@@ -5,20 +5,18 @@ import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
-import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.Ancestor;
 import com.sdl.web.pca.client.contentmodel.generated.SitemapItem;
 import com.sdl.web.pca.client.contentmodel.generated.TaxonomySitemapItem;
-import com.sdl.web.pca.client.exception.PublicContentApiException;
+import com.sdl.web.pca.client.exception.ApiClientException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -34,12 +32,12 @@ import static com.sdl.dxa.tridion.common.ContextDataCreator.createContextData;
 //@Service
 //@Profile("!cil.providers.active")
 @Primary
-public class PCARestDynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
+public class GraphQLRestDynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
 
-    private final PCAClientProvider provider;
+    private final ApiClientProvider provider;
 
     @Autowired
-    public PCARestDynamicNavigationModelProvider(PCAClientProvider provider) {
+    public GraphQLRestDynamicNavigationModelProvider(ApiClientProvider provider) {
         this.provider = provider;
     }
 
@@ -52,8 +50,8 @@ public class PCARestDynamicNavigationModelProvider implements NavigationModelPro
                     createContextData(requestDto.getClaims()));
             TaxonomyNodeModelData converted = convert(taxonomySitemapItem);
             return Optional.of(converted);
-        } catch (PublicContentApiException e) {
-            log.warn("Cannot find/load/convert dynamic navigation in the PCA for the request " + requestDto, e);
+        } catch (ApiClientException e) {
+            log.warn("Cannot find/load/convert dynamic navigation in the Api Client for the request " + requestDto, e);
             return Optional.empty();
         }
     }
@@ -95,8 +93,8 @@ public class PCARestDynamicNavigationModelProvider implements NavigationModelPro
                 }
             }
             return Optional.of(result);
-        } catch (PublicContentApiException e) {
-            log.warn("Cannot find/load/convert dynamic subtree navigation in PCA for the request " + requestDto, e);
+        } catch (ApiClientException e) {
+            log.warn("Cannot find/load/convert dynamic subtree navigation in Api Client for the request " + requestDto, e);
             return Optional.empty();
         }
     }

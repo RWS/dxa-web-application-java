@@ -5,13 +5,13 @@ import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
-import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
-import com.sdl.web.pca.client.PublicContentApi;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.SitemapItem;
 import com.sdl.web.pca.client.contentmodel.generated.TaxonomySitemapItem;
-import com.sdl.web.pca.client.exception.PublicContentApiException;
+import com.sdl.web.pca.client.exception.ApiClientException;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
@@ -42,7 +42,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PCARestDynamicNavigationModelProviderTest {
+public class GraphQLRestDynamicNavigationModelProviderTest {
     private static final TaxonomyNodeModelData[] EMPTY = new TaxonomyNodeModelData[0];
     private static final int CLASSIFIED_ITEMS_COUNT = 5;
     private static final String DESCRIPTION = "Description";
@@ -61,14 +61,14 @@ public class PCARestDynamicNavigationModelProviderTest {
     private static final String SITEMAP_ID = "sitemap Id";
 
     @Mock
-    private PCAClientProvider clientProvider;
+    private ApiClientProvider clientProvider;
 
     @Mock
-    private PublicContentApi pcaClient;
+    private ApiClient pcaClient;
 
     @Spy
     @InjectMocks
-    private PCARestDynamicNavigationModelProvider provider;
+    private GraphQLRestDynamicNavigationModelProvider provider;
 
     private SitemapRequestDto requestDto;
 
@@ -202,7 +202,7 @@ public class PCARestDynamicNavigationModelProviderTest {
 
     @Test
     public void getNavigationModelException() {
-        doThrow(new PublicContentApiException()).when(pcaClient).getSitemap(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID),
+        doThrow(new ApiClientException()).when(pcaClient).getSitemap(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID),
                 eq(DEPTH_COUNTER), any(ContextData.class));
 
         assertFalse(provider.getNavigationModel(requestDto).isPresent());
@@ -227,7 +227,7 @@ public class PCARestDynamicNavigationModelProviderTest {
 
     @Test
     public void getNavigationSubtreeException() {
-        doThrow(new PublicContentApiException()).when(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID),
+        doThrow(new ApiClientException()).when(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID),
                 eq(SITEMAP_ID), eq(DEPTH_COUNTER), eq(INCLUDE), any(ContextData.class));
 
         assertFalse(provider.getNavigationSubtree(requestDto).isPresent());

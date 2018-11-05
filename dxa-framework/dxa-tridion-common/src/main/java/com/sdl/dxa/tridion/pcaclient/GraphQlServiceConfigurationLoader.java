@@ -19,7 +19,7 @@ import static com.sdl.dxa.tridion.common.ConfigurationConstants.CONTENT_SERVICE_
 import static com.sdl.dxa.tridion.common.ConfigurationConstants.SERVICE_URI;
 
 @Service("GraphQlServiceConfigurationLoader")
-public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLoader implements PCAClientConfigurationLoader {
+public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLoader implements ApiClientConfigurationLoader {
     private static final Logger LOG = LoggerFactory.getLogger(GraphQlServiceConfigurationLoader.class);
     private static final String[] EMPTY = new String[0];
 
@@ -58,7 +58,7 @@ public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLo
                     endpointContext));
             LOG.debug("The Public Content API endpoint is '{}'", serviceUrl);
         } catch (ConfigurationException e) {
-            throw new PCAConfigurationException("Exception during loading PCA client configuration, " +
+            throw new ApiClientConfigurationException("Exception during loading Api Client configuration, " +
                     "endpoint: [" + endpointContext + "]", e);
         }
         initialized = true;

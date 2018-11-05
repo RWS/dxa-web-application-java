@@ -29,7 +29,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PCAContentProviderTest {
+public class GraphQLContentProviderTest {
 
     @Mock
     private Localization localization;
@@ -43,7 +43,7 @@ public class PCAContentProviderTest {
     private StaticContentResolver staticContentResolver;
 
     @InjectMocks
-    PCAContentProvider contentProvider;
+    GraphQLContentProvider contentProvider;
 
     @Before
     public void setup() {

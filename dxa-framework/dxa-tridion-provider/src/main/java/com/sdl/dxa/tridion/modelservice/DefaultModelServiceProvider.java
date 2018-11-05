@@ -22,7 +22,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Slf4j
 @Service(value = "DefaultModelService")
 @Profile("cil.providers.active")
-@Primary
 public class DefaultModelServiceProvider implements ModelServiceProvider {
 
     private final ModelServiceConfiguration configuration;

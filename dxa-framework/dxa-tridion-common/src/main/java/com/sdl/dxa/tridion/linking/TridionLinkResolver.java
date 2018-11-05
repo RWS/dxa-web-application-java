@@ -4,12 +4,14 @@ import com.sdl.web.api.linking.BinaryLinkImpl;
 import com.sdl.web.api.linking.ComponentLinkImpl;
 import com.sdl.web.api.linking.PageLinkImpl;
 import com.sdl.webapp.tridion.linking.AbstractLinkResolver;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 import java.util.function.Function;
 
 @Component
+@Profile("cil.providers.active")
 public class TridionLinkResolver extends AbstractLinkResolver {
 
     @Override

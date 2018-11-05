@@ -1,14 +1,15 @@
 package com.sdl.webapp.tridion;
 
 import com.google.common.base.Strings;
-import com.sdl.web.api.dynamic.DynamicMappingsRetriever;
-import com.sdl.web.api.dynamic.mapping.PublicationMapping;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
+import com.sdl.web.pca.client.contentmodel.generated.PublicationMapping;
+import com.sdl.web.pca.client.exception.ApiClientException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
 import com.sdl.webapp.common.api.localization.LocalizationResolver;
 import com.sdl.webapp.common.api.localization.LocalizationResolverException;
-import com.tridion.configuration.ConfigurationException;
 import lombok.AllArgsConstructor;
 import lombok.SneakyThrows;
 import org.slf4j.Logger;
@@ -24,13 +25,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Implementation of {@code LocalizationResolver} that uses the Tridion API to determine the localization for a request.
+ * Implementation of {@code LocalizationResolver} that uses the Api Client to determine the localization for a request.
  */
 @Component
-@Profile("cil.providers.active")
-public class TridionLocalizationResolver implements LocalizationResolver {
+@Profile("!cil.providers.active")
+public class GraphQLLocalizationResolver implements LocalizationResolver {
 
-    private static final Logger LOG = LoggerFactory.getLogger(TridionLocalizationResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GraphQLLocalizationResolver.class);
 
     private final Map<String, Localization> localizations = Collections.synchronizedMap(new HashMap<String, Localization>());
 
@@ -38,7 +39,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     private LocalizationFactory localizationFactory;
 
     @Autowired
-    private DynamicMappingsRetriever dynamicMappingsRetriever;
+    private ApiClientProvider apiClientProvider;
 
     /**
      * Gets the publication mapping path. The returned path always starts with a "/" and does not end with a "/", unless
@@ -99,7 +100,8 @@ public class TridionLocalizationResolver implements LocalizationResolver {
 
     protected PublicationMappingData getPublicationMappingData(String url) throws PublicationMappingNotFoundException {
         try {
-            PublicationMapping publicationMapping = dynamicMappingsRetriever.getPublicationMapping(url);
+            // Publication Mapping is more specific to Tridion Sites, hence Tridion Sites is passed which is similar to .NET implementation
+            PublicationMapping publicationMapping = apiClientProvider.getClient().getPublicationMapping(ContentNamespace.Sites,url);
 
             if (publicationMapping == null) {
                 throw new PublicationMappingNotFoundException("Publication mapping not found. There is no any publication mapping " +
@@ -108,7 +110,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
 
             return new PublicationMappingData(String.valueOf(publicationMapping.getPublicationId()),
                     getPublicationMappingPath(publicationMapping.getPath()));
-        } catch (ConfigurationException ex) {
+        } catch (ApiClientException ex) {
             throw new PublicationMappingNotFoundException("Error found during fetch publication mapping not found for URL: " + url, ex);
         }
     }

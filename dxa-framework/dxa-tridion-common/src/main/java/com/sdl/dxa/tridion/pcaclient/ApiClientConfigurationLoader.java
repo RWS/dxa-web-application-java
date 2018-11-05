@@ -5,7 +5,7 @@ import java.util.Properties;
 /**
  * Loads and holds public content api client configuration.
  */
-public interface PCAClientConfigurationLoader {
+public interface ApiClientConfigurationLoader {
 
     /**
      * Returns client configuration properties.

@@ -13,30 +13,30 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class DefaultPCAClientProviderTest {
+public class DefaultApiClientProviderTest {
 
     @Mock
-    private PCAClientConfigurationLoader configurationLoader;
+    private ApiClientConfigurationLoader configurationLoader;
     @Mock
     private Authentication auth;
 
-    private DefaultPCAClientProvider pcaClientProvider;
+    private DefaultApiClientProvider apiClientProvider;
 
     @Before
     public void setup() {
         when(configurationLoader.getServiceUrl()).thenReturn("http://localhost:8082/cd/api");
         when(configurationLoader.getConfiguration()).thenReturn(new Properties());
-        pcaClientProvider = new DefaultPCAClientProvider(configurationLoader, auth);
+        apiClientProvider = new DefaultApiClientProvider(configurationLoader, auth);
     }
 
     @Test
     public void getClient() {
-        assertNotNull(pcaClientProvider.getClient());
+        assertNotNull(apiClientProvider.getClient());
     }
 
     @Test
     public void getGraphQLClient() {
-        assertNotNull(pcaClientProvider.getGraphQLClient());
+        assertNotNull(apiClientProvider.getGraphQLClient());
     }
 
 }

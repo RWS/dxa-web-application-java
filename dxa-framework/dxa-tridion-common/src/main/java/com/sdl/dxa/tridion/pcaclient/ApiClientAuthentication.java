@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.pcaclient;
 
+import com.sdl.odata.client.api.exception.ODataClientRuntimeException;
 import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.web.client.impl.OAuthTokenProvider;
 import com.sdl.web.pca.client.auth.Authentication;
@@ -11,21 +12,23 @@ import org.springframework.stereotype.Service;
 
 import static com.sdl.dxa.tridion.common.ConfigurationConstants.AUTHORIZATION_HEADER;
 
-@Service("PCAAuthentication")
-public class PCAAuthentication implements Authentication {
-    private static final Logger LOG = LoggerFactory.getLogger(PCAAuthentication.class);
+@Service("ApiClientAuthentication")
+public class ApiClientAuthentication implements Authentication {
+    private static final Logger LOG = LoggerFactory.getLogger(ApiClientAuthentication.class);
 
     private OAuthTokenProvider tokenProvider;
 
-    PCAAuthentication() {
+    ApiClientAuthentication() {
     }
 
     @Autowired
-    public PCAAuthentication(GraphQlServiceConfigurationLoader configurationLoader) {
+    public ApiClientAuthentication(GraphQlServiceConfigurationLoader configurationLoader) {
         try {
             tokenProvider = new OAuthTokenProvider(configurationLoader.getOauthTokenProviderConfiguration());
         } catch (ConfigurationException e) {
             LOG.warn("Unable to read configuration for token provider.", e);
+        } catch (ODataClientRuntimeException e) {
+            LOG.warn("Unable to initialize Token Provider.", e);
         }
     }
 

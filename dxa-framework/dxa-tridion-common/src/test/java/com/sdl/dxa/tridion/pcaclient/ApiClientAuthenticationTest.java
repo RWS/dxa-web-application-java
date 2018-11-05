@@ -14,14 +14,14 @@ import org.mockito.runners.MockitoJUnitRunner;
 import static org.junit.Assert.assertEquals;
 
 @RunWith(MockitoJUnitRunner.class)
-public class PCAAuthenticationTest {
+public class ApiClientAuthenticationTest {
 
     @Mock
     private OAuthTokenProvider tokenProvider;
 
     @Spy
     @InjectMocks
-    private PCAAuthentication authentication = new PCAAuthentication();
+    private ApiClientAuthentication authentication = new ApiClientAuthentication();
 
     @Test
     public void applyManualAuthentication() {

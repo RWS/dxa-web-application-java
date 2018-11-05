@@ -43,7 +43,6 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
 
     @Autowired
-    @Qualifier("DefaultContentProvider")
     private ContentProvider contentProvider;
 
     @Autowired

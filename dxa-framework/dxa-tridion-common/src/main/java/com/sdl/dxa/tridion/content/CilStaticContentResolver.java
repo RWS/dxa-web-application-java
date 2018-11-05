@@ -61,14 +61,12 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
                                                         ImageUtils.StaticContentPathInfo pathInfo,
                                                         String urlPath) throws ContentProviderException {
         BinaryMeta binaryMeta;
-        ComponentMeta componentMeta;
-        int itemId;
 
         synchronized (LOCK) {
             binaryMeta = getBinaryMeta(urlPath, publicationId);
 
-            itemId = (int) binaryMeta.getURI().getItemId();
-            componentMeta = getComponentMeta(pathInfo, publicationId, itemId);
+            int itemId = (int) binaryMeta.getURI().getItemId();
+            ComponentMeta componentMeta = getComponentMeta(pathInfo, publicationId, itemId);
 
             long componentTime = componentMeta.getLastPublicationDate().getTime();
 

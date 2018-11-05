@@ -14,23 +14,18 @@ import java.io.IOException;
 @Component
 public class BinaryContentDownloader {
 
+    private final CloseableHttpClient httpclient;
+
+    public BinaryContentDownloader() {
+        httpclient = HttpClients.createDefault();
+    }
+
     public byte[] downloadContent(File file, String downloadUrl) throws StaticContentNotLoadedException {
-        CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpGet httpget = new HttpGet(downloadUrl);
-        CloseableHttpResponse response = null;
-        byte[] content = null;
-        try {
-            response = httpclient.execute(httpget);
-            content = IOUtils.toByteArray(response.getEntity().getContent());
+        try(CloseableHttpResponse response = httpclient.execute(httpget)) {
+            return IOUtils.toByteArray(response.getEntity().getContent());
         } catch (IOException e) {
             throw new StaticContentNotLoadedException("Cannot content for file " + file, e);
-        } finally {
-            try {
-                response.close();
-            } catch (IOException e) {
-                throw new StaticContentNotLoadedException("Cannot content for file " + file, e);
-            }
         }
-        return content;
     }
 }

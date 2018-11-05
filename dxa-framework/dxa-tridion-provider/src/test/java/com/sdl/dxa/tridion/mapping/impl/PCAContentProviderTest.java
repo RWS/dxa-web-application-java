@@ -13,7 +13,6 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.Configuration;
-import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,12 +22,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.File;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -83,31 +80,13 @@ public class PCAContentProviderTest {
 
     @Test
     public void getStaticContent() throws Exception {
-        when(staticContentResolver.getStaticContent(any(StaticContentRequestDto.class))).thenReturn(new StaticContentItem() {
-            @Override
-            public long getLastModified() {
-                return 42;
-            }
-
-            @Override
-            public String getContentType() {
-                return "testType";
-            }
-
-            @Override
-            public InputStream getContent() throws IOException {
-                return null;
-            }
-
-            @Override
-            public boolean isVersioned() {
-                return false;
-            }
-        });
+        File contentFile = new File("path");
+        when(staticContentResolver.getStaticContent(any(StaticContentRequestDto.class))).thenReturn(new StaticContentItem("testType",
+                contentFile, false));
 
         StaticContentItem result = contentProvider.getStaticContent("/static", "localizationId", "localilzationPath");
 
-        assertEquals(42, result.getLastModified());
+        assertEquals("path", contentFile.getName());
         assertEquals("testType", result.getContentType());
     }
 }

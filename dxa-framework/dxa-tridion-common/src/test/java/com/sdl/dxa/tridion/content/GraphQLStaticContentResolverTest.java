@@ -1,8 +1,8 @@
 package com.sdl.dxa.tridion.content;
 
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
-import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
-import com.sdl.web.pca.client.PublicContentApi;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
@@ -38,8 +38,8 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(ApiStaticContentResolver.class)
-public class ApiStaticContentResolverTest {
+@PrepareForTest(GraphQLStaticContentResolver.class)
+public class GraphQLStaticContentResolverTest {
 
     private static final String LOCALIZATION_ID = "42";
     private static final String DOWNLOAD_URL = "DOWNLOAD_URL";
@@ -49,16 +49,16 @@ public class ApiStaticContentResolverTest {
     private WebApplicationContext webApplicationContext;
 
     @Mock
-    private PCAClientProvider pcaClientProvider;
+    private ApiClientProvider pcaClientProvider;
 
     @Mock
-    private PublicContentApi publicContentApi;
+    private ApiClient apiClient;
 
     @Mock
     private BinaryContentDownloader binaryContentDownloader;
 
     @InjectMocks
-    private ApiStaticContentResolver apiStaticContentResolver;
+    private GraphQLStaticContentResolver graphQLStaticContentResolver;
 
     BinaryComponent binaryComponent;
     BinaryVariant binaryVariant;
@@ -68,11 +68,11 @@ public class ApiStaticContentResolverTest {
         MockServletContext context = new MockServletContext();
         when(webApplicationContext.getServletContext()).thenReturn(context);
 
-        when(pcaClientProvider.getClient()).thenReturn(publicContentApi);
+        when(pcaClientProvider.getClient()).thenReturn(apiClient);
 
-        apiStaticContentResolver = new ApiStaticContentResolver(webApplicationContext);
-        apiStaticContentResolver.setPcaClientProvider(pcaClientProvider);
-        apiStaticContentResolver.setContentDownloader(binaryContentDownloader);
+        graphQLStaticContentResolver = new GraphQLStaticContentResolver(webApplicationContext);
+        graphQLStaticContentResolver.setPcaClientProvider(pcaClientProvider);
+        graphQLStaticContentResolver.setContentDownloader(binaryContentDownloader);
 
         binaryComponent = new BinaryComponent();
         BinaryVariantConnection binaryVariantConnection = new BinaryVariantConnection();
@@ -110,7 +110,7 @@ public class ApiStaticContentResolverTest {
         when(binaryContentDownloader.downloadContent(any(File.class), eq(DOWNLOAD_URL))).thenReturn(binaryDataString.getBytes());
 
         //when
-        StaticContentItem item = apiStaticContentResolver.getStaticContent(requestDto);
+        StaticContentItem item = graphQLStaticContentResolver.getStaticContent(requestDto);
 
         //then
         assertEquals("path_not_in_request", IOUtils.toString(item.getContent(), "UTF-8"));
@@ -125,7 +125,7 @@ public class ApiStaticContentResolverTest {
         binaryVariant.setType("content_type");
 
         //when
-        StaticContentItem item = apiStaticContentResolver.getStaticContent(requestDto);
+        StaticContentItem item = graphQLStaticContentResolver.getStaticContent(requestDto);
 
         //then
         assertEquals("content_type", item.getContentType());
@@ -139,7 +139,7 @@ public class ApiStaticContentResolverTest {
                 .localizationPath("/publication").baseUrl("http://base").build();
 
         //when
-        StaticContentItem item = apiStaticContentResolver.getStaticContent(requestDto);
+        StaticContentItem item = graphQLStaticContentResolver.getStaticContent(requestDto);
 
         //then
         assertEquals("all_data", IOUtils.toString(item.getContent(), "UTF-8"));
@@ -156,7 +156,7 @@ public class ApiStaticContentResolverTest {
                 .localizationPath("/").baseUrl("http://base").build();
 
         //when
-        apiStaticContentResolver.getStaticContent(requestDto);
+        graphQLStaticContentResolver.getStaticContent(requestDto);
 
         //then
         assertTrue(new File(webApplicationContext.getServletContext().getRealPath("/") + "/BinaryData/42/loc_root").exists());
@@ -169,7 +169,7 @@ public class ApiStaticContentResolverTest {
         StaticContentRequestDto requestDto = StaticContentRequestDto.builder("/system/v1.2/version", "42").build();
 
         //when
-        apiStaticContentResolver.getStaticContent(requestDto);
+        graphQLStaticContentResolver.getStaticContent(requestDto);
 
         //then
         assertTrue(new File(webApplicationContext.getServletContext().getRealPath("/") + "/BinaryData/42/system/version").exists());

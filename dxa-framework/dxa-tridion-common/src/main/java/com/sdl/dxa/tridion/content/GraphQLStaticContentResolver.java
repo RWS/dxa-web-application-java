@@ -27,7 +27,7 @@ import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
 @Slf4j
 @Service
 @Profile("!cil.providers.active")
-public class ApiStaticContentResolver extends GenericStaticContentResolver implements StaticContentResolver {
+public class GraphQLStaticContentResolver extends GenericStaticContentResolver implements StaticContentResolver {
 
     private static final Object LOCK = new Object();
 
@@ -38,7 +38,7 @@ public class ApiStaticContentResolver extends GenericStaticContentResolver imple
     private BinaryContentDownloader contentDownloader;
 
     @Autowired
-    public ApiStaticContentResolver(WebApplicationContext webApplicationContext) {
+    public GraphQLStaticContentResolver(WebApplicationContext webApplicationContext) {
         this.webApplicationContext = webApplicationContext;
     }
 

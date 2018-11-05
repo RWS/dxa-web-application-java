@@ -1,16 +1,18 @@
 package com.sdl.dxa.tridion.pcaclient;
 
-import com.sdl.web.pca.client.DefaultGraphQLClient;
-import com.sdl.web.pca.client.DefaultApiClient;
-import com.sdl.web.pca.client.GraphQLClient;
 import com.sdl.web.pca.client.ApiClient;
+import com.sdl.web.pca.client.DefaultApiClient;
+import com.sdl.web.pca.client.DefaultGraphQLClient;
+import com.sdl.web.pca.client.GraphQLClient;
 import com.sdl.web.pca.client.auth.Authentication;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import static com.sdl.dxa.tridion.common.ConfigurationConstants.CONNECTION_TIMEOUT;
 
 @Service("DefaultApiClientProvider")
+@Profile("!cil.providers.active")
 public class DefaultApiClientProvider implements ApiClientProvider {
 
     private ApiClient apiClient;

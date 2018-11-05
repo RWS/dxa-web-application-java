@@ -8,11 +8,13 @@ import org.apache.http.HttpRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import static com.sdl.dxa.tridion.common.ConfigurationConstants.AUTHORIZATION_HEADER;
 
 @Service("ApiClientAuthentication")
+@Profile("!cil.providers.active")
 public class ApiClientAuthentication implements Authentication {
     private static final Logger LOG = LoggerFactory.getLogger(ApiClientAuthentication.class);
 

@@ -1,7 +1,7 @@
 package com.sdl.dxa.tridion.content;
 
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
-import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
@@ -32,7 +32,7 @@ public class ApiStaticContentResolver extends GenericStaticContentResolver imple
     private static final Object LOCK = new Object();
 
     @Autowired
-    private PCAClientProvider pcaClientProvider;
+    private ApiClientProvider pcaClientProvider;
 
     @Autowired
     private BinaryContentDownloader contentDownloader;
@@ -95,7 +95,7 @@ public class ApiStaticContentResolver extends GenericStaticContentResolver imple
         return publication.getPublicationUrl();
     }
 
-    public void setPcaClientProvider(PCAClientProvider pcaClientProvider) {
+    public void setPcaClientProvider(ApiClientProvider pcaClientProvider) {
         this.pcaClientProvider = pcaClientProvider;
     }
 

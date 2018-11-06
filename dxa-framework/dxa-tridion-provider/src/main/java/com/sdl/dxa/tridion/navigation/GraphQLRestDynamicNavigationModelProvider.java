@@ -293,7 +293,9 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
         target.setOriginalTitle(source.getOriginalTitle());
         target.setTitle(source.getTitle());
         target.setType(source.getType());
-        target.setPublishedDate(DateTime.parse(source.getPublishedDate()));
+        if (source.getPublishedDate() != null) {
+            target.setPublishedDate(DateTime.parse(source.getPublishedDate()));
+        }
         target.setUrl(source.getUrl());
         target.setVisible(source.getVisible());
 

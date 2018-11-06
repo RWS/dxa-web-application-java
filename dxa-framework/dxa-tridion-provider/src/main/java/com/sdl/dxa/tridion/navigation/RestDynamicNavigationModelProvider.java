@@ -11,7 +11,6 @@ import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -23,7 +22,6 @@ import java.util.Optional;
 @Slf4j
 @Service
 @Profile("cil.providers.active")
-@Primary
 public class RestDynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
 
     private final ModelServiceConfiguration configuration;

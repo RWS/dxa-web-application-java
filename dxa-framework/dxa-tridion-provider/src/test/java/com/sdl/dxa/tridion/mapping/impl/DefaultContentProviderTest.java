@@ -3,7 +3,7 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
-import com.sdl.dxa.tridion.content.StaticContentResolver;
+import com.sdl.dxa.tridion.content.CilStaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.modelservice.DefaultModelServiceProvider;
 import com.sdl.webapp.common.api.WebRequestContext;
@@ -107,7 +107,7 @@ public class DefaultContentProviderTest {
         //given
         DefaultContentProvider provider = mock(DefaultContentProvider.class);
         when(provider.getStaticContent(anyString(), anyString(), anyString())).thenCallRealMethod();
-        StaticContentResolver staticContentResolver = mock(StaticContentResolver.class);
+        CilStaticContentResolver staticContentResolver = mock(CilStaticContentResolver.class);
         WebRequestContext webRequestContext = mock(WebRequestContext.class);
         when(webRequestContext.getBaseUrl()).thenReturn("baseUrl");
         ReflectionTestUtils.setField(provider, "webRequestContext", webRequestContext);

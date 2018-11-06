@@ -39,8 +39,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest(StaticContentResolver.class)
-public class StaticContentResolverTest {
+@PrepareForTest(CilStaticContentResolver.class)
+public class CilStaticContentResolverTest {
 
     @Mock
     private PublicationMetaFactory publicationMetaFactory;
@@ -69,7 +69,7 @@ public class StaticContentResolverTest {
     @Mock
     private ComponentMeta componentMeta;
 
-    private StaticContentResolver staticContentResolver;
+    private CilStaticContentResolver staticContentResolver;
 
     @Before
     public void init() throws Exception {
@@ -95,7 +95,7 @@ public class StaticContentResolverTest {
         MockServletContext context = new MockServletContext();
         when(webApplicationContext.getServletContext()).thenReturn(context);
 
-        staticContentResolver = new StaticContentResolver(webApplicationContext);
+        staticContentResolver = new CilStaticContentResolver(webApplicationContext);
     }
 
     @Test

@@ -16,8 +16,8 @@ import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
-import com.sdl.dxa.tridion.pcaclient.PCAClientProvider;
-import com.sdl.web.pca.client.PublicContentApi;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
@@ -41,24 +41,24 @@ import static org.springframework.util.ClassUtils.forName;
 import static org.springframework.util.ClassUtils.getDefaultClassLoader;
 
 @Slf4j
-@Service(value = "PCAModelServiceProvider")
+@Service(value = "GraphQLModelServiceProvider")
 @Profile("!cil.providers.active")
-public class PCAModelServiceProvider implements ModelServiceProvider {
+public class GraphQLModelServiceProvider implements ModelServiceProvider {
 
-    private PCAClientProvider pcaClientProvider;
+    private ApiClientProvider apiClientProvider;
 
-    private PublicContentApi pcaClient;
+    private ApiClient pcaClient;
 
     private ObjectMapper mapper;
 
-    PCAModelServiceProvider() {
+    GraphQLModelServiceProvider() {
         this.mapper = getObjectMapper();
     }
 
     @Autowired
-    public PCAModelServiceProvider(PCAClientProvider pcaClientProvider) {
-        this.pcaClientProvider = pcaClientProvider;
-        this.pcaClient = pcaClientProvider.getClient();
+    public GraphQLModelServiceProvider(ApiClientProvider apiClientProvider) {
+        this.apiClientProvider = apiClientProvider;
+        this.pcaClient = apiClientProvider.getClient();
         this.mapper = getObjectMapper();
     }
 
@@ -92,7 +92,7 @@ public class PCAModelServiceProvider implements ModelServiceProvider {
     // The problem with these "URL compression" features is that if a URL does not end with a slash (nor an extension), you don't
     // know upfront if the URL addresses a regular Page or an index Page (within a nested SG).
     // To determine this, DXA first tries the regular Page and if it doesn't exist, it appends /index.html and tries again.
-    // TODO: The above should be handled by PCA (See CRQ-11703)
+    // TODO: The above should be handled by GraphQL (See CRQ-11703)
     private <T> T _loadPage(Class<T> type, PageRequestDto pageRequest, ContentType contentType) throws ContentProviderException {
         try {
             JsonNode pageNode = pcaClient.getPageModelData(

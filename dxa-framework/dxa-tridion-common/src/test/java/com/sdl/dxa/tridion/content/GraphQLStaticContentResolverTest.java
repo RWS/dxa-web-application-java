@@ -60,8 +60,8 @@ public class GraphQLStaticContentResolverTest {
     @InjectMocks
     private GraphQLStaticContentResolver graphQLStaticContentResolver;
 
-    BinaryComponent binaryComponent;
-    BinaryVariant binaryVariant;
+    private BinaryComponent binaryComponent;
+    private BinaryVariant binaryVariant;
 
     @Before
     public void init() throws Exception {
@@ -70,7 +70,7 @@ public class GraphQLStaticContentResolverTest {
 
         when(pcaClientProvider.getClient()).thenReturn(apiClient);
 
-        graphQLStaticContentResolver = new GraphQLStaticContentResolver(webApplicationContext);
+        graphQLStaticContentResolver = new GraphQLStaticContentResolver(pcaClientProvider, binaryContentDownloader, webApplicationContext);
         graphQLStaticContentResolver.setPcaClientProvider(pcaClientProvider);
         graphQLStaticContentResolver.setContentDownloader(binaryContentDownloader);
 

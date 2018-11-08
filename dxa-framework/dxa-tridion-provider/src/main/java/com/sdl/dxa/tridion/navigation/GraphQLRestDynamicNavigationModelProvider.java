@@ -199,12 +199,8 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
         }
 
         TaxonomySitemapItem root = (TaxonomySitemapItem) rootNode;
-        if (!root.getHasChildNodes()) {
+        if (!root.getHasChildNodes() || root.getItems() == null || root.getItems().isEmpty()) {
             return leafNodes;
-        }
-
-        if (root.getItems() == null || root.getItems().isEmpty()) {
-            return new ArrayList<>(asList(root));
         }
 
         for (SitemapItem item : root.getItems()) {

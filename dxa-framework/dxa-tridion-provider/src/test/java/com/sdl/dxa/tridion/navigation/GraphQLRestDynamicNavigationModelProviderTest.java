@@ -1,6 +1,5 @@
 package com.sdl.dxa.tridion.navigation;
 
-
 import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.DepthCounter;
@@ -8,7 +7,6 @@ import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.ContextData;
-import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.SitemapItem;
 import com.sdl.web.pca.client.contentmodel.generated.TaxonomySitemapItem;
 import com.sdl.web.pca.client.exception.ApiClientException;
@@ -19,24 +17,26 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites;
 import static com.sdl.web.pca.client.contentmodel.generated.Ancestor.INCLUDE;
+import static com.sdl.web.pca.client.contentmodel.generated.Ancestor.NONE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -66,14 +66,13 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
     @Mock
     private ApiClient pcaClient;
 
-    @Spy
-    @InjectMocks
     private GraphQLRestDynamicNavigationModelProvider provider;
 
     private SitemapRequestDto requestDto;
 
     @Before
     public void setUp() {
+        provider = spy(new GraphQLRestDynamicNavigationModelProvider(clientProvider, 10));
         when(clientProvider.getClient()).thenReturn(pcaClient);
         NavigationFilter withAncestorsFilter = new NavigationFilter();
         withAncestorsFilter.setWithAncestors(true);
@@ -191,48 +190,52 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
 
     @Test
     public void getNavigationModel() {
-        doReturn(createTaxonomySitemapItem(ID, false)).when(pcaClient).getSitemap(eq(ContentNamespace.Sites),
+        doReturn(createTaxonomySitemapItem(ID, false)).when(pcaClient).getSitemap(eq(Sites),
                 eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any(ContextData.class));
+        doReturn(new TaxonomySitemapItem[0]).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID),
+                anyString(), eq(DEPTH_COUNTER), eq(NONE), any(ContextData.class));
 
         TaxonomyNodeModelData result = provider.getNavigationModel(requestDto).get();
 
-        verify(pcaClient).getSitemap(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any(ContextData.class));
+        verify(pcaClient).getSitemap(eq(Sites), eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any(ContextData.class));
         verifyCreatedObject(result, true, false);
     }
 
     @Test
     public void getNavigationModelException() {
-        doThrow(new ApiClientException()).when(pcaClient).getSitemap(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID),
+        doThrow(new ApiClientException()).when(pcaClient).getSitemap(eq(Sites), eq(LOCALIZATION_ID),
                 eq(DEPTH_COUNTER), any(ContextData.class));
 
         assertFalse(provider.getNavigationModel(requestDto).isPresent());
 
-        verify(pcaClient).getSitemap(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any(ContextData.class));
+        verify(pcaClient).getSitemap(eq(Sites), eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any(ContextData.class));
         verify(provider, never()).convert(any(TaxonomySitemapItem.class));
     }
 
     @Test
     public void getNavigationSubtree() {
         TaxonomySitemapItem[] result = new TaxonomySitemapItem[]{createTaxonomySitemapItem(ID, true)};
-        doReturn(result).when(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID),
+        doReturn(result).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID),
                 eq(DEPTH_COUNTER), eq(INCLUDE), any(ContextData.class));
+        doReturn(new TaxonomySitemapItem[0]).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID),
+                anyString(), eq(DEPTH_COUNTER), eq(NONE), any(ContextData.class));
 
         Collection<SitemapItemModelData> sitemapItemModelData = provider.getNavigationSubtree(requestDto).get();
 
         verifyCreatedObject(sitemapItemModelData.toArray(EMPTY)[0], true, true);
-        verify(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER),
+        verify(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER),
                 eq(INCLUDE), any(ContextData.class));
         verify(provider, times(5)).convert(any(TaxonomySitemapItem.class));
     }
 
     @Test
     public void getNavigationSubtreeException() {
-        doThrow(new ApiClientException()).when(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID),
+        doThrow(new ApiClientException()).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID),
                 eq(SITEMAP_ID), eq(DEPTH_COUNTER), eq(INCLUDE), any(ContextData.class));
 
         assertFalse(provider.getNavigationSubtree(requestDto).isPresent());
 
-        verify(pcaClient).getSitemapSubtree(eq(ContentNamespace.Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER),
+        verify(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER),
                 eq(INCLUDE), any(ContextData.class));
     }
 }

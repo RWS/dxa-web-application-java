@@ -31,7 +31,7 @@ public class GraphQLLinkResolver extends AbstractLinkResolver {
         else if(uri.startsWith("ish:"))
             return ContentNamespace.Docs;
         else
-            throw new DxaTridionCommonException("Not a valid Tridion CmUri request");
+            throw new DxaTridionCommonException("Not a valid Tridion CmUri request uri " + uri);
     }
 
     @Override

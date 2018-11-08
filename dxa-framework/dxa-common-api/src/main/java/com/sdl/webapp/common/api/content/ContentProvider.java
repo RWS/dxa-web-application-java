@@ -56,6 +56,22 @@ public interface ContentProvider {
      * @return The {@link StaticContentItem}.
      * @throws ContentProviderException If an error occurred so that the static content item could not be retrieved.
      */
-    StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
-            throws ContentProviderException;
+    StaticContentItem getStaticContent(String path, String localizationId, String localizationPath) throws ContentProviderException;
+
+    /**
+     * Gets a static content item by path for a specific localization.
+     * Path to media resource like '/media/company-news-placeholder_tcm5-286_w1024_n.png'
+     * or even '/media/wall_tcm5-308.jpg' where
+     * tcm - namespace,
+     * 5 - publicaionId
+     * 286 - binaryId
+     *
+     * @param binaryId         The id of the static content item.
+     * @param localizationId   The localization ID.
+     * @param localizationPath The localization path.
+     * @return The {@link StaticContentItem}.
+     * @throws ContentProviderException If an error occurred so that the static content item could not be retrieved.
+     */
+    StaticContentItem getStaticContent(int binaryId, String localizationId, String localizationPath) throws ContentProviderException;
+
 }

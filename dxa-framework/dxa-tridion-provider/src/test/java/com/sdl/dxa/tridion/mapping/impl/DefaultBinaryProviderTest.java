@@ -41,8 +41,6 @@ public class DefaultBinaryProviderTest {
             "wall_tcm5-308.jpg"};
 
     @Mock
-    private WebApplicationContext context;
-    @Mock
     private ContentProvider contentProvider;
 
     @Spy

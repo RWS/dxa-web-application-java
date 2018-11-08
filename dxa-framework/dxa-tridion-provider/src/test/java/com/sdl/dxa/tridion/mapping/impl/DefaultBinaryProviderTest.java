@@ -9,18 +9,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.regex.Matcher;
 
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
@@ -28,12 +25,12 @@ import static org.powermock.api.mockito.PowerMockito.mock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class DefaultBinaryProviderTest {
-    public static final String PATH_TO_FILES = "D:=projects=dxa=web-application-java=dxa-webapp=target=dxa-webapp"
+    private static final String PATH_TO_FILES = "D:=projects=dxa=web-application-java=dxa-webapp=target=dxa-webapp"
             .replaceAll("=", Matcher.quoteReplacement(File.separator));
 
     private static final String LOCALIZATION_PATH = "/";
-    public static final String PUB_ID = "5";
-    public static final int BINARY_ID = 286;
+    private static final String PUB_ID = "5";
+    private static final int BINARY_ID = 286;
     private final String[] files = {"ballon-burner_tcm5-297_w1024_h311_n.jpg",
             "company-news-placeholder_tcm5-286_w1024_n.png",
             "duplicate_tcm5-286_w1024_n.png",
@@ -61,7 +58,7 @@ public class DefaultBinaryProviderTest {
 
     @Test
     public void processBinaryFileNoFiles() throws Exception {
-        assertNull(provider.processBinaryFile(contentProvider, PUB_ID, LOCALIZATION_PATH, null));
+        assertNull(provider.processBinaryFile(contentProvider, BINARY_ID, PUB_ID, LOCALIZATION_PATH, null));
     }
 
     @Test
@@ -69,7 +66,7 @@ public class DefaultBinaryProviderTest {
         StaticContentItem binaryContent = mock(StaticContentItem.class);
         when(contentProvider.getStaticContent(files[0], PUB_ID, LOCALIZATION_PATH)).thenReturn(binaryContent);
 
-        StaticContentItem result = provider.processBinaryFile(contentProvider, PUB_ID, LOCALIZATION_PATH, files);
+        StaticContentItem result = provider.processBinaryFile(contentProvider, BINARY_ID, PUB_ID, LOCALIZATION_PATH, files);
 
         assertEquals(binaryContent, result);
     }
@@ -98,7 +95,7 @@ public class DefaultBinaryProviderTest {
         doReturn(pathToBinaries).when(provider).getPathToBinaryFiles(PUB_ID);
         doReturn(files).when(provider).getFiles(BINARY_ID, PUB_ID, pathToBinaries);
         StaticContentItem binaryContent = mock(StaticContentItem.class);
-        doReturn(binaryContent).when(provider).processBinaryFile(contentProvider, PUB_ID, LOCALIZATION_PATH, files);
+        doReturn(binaryContent).when(provider).processBinaryFile(contentProvider, BINARY_ID, PUB_ID, LOCALIZATION_PATH, files);
 
         StaticContentItem result = provider.getStaticContent(contentProvider, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
 

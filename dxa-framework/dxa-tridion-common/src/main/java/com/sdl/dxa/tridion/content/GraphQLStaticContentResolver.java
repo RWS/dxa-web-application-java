@@ -2,6 +2,7 @@ package com.sdl.dxa.tridion.content;
 
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
@@ -31,15 +32,20 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
 
     private static final Object LOCK = new Object();
 
-    @Autowired
     private ApiClientProvider pcaClientProvider;
 
-    @Autowired
     private BinaryContentDownloader contentDownloader;
 
+    private ApiClient pcaClient;
+
     @Autowired
-    public GraphQLStaticContentResolver(WebApplicationContext webApplicationContext) {
+    public GraphQLStaticContentResolver(ApiClientProvider pcaClientProvider,
+                                        BinaryContentDownloader contentDownloader,
+                                        WebApplicationContext webApplicationContext) {
+        this.contentDownloader = contentDownloader;
         this.webApplicationContext = webApplicationContext;
+        this.pcaClientProvider = pcaClientProvider;
+        pcaClient = pcaClientProvider.getClient();
     }
 
     @Override
@@ -47,7 +53,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     protected StaticContentItem createStaticContentItem(StaticContentRequestDto requestDto, File file,
                                                         int publicationId, ImageUtils.StaticContentPathInfo pathInfo,
                                                         String urlPath) throws ContentProviderException {
-        BinaryComponent binaryComponent = pcaClientProvider.getClient().getBinaryComponent(ContentNamespace.Sites,
+        BinaryComponent binaryComponent = pcaClient.getBinaryComponent(ContentNamespace.Sites,
                     publicationId,
                     pathInfo.getFileName(),
                     "",
@@ -85,7 +91,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     protected String _resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
         ContextData contextData = createContextData(requestDto.getClaims());
-        Publication publication = pcaClientProvider.getClient().getPublication(ContentNamespace.Sites,
+        Publication publication = pcaClient.getPublication(ContentNamespace.Sites,
                 publicationId,
                 "",
                 contextData);

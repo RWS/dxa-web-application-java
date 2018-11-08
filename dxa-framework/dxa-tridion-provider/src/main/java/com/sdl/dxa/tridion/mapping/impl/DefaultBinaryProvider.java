@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Arrays;
 
 @Slf4j
 public class DefaultBinaryProvider {
@@ -27,7 +28,7 @@ public class DefaultBinaryProvider {
             throws ContentProviderException {
         Path pathToBinaries = getPathToBinaryFiles(localizationId);
         String[] files = getFiles(binaryId, localizationId, pathToBinaries);
-        return processBinaryFile(provider, localizationId, localizationPath, files);
+        return processBinaryFile(provider, binaryId, localizationId, localizationPath, files);
     }
 
     @NotNull
@@ -41,9 +42,13 @@ public class DefaultBinaryProvider {
         return Paths.get(parentPath);
     }
 
-    StaticContentItem processBinaryFile(ContentProvider provider, String localizationId, String localizationPath, String[] files) throws ContentProviderException {
+    StaticContentItem processBinaryFile(ContentProvider provider, int binaryId, String localizationId, String localizationPath, String[] files) throws ContentProviderException {
         if (files == null || files.length <= 0) {
+            log.warn("There are no binary files by Id " + binaryId + " for localizationId " + localizationId);
             return null;
+        }
+        if (files.length > 1) {
+            log.warn("There are more than 1 file for binaryId " + binaryId + " for localizationId " + localizationId + " {"+ Arrays.toString(files) + "}");
         }
         return provider.getStaticContent(files[0], localizationId, localizationPath);
     }

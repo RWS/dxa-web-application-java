@@ -9,6 +9,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -25,27 +26,42 @@ public class DefaultBinaryProvider {
     public StaticContentItem getStaticContent(ContentProvider provider, int binaryId, String localizationId, String localizationPath)
             throws ContentProviderException {
         Path pathToBinaries = getPathToBinaryFiles(localizationId);
-        String[] files = pathToBinaries.toFile().list((path, name) -> name.matches(".*_tcm" + localizationId + "-" + binaryId + "\\D.*"));
+        String[] files = getFiles(binaryId, localizationId, pathToBinaries);
         return processBinaryFile(provider, localizationId, localizationPath, files);
     }
 
     @NotNull
-    private Path getPathToBinaryFiles(String localizationId) {
+    FilenameFilter getFilenameFilter(int binaryId, String localizationId) {
+        return (path, name) -> name.matches(".*_tcm" + localizationId + "-" + binaryId + "\\D.*");
+    }
+
+    @NotNull
+    Path getPathToBinaryFiles(String localizationId) {
         String parentPath = StringUtils.join(new String[]{getBasePath(), STATIC_FILES_DIR, localizationId, "media"}, File.separator);
         return Paths.get(parentPath);
     }
 
-    private StaticContentItem processBinaryFile(ContentProvider provider, String localizationId, String localizationPath, String[] files) throws ContentProviderException {
+    StaticContentItem processBinaryFile(ContentProvider provider, String localizationId, String localizationPath, String[] files) throws ContentProviderException {
         if (files == null || files.length <= 0) {
             return null;
         }
-        return provider.getStaticContent(files[0], localizationId, localizationPath));
+        return provider.getStaticContent(files[0], localizationId, localizationPath);
     }
 
     @NotNull
-    private String getBasePath() {
-        String basePath = webApplicationContext.getServletContext().getRealPath("/");
-        if (basePath.endsWith(File.separator)) basePath = basePath.substring(0, basePath.length()-1);
+    String getBasePath() {
+        String basePath = getAppRealPath();
+        if (basePath.endsWith(File.separator)) {
+            basePath = basePath.substring(0, basePath.length()-1);
+        }
         return basePath;
+    }
+
+    String[] getFiles(int binaryId, String localizationId, Path pathToBinaries) {
+        return pathToBinaries.toFile().list(getFilenameFilter(binaryId, localizationId));
+    }
+
+    String getAppRealPath() {
+        return webApplicationContext.getServletContext().getRealPath("/");
     }
 }

@@ -7,12 +7,14 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @NoArgsConstructor
 @Builder
 @AllArgsConstructor
+@ToString
 public class SimpleBrokerQuery extends AbstractQuery {
 
     private int publicationId;

@@ -7,6 +7,7 @@ import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -41,13 +42,14 @@ public class GraphQLContentProviderTest {
     private ModelBuilderPipeline builderPipeline;
     @Mock
     private StaticContentResolver staticContentResolver;
+    @Mock
+    private ApiClientProvider apiClientProvider;
 
     @InjectMocks
     GraphQLContentProvider contentProvider;
 
     @Before
     public void setup() {
-
     }
 
     @Test

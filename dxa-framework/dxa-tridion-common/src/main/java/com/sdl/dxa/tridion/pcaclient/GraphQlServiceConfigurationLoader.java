@@ -26,10 +26,13 @@ public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLo
     private String serviceUrl;
     private volatile boolean initialized = false;
     private String endpointContext;
+    private boolean claimForwarding;
 
-    public GraphQlServiceConfigurationLoader(@Value("${dxa.graphql.endpoint:cd/api}") String endpointContext) throws ConfigurationException {
+    public GraphQlServiceConfigurationLoader(@Value("${dxa.graphql.endpoint:cd/api}") String endpointContext,
+                                             @Value("${dxa.graphql.claimforwarding:true}") boolean claimForwarding) throws ConfigurationException {
         super();
         this.endpointContext = endpointContext;
+        this.claimForwarding = claimForwarding;
     }
 
     Optional<ContentServiceCapability> getContentServiceCapability() throws ConfigurationException {
@@ -72,6 +75,11 @@ public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLo
     public String getServiceUrl() {
         initialize();
         return serviceUrl;
+    }
+
+    @Override
+    public boolean claimForwarding() {
+        return this.claimForwarding;
     }
 
     @Override

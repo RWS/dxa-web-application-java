@@ -70,9 +70,7 @@ public class GraphQLStaticContentResolverTest {
 
         when(pcaClientProvider.getClient()).thenReturn(apiClient);
 
-        graphQLStaticContentResolver = new GraphQLStaticContentResolver(webApplicationContext);
-        graphQLStaticContentResolver.setPcaClientProvider(pcaClientProvider);
-        graphQLStaticContentResolver.setContentDownloader(binaryContentDownloader);
+        graphQLStaticContentResolver = new GraphQLStaticContentResolver(webApplicationContext, pcaClientProvider, binaryContentDownloader);
 
         binaryComponent = new BinaryComponent();
         BinaryVariantConnection binaryVariantConnection = new BinaryVariantConnection();

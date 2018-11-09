@@ -20,4 +20,6 @@ public interface ApiClientConfigurationLoader {
      * @return
      */
     String getServiceUrl();
+
+    boolean claimForwarding();
 }

@@ -12,6 +12,7 @@ import com.sdl.dxa.tridion.broker.QueryProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.generated.Component;
 import com.sdl.web.pca.client.contentmodel.generated.CustomMetaEdge;
 import com.sdl.web.pca.client.contentmodel.generated.Item;
@@ -69,9 +70,12 @@ public class GraphQLContentProvider implements ContentProvider {
 
     private StaticContentResolver staticContentResolver;
 
-    private ApiClientProvider clientProvider;
+    private ApiClient apiClient;
 
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
+
+    public GraphQLContentProvider() {
+    }
 
     @Autowired
     public GraphQLContentProvider(WebRequestContext webRequestContext,
@@ -85,7 +89,7 @@ public class GraphQLContentProvider implements ContentProvider {
         this.staticContentResolver = staticContentResolver;
         this.builderPipeline = builderPipeline;
         this.modelService = modelService;
-        this.clientProvider = clientProvider;
+        this.apiClient = clientProvider.getClient();
     }
 
     @Autowired(required = false)
@@ -149,7 +153,7 @@ public class GraphQLContentProvider implements ContentProvider {
         simpleBrokerQuery.setStartAt(start);
         dynamicList.setStart(cursors.getStart());
 
-        QueryProvider brokerQuery = new GraphQLQueryProvider(clientProvider.getClient());
+        QueryProvider brokerQuery = new GraphQLQueryProvider(apiClient);
 
         List<Item> components = brokerQuery.executeQueryItems(simpleBrokerQuery);
         log.debug("Broker query returned {} results. hasMore={}", components.size(), brokerQuery.hasMore());

@@ -31,6 +31,7 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaRuntimeException;
 import com.sdl.webapp.common.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,13 +39,19 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
@@ -58,15 +65,13 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 @Profile("!cil.providers.active")
 @Primary
 @Slf4j
-public class GraphQLContentProvider implements ContentProvider {
+public class GraphQLContentProvider extends DefaultBinaryProvider implements ContentProvider {
 
     private ModelBuilderPipeline builderPipeline;
 
     private ModelServiceProvider modelService;
 
     private WebRequestContext webRequestContext;
-
-    private LinkResolver linkResolver;
 
     private StaticContentResolver staticContentResolver;
 
@@ -75,17 +80,18 @@ public class GraphQLContentProvider implements ContentProvider {
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
     public GraphQLContentProvider() {
+        super(null);
     }
 
     @Autowired
-    public GraphQLContentProvider(WebRequestContext webRequestContext,
-                              StaticContentResolver staticContentResolver,
-                              LinkResolver linkResolver,
-                              ModelBuilderPipeline builderPipeline,
-                              ModelServiceProvider modelService,
-                              ApiClientProvider clientProvider) {
+    public GraphQLContentProvider(WebApplicationContext webApplicationContext,
+                                  WebRequestContext webRequestContext,
+                                  StaticContentResolver staticContentResolver,
+                                  ModelBuilderPipeline builderPipeline,
+                                  ModelServiceProvider modelService,
+                                  ApiClientProvider clientProvider) {
+        super(webApplicationContext);
         this.webRequestContext = webRequestContext;
-        this.linkResolver = linkResolver;
         this.staticContentResolver = staticContentResolver;
         this.builderPipeline = builderPipeline;
         this.modelService = modelService;
@@ -263,7 +269,6 @@ public class GraphQLContentProvider implements ContentProvider {
     @Override
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
-
         return staticContentResolver.getStaticContent(
                 StaticContentRequestDto.builder(path, localizationId)
                         .localizationPath(localizationPath)
@@ -288,5 +293,15 @@ public class GraphQLContentProvider implements ContentProvider {
         } catch (DxaException e) {
             throw new ContentProviderException("Cannot build the entity model for componentId" + componentId, e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
+    @Override
+    public StaticContentItem getStaticContent(int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
+        return getStaticContent(this, binaryId, localizationId, localizationPath);
     }
 }

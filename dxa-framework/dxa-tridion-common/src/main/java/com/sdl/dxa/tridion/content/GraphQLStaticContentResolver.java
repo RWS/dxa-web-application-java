@@ -49,26 +49,23 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     protected StaticContentItem createStaticContentItem(StaticContentRequestDto requestDto, File file,
                                                         int publicationId, ImageUtils.StaticContentPathInfo pathInfo,
                                                         String urlPath) throws ContentProviderException {
-        BinaryComponent binaryComponent;
-
-        synchronized (LOCK) {
-            binaryComponent = apiClient.getBinaryComponent(ContentNamespace.Sites,
+        BinaryComponent binaryComponent = apiClient.getBinaryComponent(ContentNamespace.Sites,
                     publicationId,
                     pathInfo.getFileName(),
                     "",
                     createContextData(requestDto.getClaims()));
 
-            long componentTime = new DateTime(binaryComponent.getLastPublishDate()).getMillis();
+        long componentTime = new DateTime(binaryComponent.getLastPublishDate()).getMillis();
 
-            boolean shouldRefresh = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
+        boolean shouldRefresh = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
 
-            if (shouldRefresh) {
+        if (shouldRefresh) {
+            synchronized (LOCK) {
                 refreshBinary(file, pathInfo, binaryComponent);
-            } else {
-                log.debug("File does not need to be refreshed: {}", file);
             }
+        } else {
+            log.debug("File does not need to be refreshed: {}", file);
         }
-
         String binaryComponentType = binaryComponent.getVariants().getEdges().get(0).getNode().getType();
         String contentType = StringUtils.isEmpty(binaryComponentType) ? DEFAULT_CONTENT_TYPE : binaryComponentType;
         boolean versioned = requestDto.getBinaryPath().contains("/system/");

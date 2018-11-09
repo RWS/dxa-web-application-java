@@ -60,8 +60,8 @@ public class GraphQLStaticContentResolverTest {
     @InjectMocks
     private GraphQLStaticContentResolver graphQLStaticContentResolver;
 
-    BinaryComponent binaryComponent;
-    BinaryVariant binaryVariant;
+    private BinaryComponent binaryComponent;
+    private BinaryVariant binaryVariant;
 
     @Before
     public void init() throws Exception {

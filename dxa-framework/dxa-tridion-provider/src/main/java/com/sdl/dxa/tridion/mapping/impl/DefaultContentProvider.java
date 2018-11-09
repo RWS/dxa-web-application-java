@@ -28,6 +28,7 @@ import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.FileUtils;
+import com.sdl.webapp.common.util.ImageUtils;
 import com.tridion.broker.StorageException;
 import com.tridion.broker.querying.MetadataType;
 import com.tridion.broker.querying.Query;
@@ -43,6 +44,7 @@ import com.tridion.broker.querying.sorting.SortDirection;
 import com.tridion.meta.ComponentMeta;
 import com.tridion.meta.NameValuePair;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -51,6 +53,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,7 +76,7 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 @Profile("cil.providers.active")
 @Primary
 @Slf4j
-public class DefaultContentProvider implements ContentProvider {
+public class DefaultContentProvider extends DefaultBinaryProvider implements ContentProvider {
 
     private final ModelBuilderPipeline builderPipeline;
 
@@ -88,11 +91,13 @@ public class DefaultContentProvider implements ContentProvider {
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
     @Autowired
-    public DefaultContentProvider(WebRequestContext webRequestContext,
+    public DefaultContentProvider(WebApplicationContext webApplicationContext,
+                                  WebRequestContext webRequestContext,
                                   StaticContentResolver staticContentResolver,
                                   LinkResolver linkResolver,
                                   ModelBuilderPipeline builderPipeline,
                                   ModelServiceProvider modelService) {
+        super(webApplicationContext);
         this.webRequestContext = webRequestContext;
         this.linkResolver = linkResolver;
         this.staticContentResolver = staticContentResolver;
@@ -114,7 +119,7 @@ public class DefaultContentProvider implements ContentProvider {
         try {
             return builderPipeline.createEntityModel(modelData);
         } catch (DxaException e) {
-            throw new ContentProviderException("Cannot build the entity model for componentId" + componentId, e);
+            throw new ContentProviderException("Cannot build the entity model for componentId " + componentId, e);
         }
     }
 
@@ -229,12 +234,12 @@ public class DefaultContentProvider implements ContentProvider {
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
 
-        return staticContentResolver.getStaticContent(
-                StaticContentRequestDto.builder(path, localizationId)
-                        .localizationPath(localizationPath)
-                        .baseUrl(webRequestContext.getBaseUrl())
-                        .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isPreview())
-                        .build());
+        return staticContentResolver.getStaticContent(StaticContentRequestDto
+                .builder(path, localizationId)
+                .localizationPath(localizationPath)
+                .baseUrl(webRequestContext.getBaseUrl())
+                .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isPreview())
+                .build());
     }
 
     protected List<String> executeQuery(SimpleBrokerQuery simpleBrokerQuery) {
@@ -242,7 +247,7 @@ public class DefaultContentProvider implements ContentProvider {
         try {
             return Arrays.asList(query.executeQuery());
         } catch (StorageException e) {
-            log.warn("Exception while execution of broker query", e);
+            log.warn("Exception while execution of broker query " + simpleBrokerQuery, e);
             return Collections.emptyList();
         }
     }
@@ -371,5 +376,15 @@ public class DefaultContentProvider implements ContentProvider {
                 // Default is to assume that its a custom metadata date field
                 return new CustomMetaKeyColumn(simpleBrokerQuery.getSort(), MetadataType.DATE);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
+    @Override
+    public StaticContentItem getStaticContent(int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
+        return getStaticContent(this, binaryId, localizationId, localizationPath);
     }
 }

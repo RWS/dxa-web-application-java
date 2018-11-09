@@ -12,20 +12,22 @@ import org.springframework.context.annotation.Profile;
 
 @ComponentScan({"com.sdl.webapp.tridion", "com.sdl.dxa.tridion"})
 @Configuration
-@Profile("cil.providers.active")
 public class TridionSpringConfiguration {
 
     @Bean
+    @Profile("cil.providers.active")
     public DynamicMetaRetriever dynamicMetaRetriever() {
         return new DynamicMetaRetriever();
     }
 
     @Bean
+    @Profile("cil.providers.active")
     public BinaryContentRetriever binaryContentRetriever() {
         return new BinaryContentRetrieverImpl();
     }
 
     @Bean
+    @Profile("cil.providers.active")
     public DynamicMappingsRetriever dynamicMappingsRetriever() {
         return new DynamicMappingsRetrieverImpl();
     }

@@ -50,6 +50,12 @@ public interface ContentProvider {
     /**
      * Gets a static content item by path for a specific localization.
      *
+     * Path to media resource like '/media/company-news-placeholder_tcm5-286_w1024_n.png'
+     * or even '/media/wall_tcm5-308.jpg' where
+     * tcm - namespace,
+     * 5 - publicaionId
+     * 286 - binaryId
+     *
      * @param path             The path of the static content item.
      * @param localizationId   The localization ID.
      * @param localizationPath The localization path.
@@ -59,12 +65,7 @@ public interface ContentProvider {
     StaticContentItem getStaticContent(String path, String localizationId, String localizationPath) throws ContentProviderException;
 
     /**
-     * Gets a static content item by path for a specific localization.
-     * Path to media resource like '/media/company-news-placeholder_tcm5-286_w1024_n.png'
-     * or even '/media/wall_tcm5-308.jpg' where
-     * tcm - namespace,
-     * 5 - publicaionId
-     * 286 - binaryId
+     * Gets a static content binary item by its id for a specific localization.
      *
      * @param binaryId         The id of the static content item.
      * @param localizationId   The localization ID.

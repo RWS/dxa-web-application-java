@@ -9,6 +9,7 @@ import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
 import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
 import com.sdl.web.api.broker.querying.sorting.SortParameter;
@@ -44,7 +45,7 @@ import com.tridion.broker.querying.sorting.SortDirection;
 import com.tridion.meta.ComponentMeta;
 import com.tridion.meta.NameValuePair;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
@@ -53,7 +54,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -76,7 +76,7 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 @Profile("cil.providers.active")
 @Primary
 @Slf4j
-public class DefaultContentProvider extends DefaultBinaryProvider implements ContentProvider {
+public class DefaultContentProvider implements ContentProvider {
 
     private final ModelBuilderPipeline builderPipeline;
 
@@ -88,16 +88,15 @@ public class DefaultContentProvider extends DefaultBinaryProvider implements Con
 
     private final StaticContentResolver staticContentResolver;
 
+
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
     @Autowired
-    public DefaultContentProvider(WebApplicationContext webApplicationContext,
-                                  WebRequestContext webRequestContext,
+    public DefaultContentProvider(WebRequestContext webRequestContext,
                                   StaticContentResolver staticContentResolver,
                                   LinkResolver linkResolver,
                                   ModelBuilderPipeline builderPipeline,
                                   ModelServiceProvider modelService) {
-        super(webApplicationContext);
         this.webRequestContext = webRequestContext;
         this.linkResolver = linkResolver;
         this.staticContentResolver = staticContentResolver;
@@ -385,6 +384,6 @@ public class DefaultContentProvider extends DefaultBinaryProvider implements Con
      */
     @Override
     public StaticContentItem getStaticContent(int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
-        return getStaticContent(this, binaryId, localizationId, localizationPath);
+        throw new NotImplementedException("CIL does not have such realization. Use GraphQL instead of CIL.");
     }
 }

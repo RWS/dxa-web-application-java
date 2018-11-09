@@ -255,11 +255,6 @@ public class GraphQLContentProvider extends GraphQLBinaryContentProvider impleme
     @Override
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
-        if (true) {
-            getStaticContent(297, localizationId, localizationPath);
-            getStaticContent(286, localizationId, localizationPath);
-            getStaticContent(308, localizationId, localizationPath);
-        }
         return staticContentResolver.getStaticContent(
                 StaticContentRequestDto.builder(path, localizationId)
                         .localizationPath(localizationPath)

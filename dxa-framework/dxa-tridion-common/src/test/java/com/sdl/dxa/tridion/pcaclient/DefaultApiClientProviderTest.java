@@ -33,10 +33,4 @@ public class DefaultApiClientProviderTest {
     public void getClient() {
         assertNotNull(apiClientProvider.getClient());
     }
-
-    @Test
-    public void getGraphQLClient() {
-        assertNotNull(apiClientProvider.getGraphQLClient());
-    }
-
 }

@@ -55,7 +55,7 @@ public class GraphQLModelServiceProviderTest {
                 ContentType.MODEL,
                 DataModelType.valueOf(request.getDataModelType().toString()),
                 PageInclusion.valueOf(request.getIncludePages().toString()),
-                ContentIncludeMode.INCLUDE,
+                ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
                 null))
                 .thenReturn(node);
 
@@ -78,7 +78,7 @@ public class GraphQLModelServiceProviderTest {
                 ContentType.MODEL,
                 DataModelType.valueOf(request.getDataModelType().toString()),
                 PageInclusion.valueOf(request.getIncludePages().toString()),
-                ContentIncludeMode.INCLUDE,
+                ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
                 null))
                 .thenThrow(IOException.class);
 
@@ -90,7 +90,7 @@ public class GraphQLModelServiceProviderTest {
                 ContentType.MODEL,
                 DataModelType.valueOf(request.getDataModelType().toString()),
                 PageInclusion.valueOf(request.getIncludePages().toString()),
-                ContentIncludeMode.INCLUDE,
+                ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
                 null))
                 .thenReturn(node);
 
@@ -113,7 +113,7 @@ public class GraphQLModelServiceProviderTest {
                 ContentType.RAW,
                 DataModelType.valueOf(request.getDataModelType().toString()),
                 PageInclusion.valueOf(request.getIncludePages().toString()),
-                ContentIncludeMode.INCLUDE,
+                ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
                 null))
                 .thenReturn(node);
 
@@ -134,7 +134,7 @@ public class GraphQLModelServiceProviderTest {
                 ContentType.MODEL,
                 DataModelType.R2,
                 DcpType.DEFAULT,
-                ContentIncludeMode.INCLUDE_AND_RENDER,
+                ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
                 null
         )).thenReturn(node);
 

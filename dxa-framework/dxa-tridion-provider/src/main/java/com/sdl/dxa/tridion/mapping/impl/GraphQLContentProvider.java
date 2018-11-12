@@ -20,7 +20,6 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
-import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -31,7 +30,6 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaRuntimeException;
 import com.sdl.webapp.common.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,15 +41,10 @@ import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
@@ -65,7 +58,7 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 @Profile("!cil.providers.active")
 @Primary
 @Slf4j
-public class GraphQLContentProvider extends DefaultBinaryProvider implements ContentProvider {
+public class GraphQLContentProvider implements ContentProvider {
 
     private ModelBuilderPipeline builderPipeline;
 
@@ -75,13 +68,11 @@ public class GraphQLContentProvider extends DefaultBinaryProvider implements Con
 
     private StaticContentResolver staticContentResolver;
 
-    private ApiClient apiClient;
-
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
-    public GraphQLContentProvider() {
-        super(null);
-    }
+    private GraphQLBinaryContentProvider graphQLBinaryContentProvider;
+
+    private ApiClient pcaClient;
 
     @Autowired
     public GraphQLContentProvider(WebApplicationContext webApplicationContext,
@@ -89,17 +80,14 @@ public class GraphQLContentProvider extends DefaultBinaryProvider implements Con
                                   StaticContentResolver staticContentResolver,
                                   ModelBuilderPipeline builderPipeline,
                                   ModelServiceProvider modelService,
-                                  ApiClientProvider clientProvider) {
-        super(webApplicationContext);
+                                  ApiClientProvider pcaClientProvider,
+                                  List<ConditionalEntityEvaluator> entityEvaluators) {
+        this.pcaClient = pcaClientProvider.getClient();
+        this.graphQLBinaryContentProvider = new GraphQLBinaryContentProvider(pcaClientProvider.getClient(), webApplicationContext);
         this.webRequestContext = webRequestContext;
         this.staticContentResolver = staticContentResolver;
         this.builderPipeline = builderPipeline;
         this.modelService = modelService;
-        this.apiClient = clientProvider.getClient();
-    }
-
-    @Autowired(required = false)
-    public void setEntityEvaluators(List<ConditionalEntityEvaluator> entityEvaluators) {
         this.entityEvaluators = entityEvaluators;
     }
 
@@ -159,7 +147,7 @@ public class GraphQLContentProvider extends DefaultBinaryProvider implements Con
         simpleBrokerQuery.setStartAt(start);
         dynamicList.setStart(cursors.getStart());
 
-        QueryProvider brokerQuery = new GraphQLQueryProvider(apiClient);
+        QueryProvider brokerQuery = new GraphQLQueryProvider(pcaClient);
 
         List<Item> components = brokerQuery.executeQueryItems(simpleBrokerQuery);
         log.debug("Broker query returned {} results. hasMore={}", components.size(), brokerQuery.hasMore());
@@ -302,6 +290,6 @@ public class GraphQLContentProvider extends DefaultBinaryProvider implements Con
      */
     @Override
     public StaticContentItem getStaticContent(int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
-        return getStaticContent(this, binaryId, localizationId, localizationPath);
+        return graphQLBinaryContentProvider.getStaticContent(this, binaryId, localizationId, localizationPath);
     }
 }

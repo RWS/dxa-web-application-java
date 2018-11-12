@@ -117,11 +117,12 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
 
     private List<SitemapItem> getNavigationSubtreeInternal(@NotNull SitemapRequestDto requestDto) {
         int depth = getDepth(requestDto);
+        String sitemapId = requestDto.getSitemapId();
         ContextData contextData = createContextData(requestDto.getClaims());
 
         if (requestDto.getExpandLevels().isUnlimited()) {
             List<SitemapItem> entireTree = getEntireNavigationSubtreeInternal(requestDto);
-            if (requestDto.getSitemapId() == null) {
+            if (sitemapId == null) {
                 // if parent node not specified we return entire tree
                 return entireTree;
             } else {
@@ -132,7 +133,6 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
                         .collect(Collectors.toList());
             }
         } else {
-            String sitemapId = requestDto.getSitemapId();
             boolean withAncestors = requestDto.getNavigationFilter().isWithAncestors();
             if (sitemapId == null) {
                 // Requesting from root so just return descendants from root

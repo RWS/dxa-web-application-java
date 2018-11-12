@@ -36,9 +36,8 @@ public final class DepthCounter {
         if (isNotTooDeep() && counter >= levels) {
             this.counter = counter - levels;
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
 
     public synchronized void depthDecrease() {

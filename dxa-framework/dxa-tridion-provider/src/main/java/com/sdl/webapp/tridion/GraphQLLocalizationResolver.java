@@ -1,7 +1,9 @@
 package com.sdl.webapp.tridion;
 
 import com.google.common.base.Strings;
+import com.sdl.dxa.tridion.linking.GraphQLLinkResolver;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.PublicationMapping;
 import com.sdl.web.pca.client.exception.ApiClientException;
@@ -35,11 +37,18 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
 
     private final Map<String, Localization> localizations = Collections.synchronizedMap(new HashMap<String, Localization>());
 
-    @Autowired
     private LocalizationFactory localizationFactory;
 
+    private ApiClient apiClient;
+
+    public GraphQLLocalizationResolver() {
+    }
+
     @Autowired
-    private ApiClientProvider apiClientProvider;
+    public GraphQLLocalizationResolver(LocalizationFactory localizationFactory, ApiClientProvider apiClientProvider) {
+        this.localizationFactory = localizationFactory;
+        this.apiClient = apiClientProvider.getClient();
+    }
 
     /**
      * Gets the publication mapping path. The returned path always starts with a "/" and does not end with a "/", unless
@@ -101,7 +110,7 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
     protected PublicationMappingData getPublicationMappingData(String url) throws PublicationMappingNotFoundException {
         try {
             // Publication Mapping is more specific to Tridion Sites, hence Tridion Sites is passed which is similar to .NET implementation
-            PublicationMapping publicationMapping = apiClientProvider.getClient().getPublicationMapping(ContentNamespace.Sites,url);
+            PublicationMapping publicationMapping = apiClient.getPublicationMapping(ContentNamespace.Sites, url);
 
             if (publicationMapping == null) {
                 throw new PublicationMappingNotFoundException("Publication mapping not found. There is no any publication mapping " +

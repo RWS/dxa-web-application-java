@@ -20,4 +20,11 @@ public interface ApiClientConfigurationLoader {
      * @return
      */
     String getServiceUrl();
+
+    /**
+     * Returns true when claim forwarding is set by parameter 'dxa.graphql.claimforwarding' in dxa.properties file.
+     *
+     * @return
+     */
+    boolean claimForwarding();
 }

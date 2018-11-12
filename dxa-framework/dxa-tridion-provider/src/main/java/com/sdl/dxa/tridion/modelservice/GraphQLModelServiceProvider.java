@@ -23,7 +23,9 @@ import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
 import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
 import com.sdl.web.pca.client.contentmodel.enums.DcpType;
+import com.sdl.web.pca.client.contentmodel.enums.ModelServiceLinkRendering;
 import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
+import com.sdl.web.pca.client.contentmodel.enums.TcdlLinkRendering;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -45,21 +47,22 @@ import static org.springframework.util.ClassUtils.getDefaultClassLoader;
 @Profile("!cil.providers.active")
 public class GraphQLModelServiceProvider implements ModelServiceProvider {
 
-    private ApiClientProvider apiClientProvider;
-
     private ApiClient pcaClient;
 
     private ObjectMapper mapper;
 
     GraphQLModelServiceProvider() {
-        this.mapper = getObjectMapper();
+        mapper = getObjectMapper();
     }
 
     @Autowired
     public GraphQLModelServiceProvider(ApiClientProvider apiClientProvider) {
-        this.apiClientProvider = apiClientProvider;
-        this.pcaClient = apiClientProvider.getClient();
-        this.mapper = getObjectMapper();
+        mapper = getObjectMapper();
+        pcaClient = apiClientProvider.getClient();
+        pcaClient.setDefaultModelType(DataModelType.R2);
+        pcaClient.setDefaultContentType(ContentType.MODEL);
+        pcaClient.setModelSericeLinkRenderingType(ModelServiceLinkRendering.RELATIVE);
+        pcaClient.setTcdlLinkRenderingType(TcdlLinkRendering.RELATIVE);
     }
 
     @NotNull
@@ -102,7 +105,7 @@ public class GraphQLModelServiceProvider implements ModelServiceProvider {
                     contentType,
                     DataModelType.valueOf(pageRequest.getDataModelType().toString()),
                     PageInclusion.valueOf(pageRequest.getIncludePages().toString()),
-                    ContentIncludeMode.INCLUDE,
+                    ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
                     null
             );
             T result = mapToType(type, pageNode);
@@ -120,7 +123,7 @@ public class GraphQLModelServiceProvider implements ModelServiceProvider {
                         contentType,
                         DataModelType.valueOf(pageRequest.getDataModelType().toString()),
                         PageInclusion.valueOf(pageRequest.getIncludePages().toString()),
-                        ContentIncludeMode.INCLUDE,
+                        ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
                         null
                 );
                 T result = mapToType(type, pageNode);
@@ -162,7 +165,7 @@ public class GraphQLModelServiceProvider implements ModelServiceProvider {
                     ContentType.valueOf(entityRequest.getContentType().toString()),
                     DataModelType.valueOf(entityRequest.getDataModelType().toString()),
                     DcpType.valueOf(entityRequest.getDcpType().toString()),
-                    ContentIncludeMode.INCLUDE_AND_RENDER,
+                    ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
                     null
             );
 

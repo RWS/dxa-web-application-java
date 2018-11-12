@@ -2,6 +2,7 @@ package com.sdl.dxa.tridion.content;
 
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
@@ -31,14 +32,15 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
 
     private static final Object LOCK = new Object();
 
-    @Autowired
-    private ApiClientProvider pcaClientProvider;
+    private ApiClient apiClient;
 
-    @Autowired
     private BinaryContentDownloader contentDownloader;
 
     @Autowired
-    public GraphQLStaticContentResolver(WebApplicationContext webApplicationContext) {
+    public GraphQLStaticContentResolver(WebApplicationContext webApplicationContext, ApiClientProvider apiClientProvider,
+                                        BinaryContentDownloader contentDownloader) {
+        this.apiClient = apiClientProvider.getClient();
+        this.contentDownloader = contentDownloader;
         this.webApplicationContext = webApplicationContext;
     }
 
@@ -47,26 +49,23 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     protected StaticContentItem createStaticContentItem(StaticContentRequestDto requestDto, File file,
                                                         int publicationId, ImageUtils.StaticContentPathInfo pathInfo,
                                                         String urlPath) throws ContentProviderException {
-        BinaryComponent binaryComponent;
-
-        synchronized (LOCK) {
-            binaryComponent = pcaClientProvider.getClient().getBinaryComponent(ContentNamespace.Sites,
+        BinaryComponent binaryComponent = apiClient.getBinaryComponent(ContentNamespace.Sites,
                     publicationId,
                     pathInfo.getFileName(),
                     "",
                     createContextData(requestDto.getClaims()));
 
-            long componentTime = new DateTime(binaryComponent.getLastPublishDate()).getMillis();
+        long componentTime = new DateTime(binaryComponent.getLastPublishDate()).getMillis();
 
-            boolean shouldRefresh = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
+        boolean shouldRefresh = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
 
-            if (shouldRefresh) {
+        if (shouldRefresh) {
+            synchronized (LOCK) {
                 refreshBinary(file, pathInfo, binaryComponent);
-            } else {
-                log.debug("File does not need to be refreshed: {}", file);
             }
+        } else {
+            log.debug("File does not need to be refreshed: {}", file);
         }
-
         String binaryComponentType = binaryComponent.getVariants().getEdges().get(0).getNode().getType();
         String contentType = StringUtils.isEmpty(binaryComponentType) ? DEFAULT_CONTENT_TYPE : binaryComponentType;
         boolean versioned = requestDto.getBinaryPath().contains("/system/");
@@ -88,18 +87,10 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     protected String _resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
         ContextData contextData = createContextData(requestDto.getClaims());
-        Publication publication = pcaClientProvider.getClient().getPublication(ContentNamespace.Sites,
+        Publication publication = apiClient.getPublication(ContentNamespace.Sites,
                 publicationId,
                 "",
                 contextData);
         return publication.getPublicationUrl();
-    }
-
-    public void setPcaClientProvider(ApiClientProvider pcaClientProvider) {
-        this.pcaClientProvider = pcaClientProvider;
-    }
-
-    public void setContentDownloader(BinaryContentDownloader contentDownloader) {
-        this.contentDownloader = contentDownloader;
     }
 }

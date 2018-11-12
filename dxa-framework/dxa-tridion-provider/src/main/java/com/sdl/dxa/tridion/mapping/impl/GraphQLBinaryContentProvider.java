@@ -3,7 +3,6 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
 import com.rometools.utils.Lists;
-import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;

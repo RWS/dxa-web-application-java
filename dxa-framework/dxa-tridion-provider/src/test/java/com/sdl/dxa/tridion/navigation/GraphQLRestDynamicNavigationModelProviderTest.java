@@ -75,8 +75,8 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
 
     @Before
     public void setUp() {
-        provider = spy(new GraphQLRestDynamicNavigationModelProvider(clientProvider, DEPTH_COUNTER_TEST_BOUND));
         when(clientProvider.getClient()).thenReturn(pcaClient);
+        provider = spy(new GraphQLRestDynamicNavigationModelProvider(clientProvider, DEPTH_COUNTER_TEST_BOUND));
         requestDto = createSitemapRequestDto(DEPTH_COUNTER);
     }
 

@@ -7,6 +7,7 @@ import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.generated.Ancestor;
 import com.sdl.web.pca.client.contentmodel.generated.PageSitemapItem;
@@ -42,7 +43,7 @@ import static java.util.Collections.emptyList;
 public class GraphQLRestDynamicNavigationModelProvider implements NavigationModelProvider,
         OnDemandNavigationModelProvider {
 
-    private final ApiClientProvider provider;
+    private final ApiClient apiClient;
 
     private final int defaultDescendantDepth;
 
@@ -50,7 +51,7 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
     public GraphQLRestDynamicNavigationModelProvider(
             ApiClientProvider provider,
             @Value("${dxa.pca.dynamic.navigation.sitemap.descendant.depth:10}") int defaultDescendantDepth) {
-        this.provider = provider;
+        this.apiClient = provider.getClient();
         this.defaultDescendantDepth = defaultDescendantDepth;
     }
 
@@ -69,7 +70,7 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
         int depth = getDepth(request);
         ContextData contextData = createContextData(request.getClaims());
 
-        TaxonomySitemapItem taxonomySitemapItem = provider.getClient()
+        TaxonomySitemapItem taxonomySitemapItem = apiClient
                 .getSitemap(Sites, request.getLocalizationId(), depth, contextData);
         if (taxonomySitemapItem == null) {
             return Optional.empty();
@@ -79,7 +80,7 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
         while (leafNodes.size() > 0) {
             TaxonomySitemapItem node = leafNodes.remove(0);
             if (node.getHasChildNodes()) {
-                TaxonomySitemapItem[] subtree = provider.getClient()
+                TaxonomySitemapItem[] subtree = apiClient
                         .getSitemapSubtree(Sites, request.getLocalizationId(), node.getId(), depth, NONE, contextData);
                 if (node.getItems() == null) {
                     node.setItems(new ArrayList<>());
@@ -136,7 +137,7 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
             if (sitemapId == null) {
                 // Requesting from root so just return descendants from root
                 int adjustedDepth = depth > 0 ? depth - 1 : depth;
-                return asList(provider.getClient().getSitemapSubtree(Sites, requestDto.getLocalizationId(),
+                return asList(apiClient.getSitemapSubtree(Sites, requestDto.getLocalizationId(),
                         null, adjustedDepth, withAncestors ? Ancestor.INCLUDE : NONE, contextData));
             } else if (withAncestors) {
                 // we are looking for a particular item, we need to request the entire subtree first
@@ -146,7 +147,7 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
                 prune(node, 0, depth);
                 return entireTree;
             } else {
-                return asList(provider.getClient()
+                return asList(apiClient
                         .getSitemapSubtree(Sites, requestDto.getLocalizationId(), sitemapId, depth, NONE, contextData))
                         .stream().map(item -> item.getItems())
                         .filter(sitemapItems -> sitemapItems != null)
@@ -161,7 +162,7 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
         int depth = getDepth(request);
         ContextData contextData = createContextData(request.getClaims());
 
-        List<SitemapItem> rootItems = asList(provider.getClient()
+        List<SitemapItem> rootItems = asList(apiClient
                 .getSitemapSubtree(Sites,
                         request.getLocalizationId(),
                         request.getSitemapId(),
@@ -180,7 +181,7 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
             TaxonomySitemapItem root = (TaxonomySitemapItem) tempRoots.get(index);
             List<TaxonomySitemapItem> leafNodes = getLeafNodes(root);
             for (TaxonomySitemapItem item : leafNodes) {
-                TaxonomySitemapItem[] subtree = provider.getClient()
+                TaxonomySitemapItem[] subtree = apiClient
                         .getSitemapSubtree(Sites, request.getLocalizationId(), item.getId(), depth, NONE, contextData);
                 if (subtree.length > 0) {
                     item.setItems(subtree[0].getItems());

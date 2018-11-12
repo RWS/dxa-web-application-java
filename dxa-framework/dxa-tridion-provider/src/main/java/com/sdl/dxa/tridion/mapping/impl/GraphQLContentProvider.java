@@ -58,7 +58,7 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 @Profile("!cil.providers.active")
 @Primary
 @Slf4j
-public class GraphQLContentProvider extends GraphQLBinaryContentProvider implements ContentProvider {
+public class GraphQLContentProvider implements ContentProvider {
 
     private ModelBuilderPipeline builderPipeline;
 
@@ -70,22 +70,24 @@ public class GraphQLContentProvider extends GraphQLBinaryContentProvider impleme
 
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
+    private GraphQLBinaryContentProvider graphQLBinaryContentProvider;
+
+    private ApiClient pcaClient;
+
     @Autowired
     public GraphQLContentProvider(WebApplicationContext webApplicationContext,
                                   WebRequestContext webRequestContext,
                                   StaticContentResolver staticContentResolver,
                                   ModelBuilderPipeline builderPipeline,
                                   ModelServiceProvider modelService,
-                                  ApiClientProvider pcaClientProvider) {
-        super(pcaClientProvider.getClient(), webApplicationContext);
+                                  ApiClientProvider pcaClientProvider,
+                                  List<ConditionalEntityEvaluator> entityEvaluators) {
+        this.pcaClient = pcaClientProvider.getClient();
+        this.graphQLBinaryContentProvider = new GraphQLBinaryContentProvider(pcaClientProvider.getClient(), webApplicationContext);
         this.webRequestContext = webRequestContext;
         this.staticContentResolver = staticContentResolver;
         this.builderPipeline = builderPipeline;
         this.modelService = modelService;
-    }
-
-    @Autowired(required = false)
-    public void setEntityEvaluators(List<ConditionalEntityEvaluator> entityEvaluators) {
         this.entityEvaluators = entityEvaluators;
     }
 
@@ -288,6 +290,6 @@ public class GraphQLContentProvider extends GraphQLBinaryContentProvider impleme
      */
     @Override
     public StaticContentItem getStaticContent(int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
-        return getStaticContent(this, binaryId, localizationId, localizationPath);
+        return graphQLBinaryContentProvider.getStaticContent(this, binaryId, localizationId, localizationPath);
     }
 }

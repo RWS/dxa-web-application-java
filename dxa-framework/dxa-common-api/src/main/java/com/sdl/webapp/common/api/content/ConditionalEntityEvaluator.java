@@ -16,5 +16,5 @@ public interface ConditionalEntityEvaluator {
      * @param entity entity to evaluate
      * @return true if should be included, false otherwise
      */
-    boolean includeEntity(EntityModel entity);
+    boolean includeEntity(EntityModel entity) throws ContentProviderException;
 }

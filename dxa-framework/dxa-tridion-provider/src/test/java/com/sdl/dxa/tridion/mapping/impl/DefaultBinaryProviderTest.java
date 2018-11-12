@@ -8,6 +8,7 @@ import com.sdl.web.pca.client.contentmodel.generated.BinaryVariant;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariantConnection;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariantEdge;
 import com.sdl.webapp.common.api.content.ContentProvider;
+import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import org.junit.Before;
@@ -108,11 +109,25 @@ public class DefaultBinaryProviderTest {
         assertSame(expected, result);
     }
 
+    @Test(expected = ContentProviderException.class)
+    public void downloadBinaryException() throws Exception {
+        BinaryVariantConnection variants = mock(BinaryVariantConnection.class);
+        when(binaryComponent.getVariants()).thenReturn(variants);
+        BinaryVariantEdge edge = mock(BinaryVariantEdge.class);
+        when(variants.getEdges()).thenReturn(Collections.singletonList(edge));
+        BinaryVariant variant = mock(BinaryVariant.class);
+        when(edge.getNode()).thenReturn(variant);
+        when(variant.getDownloadUrl()).thenReturn("ballon-burner_tcm5-297_w1024_h311_n.jpg");
+        when(variant.getPath()).thenReturn("/binary/39137/6723");
+        when(contentProvider.getStaticContent(variant.getPath(), PUB_ID, LOCALIZATION_PATH)).thenThrow(new RuntimeException());
+
+        provider.downloadBinary(contentProvider, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
+    }
+
     @Test
     public void downloadBinaryNoEdges() throws Exception {
         BinaryVariantConnection variants = mock(BinaryVariantConnection.class);
         when(binaryComponent.getVariants()).thenReturn(variants);
-        BinaryVariantEdge edge = mock(BinaryVariantEdge.class);
         when(variants.getEdges()).thenReturn(null);
 
         assertNull(provider.downloadBinary(contentProvider, BINARY_ID, PUB_ID, LOCALIZATION_PATH));

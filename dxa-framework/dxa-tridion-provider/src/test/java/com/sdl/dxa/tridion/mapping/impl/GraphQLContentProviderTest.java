@@ -10,6 +10,7 @@ import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.ApiClient;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -26,6 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -50,6 +52,8 @@ public class GraphQLContentProviderTest {
     @Mock
     private ApiClientProvider apiClientProvider;
     @Mock
+    private List<ConditionalEntityEvaluator> entityEvaluators;
+    @Mock
     private ApiClient pcaClient;
 
     @InjectMocks
@@ -63,7 +67,8 @@ public class GraphQLContentProviderTest {
                 staticContentResolver,
                 builderPipeline,
                 modelServiceProvider,
-                apiClientProvider));
+                apiClientProvider,
+                entityEvaluators));
     }
 
     @Test

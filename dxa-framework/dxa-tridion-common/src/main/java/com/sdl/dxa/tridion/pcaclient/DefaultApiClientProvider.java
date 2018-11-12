@@ -150,8 +150,7 @@ public class DefaultApiClientProvider implements ApiClientProvider {
                 String jsonValue = mapper.writeValueAsString(claim.getValue());
                 value.setValue(jsonValue);
             } catch (JsonProcessingException e) {
-                log.error("Unable to serialize claim " + claim.getKey().toString(), e);
-                continue;
+                throw new ApiClientConfigurationException("Unable to serialize claim " + claim.getKey().toString(), e);
             }
             client.getGlobalContextData().addClaimValule(value);
         }

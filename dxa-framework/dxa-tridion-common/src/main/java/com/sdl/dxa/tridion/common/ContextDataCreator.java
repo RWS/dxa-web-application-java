@@ -10,7 +10,12 @@ import org.springframework.beans.BeanUtils;
 
 import java.util.Map;
 
+import static java.lang.String.format;
+
 public class ContextDataCreator {
+
+    private static final String CLAIM_TYPE_NOT_FOUND_ERROR = "ClaimValueType is not recognized, was used in '%s'" +
+            ", expected one of " + Joiner.on(";").join(ClaimValueType.values());
 
     @NotNull
     public static ContextData createContextData(Map<String, ClaimHolder> claims) {
@@ -27,15 +32,15 @@ public class ContextDataCreator {
     static ClaimValue convertClaimHolderToClaimValue(ClaimHolder holder) {
         ClaimValue claimValue = new ClaimValue();
         BeanUtils.copyProperties(holder, claimValue);
-        String message = "ClaimValueType is not recognized, was used in " +
-                holder + ", expected one of " + Joiner.on(";").join(ClaimValueType.values());
-        if (holder.getClaimType() == null) throw new IllegalArgumentException(message);
         for (ClaimValueType type : ClaimValueType.values()) {
-            if (holder.getClaimType().toUpperCase().equals(type.name())) {
+            if (type.name().equalsIgnoreCase(holder.getClaimType())) {
                 claimValue.setType(type);
             }
         }
-        if (claimValue.getType() == null) throw new IllegalArgumentException(message);
+        if (claimValue.getType() == null) {
+            throw new IllegalArgumentException(format(CLAIM_TYPE_NOT_FOUND_ERROR, holder));
+        }
         return claimValue;
     }
+
 }

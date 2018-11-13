@@ -39,17 +39,16 @@ import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import com.sdl.webapp.common.exceptions.DxaException;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
@@ -130,8 +129,9 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             fillViewModel(entityModel, modelData);
 
             _processMediaItem(modelData, entityModel);
-
-            entitiesCache.addAndGet(key, entityModel);
+            synchronized (this) {
+                entitiesCache.addAndGet(key, entityModel);
+            }
         } catch (DxaException e) {
             throw new DxaException("Exception happened while creating a entity model from: " + modelData, e);
         }
@@ -151,47 +151,40 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     }
 
     @NotNull
-    private <T extends ViewModel> T createViewModel(Class<T> viewModelType, ViewModelData modelData) throws DxaException {
+    private <T extends ViewModel> T createViewModel(Class<T> viewModelType, ViewModelData modelData) throws SemanticMappingException {
         Localization localization = webRequestContext.getLocalization();
         SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(modelData.getSchemaId()));
-        try {
-            Map<FieldSemantics, SemanticField> semanticFields = getAllSemanticFields(semanticSchema, modelData);
-
-            return semanticMapper.createEntity(viewModelType, semanticFields,
-                    DefaultSemanticFieldDataProvider.getFor(modelData, semanticSchema));
-        } catch (SemanticMappingException e) {
-            String message = "Cannot do a semantic mapping for class '" + viewModelType +
-                    "', model data '" + modelData + "', localization '" + localization + "'";
-            throw new SemanticMappingException(message, e);
-        }
+        Map<FieldSemantics, SemanticField> semanticFields = getAllSemanticFields(semanticSchema, modelData);
+        return semanticMapper.createEntity(viewModelType, semanticFields, DefaultSemanticFieldDataProvider.getFor(modelData, semanticSchema));
     }
 
     @NotNull
     private Map<FieldSemantics, SemanticField> getAllSemanticFields(@NotNull SemanticSchema semanticSchema, @NotNull ViewModelData modelData) {
         final Map<FieldSemantics, SemanticField> semanticFields = semanticSchema.getSemanticFields();
 
-        if (modelData.getExtensionData() != null) {
-            Object schemas = modelData.getExtensionData().get("Schemas");
-            if (schemas != null && schemas instanceof ListWrapper
-                    && !((ListWrapper) schemas).getValues().isEmpty()) {
-                log.debug("Found additional semantic schemas {} used in the view model {}", schemas, modelData);
-
-                Localization localization = webRequestContext.getLocalization();
-                Map<FieldSemantics, SemanticField> allSemanticFields = new HashMap<>(semanticFields);
-
-                //noinspection unchecked
-                allSemanticFields.putAll(((ListWrapper<String>) schemas).getValues().stream()
-                        .map(schemaId -> localization.getSemanticSchemas().get(Long.parseLong(schemaId)))
-                        .filter(Objects::nonNull)
-                        .map(SemanticSchema::getSemanticFields)
-                        .flatMap(fieldMap -> fieldMap.entrySet().stream())
-                        .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
-
-                return allSemanticFields;
-            }
+        if (modelData.getExtensionData() == null) {
+            return semanticFields;
         }
+        Object schemas = modelData.getExtensionData().get("Schemas");
+        if (schemas == null ||
+            !(schemas instanceof ListWrapper) ||
+            ((ListWrapper) schemas).getValues().isEmpty()) {
+            return semanticFields;
+        }
+        log.debug("Found additional semantic schemas {} used in the view model {}", schemas, modelData);
 
-        return semanticFields;
+        Localization localization = webRequestContext.getLocalization();
+        Map<FieldSemantics, SemanticField> allSemanticFields = new HashMap<>(semanticFields);
+
+        //noinspection unchecked
+        allSemanticFields.putAll(((ListWrapper<String>) schemas).getValues().stream()
+                .map(schemaId -> localization.getSemanticSchemas().get(Long.parseLong(schemaId)))
+                .filter(Objects::nonNull)
+                .map(SemanticSchema::getSemanticFields)
+                .flatMap(fieldMap -> fieldMap.entrySet().stream())
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+
+        return allSemanticFields;
     }
 
     private void fillViewModel(ViewModel viewModel, ViewModelData modelData) {
@@ -242,7 +235,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
      * @dxa.publicApi
      */
     @Override
-    public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData) {
+    public PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData) throws SemanticMappingException {
         LocalizationAwareCacheKey cacheKey = pagesCopyingCache.getSpecificKey(modelData);
         synchronized (this) {
             if (pagesCopyingCache.containsKey(cacheKey)) {
@@ -267,7 +260,13 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
         if (modelData.getRegions() != null) {
             modelData.getRegions().stream()
-                    .map(regionModelData -> createRegionModel(regionModelData, keyBuilder))
+                    .map(regionModelData -> {
+                        try {
+                            return createRegionModel(regionModelData, keyBuilder);
+                        } catch (SemanticMappingException e) {
+                            return null;
+                        }
+                    })
                     .forEach(pageModel.getRegions()::add);
         }
         if (isNeverCached(pageModel)) {
@@ -275,33 +274,33 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         }
         ConditionalKey conditionalKey = keyBuilder.build();
         pageModel.setStaticModel(!conditionalKey.isSkipCaching());
-        return pagesCopyingCache.addAndGet(conditionalKey, pageModel);
+        synchronized (this) {
+            return pagesCopyingCache.addAndGet(conditionalKey, pageModel);
+        }
     }
 
-
-    @SneakyThrows({InstantiationException.class, IllegalAccessException.class})
     @Nullable
-    private PageModel instantiatePageModel(@Nullable PageModel originalPageModel, PageModelData modelData) {
+    private PageModel instantiatePageModel(@Nullable PageModel originalPageModel, PageModelData modelData) throws SemanticMappingException {
         MvcData mvcData = createMvcData(modelData.getMvcData(), DefaultsMvcData.PAGE);
         log.debug("MvcData '{}' for PageModel {}", mvcData, modelData);
 
         PageModel pageModel = originalPageModel;
         if (originalPageModel != null) {
             log.warn("Original page model expected to be null but it's '{}'", originalPageModel);
-        } else {
-            try {
-                Class<? extends ViewModel> viewModelType = viewModelRegistry.getViewModelType(mvcData);
+            return pageModel;
+        }
+        try {
+            Class<? extends ViewModel> viewModelType = viewModelRegistry.getViewModelType(mvcData);
 
-                log.debug("Instantiating a PageModel without a SchemaID = null, modelData = {}, view model type = '{}'", modelData, viewModelType);
-                if (modelData.getSchemaId() == null) { //schema ID is not set, can't do semantic mapping
-                    pageModel = viewModelType == null ? new DefaultPageModel() : (PageModel) viewModelType.newInstance();
-                } else { // semantic mapping is possible, let's do it
-                    pageModel = (PageModel) createViewModel(viewModelType, modelData);
-                }
-                pageModel.setMvcData(mvcData);
-            } catch (DxaException e) {
-                log.warn("Exception happened while creating a page model {}", modelData.getId(), e);
+            log.debug("Instantiating a PageModel without a SchemaID = null, modelData = {}, view model type = '{}'", modelData, viewModelType);
+            if (modelData.getSchemaId() == null) { //schema ID is not set, can't do semantic mapping
+                pageModel = viewModelType == null ? new DefaultPageModel() : (PageModel) viewModelType.newInstance();
+            } else { // semantic mapping is possible, let's do it
+                pageModel = (PageModel) createViewModel(viewModelType, modelData);
             }
+            pageModel.setMvcData(mvcData);
+        } catch (ReflectiveOperationException | DxaException e) {
+            throw new SemanticMappingException("Exception happened while creating a page model " + modelData.getId(), e);
         }
         return pageModel;
     }
@@ -315,14 +314,14 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         return title + separator + postfix;
     }
 
-    private RegionModel createRegionModel(RegionModelData regionModelData, ConditionalKeyBuilder keyBuilder) {
+    private RegionModel createRegionModel(RegionModelData regionModelData, ConditionalKeyBuilder keyBuilder) throws SemanticMappingException {
         MvcData mvcData = createMvcData(regionModelData.getMvcData(), DefaultsMvcData.REGION);
         log.debug("MvcData '{}' for RegionModel {}", mvcData, regionModelData);
 
         try {
             Class<? extends ViewModel> viewModelType = viewModelRegistry.getViewModelType(mvcData);
             if (viewModelType == null) {
-                throw new DxaException("Cannot find a view model type for " + mvcData);
+                throw new SemanticMappingException("Cannot find a view model type for " + mvcData);
             }
 
             RegionModel regionModel = (RegionModel) viewModelType.getConstructor(String.class)
@@ -334,19 +333,12 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             if(schemaId != null && !schemaId.isEmpty()){
                 Localization localization = webRequestContext.getLocalization();
                 SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(schemaId));
-                try {
-                    Map<FieldSemantics, SemanticField> semanticFields = getAllSemanticFields(semanticSchema, regionModelData);
+                Map<FieldSemantics, SemanticField> semanticFields = getAllSemanticFields(semanticSchema, regionModelData);
 
-                    semanticMapper.mapSemanticFields(viewModelType,
-                            semanticFields,
-                            DefaultSemanticFieldDataProvider.getFor(regionModelData, semanticSchema),
-                            regionModel);
-                }
-                catch (Exception e) {
-                    String message = "Cannot do a semantic mapping for class '" + viewModelType +
-                            "', model data '" + regionModelData + "', localization '" + localization + "'";
-                    log.error(message);
-                }
+                semanticMapper.mapSemanticFields(viewModelType,
+                        semanticFields,
+                        DefaultSemanticFieldDataProvider.getFor(regionModelData, semanticSchema),
+                        regionModel);
             }
 
             fillViewModel(regionModel, regionModelData);
@@ -355,13 +347,20 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             if (isNeverCached(regionModel)) {
                 keyBuilder.skipCaching(true);
             }
-
+            AtomicReference<SemanticMappingException> exception = new AtomicReference<>();
             if (regionModelData.getRegions() != null) {
                 regionModelData.getRegions().stream()
-                        .map(regionModelData1 -> createRegionModel(regionModelData1, keyBuilder))
+                        .map(regionModelData1 -> {
+                            try {
+                                return createRegionModel(regionModelData1, keyBuilder);
+                            } catch (SemanticMappingException ex) {
+                                if (exception.get() == null) exception.set(ex);
+                                return null;
+                            }
+                        })
                         .forEach(regionModel.getRegions()::add);
             }
-
+            if (exception.get() != null) throw exception.get();
             if (regionModelData.getEntities() != null) {
                 regionModelData.getEntities().stream()
                         .map(entityModelData -> {
@@ -372,12 +371,8 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             }
 
             return regionModel;
-        } catch (DxaException e) {
-            log.warn("Exception happened while creating Region {}", regionModelData, e);
-            return null;
-        } catch (InvocationTargetException | NoSuchMethodException | IllegalAccessException | InstantiationException e) {
-            log.warn("Cannot instantiate a region model '{}' because of problems with reflective access", regionModelData, e);
-            return null;
+        } catch (ReflectiveOperationException | DxaException e) {
+            throw new SemanticMappingException("Exception happened while creating Region " + regionModelData, e);
         }
     }
 
@@ -389,8 +384,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             }
             return entityModel;
         } catch (Exception e) {
-            log.warn("Cannot create an entity model for model data {}", entityModelData, e);
-            return new ExceptionEntity(e);
+            return new ExceptionEntity(new SemanticMappingException("Cannot create an entity model for model data " + entityModelData, e));
         }
     }
 

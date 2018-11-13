@@ -2,6 +2,7 @@ package com.sdl.dxa.tridion.mapping;
 
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.tridion.mapping.impl.ModelBuilderPipelineImpl;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.model.PageModel;
 import org.jetbrains.annotations.Nullable;
 
@@ -22,5 +23,5 @@ public interface PageModelBuilder extends ModelBuilder {
      * @return the strongly typed Page Model, or {@code null} if cannot build a page
      */
     @Nullable
-    PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData);
+    PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData) throws SemanticMappingException;
 }

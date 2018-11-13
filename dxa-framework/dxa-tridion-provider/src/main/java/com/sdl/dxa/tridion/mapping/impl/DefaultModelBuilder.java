@@ -29,6 +29,7 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
@@ -46,6 +47,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -257,18 +259,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         pageModel.setName(modelData.getTitle());
         pageModel.setTitle(getPageTitle(modelData));
         pageModel.setUrl(modelData.getUrlPath());
-
-        if (modelData.getRegions() != null) {
-            modelData.getRegions().stream()
-                    .map(regionModelData -> {
-                        try {
-                            return createRegionModel(regionModelData, keyBuilder);
-                        } catch (SemanticMappingException e) {
-                            return null;
-                        }
-                    })
-                    .forEach(pageModel.getRegions()::add);
-        }
+        processRegions(modelData.getRegions(), keyBuilder, pageModel.getRegions());
         if (isNeverCached(pageModel)) {
             keyBuilder.skipCaching(true);
         }
@@ -277,6 +268,26 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         synchronized (this) {
             return pagesCopyingCache.addAndGet(conditionalKey, pageModel);
         }
+    }
+
+    private void processRegions(List<RegionModelData> regions,
+                                ConditionalKeyBuilder keyBuilder,
+                                RegionModelSet regionsToAdd) throws SemanticMappingException {
+        if (regions == null) {
+            return;
+        }
+        AtomicReference<SemanticMappingException> exception = new AtomicReference<>();
+        regions.stream()
+                .map(regionModelDataLoc -> {
+                    try {
+                        return createRegionModel(regionModelDataLoc, keyBuilder);
+                    } catch (SemanticMappingException ex) {
+                        if (exception.get() != null) exception.set(ex);
+                        return null;
+                    }
+                })
+                .forEach(regionsToAdd::add);
+        if (exception.get() != null) throw exception.get();
     }
 
     @Nullable
@@ -347,20 +358,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             if (isNeverCached(regionModel)) {
                 keyBuilder.skipCaching(true);
             }
-            AtomicReference<SemanticMappingException> exception = new AtomicReference<>();
-            if (regionModelData.getRegions() != null) {
-                regionModelData.getRegions().stream()
-                        .map(regionModelData1 -> {
-                            try {
-                                return createRegionModel(regionModelData1, keyBuilder);
-                            } catch (SemanticMappingException ex) {
-                                if (exception.get() == null) exception.set(ex);
-                                return null;
-                            }
-                        })
-                        .forEach(regionModel.getRegions()::add);
-            }
-            if (exception.get() != null) throw exception.get();
+            processRegions(regionModelData.getRegions(), keyBuilder, regionModel.getRegions());
             if (regionModelData.getEntities() != null) {
                 regionModelData.getEntities().stream()
                         .map(entityModelData -> {

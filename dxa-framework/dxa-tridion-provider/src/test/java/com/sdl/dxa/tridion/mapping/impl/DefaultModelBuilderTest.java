@@ -88,7 +88,7 @@ public class DefaultModelBuilderTest {
     private EntitiesCache entitiesCache;
 
     @Test
-    public void shouldBuildPageModel_OutOfModelDataR2() throws IOException {
+    public void shouldBuildPageModel_OutOfModelDataR2() throws Exception {
         //given
         PageModelData pageModelData = objectMapper.readValue(new ClassPathResource("home_page_json_full.json").getFile(), PageModelData.class);
 

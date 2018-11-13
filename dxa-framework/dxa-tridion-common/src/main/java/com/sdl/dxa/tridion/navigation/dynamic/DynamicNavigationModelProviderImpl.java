@@ -26,6 +26,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -58,6 +59,7 @@ import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapI
 
 @Slf4j
 @Service
+@Profile("cil.providers.active")
 public class DynamicNavigationModelProviderImpl implements NavigationModelProvider, OnDemandNavigationModelProvider {
 
     private final WebTaxonomyFactory taxonomyFactory;

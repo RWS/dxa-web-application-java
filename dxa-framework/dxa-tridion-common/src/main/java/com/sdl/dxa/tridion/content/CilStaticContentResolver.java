@@ -1,8 +1,10 @@
 package com.sdl.dxa.tridion.content;
 
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
+import com.sdl.web.api.content.BinaryContentRetriever;
 import com.sdl.web.api.meta.WebComponentMetaFactory;
 import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
+import com.sdl.web.api.meta.WebPublicationMetaFactory;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
@@ -10,13 +12,11 @@ import com.sdl.webapp.common.api.content.StaticContentNotLoadedException;
 import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.common.util.TcmUtils;
 import com.tridion.broker.StorageException;
-import com.tridion.content.BinaryFactory;
 import com.tridion.data.BinaryData;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import com.tridion.meta.BinaryMeta;
 import com.tridion.meta.ComponentMeta;
 import com.tridion.meta.PublicationMeta;
-import com.tridion.meta.PublicationMetaFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -40,17 +40,23 @@ import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
 @Profile("cil.providers.active")
 public class CilStaticContentResolver extends GenericStaticContentResolver implements StaticContentResolver {
 
-    private final DynamicMetaRetriever dynamicMetaRetriever = new DynamicMetaRetriever();
+    private final DynamicMetaRetriever dynamicMetaRetriever;
 
-    private final BinaryFactory binaryContentRetriever = new BinaryFactory();
+    private final BinaryContentRetriever binaryContentRetriever;
 
-    private final PublicationMetaFactory publicationMetaFactory = new PublicationMetaFactory();
+    private final WebPublicationMetaFactory webPublicationMetaFactory;
 
     private static final Object LOCK = new Object();
 
     @Autowired
-    public CilStaticContentResolver(WebApplicationContext webApplicationContext) {
+    public CilStaticContentResolver(WebApplicationContext webApplicationContext,
+                                    DynamicMetaRetriever dynamicMetaRetriever,
+                                    BinaryContentRetriever binaryContentRetriever,
+                                    WebPublicationMetaFactory webPublicationMetaFactory) {
         this.webApplicationContext = webApplicationContext;
+        this.dynamicMetaRetriever = dynamicMetaRetriever;
+        this.binaryContentRetriever = binaryContentRetriever;
+        this.webPublicationMetaFactory = webPublicationMetaFactory;
     }
 
     @NotNull
@@ -92,7 +98,7 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
         PublicationMeta meta;
         String localizationId = requestDto.getLocalizationId();
         try {
-            meta = publicationMetaFactory.getMeta(TcmUtils.buildPublicationTcmUri(localizationId));
+            meta = webPublicationMetaFactory.getMeta(TcmUtils.buildPublicationTcmUri(localizationId));
         } catch (StorageException e) {
             throw new StaticContentNotLoadedException("Cannot resolve localization path for localization '" + localizationId + "'", e);
         }

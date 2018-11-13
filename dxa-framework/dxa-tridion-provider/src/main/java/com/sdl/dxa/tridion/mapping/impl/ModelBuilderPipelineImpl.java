@@ -6,6 +6,7 @@ import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
+import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -56,9 +57,13 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
     public PageModel createPageModel(@NotNull PageModelData modelData) {
         PageModel pageModel = null;
         for (PageModelBuilder builder : pageModelBuilders) {
-            pageModel = builder.buildPageModel(pageModel, modelData);
+            try {
+                pageModel = builder.buildPageModel(pageModel, modelData);
+            } catch (SemanticMappingException e) {
+                log.error("Could not process " + modelData, e);
+            }
         }
-        Assert.notNull(pageModel, "Page Model is null after model pipeline, model builder are not set?");
+        Assert.notNull(pageModel, "Page Model is null after model pipeline, model builders are not set?");
         return pageModel; //NOSONAR
     }
 

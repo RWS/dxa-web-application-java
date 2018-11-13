@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.List;
@@ -18,6 +19,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @Accessors(chain = true)
+@ToString
 public class PageModelData extends ViewModelData {
 
     private String id;

@@ -55,7 +55,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.cache.Cache;
-import java.io.IOException;
 import java.util.Collections;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
@@ -107,88 +106,57 @@ public class DefaultModelBuilderTest {
         assertEquals("000 Home", pageModel.getMeta().get("sitemapKeyword"));
         assertEquals("<p>text<a href=\"resolved-link\">text</a></p>", pageModel.getMeta().get("richText"));
 
-        // region (0). region (0) -> Header
+        // region (0). region (0) -> Header region
         RegionModelData regionModelData = pageModelData.getRegions().get(0);
         RegionModel headerRegion = pageModel.getRegions().get("Header");
         assertEqualsAndNotNull(regionModelData.getName(), headerRegion.getName());
 
-        // Header region (0) -> Info
+        // Header region (0) -> Info sub-region
         RegionModelData subRegionModelData = regionModelData.getRegions().get(0);
         RegionModel infoRegion = headerRegion.getRegions().get("Info");
         assertEqualsAndNotNull(subRegionModelData.getName(), infoRegion.getName());
 
-        // Info .entity (0)
+        // Info sub-region -> entity (0)
         EntityModelData entityModelData = subRegionModelData.getEntities().get(0);
         EntityModel infoRegionEntities = infoRegion.getEntities().get(0);
         assertEqualsAndNotNull(entityModelData.getId(), infoRegionEntities.getId());
 
         assertEquals(2, infoRegion.getEntities().size());
 
-        // TODO
-        // region(0).region(0).entity(0).Content
-        //assertEqualsAndNotNull(entityModelData.getContent().get("headline"), ((EntityModel) infoRegionEntities).getContent().get("headline"));
-
         // region(0).region(0).entity(0).MvcData
         assertEqualsAndNotNull(entityModelData.getMvcData().getViewName(), infoRegionEntities.getMvcData().getViewName());
 
-        // TODO
         // region(0).region(0).entity(0).xpmMetadata
-//        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentID");
-//        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentModified");
-//        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateID");
-//        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateModified");
-//        assertXpmMetadata(entityModelData, infoRegionEntities, "IsRepositoryPublished");
-
-        // TODO
-        // region(0).region(0).entity(0).schemaId
-        //assertEqualsAndNotNull(entityModelData.getSchemaId(), ((EntityModel) infoRegionEntities).getSchemaId());
+        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentID");
+        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentModified");
+        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateID");
+        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateModified");
+        assertXpmMetadata(entityModelData, infoRegionEntities, "IsRepositoryPublished");
 
         // region(0).region(0).MvcData
         assertEqualsAndNotNull(subRegionModelData.getMvcData().getViewName(), infoRegion.getMvcData().getViewName());
 
-        // TODO
-        // region(0).IncludePageUrl
-        //assertEqualsAndNotNull(regionModelData.getIncludePageId(), ((RegionModel) headerRegion).getIncludePageId());
-
         // region(0).MvcData
         assertEqualsAndNotNull(regionModelData.getMvcData().getViewName(), headerRegion.getMvcData().getViewName());
 
-        // TODO
         // region(0).XpmMetadata
-//        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageId");
-//        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageTitle");
-//        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageFileName");
+        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageId");
+        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageTitle");
+        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageFileName");
 
         // page.getMvcData
         assertEqualsAndNotNull(pageModelData.getMvcData().getViewName(), pageModel.getMvcData().getViewName());
 
-        // TODO
         // page.getXpmMetadata
-//        assertXpmMetadata(pageModelData, pageModel, "PageID");
-//        assertXpmMetadata(pageModelData, pageModel, "PageModified");
-//        assertXpmMetadata(pageModelData, pageModel, "PageTemplateID");
-//        assertXpmMetadata(pageModelData, pageModel, "PageTemplateModified");
+        assertXpmMetadata(pageModelData, pageModel, "PageID");
+        assertXpmMetadata(pageModelData, pageModel, "PageModified");
+        assertXpmMetadata(pageModelData, pageModel, "PageTemplateID");
+        assertXpmMetadata(pageModelData, pageModel, "PageTemplateModified");
 
-        // TODO
-        // page.Metadata
-        //noinspection unchecked
-        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("sitemapKeyword")).get("Id"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("Id"));
-        //noinspection unchecked
-        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("sitemapKeyword")).get("Title"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("Title"));
-        //noinspection unchecked
-        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("Description")).get("Id"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("Description"));
-        //noinspection unchecked
-        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("Key")).get("Id"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("Key"));
-        //noinspection unchecked
-        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("sitemapKeyword")).get("TaxonomyId"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("TaxonomyId"));
-
-        // TODO
-        // page.SchemaId
-        //assertEqualsAndNotNull(pageModelData.getSchemaId(), pageModel.getSchemaId());
 
 //        ((ItemList) pageModel.getRegions().get("Hero").getEntity("1472"))
 
-        verify(pagesCopyingCache).containsKey(eq(pagesCopyingCache.getSpecificKey(pageModelData)));
+        verify(pagesCopyingCache).containsKey(pagesCopyingCache.getSpecificKey(pageModelData));
     }
 
     private void assertEqualsAndNotNull(Object expected, Object actual) {
@@ -230,10 +198,10 @@ public class DefaultModelBuilderTest {
         public LocalizationIdProvider webRequestContextLocalizationIdProvider() {
             return new WebRequestContextLocalizationIdProvider();
         }
-        
+
         @Bean
         public LocalizationAwareKeyGenerator localizationAwareKeyGenerator() {
-            return mock(LocalizationAwareKeyGenerator.class);
+            return spy(LocalizationAwareKeyGenerator.class);
         }
 
         @Bean

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
+import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.AbstractViewModel;
@@ -15,10 +16,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.lang.ref.Reference;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 
@@ -88,8 +91,16 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
     }
 
     @Override
-    public void filterConditionalEntities(Collection<ConditionalEntityEvaluator> evaluators) {
-        this.regions.forEach(regionModel -> regionModel.filterConditionalEntities(evaluators));
+    public void filterConditionalEntities(Collection<ConditionalEntityEvaluator> evaluators) throws ContentProviderException {
+        final AtomicReference<ContentProviderException> exception = new AtomicReference<>();
+        this.regions.forEach(regionModel -> {
+            try {
+                regionModel.filterConditionalEntities(evaluators);
+            } catch (ContentProviderException ex) {
+                exception.set(ex);
+            }
+        });
+        if (exception.get() != null) throw exception.get();
     }
 
     /**

@@ -1,24 +1,36 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
+import com.google.common.primitives.Ints;
+import com.sdl.web.pca.client.ApiClient;
+import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
+import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
+import com.sdl.web.pca.client.contentmodel.generated.BinaryVariant;
+import com.sdl.web.pca.client.contentmodel.generated.BinaryVariantConnection;
+import com.sdl.web.pca.client.contentmodel.generated.BinaryVariantEdge;
 import com.sdl.webapp.common.api.content.ContentProvider;
+import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.regex.Matcher;
 
 import static junit.framework.TestCase.assertNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.doReturn;
 import static org.powermock.api.mockito.PowerMockito.mock;
@@ -39,14 +51,20 @@ public class DefaultBinaryProviderTest {
 
     @Mock
     private ContentProvider contentProvider;
+    @Mock
+    private ApiClient pcaClient;
+    @Mock
+    private WebApplicationContext webApplicationContext;
 
-    @Spy
-    @InjectMocks
-    private DefaultBinaryProvider provider;
+    private GraphQLBinaryContentProvider provider;
+    @Mock
+    private BinaryComponent binaryComponent;
 
     @Before
     public void setUp(){
+        provider = spy(new GraphQLBinaryContentProvider(pcaClient, webApplicationContext));
         doReturn(PATH_TO_FILES).when(provider).getBasePath();
+        when(pcaClient.getBinaryComponent(ContentNamespace.Sites, Ints.tryParse(PUB_ID), BINARY_ID, null, null)).thenReturn(binaryComponent);
     }
 
     @Test
@@ -56,9 +74,63 @@ public class DefaultBinaryProviderTest {
         assertEquals(PATH_TO_FILES + File.separator + "BinaryData" + File.separator + PUB_ID + File.separator + "media", result.toString());
     }
 
-    @Test
+    @Test(expected = DxaItemNotFoundException.class)
     public void processBinaryFileNoFiles() throws Exception {
+        when(pcaClient.getBinaryComponent(ContentNamespace.Sites, Ints.tryParse(PUB_ID), BINARY_ID, null, null)).thenReturn(null);
+
         assertNull(provider.processBinaryFile(contentProvider, BINARY_ID, PUB_ID, LOCALIZATION_PATH, null));
+
+        verify(provider).downloadBinary(contentProvider, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
+    }
+
+    @Test
+    public void processBinaryFileDownloadBinaryComponentWithoutVariants() throws Exception {
+        assertNull(provider.processBinaryFile(contentProvider, BINARY_ID, PUB_ID, LOCALIZATION_PATH, null));
+
+        verify(provider).downloadBinary(contentProvider, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
+    }
+
+    @Test
+    public void downloadBinary() throws Exception {
+        BinaryVariantConnection variants = mock(BinaryVariantConnection.class);
+        when(binaryComponent.getVariants()).thenReturn(variants);
+        BinaryVariantEdge edge = mock(BinaryVariantEdge.class);
+        when(variants.getEdges()).thenReturn(Collections.singletonList(edge));
+        BinaryVariant variant = mock(BinaryVariant.class);
+        when(edge.getNode()).thenReturn(variant);
+        when(variant.getDownloadUrl()).thenReturn("ballon-burner_tcm5-297_w1024_h311_n.jpg");
+        when(variant.getPath()).thenReturn("/binary/39137/6723");
+        StaticContentItem expected = mock(StaticContentItem.class);
+        when(contentProvider.getStaticContent(variant.getPath(), PUB_ID, LOCALIZATION_PATH)).thenReturn(expected);
+
+        StaticContentItem result = provider.downloadBinary(contentProvider, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
+
+        verify(contentProvider).getStaticContent(variant.getPath(), PUB_ID, LOCALIZATION_PATH);
+        assertSame(expected, result);
+    }
+
+    @Test(expected = ContentProviderException.class)
+    public void downloadBinaryException() throws Exception {
+        BinaryVariantConnection variants = mock(BinaryVariantConnection.class);
+        when(binaryComponent.getVariants()).thenReturn(variants);
+        BinaryVariantEdge edge = mock(BinaryVariantEdge.class);
+        when(variants.getEdges()).thenReturn(Collections.singletonList(edge));
+        BinaryVariant variant = mock(BinaryVariant.class);
+        when(edge.getNode()).thenReturn(variant);
+        when(variant.getDownloadUrl()).thenReturn("ballon-burner_tcm5-297_w1024_h311_n.jpg");
+        when(variant.getPath()).thenReturn("/binary/39137/6723");
+        when(contentProvider.getStaticContent(variant.getPath(), PUB_ID, LOCALIZATION_PATH)).thenThrow(new RuntimeException());
+
+        provider.downloadBinary(contentProvider, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
+    }
+
+    @Test
+    public void downloadBinaryNoEdges() throws Exception {
+        BinaryVariantConnection variants = mock(BinaryVariantConnection.class);
+        when(binaryComponent.getVariants()).thenReturn(variants);
+        when(variants.getEdges()).thenReturn(null);
+
+        assertNull(provider.downloadBinary(contentProvider, BINARY_ID, PUB_ID, LOCALIZATION_PATH));
     }
 
     @Test

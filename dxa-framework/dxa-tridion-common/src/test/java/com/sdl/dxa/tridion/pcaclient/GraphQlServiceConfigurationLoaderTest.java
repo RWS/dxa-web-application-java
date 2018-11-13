@@ -35,7 +35,7 @@ public class GraphQlServiceConfigurationLoaderTest {
 
     @Before
     public void setup() throws ConfigurationException {
-        configurationLoader = spy(new GraphQlServiceConfigurationLoader("cd/api/"));
+        configurationLoader = spy(new GraphQlServiceConfigurationLoader("cd/api/", false));
         doReturn(Optional.of(contentServiceCapability)).when(configurationLoader).getContentServiceCapability();
         when(contentServiceCapability.getUri()).thenReturn("http://localhost:8082/content.svc");
         Properties props = new Properties();

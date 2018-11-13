@@ -32,20 +32,16 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
 
     private static final Object LOCK = new Object();
 
-    private ApiClientProvider pcaClientProvider;
+    private ApiClient apiClient;
 
     private BinaryContentDownloader contentDownloader;
 
-    private ApiClient pcaClient;
-
     @Autowired
-    public GraphQLStaticContentResolver(ApiClientProvider pcaClientProvider,
-                                        BinaryContentDownloader contentDownloader,
-                                        WebApplicationContext webApplicationContext) {
+    public GraphQLStaticContentResolver(WebApplicationContext webApplicationContext, ApiClientProvider apiClientProvider,
+                                        BinaryContentDownloader contentDownloader) {
+        this.apiClient = apiClientProvider.getClient();
         this.contentDownloader = contentDownloader;
         this.webApplicationContext = webApplicationContext;
-        this.pcaClientProvider = pcaClientProvider;
-        pcaClient = pcaClientProvider.getClient();
     }
 
     @Override
@@ -53,7 +49,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     protected StaticContentItem createStaticContentItem(StaticContentRequestDto requestDto, File file,
                                                         int publicationId, ImageUtils.StaticContentPathInfo pathInfo,
                                                         String urlPath) throws ContentProviderException {
-        BinaryComponent binaryComponent = pcaClient.getBinaryComponent(ContentNamespace.Sites,
+        BinaryComponent binaryComponent = apiClient.getBinaryComponent(ContentNamespace.Sites,
                     publicationId,
                     pathInfo.getFileName(),
                     "",
@@ -91,18 +87,10 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     protected String _resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
         ContextData contextData = createContextData(requestDto.getClaims());
-        Publication publication = pcaClient.getPublication(ContentNamespace.Sites,
+        Publication publication = apiClient.getPublication(ContentNamespace.Sites,
                 publicationId,
                 "",
                 contextData);
         return publication.getPublicationUrl();
-    }
-
-    public void setPcaClientProvider(ApiClientProvider pcaClientProvider) {
-        this.pcaClientProvider = pcaClientProvider;
-    }
-
-    public void setContentDownloader(BinaryContentDownloader contentDownloader) {
-        this.contentDownloader = contentDownloader;
     }
 }

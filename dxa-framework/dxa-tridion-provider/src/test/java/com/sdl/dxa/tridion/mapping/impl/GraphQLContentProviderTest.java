@@ -7,7 +7,10 @@ import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -21,11 +24,14 @@ import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -41,13 +47,28 @@ public class GraphQLContentProviderTest {
     private ModelBuilderPipeline builderPipeline;
     @Mock
     private StaticContentResolver staticContentResolver;
+    @Mock
+    private WebApplicationContext webApplicationContext;
+    @Mock
+    private ApiClientProvider apiClientProvider;
+    @Mock
+    private List<ConditionalEntityEvaluator> entityEvaluators;
+    @Mock
+    private ApiClient pcaClient;
 
     @InjectMocks
-    GraphQLContentProvider contentProvider;
+    private GraphQLContentProvider contentProvider;
 
     @Before
     public void setup() {
-
+        when(apiClientProvider.getClient()).thenReturn(pcaClient);
+        contentProvider = spy(new GraphQLContentProvider(webApplicationContext,
+                webRequestContext,
+                staticContentResolver,
+                builderPipeline,
+                modelServiceProvider,
+                apiClientProvider,
+                entityEvaluators));
     }
 
     @Test

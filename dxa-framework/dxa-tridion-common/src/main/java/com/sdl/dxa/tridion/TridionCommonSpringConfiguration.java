@@ -18,13 +18,15 @@ import org.springframework.context.annotation.Profile;
 public class TridionCommonSpringConfiguration {
 
     @Bean
-    @Profile("cil.providers.active")
+    // TODO uncomment when tridion docs module will use graphql providers
+    // @Profile("cil.providers.active")
     public WebTaxonomyFactory webTaxonomyFactory() {
         return new WebTaxonomyFactoryImpl();
     }
 
     @Bean
-    @Profile("cil.providers.active")
+    // TODO uncomment when tridion docs module will use graphql providers
+    // @Profile("cil.providers.active")
     public TaxonomyRelationManager taxonomyRelationManager() {
         return new TaxonomyRelationManager();
     }
@@ -36,7 +38,8 @@ public class TridionCommonSpringConfiguration {
     }
 
     @Bean
-    @Profile("cil.providers.active")
+    // TODO uncomment when tridion docs module will use graphql providers
+    // @Profile("cil.providers.active")
     public BinaryContentRetriever binaryContentRetriever() {
         return new BinaryContentRetrieverImpl();
     }

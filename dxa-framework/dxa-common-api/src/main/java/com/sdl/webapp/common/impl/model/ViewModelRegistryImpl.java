@@ -190,7 +190,8 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                 semanticMappingRegistry.registerEntity((Class<? extends EntityModel>) entityClass);
             }
         } catch (InterruptedException e) {
-            LOG.warn(e.getMessage(), e);
+            Thread.currentThread().interrupt();
+            LOG.warn("Interrupt detected", e);
         } finally {
             lock.unlock();
         }

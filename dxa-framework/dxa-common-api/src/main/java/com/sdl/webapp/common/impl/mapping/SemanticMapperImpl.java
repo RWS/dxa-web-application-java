@@ -134,7 +134,7 @@ public class SemanticMapperImpl implements SemanticMapper {
                     final SemanticField semanticField = findFieldForGivenSemantics(semanticFields, fieldSemantics);
                     if (semanticField != null) {
                         foundMatch = true;
-                        LOG.trace("Match found: {} -> {}", fieldSemantics, semanticField);
+                        if (LOG.isTraceEnabled()) LOG.trace("Semantic match found: {} -> {}", fieldSemantics, semanticField);
 
                         FieldData fieldData = null;
                         try {
@@ -237,6 +237,10 @@ public class SemanticMapperImpl implements SemanticMapper {
         // Set property data (used for semantic markup)
         if (AbstractEntityModel.class.isAssignableFrom(entity.getClass())) {
             ((AbstractEntityModel) entity).setXpmPropertyMetadata(xpmPropertyMetadata);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created: " + entity);
         }
     }
 

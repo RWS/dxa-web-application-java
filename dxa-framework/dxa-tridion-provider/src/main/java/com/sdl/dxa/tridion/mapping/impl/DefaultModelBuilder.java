@@ -201,7 +201,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             ((ListWrapper) schemas).getValues().isEmpty()) {
             return semanticFields;
         }
-        log.debug("Found additional semantic schemas {} used in the view model {}", schemas, modelData);
+        if (log.isDebugEnabled()) log.debug("Found additional semantic schemas {} used in the view model {}", schemas, modelData);
 
         Localization localization = webRequestContext.getLocalization();
         Map<FieldSemantics, SemanticField> allAncestorsSemanticFields = new HashMap<>(semanticFields);

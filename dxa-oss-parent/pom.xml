@@ -61,7 +61,7 @@
         <joda-time-version>2.10</joda-time-version>
 
         <jackson.version>2.9.6</jackson.version>
-        <woodstox-version>5.1.0</woodstox-version>
+        <woodstox-core.version>4.4.1</woodstox-core.version>
         <lombok.version>1.18.2</lombok.version>
 
         <!-- Logging -->
@@ -717,7 +717,7 @@
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>woodstox-core-asl</artifactId>
-                <version>${woodstox-version}</version>
+                <version>${woodstox-core.version}</version>
                 <scope>runtime</scope>
             </dependency>
 

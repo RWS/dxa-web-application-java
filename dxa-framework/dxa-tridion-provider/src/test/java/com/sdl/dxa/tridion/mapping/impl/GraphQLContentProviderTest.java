@@ -67,8 +67,8 @@ public class GraphQLContentProviderTest {
                 staticContentResolver,
                 builderPipeline,
                 modelServiceProvider,
-                apiClientProvider,
-                entityEvaluators));
+                apiClientProvider
+        ));
     }
 
     @Test

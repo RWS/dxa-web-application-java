@@ -80,14 +80,17 @@ public class GraphQLContentProvider implements ContentProvider {
                                   StaticContentResolver staticContentResolver,
                                   ModelBuilderPipeline builderPipeline,
                                   ModelServiceProvider modelService,
-                                  ApiClientProvider pcaClientProvider,
-                                  List<ConditionalEntityEvaluator> entityEvaluators) {
+                                  ApiClientProvider pcaClientProvider) {
         this.pcaClient = pcaClientProvider.getClient();
         this.graphQLBinaryContentProvider = new GraphQLBinaryContentProvider(pcaClientProvider.getClient(), webApplicationContext);
         this.webRequestContext = webRequestContext;
         this.staticContentResolver = staticContentResolver;
         this.builderPipeline = builderPipeline;
         this.modelService = modelService;
+    }
+
+    @Autowired(required = false)
+    public void setEntityEvaluators(List<ConditionalEntityEvaluator> entityEvaluators) {
         this.entityEvaluators = entityEvaluators;
     }
 

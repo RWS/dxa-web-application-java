@@ -5,7 +5,7 @@ import lombok.Value;
 import java.io.Serializable;
 
 /**
- * Combined cache key with a lozalition ID and key itself.
+ * Combined cache key with a localization ID and key itself.
  *
  * @dxa.publicApi
  */

@@ -27,9 +27,9 @@ import java.util.Arrays;
 public class GraphQLBinaryContentProvider {
     private static final String STATIC_FILES_DIR = "BinaryData";
 
-    protected WebApplicationContext webApplicationContext;
+    private WebApplicationContext webApplicationContext;
 
-    protected ApiClient pcaClient;
+    private ApiClient pcaClient;
 
     public GraphQLBinaryContentProvider(ApiClient pcaClient, WebApplicationContext webApplicationContext) {
         this.webApplicationContext = webApplicationContext;

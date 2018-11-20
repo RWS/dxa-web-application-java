@@ -38,7 +38,7 @@ public class ApiClientAuthentication implements Authentication {
     public void applyManualAuthentication(HttpRequest request) {
         if (tokenProvider != null) {
             LOG.trace("Request is secured, adding security token.");
-            request.addHeader(AUTHORIZATION_HEADER, "Bearer" + tokenProvider.getToken());
+            request.addHeader(AUTHORIZATION_HEADER, "Bearer " + tokenProvider.getToken());
         } else {
             LOG.trace("Request is not secured. Token provider is not available.");
         }

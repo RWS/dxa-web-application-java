@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
+import com.google.common.base.Strings;
 import com.sdl.dxa.api.datamodel.model.BinaryContentData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.ExternalContentData;
@@ -134,10 +135,10 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
             processMediaItem(modelData, entityModel);
             synchronized (this) {
-            entitiesCache.addAndGet(key, entityModel);
+                entitiesCache.addAndGet(key, entityModel);
             }
             return entityModel;
-        } catch (DxaException e) {
+        } catch (ReflectiveOperationException | DxaException e) {
             throw new DxaException("Exception happened while creating a entity model from: " + modelData, e);
         }
     }
@@ -155,19 +156,24 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     }
 
     @NotNull
-    private <T extends ViewModel> T createViewModel(Class<T> viewModelType, @NonNull ViewModelData viewModelData) throws SemanticMappingException {
+    private <T extends ViewModel> T createViewModel(Class<T> viewModelType, @NonNull ViewModelData viewModelData)
+            throws SemanticMappingException, ReflectiveOperationException {
         Localization localization = webRequestContext.getLocalization();
-        long schemaId = Long.parseLong(viewModelData.getSchemaId());
-        SemanticSchema semanticSchema = localization.getSemanticSchemas().get(schemaId);
-
-        List<SemanticSchema> allSchemas = semanticSchema == null ? getInheritedSemanticSchemas(viewModelData, localization) : Collections.emptyList();
-        semanticSchema = semanticSchema == null && !allSchemas.isEmpty()
-                ? allSchemas.get(0)
-                : semanticSchema;
+        List<SemanticSchema> allSchemas = getInheritedSemanticSchemas(viewModelData, localization);
+        SemanticSchema semanticSchema = null;
+        if (!Strings.isNullOrEmpty(viewModelData.getSchemaId())) {
+            long schemaId = Long.parseLong(viewModelData.getSchemaId());
+            semanticSchema = localization.getSemanticSchemas().get(schemaId);
+        } else {
+            if (allSchemas.isEmpty()) {
+                return viewModelType.newInstance();
+            }
+            semanticSchema = allSchemas.get(0);
+        }
         Map<FieldSemantics, SemanticField> semanticFields = getAllSemanticFields(semanticSchema, viewModelData);
         DefaultSemanticFieldDataProvider dataProvider = DefaultSemanticFieldDataProvider.getFor(viewModelData, semanticSchema);
         return semanticMapper.createEntity(viewModelType, semanticFields, dataProvider);
-        }
+    }
 
     protected List<SemanticSchema> getInheritedSemanticSchemas(ViewModelData viewModelData, Localization localization) {
         Object schemas = viewModelData.getExtensionData() != null ? viewModelData.getExtensionData().get("Schemas") : null;
@@ -331,20 +337,22 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             return originalPageModel;
         }
         PageModel pageModel = null;
-            try {
-                Class<? extends ViewModel> viewModelType = viewModelRegistry.getViewModelType(mvcData);
+        try {
+            Class<? extends ViewModel> viewModelType = viewModelRegistry.getViewModelType(mvcData);
 
-                log.debug("Instantiating a PageModel without a SchemaID = null, modelData = {}, view model type = '{}'", modelData, viewModelType);
-                if (modelData.getSchemaId() == null) { //schema ID is not set, can't do semantic mapping
-                    pageModel = viewModelType == null ? new DefaultPageModel() : (PageModel) viewModelType.newInstance();
-                } else { // semantic mapping is possible, let's do it
-                    pageModel = (PageModel) createViewModel(viewModelType, modelData);
-                }
-                pageModel.setMvcData(mvcData);
+            log.debug("Instantiating a PageModel without a SchemaID = null, modelData = {}, view model type = '{}'", modelData, viewModelType);
+            // semantic mapping is possible, let's do it
+            if (modelData.getSchemaId() == null) {
+                pageModel = viewModelType == null ? new DefaultPageModel() : null;
+            }
+            if (pageModel == null) {
+                pageModel = (PageModel) createViewModel(viewModelType, modelData);
+            }
+            pageModel.setMvcData(mvcData);
+            return pageModel;
         } catch (ReflectiveOperationException | DxaException e) {
             throw new SemanticMappingException("Exception happened while creating a page model " + modelData.getId(), e);
         }
-        return pageModel;
     }
 
     private String getPageTitle(PageModelData modelData) {

@@ -65,7 +65,7 @@ public class CacheTest {
         MvcModelData mvcData = new MvcModelData("a", "a", "a", "c", "v", null);
         PageModelData pageData = (PageModelData) new PageModelData("1", null, null, null, null, null, "/url")
                 .setMvcData(mvcData);
-        EntityModelData entityMvcData = (EntityModelData) new EntityModelData("2", null, null, null, null, mvcData, "1", "/url", null, null, null)
+        EntityModelData entityMvcData = (EntityModelData) new EntityModelData("3", null, null, null, null, mvcData, "1", "2", "/url", null, null, null)
                 .setMvcData(mvcData);
 
         //when
@@ -74,7 +74,7 @@ public class CacheTest {
 
         //then
         assertEquals(keyGenerator.generate("/url", mvcData), pagesCopyingCacheKey);
-        assertEquals(keyGenerator.generate("1", "2", mvcData), entitiesCacheKey);
+        assertEquals(keyGenerator.generate("1", "2", "3", mvcData), entitiesCacheKey);
     }
 
     private void shouldReturnNeededCache(Supplier<SimpleCacheWrapper<?, ?>> supplier, String cacheName) {

@@ -80,9 +80,8 @@ public abstract class AbstractModuleInitializer {
 
     private void registerViewModel(String viewName, Class<? extends ViewModel> entityClass, String controllerName) {
         String actualControllerName = getControllerNameForEntityClass(controllerName, entityClass);
-        boolean shouldHaveControllerName = shouldHaveControllerName(entityClass);
 
-        if (!shouldHaveControllerName && actualControllerName != null) {
+        if (actualControllerName != null && !shouldHaveControllerName(entityClass)) {
             log.warn("Controller name is not expected for {} but is {}", entityClass, controllerName);
         }
 

@@ -385,7 +385,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                             semanticFields,
                             DefaultSemanticFieldDataProvider.getFor(regionModelData, semanticSchema),
                             regionModel);
-                }
+            }
 
             fillViewModel(regionModel, regionModelData);
             regionModel.setMvcData(mvcData);

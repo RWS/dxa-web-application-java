@@ -104,7 +104,7 @@ public class SemanticMapperImpl implements SemanticMapper {
 
         mapSemanticFields(entityClass, semanticFields, fieldDataProvider, entity);
 
-        LOG.trace("entity: {}", entity);
+        if (LOG.isTraceEnabled()) LOG.trace("entity: {}", entity);
         return entity;
     }
 
@@ -112,125 +112,68 @@ public class SemanticMapperImpl implements SemanticMapper {
     public <T extends ViewModel> void mapSemanticFields(Class<? extends T> entityClass,
                                                          Map<FieldSemantics, SemanticField> semanticFields,
                                                          SemanticFieldDataProvider fieldDataProvider,
-                                                         T entity)
-    {
+                                                         T entity) {
         final Map<String, String> xpmPropertyMetadata = new HashMap<>();
 
         // Map all the fields (including fields inherited from superclasses) of the entity
-        ReflectionUtils.doWithFields(entityClass, new ReflectionUtils.FieldCallback() {
-            @Override
-            public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
-                // Find the semantics for this field
-                final Set<FieldSemantics> registrySemantics = registry.getFieldSemantics(field);
-                if (LOG.isTraceEnabled() && !registrySemantics.isEmpty()) {
-                    LOG.trace("field: {}", field);
+        ReflectionUtils.doWithFields(entityClass, field -> {
+            // Find the semantics for this field
+            final Set<FieldSemantics> registrySemantics = registry.getFieldSemantics(field);
+            if (LOG.isTraceEnabled() && !registrySemantics.isEmpty()) {
+                LOG.trace("field: {}", field);
+            }
+
+            boolean foundMatch = false;
+
+            // Try getting data using each of the field semantics in order
+            for (FieldSemantics fieldSemantics : registrySemantics) {
+                // Find the matching semantic field
+                final SemanticField semanticField = findFieldForGivenSemantics(semanticFields, fieldSemantics);
+                if (semanticField == null) {
+                    continue;
                 }
-
-                boolean foundMatch = false;
-
-                // Try getting data using each of the field semantics in order
-                for (FieldSemantics fieldSemantics : registrySemantics) {
-                    // Find the matching semantic field
-                    final SemanticField semanticField = findFieldForGivenSemantics(semanticFields, fieldSemantics);
-                    if (semanticField != null) {
-                        foundMatch = true;
-                        LOG.trace("Match found: {} -> {}", fieldSemantics, semanticField);
-
-                        FieldData fieldData = null;
-                        try {
-                            fieldData = fieldDataProvider.getFieldData(semanticField, new TypeDescriptor(field));
-                        } catch (SemanticMappingException e) {
-                            LOG.error("Exception while getting field data for: " + field, e);
-                        }
-
-                        String xPath = null;
-                        boolean isFieldSet = false;
-                        if (fieldData != null) {
-                            final Object fieldValue = fieldData.getFieldValue();
-                            if (fieldValue != null) {
-                                if (LOG.isTraceEnabled()) {
-                                    LOG.trace("Setting field value: {} -> {}", field.getName(), fieldValue);
-                                }
-
-                                field.setAccessible(true);
-                                if (field.getType().equals(RichText.class) && fieldValue.getClass().equals(String.class)) {
-                                    field.set(entity, new RichText((String) fieldValue));
-                                } else {
-                                    field.set(entity, fieldValue);
-                                }
-
-                                xPath = fieldData.getPropertyData();
-                                isFieldSet = true;
-                            }
-                        }
-
-                        if (xPath == null) {
-                            xPath = semanticField.getXPath("");
-                        }
-
-                        if (findFieldForGivenSemantics(fieldDataProvider.getSemanticSchema().getSemanticFields(), fieldSemantics) != null) {
-                            xpmPropertyMetadata.put(field.getName(), xPath);
-                        }
-                        if (isFieldSet) {
-                            break;
+                foundMatch = true;
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Match found: {} -> {}", fieldSemantics, semanticField);
+                }
+                try {
+                    FieldData fieldData = fieldDataProvider.getFieldData(semanticField, new TypeDescriptor(field));
+                    String xPath = null;
+                    boolean isFieldSet = false;
+                    if (fieldData != null) {
+                        final Object fieldValue = fieldData.getFieldValue();
+                        if (fieldValue != null) {
+                            setValueToField(entity, field, fieldValue);
+                            xPath = fieldData.getPropertyData();
+                            isFieldSet = true;
                         }
                     }
-                }
 
-                // Special cases - only try these when nothing was found yet
-                if (!foundMatch) {
-                    for (FieldSemantics fieldSemantics : registrySemantics) {
-                        final String propertyName = fieldSemantics.getPropertyName();
-                        SemanticSchema semanticSchema = fieldDataProvider.getSemanticSchema();
-                        if (propertyName.equals(SELF_PROPERTY) && (semanticSchema == null ||
-                                semanticSchema.hasSemantics(new EntitySemantics(fieldSemantics.getVocabulary(), fieldSemantics.getEntityName())))) {
-                            foundMatch = true;
-                            Object fieldData = null;
-                            try {
-                                fieldData = fieldDataProvider.getSelfFieldData(new TypeDescriptor(field));
-                            } catch (SemanticMappingException e) {
-                                LOG.error("Exception while getting self property data for: " + field, e);
-                            }
-
-                            if (fieldData != null) {
-                                field.setAccessible(true);
-                                field.set(entity, fieldData);
-                                break;
-                            }
-                        } else if (propertyName.equals(ALL_PROPERTY)) {
-                            foundMatch = true;
-
-                            Map<String, ?> fieldData = null;
-
-                            try
-                            {
-                                if(IsTypeOfMap(String.class, KeywordModel.class, field))
-                                {
-                                    fieldData = fieldDataProvider.getAllFieldData(KeywordModel.class);
-                                }
-                                else
-                                {
-                                    fieldData  = fieldDataProvider.getAllFieldData(String.class);
-                                }
-                            } catch (SemanticMappingException e) {
-                                LOG.error("Exception while getting all property data for: " + field, e);
-                            }
-
-                            if (fieldData != null) {
-                                field.setAccessible(true);
-                                field.set(entity, fieldData);
-                                break;
-                            }
-                        }
+                    if (xPath == null) {
+                        xPath = semanticField.getXPath("");
                     }
-                }
 
-                if (LOG.isDebugEnabled() && !foundMatch && !registrySemantics.isEmpty()) {
-                    // This not necessarily means there is a problem; for some components in the input, not all fields
-                    // of the entity are mapped
-                    LOG.trace("No match found for field: {}; registry semantics: {} did not match with supplied " +
-                            "semantics: {}", field, registrySemantics, semanticFields);
+                    if (findFieldForGivenSemantics(fieldDataProvider.getSemanticSchema().getSemanticFields(), fieldSemantics) != null) {
+                        xpmPropertyMetadata.put(field.getName(), xPath);
+                    }
+                    if (isFieldSet) {
+                        break;
+                    }
+                } catch (SemanticMappingException e) {
+                    LOG.error("Exception while getting field data for: " + field, e);
                 }
+            }
+
+            // Special cases - only try these when nothing was found yet
+            if (!foundMatch) {
+                foundMatch = setDefaultValueToField(fieldDataProvider, entity, field, registrySemantics, foundMatch);
+            }
+
+            if (LOG.isDebugEnabled() && !foundMatch && !registrySemantics.isEmpty()) {
+                // This not necessarily means there is a problem; for some components in the input, not all fields
+                // of the entity are mapped
+                LOG.trace("No match found for field: {}; registry semantics: {} did not match with supplied " +
+                        "semantics: {}", field, registrySemantics, semanticFields);
             }
         });
 
@@ -240,22 +183,64 @@ public class SemanticMapperImpl implements SemanticMapper {
         }
     }
 
-    private static boolean IsTypeOfMap(Type mapKeyType, Type mapValueType, Field field)
-    {
-        if( field.getType() == Map.class)
-        {
-            ParameterizedType type = (ParameterizedType) field.getGenericType();
-            Type key = type.getActualTypeArguments()[0];
-            Type value = type.getActualTypeArguments()[1];
+    private <T extends ViewModel> boolean setDefaultValueToField(SemanticFieldDataProvider fieldDataProvider, T entity, Field field, Set<FieldSemantics> registrySemantics, boolean foundMatch) throws IllegalAccessException {
+        for (FieldSemantics fieldSemantics : registrySemantics) {
+            final String propertyName = fieldSemantics.getPropertyName();
+            try {
+                SemanticSchema semanticSchema = fieldDataProvider.getSemanticSchema();
+                if (propertyName.equals(SELF_PROPERTY) &&
+                    (semanticSchema == null ||
+                     semanticSchema.hasSemantics(new EntitySemantics(fieldSemantics.getVocabulary(), fieldSemantics.getEntityName())))) {
+                    foundMatch = true;
+                    Object fieldData = fieldDataProvider.getSelfFieldData(new TypeDescriptor(field));
+                    if (fieldData != null) {
+                        field.setAccessible(true);
+                        field.set(entity, fieldData);
+                        break;
+                    }
 
-            if (key == mapKeyType && value == mapValueType)
-            {
-                return  true;
+                } else if (propertyName.equals(ALL_PROPERTY)) {
+                    foundMatch = true;
+
+                    Map<String, ?> fieldData = null;
+                    if (IsTypeOfMap(String.class, KeywordModel.class, field)) {
+                        fieldData = fieldDataProvider.getAllFieldData(KeywordModel.class);
+                    } else {
+                        fieldData = fieldDataProvider.getAllFieldData(String.class);
+                    }
+                    if (fieldData != null) {
+                        field.setAccessible(true);
+                        field.set(entity, fieldData);
+                        break;
+                    }
+                }
+            } catch (SemanticMappingException e) {
+                LOG.error("Exception while setting property [" + propertyName + "] data for: " + field, e);
             }
         }
-
-        return  false;
+        return foundMatch;
     }
 
+    private <T extends ViewModel> void setValueToField(T entity, Field field, Object fieldValue) throws IllegalAccessException {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Setting field value: {} -> {}", field.getName(), fieldValue);
+        }
+        field.setAccessible(true);
+        if (field.getType().equals(RichText.class) && fieldValue.getClass().equals(String.class)) {
+            field.set(entity, new RichText((String) fieldValue));
+        } else {
+            field.set(entity, fieldValue);
+        }
+    }
 
+    private static boolean IsTypeOfMap(Type mapKeyType, Type mapValueType, Field field) {
+        if (field.getType() != Map.class) {
+            return  false;
+        }
+        ParameterizedType type = (ParameterizedType) field.getGenericType();
+        Type key = type.getActualTypeArguments()[0];
+        Type value = type.getActualTypeArguments()[1];
+
+        return key == mapKeyType && value == mapValueType;
+    }
 }

@@ -1,5 +1,7 @@
 package com.sdl.dxa.caching;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.Value;
 
 import java.io.Serializable;
@@ -10,6 +12,8 @@ import java.io.Serializable;
  * @dxa.publicApi
  */
 @Value
+@EqualsAndHashCode
+@ToString(exclude = "key")
 public class LocalizationAwareCacheKey implements Serializable {
 
     private String localizationId;

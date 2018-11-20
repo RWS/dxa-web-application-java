@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.impl.model;
 
+import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -8,6 +9,7 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.exceptions.DxaException;
+import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
@@ -19,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -26,11 +29,13 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.Collectors;
 
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.getDefaultAreaName;
 
 @Component
 @Slf4j
+@ToString
 @CacheConfig(cacheNames = "defaultCache", keyGenerator = "localizationAwareKeyGenerator")
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 
@@ -60,13 +65,17 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             areaName = parts[0];
             scopedViewName = parts[1];
         }
-
-        return viewEntityClassMap.entrySet().stream()
-                .filter(mvcData -> mvcData.getKey().getAreaName().equals(areaName)
-                        && mvcData.getKey().getViewName().equals(scopedViewName))
-                .findFirst()
-                .map(Map.Entry::getValue)
-                .orElseThrow(() -> new DxaException(String.format("Could not find a view model for the view name %s", viewName)));
+        try {
+            lock.lock();
+            return viewEntityClassMap.entrySet().stream()
+                    .filter(mvcData -> mvcData.getKey().getAreaName().equals(areaName)
+                            && mvcData.getKey().getViewName().equals(scopedViewName))
+                    .findFirst()
+                    .map(Map.Entry::getValue)
+                    .orElseThrow(() -> new DxaException(String.format("Could not find a view model for the view name %s", viewName)));
+        } finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -99,7 +108,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         try {
             return getMappedModelTypes(semanticTypeNames, null);
         } catch (DxaException e) {
-            log.warn("Cannot get entity model type for {}", semanticTypeNames, e);
+            log.warn("Cannot get entity model type for {}" + semanticTypeNames, e);
             return null;
         }
     }
@@ -143,33 +152,41 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     @Override
     @Cacheable
     public Class<? extends ViewModel> getViewModelType(final MvcData viewData) {
-        Set<Map.Entry<MvcData, Class<? extends ViewModel>>> entries = viewEntityClassMap.entrySet();
-
-        Optional<? extends Class<? extends ViewModel>> entry =
-                entries.stream()
-                        .filter(mvcData -> {
-                            MvcData key = mvcData.getKey();
-                            return key.getViewName().equals(viewData.getViewName()) &&
-                                    key.getControllerName().equals(viewData.getControllerName()) &&
-                                    key.getAreaName().equals(viewData.getAreaName());
-                        })
-                        .map(Map.Entry::getValue)
-                        .findFirst();
-
-        if (entry.isPresent()) {
-            return entry.get();
+        Set<Map.Entry<MvcData, Class<? extends ViewModel>>> entries = new HashSet<>();
+        try{
+            lock.lock();
+            entries.addAll(viewEntityClassMap.entrySet().stream().filter(mvcData -> {
+                MvcData key = mvcData.getKey();
+                return key.getViewName().equals(viewData.getViewName());
+            }).collect(Collectors.toSet()));
+        } finally {
+            lock.unlock();
         }
-
-        Class<? extends ViewModel> classForModelData = entries.stream()
+        Class<? extends ViewModel> exactClassForModelData = entries.stream()
                 .filter(mvcData -> {
                     MvcData key = mvcData.getKey();
-                    return key.getViewName().equals(viewData.getViewName()) &&
-                            (key.getControllerName().equals(viewData.getControllerName()) || viewData.getControllerName() == null);
+                    return key.getControllerName().equals(viewData.getControllerName()) &&
+                           key.getAreaName().equals(viewData.getAreaName());
                 })
                 .map(Map.Entry::getValue)
                 .findFirst()
                 .orElse(null);
-        if (classForModelData != null) return classForModelData;
+
+        if (exactClassForModelData != null) {
+            return exactClassForModelData;
+        }
+
+        Class<? extends ViewModel> probablyClassForModelData = entries.stream()
+                .filter(mvcData -> {
+                    MvcData key = mvcData.getKey();
+                    return key.getControllerName().equals(viewData.getControllerName()) || Strings.isNullOrEmpty(viewData.getControllerName());
+                })
+                .map(Map.Entry::getValue)
+                .findFirst()
+                .orElse(null);
+        if (probablyClassForModelData != null) {
+            return probablyClassForModelData;
+        }
         throw new IllegalStateException("Cannot detect ViewModel for ViewData " + viewData);
     }
 
@@ -179,18 +196,15 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     @Override
     public void registerViewModel(MvcData viewData, Class<? extends ViewModel> entityClass) {
         try {
-            if (lock.tryLock(10, TimeUnit.SECONDS)) {
-                if (viewData != null) {
-                    if (viewEntityClassMap.containsKey(viewData)) {
-                        LOG.warn("View {} registered multiple times.", viewData);
-                        return;
-                    }
-                    viewEntityClassMap.put(viewData, entityClass);
+            lock.lock();
+            if (viewData != null) {
+                if (viewEntityClassMap.containsKey(viewData)) {
+                    LOG.warn("View {} registered multiple times, ignoring.", viewData);
+                    return;
                 }
-                semanticMappingRegistry.registerEntity((Class<? extends EntityModel>) entityClass);
+                viewEntityClassMap.put(viewData, entityClass);
             }
-        } catch (InterruptedException e) {
-            LOG.warn(e.getMessage(), e);
+            semanticMappingRegistry.registerEntity((Class<? extends EntityModel>) entityClass);
         } finally {
             lock.unlock();
         }

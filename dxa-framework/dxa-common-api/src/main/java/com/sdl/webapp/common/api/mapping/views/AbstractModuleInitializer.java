@@ -28,7 +28,7 @@ public abstract class AbstractModuleInitializer {
 
     @PostConstruct
     private void initialize() {
-        log.debug("Registration for views in {}", getClass().getCanonicalName());
+        log.info("Registration for views in {}", getClass().getCanonicalName());
 
         //todo dxa2 make ModuleInfo mandatory
         if (getClass().isAnnotationPresent(ModuleInfo.class)) {
@@ -58,6 +58,7 @@ public abstract class AbstractModuleInitializer {
                 registerViewEntry(viewEntry);
             }
         }
+        log.info("All views ("+viewModelRegistry.toString()+") registered");
     }
 
     private void traceAutoRegistering(Class<? extends Annotation> annotation) {
@@ -73,7 +74,7 @@ public abstract class AbstractModuleInitializer {
     protected abstract String getAreaName();
 
     private void registerViewEntry(RegisteredViewModel viewEntry) {
-        log.debug("View {} for class {}", viewEntry.viewName(), viewEntry.modelClass());
+        log.info("Registering view {} for class {}", viewEntry.viewName(), viewEntry.modelClass());
         registerViewModel(viewEntry.viewName(), viewEntry.modelClass(), viewEntry.controllerName());
     }
 
@@ -85,15 +86,18 @@ public abstract class AbstractModuleInitializer {
             log.warn("Controller name is not expected for {} but is {}", entityClass, controllerName);
         }
 
-        log.debug("controllerName {} for view {} with entity class {}", actualControllerName, viewName, entityClass);
+        log.info("Using controller '{}' for view '{}' with entity class {}", actualControllerName, viewName, entityClass);
 
-        MvcData mvcData = isNullOrEmpty(viewName) || isNullOrEmpty(actualControllerName) ? null : MvcDataImpl.newBuilder()
-                .areaName(getAreaName())
-                .viewName(viewName)
-                .controllerName(actualControllerName)
-                .build();
+        MvcData mvcData = isNullOrEmpty(viewName) || isNullOrEmpty(actualControllerName)
+                ? null
+                : MvcDataImpl.newBuilder()
+                    .controllerAreaName(null)
+                    .controllerName(actualControllerName)
+                    .areaName(getAreaName())
+                    .viewName(viewName)
+                    .build();
 
-        log.debug("Registering MvcData {} for entity class {}", mvcData, entityClass);
+        log.info("Registering {} for entity {}", mvcData, entityClass);
 
         viewModelRegistry.registerViewModel(mvcData, entityClass);
     }

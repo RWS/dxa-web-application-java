@@ -91,7 +91,7 @@ public class ModelBuilderPipelineTest {
     }
 
     @Test
-    public void shouldIterate_AllPageModelBuilders() {
+    public void shouldIterate_AllPageModelBuilders() throws Exception {
         //given
         PageRequestDto.PageInclusion pageInclusion = PageRequestDto.PageInclusion.INCLUDE;
 

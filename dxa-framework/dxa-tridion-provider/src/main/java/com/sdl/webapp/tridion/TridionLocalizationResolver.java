@@ -25,9 +25,12 @@ import java.util.Map;
 
 /**
  * Implementation of {@code LocalizationResolver} that uses the Tridion API to determine the localization for a request.
+ *
+ * @deprecated since PCA implementation added which support mashup scenario.
  */
 @Component
 @Profile("cil.providers.active")
+@Deprecated
 public class TridionLocalizationResolver implements LocalizationResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(TridionLocalizationResolver.class);

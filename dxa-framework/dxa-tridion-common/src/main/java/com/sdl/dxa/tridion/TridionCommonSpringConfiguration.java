@@ -13,8 +13,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+/**
+ * Tridion common spring configuration.
+ *
+ * @deprecated since PCA implementation added which support mashup scenario.
+ */
 @ComponentScan("com.sdl.dxa.tridion")
 @Configuration
+@Deprecated
 public class TridionCommonSpringConfiguration {
 
     @Bean

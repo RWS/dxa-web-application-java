@@ -13,7 +13,7 @@ import java.util.function.Function;
 /**
  * Tridion link resolver.
  *
- * @deprecated since PCA implementation added which support mashup scenario.
+ * @deprecated since PCA implementation added which supports mashup scenario.
  */
 @Component
 @Profile("cil.providers.active")

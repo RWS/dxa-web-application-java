@@ -68,7 +68,7 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
  * Content Provider default implementation. Look at {@link ContentProvider} documentation for details.
  *
  * @dxa.publicApi
- * @deprecated since PCA implementation added which support mashup scenario.
+ * @deprecated since PCA implementation added which supports mashup scenario.
  */
 @Service(value = "DefaultContentProvider")
 @Profile("cil.providers.active")

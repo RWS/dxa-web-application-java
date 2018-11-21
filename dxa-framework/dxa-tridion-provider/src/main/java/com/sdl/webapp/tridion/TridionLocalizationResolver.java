@@ -26,7 +26,7 @@ import java.util.Map;
 /**
  * Implementation of {@code LocalizationResolver} that uses the Tridion API to determine the localization for a request.
  *
- * @deprecated since PCA implementation added which support mashup scenario.
+ * @deprecated since PCA implementation added which supports mashup scenario.
  */
 @Component
 @Profile("cil.providers.active")

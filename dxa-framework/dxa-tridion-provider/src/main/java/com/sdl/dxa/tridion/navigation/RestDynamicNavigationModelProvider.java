@@ -22,7 +22,7 @@ import java.util.Optional;
 /**
  * Rest dynamic navigation model provider implementation.
  *
- * @deprecated since PCA implementation added which support mashup scenario.
+ * @deprecated since PCA implementation added which supports mashup scenario.
  */
 @Slf4j
 @Service

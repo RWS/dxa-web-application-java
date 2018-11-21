@@ -35,7 +35,7 @@ import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
  * and to cache it for same request.
  *
  * @dxa.publicApi
- * @deprecated since PCA implementation added which support mashup scenario.
+ * @deprecated since PCA implementation added which supports mashup scenario.
  */
 @Slf4j
 @Service

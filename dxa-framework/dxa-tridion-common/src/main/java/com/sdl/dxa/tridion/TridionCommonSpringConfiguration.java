@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Profile;
 /**
  * Tridion common spring configuration.
  *
- * @deprecated since PCA implementation added which support mashup scenario.
+ * @deprecated since PCA implementation added which supports mashup scenario.
  */
 @ComponentScan("com.sdl.dxa.tridion")
 @Configuration

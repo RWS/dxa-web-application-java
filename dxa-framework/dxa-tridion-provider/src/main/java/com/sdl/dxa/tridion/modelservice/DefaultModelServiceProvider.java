@@ -21,7 +21,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 /**
  * Default model service provider implementation.
  *
- * @deprecated since PCA implementation added which support mashup scenario.
+ * @deprecated since PCA implementation added which supports mashup scenario.
  */
 @Slf4j
 @Service(value = "DefaultModelService")

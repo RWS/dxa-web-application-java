@@ -133,7 +133,6 @@ public class DefaultModelBuilderTest {
         // region(0).region(0).entity(0).MvcData
         assertEqualsAndNotNull(entityModelData.getMvcData().getViewName(), infoRegionEntities.getMvcData().getViewName());
 
-        // TODO
         // region(0).region(0).entity(0).xpmMetadata
         assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentID");
         assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentModified");
@@ -155,7 +154,6 @@ public class DefaultModelBuilderTest {
         // region(0).MvcData
         assertEqualsAndNotNull(regionModelData.getMvcData().getViewName(), headerRegion.getMvcData().getViewName());
 
-        // TODO
         // region(0).XpmMetadata
         assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageId");
         assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageTitle");
@@ -164,7 +162,6 @@ public class DefaultModelBuilderTest {
         // page.getMvcData
         assertEqualsAndNotNull(pageModelData.getMvcData().getViewName(), pageModel.getMvcData().getViewName());
 
-        // TODO
         // page.getXpmMetadata
         assertXpmMetadata(pageModelData, pageModel, "PageID");
         assertXpmMetadata(pageModelData, pageModel, "PageModified");

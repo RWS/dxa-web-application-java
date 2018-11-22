@@ -240,6 +240,8 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     private <T extends EntityModel> void processMediaItem(EntityModelData modelData, T entityModel) throws DxaException {
         if (!(entityModel instanceof MediaItem)) {
+            log.debug("Entity model " + entityModel.getClass().getCanonicalName() +
+                      " is not a MediaItem, processing as media will be skipped");
             return;
         }
         MediaItem mediaItem = (MediaItem) entityModel;

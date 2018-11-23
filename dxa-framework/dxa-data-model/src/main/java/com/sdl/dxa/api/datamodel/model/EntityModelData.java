@@ -16,7 +16,7 @@ import java.util.Map;
 
 @EqualsAndHashCode(callSuper = true)
 @JsonTypeName
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)

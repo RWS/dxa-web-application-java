@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
+import com.sdl.dxa.api.datamodel.model.MvcModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
@@ -30,11 +31,13 @@ import com.sdl.webapp.common.api.mapping.views.AbstractModuleInitializer;
 import com.sdl.webapp.common.api.mapping.views.RegisteredViewModel;
 import com.sdl.webapp.common.api.mapping.views.RegisteredViewModels;
 import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
+import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.impl.mapping.SemanticMapperImpl;
@@ -61,10 +64,12 @@ import java.util.Collections;
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -84,11 +89,8 @@ public class DefaultModelBuilderTest {
     @Autowired
     private PagesCopyingCache pagesCopyingCache;
 
-    @Autowired
-    private EntitiesCache entitiesCache;
-
     @Test
-    public void shouldBuildPageModel_OutOfModelDataR2() throws IOException {
+    public void shouldBuildPageModel_OutOfModelDataR2() throws Exception {
         //given
         PageModelData pageModelData = objectMapper.readValue(new ClassPathResource("home_page_json_full.json").getFile(), PageModelData.class);
 
@@ -131,13 +133,12 @@ public class DefaultModelBuilderTest {
         // region(0).region(0).entity(0).MvcData
         assertEqualsAndNotNull(entityModelData.getMvcData().getViewName(), infoRegionEntities.getMvcData().getViewName());
 
-        // TODO
         // region(0).region(0).entity(0).xpmMetadata
-//        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentID");
-//        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentModified");
-//        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateID");
-//        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateModified");
-//        assertXpmMetadata(entityModelData, infoRegionEntities, "IsRepositoryPublished");
+        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentID");
+        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentModified");
+        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateID");
+        assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateModified");
+        assertXpmMetadata(entityModelData, infoRegionEntities, "IsRepositoryPublished");
 
         // TODO
         // region(0).region(0).entity(0).schemaId
@@ -153,21 +154,19 @@ public class DefaultModelBuilderTest {
         // region(0).MvcData
         assertEqualsAndNotNull(regionModelData.getMvcData().getViewName(), headerRegion.getMvcData().getViewName());
 
-        // TODO
         // region(0).XpmMetadata
-//        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageId");
-//        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageTitle");
-//        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageFileName");
+        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageId");
+        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageTitle");
+        assertXpmMetadata(regionModelData, headerRegion, "IncludedFromPageFileName");
 
         // page.getMvcData
         assertEqualsAndNotNull(pageModelData.getMvcData().getViewName(), pageModel.getMvcData().getViewName());
 
-        // TODO
         // page.getXpmMetadata
-//        assertXpmMetadata(pageModelData, pageModel, "PageID");
-//        assertXpmMetadata(pageModelData, pageModel, "PageModified");
-//        assertXpmMetadata(pageModelData, pageModel, "PageTemplateID");
-//        assertXpmMetadata(pageModelData, pageModel, "PageTemplateModified");
+        assertXpmMetadata(pageModelData, pageModel, "PageID");
+        assertXpmMetadata(pageModelData, pageModel, "PageModified");
+        assertXpmMetadata(pageModelData, pageModel, "PageTemplateID");
+        assertXpmMetadata(pageModelData, pageModel, "PageTemplateModified");
 
         // TODO
         // page.Metadata

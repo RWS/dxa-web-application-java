@@ -2,6 +2,7 @@ package com.sdl.webapp.common.markup;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import org.joda.time.DateTime;
@@ -19,7 +20,11 @@ public interface Markup {
 
     String entity(EntityModel entity);
 
+    String page(PageModel page);
+
     String property(EntityModel entity, String fieldName);
+
+    String property(PageModel page, String fieldName);
 
     String property(EntityModel entity, String fieldName, int index);
 

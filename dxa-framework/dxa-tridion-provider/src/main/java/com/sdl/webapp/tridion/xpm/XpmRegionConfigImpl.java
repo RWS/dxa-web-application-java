@@ -72,6 +72,11 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
         }
         Map<String, XpmRegion> oldRegionsByName = regionsByLocalization.putIfAbsent(localization.getId(), newRegionsByName);
         if (oldRegionsByName == null) oldRegionsByName = newRegionsByName;
+        if (LOG.isDebugEnabled() && regionsByLocalization.size()>100) {
+            LOG.debug("RegionsByLocalization cache contains " + regionsByLocalization.size() +
+                    " different localizations with " + oldRegionsByName.size() +
+                    " regions for " + localization.getId());
+        }
         return oldRegionsByName.get(regionName);
     }
 

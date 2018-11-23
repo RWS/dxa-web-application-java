@@ -18,9 +18,15 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/**
+ * Default model service provider implementation.
+ *
+ * @deprecated since PCA implementation added which supports mashup scenario.
+ */
 @Slf4j
 @Service(value = "DefaultModelService")
 @Profile("cil.providers.active")
+@Deprecated
 public class DefaultModelServiceProvider implements ModelServiceProvider {
 
     private final ModelServiceConfiguration configuration;

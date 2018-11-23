@@ -24,7 +24,7 @@ public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLo
     private static final String[] EMPTY = new String[0];
 
     private String serviceUrl;
-    private volatile boolean initialized = false;
+    private boolean initialized = false;
     private String endpointContext;
     private boolean claimForwarding;
 
@@ -59,20 +59,20 @@ public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLo
             this.serviceUrl = ClientsUtil.makeEndWithoutSlash(StringUtils.replace(contentServiceUrl,
                     CONTENT_SERVICE_CONTEXT_PATH,
                     endpointContext));
-            LOG.debug("The Public Content API endpoint is '{}'", serviceUrl);
+            LOG.info("The Public Content API endpoint is '{}'", serviceUrl);
+            initialized = true;
         } catch (ConfigurationException e) {
             throw new ApiClientConfigurationException("Exception during loading Api Client configuration, " +
                     "endpoint: [" + endpointContext + "]", e);
         }
-        initialized = true;
     }
 
-    boolean isInitialized() {
+    synchronized boolean isInitialized() {
         return initialized;
     }
 
     @Override
-    public String getServiceUrl() {
+    synchronized public String getServiceUrl() {
         initialize();
         return serviceUrl;
     }
@@ -87,9 +87,12 @@ public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLo
         initialize();
         Properties properties = new Properties();
         properties.putAll(getCommonProperties());
-        properties.put(SERVICE_URI, ClientsUtil.makeEndWithoutSlash(StringUtils.replace(this.serviceUrl,
-                CONTENT_SERVICE_CONTEXT_PATH,
-                endpointContext)));
+        final String serviceUrl;
+        synchronized (this) {
+            serviceUrl = this.serviceUrl;
+        }
+        String fullUrl = StringUtils.replace(serviceUrl, CONTENT_SERVICE_CONTEXT_PATH, endpointContext);
+        properties.put(SERVICE_URI, ClientsUtil.makeEndWithoutSlash(fullUrl));
         return properties;
     }
 

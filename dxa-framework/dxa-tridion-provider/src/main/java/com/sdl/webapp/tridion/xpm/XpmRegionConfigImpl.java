@@ -12,17 +12,22 @@ import com.sdl.webapp.common.api.xpm.ComponentType;
 import com.sdl.webapp.common.api.xpm.OccurrenceConstraint;
 import com.sdl.webapp.common.api.xpm.XpmRegion;
 import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
+import com.sdl.webapp.common.exceptions.DxaRuntimeException;
+import lombok.Synchronized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
+import scala.collection.mutable.SynchronizedMap;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 /**
@@ -33,7 +38,7 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
 
     private static final String REGIONS_PATH = "/system/mappings/regions.json";
 
-    private final Map<String, Map<String, XpmRegion>> regionsByLocalization = new HashMap<>();
+    private final ConcurrentHashMap<String, Map<String, XpmRegion>> regionsByLocalization = new ConcurrentHashMap<>();
 
     private final ContentProvider contentProvider;
 
@@ -55,20 +60,19 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
     /**
      * {@inheritDoc}
      */
-    public synchronized XpmRegion getXpmRegion(String regionName, Localization localization) {
-        final String localizationId = localization.getId();
-        if (!regionsByLocalization.containsKey(localizationId)) {
-            final Map<String, XpmRegion> regionsByName = new HashMap<>();
-            List<XpmRegion> xpmRegions = loadXpmRegions(localization);
-            if (xpmRegions != null) {
-                for (XpmRegion region : xpmRegions) {
-                    regionsByName.put(region.getRegionName(), region);
-                }
-            }
-            regionsByLocalization.put(localizationId, regionsByName);
+    public XpmRegion getXpmRegion(String regionName, Localization localization) {
+        Map<String, XpmRegion> regions = regionsByLocalization.get(localization.getId());
+        if (regions != null) {
+            return regions.get(regionName);
         }
-
-        return regionsByLocalization.get(localizationId).get(regionName);
+        final Map<String, XpmRegion> newRegionsByName = new HashMap<>();
+        List<XpmRegion> xpmRegions = loadXpmRegions(localization);
+        for (XpmRegion region : xpmRegions) {
+            newRegionsByName.put(region.getRegionName(), region);
+        }
+        Map<String, XpmRegion> oldRegionsByName = regionsByLocalization.putIfAbsent(localization.getId(), newRegionsByName);
+        if (oldRegionsByName == null) oldRegionsByName = newRegionsByName;
+        return oldRegionsByName.get(regionName);
     }
 
     private List<XpmRegion> loadXpmRegions(Localization localization) {
@@ -78,9 +82,10 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
             item = contentProvider.getStaticContent(REGIONS_PATH, localization.getId(), localization.getPath());
         } catch (ContentProviderException e) {
             LOG.error(message, e);
-            return null;
+            throw new DxaRuntimeException(message, e);
         }
         try (final InputStream in = item.getContent();) {
+            message += " and path: " + localization.getPath() + " as " + REGIONS_PATH;
             SimpleModule module = new SimpleModule("ComponentTypeMapper", Version.unknownVersion());
             module.addAbstractTypeMapping(ComponentType.class, ComponentTypeImpl.class);
             module.addAbstractTypeMapping(OccurrenceConstraint.class, OccurrenceConstraintImpl.class);
@@ -88,7 +93,7 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
             return objectMapper.readValue(in, new TypeReference<List<XpmRegionImpl>>() {});
         } catch (IOException e) {
             LOG.error(message, e);
-            return null;
+            throw new DxaRuntimeException(message, e);
         }
     }
 }

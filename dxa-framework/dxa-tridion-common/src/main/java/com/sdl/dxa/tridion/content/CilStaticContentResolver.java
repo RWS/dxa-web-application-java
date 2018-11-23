@@ -66,44 +66,39 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
                                                         int publicationId,
                                                         ImageUtils.StaticContentPathInfo pathInfo,
                                                         String urlPath) throws ContentProviderException {
-        BinaryMeta binaryMeta;
+        BinaryMeta binaryMeta = getBinaryMeta(urlPath, publicationId);
 
-        synchronized (LOCK) {
-            binaryMeta = getBinaryMeta(urlPath, publicationId);
+        int itemId = (int) binaryMeta.getURI().getItemId();
+        ComponentMeta componentMeta = getComponentMeta(pathInfo, publicationId, itemId);
 
-            int itemId = (int) binaryMeta.getURI().getItemId();
-            ComponentMeta componentMeta = getComponentMeta(pathInfo, publicationId, itemId);
+        long componentTime = componentMeta.getLastPublicationDate().getTime();
 
-            long componentTime = componentMeta.getLastPublicationDate().getTime();
+        boolean shouldRefresh = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
 
-            boolean shouldRefresh = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
-
-            if (shouldRefresh) {
+        if (shouldRefresh) {
+            log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
+            synchronized (LOCK) {
                 refreshBinary(file, pathInfo, publicationId, binaryMeta, itemId);
-            } else {
-                log.debug("File does not need to be refreshed: {}", file);
             }
+        } else {
+            log.debug("File does not need to be refreshed: {}", file.getAbsolutePath());
         }
 
         String contentType = StringUtils.isEmpty(binaryMeta.getType()) ? DEFAULT_CONTENT_TYPE : binaryMeta.getType();
         boolean versioned = requestDto.getBinaryPath().contains("/system/");
-        StaticContentItem staticContentItem = new StaticContentItem(contentType,
-                file,
-                versioned);
-        return staticContentItem;
+        return new StaticContentItem(contentType, file, versioned);
     }
 
     @Override
     protected String _resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
-        PublicationMeta meta;
         String localizationId = requestDto.getLocalizationId();
         try {
-            meta = webPublicationMetaFactory.getMeta(TcmUtils.buildPublicationTcmUri(localizationId));
+            PublicationMeta meta = webPublicationMetaFactory.getMeta(TcmUtils.buildPublicationTcmUri(localizationId));
+            log.debug("Resolved url '{}' for publication id {}", meta.getPublicationPath(), localizationId);
+            return meta.getPublicationUrl();
         } catch (StorageException e) {
             throw new StaticContentNotLoadedException("Cannot resolve localization path for localization '" + localizationId + "'", e);
         }
-        log.debug("Resolved url '{}' for publication id {}", meta.getPublicationPath(), localizationId);
-        return meta.getPublicationUrl();
     }
 
     @NotNull

@@ -119,16 +119,17 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                     (expectedClass != null
                             ? " from pre-selected class " + expectedClass.getCanonicalName()
                             : " from MvcData class " + mvcData.getClass().getCanonicalName()));
-            LocalizationAwareCacheKey key = entitiesCache.getSpecificKey(modelData,expectedClass);
+            LocalizationAwareCacheKey key = entitiesCache.getSpecificKey(modelData, expectedClass);
+            T entityModel = null;
             synchronized (this) {
-                if (entitiesCache.containsKey(key)) {
-                    //noinspection unchecked
-                    return (T) entitiesCache.get(key);
-                }
+                entityModel = (T) entitiesCache.get(key);
             }
-
+            if (entityModel != null) {
+                //noinspection unchecked
+                return (T) entityModel;
+            }
             //noinspection unchecked
-            T entityModel = (T) createViewModel(modelType, modelData);
+            entityModel = (T) createViewModel(modelType, modelData);
             entityModel.setMvcData(mvcData);
 
             ((AbstractEntityModel) entityModel).setId(modelData.getId());

@@ -7,9 +7,11 @@ import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariant;
+import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
+import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -31,7 +33,8 @@ public class GraphQLBinaryContentProvider {
 
     private ApiClient pcaClient;
 
-    public GraphQLBinaryContentProvider(ApiClient pcaClient, WebApplicationContext webApplicationContext) {
+    public GraphQLBinaryContentProvider(ApiClient pcaClient,
+                                        WebApplicationContext webApplicationContext) {
         this.webApplicationContext = webApplicationContext;
         this.pcaClient = pcaClient;
     }

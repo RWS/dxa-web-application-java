@@ -57,22 +57,20 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
 
         long componentTime = new DateTime(binaryComponent.getLastPublishDate()).getMillis();
 
-        boolean shouldRefresh = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
+        boolean shouldRefreshed = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
 
-        if (shouldRefresh) {
+        if (shouldRefreshed) {
+            log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
             synchronized (LOCK) {
                 refreshBinary(file, pathInfo, binaryComponent);
             }
         } else {
-            log.debug("File does not need to be refreshed: {}", file);
+            log.debug("File does not need to be refreshed: {}", file.getAbsolutePath());
         }
         String binaryComponentType = binaryComponent.getVariants().getEdges().get(0).getNode().getType();
         String contentType = StringUtils.isEmpty(binaryComponentType) ? DEFAULT_CONTENT_TYPE : binaryComponentType;
         boolean versioned = requestDto.getBinaryPath().contains("/system/");
-        StaticContentItem staticContentItem = new StaticContentItem(contentType,
-                file,
-                versioned);
-        return staticContentItem;
+        return new StaticContentItem(contentType, file, versioned);
     }
 
     private void refreshBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, BinaryComponent binaryComponent) throws ContentProviderException {

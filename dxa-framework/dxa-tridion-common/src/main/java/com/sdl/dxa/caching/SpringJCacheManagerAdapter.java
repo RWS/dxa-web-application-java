@@ -7,6 +7,7 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.jcache.JCacheCache;
 import org.springframework.cache.support.NoOpCache;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -29,8 +30,9 @@ public class SpringJCacheManagerAdapter implements CacheManager {
     public Cache getCache(String name) {
         log.debug("Requested cache name = {}, we know these caches: {}", caches);
         if (!caches.containsKey(name)) {
-            Cache cache = cacheProvider.isCacheEnabled(name) ?
-                    new JCacheCache(cacheProvider.getCache(name)) : new NoOpCache(name);
+            Cache cache = cacheProvider.isCacheEnabled(name)
+                    ? new JCacheCache(cacheProvider.getCache(name))
+                    : new NoOpCache(name);
             log.debug("Created a cache {} and now know all these: {}", name, caches);
             caches.putIfAbsent(name, cache);
         }
@@ -38,7 +40,7 @@ public class SpringJCacheManagerAdapter implements CacheManager {
     }
 
     @Override
-    public synchronized Collection<String> getCacheNames() {
-        return caches.keySet();
+    public Collection<String> getCacheNames() {
+        return new ArrayList<>(caches.keySet());
     }
 }

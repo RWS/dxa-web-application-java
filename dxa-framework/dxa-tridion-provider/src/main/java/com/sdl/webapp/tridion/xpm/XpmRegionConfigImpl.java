@@ -37,6 +37,7 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
     private static final Logger LOG = LoggerFactory.getLogger(XpmRegionConfigImpl.class);
 
     private static final String REGIONS_PATH = "/system/mappings/regions.json";
+    private static final int TOTAL_SIZE_TO_START_LOGGING = 100;
 
     private final ConcurrentHashMap<String, Map<String, XpmRegion>> regionsByLocalization = new ConcurrentHashMap<>();
 
@@ -72,7 +73,7 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
         }
         Map<String, XpmRegion> oldRegionsByName = regionsByLocalization.putIfAbsent(localization.getId(), newRegionsByName);
         if (oldRegionsByName == null) oldRegionsByName = newRegionsByName;
-        if (LOG.isDebugEnabled() && regionsByLocalization.size()>100) {
+        if (LOG.isDebugEnabled() && regionsByLocalization.size() > TOTAL_SIZE_TO_START_LOGGING) {
             LOG.debug("RegionsByLocalization cache contains " + regionsByLocalization.size() +
                     " different localizations with " + oldRegionsByName.size() +
                     " regions for " + localization.getId());

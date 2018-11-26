@@ -43,11 +43,11 @@ import com.tridion.broker.querying.sorting.SortDirection;
 import com.tridion.meta.ComponentMeta;
 import com.tridion.meta.NameValuePair;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -68,11 +68,12 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
  * Content Provider default implementation. Look at {@link ContentProvider} documentation for details.
  *
  * @dxa.publicApi
+ * @deprecated since PCA implementation added which supports mashup scenario.
  */
 @Service(value = "DefaultContentProvider")
 @Profile("cil.providers.active")
-@Primary
 @Slf4j
+@Deprecated
 public class DefaultContentProvider implements ContentProvider {
 
     private final ModelBuilderPipeline builderPipeline;
@@ -84,6 +85,7 @@ public class DefaultContentProvider implements ContentProvider {
     private final LinkResolver linkResolver;
 
     private final StaticContentResolver staticContentResolver;
+
 
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
@@ -114,7 +116,7 @@ public class DefaultContentProvider implements ContentProvider {
         try {
             return builderPipeline.createEntityModel(modelData);
         } catch (DxaException e) {
-            throw new ContentProviderException("Cannot build the entity model for componentId" + componentId, e);
+            throw new ContentProviderException("Cannot build the entity model for componentId " + componentId, e);
         }
     }
 
@@ -229,12 +231,12 @@ public class DefaultContentProvider implements ContentProvider {
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
 
-        return staticContentResolver.getStaticContent(
-                StaticContentRequestDto.builder(path, localizationId)
-                        .localizationPath(localizationPath)
-                        .baseUrl(webRequestContext.getBaseUrl())
-                        .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isPreview())
-                        .build());
+        return staticContentResolver.getStaticContent(StaticContentRequestDto
+                .builder(path, localizationId)
+                .localizationPath(localizationPath)
+                .baseUrl(webRequestContext.getBaseUrl())
+                .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isPreview())
+                .build());
     }
 
     protected List<String> executeQuery(SimpleBrokerQuery simpleBrokerQuery) {
@@ -242,7 +244,7 @@ public class DefaultContentProvider implements ContentProvider {
         try {
             return Arrays.asList(query.executeQuery());
         } catch (StorageException e) {
-            log.warn("Exception while execution of broker query", e);
+            log.warn("Exception while execution of broker query " + simpleBrokerQuery, e);
             return Collections.emptyList();
         }
     }
@@ -371,5 +373,15 @@ public class DefaultContentProvider implements ContentProvider {
                 // Default is to assume that its a custom metadata date field
                 return new CustomMetaKeyColumn(simpleBrokerQuery.getSort(), MetadataType.DATE);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
+    @Override
+    public StaticContentItem getStaticContent(int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
+        throw new NotImplementedException("CIL does not have such realization. Use GraphQL instead of CIL.");
     }
 }

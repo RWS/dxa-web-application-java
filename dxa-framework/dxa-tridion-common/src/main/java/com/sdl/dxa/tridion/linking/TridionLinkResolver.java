@@ -10,8 +10,14 @@ import org.springframework.stereotype.Component;
 import java.util.Optional;
 import java.util.function.Function;
 
+/**
+ * Tridion link resolver.
+ *
+ * @deprecated since PCA implementation added which supports mashup scenario.
+ */
 @Component
 @Profile("cil.providers.active")
+@Deprecated
 public class TridionLinkResolver extends AbstractLinkResolver {
 
     @Override

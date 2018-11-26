@@ -5,6 +5,7 @@ import com.sdl.dxa.api.datamodel.model.util.CanWrapContentAndMetadata;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.Map;
@@ -19,6 +20,7 @@ import java.util.Map;
 @Accessors(chain = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 public abstract class ViewModelData implements CanCopyValues<ViewModelData>, CanWrapContentAndMetadata {
 
     private String schemaId;

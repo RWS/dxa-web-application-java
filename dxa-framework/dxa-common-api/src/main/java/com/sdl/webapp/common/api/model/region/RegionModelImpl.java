@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
+import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -26,6 +27,7 @@ import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.collect.FluentIterable.from;
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.REGION;
@@ -182,10 +184,25 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
     }
 
     @Override
-    public void filterConditionalEntities(Collection<ConditionalEntityEvaluator> evaluators) {
-        regions.forEach(regionModel -> regionModel.filterConditionalEntities(evaluators));
-
-        entities.removeIf(entityModel -> !evaluators.stream().allMatch(evaluator -> evaluator.includeEntity(entityModel)));
+    public void filterConditionalEntities(Collection<ConditionalEntityEvaluator> evaluators) throws ContentProviderException {
+        AtomicReference<ContentProviderException> exception = new AtomicReference<>();
+        regions.forEach(regionModel -> {
+            try {
+                regionModel.filterConditionalEntities(evaluators);
+            } catch (ContentProviderException ex) {
+                exception.set(ex);
+            }
+        });
+        if (exception.get() != null) throw exception.get();
+        entities.removeIf(entityModel -> !evaluators.stream().allMatch(evaluator -> {
+            try {
+                return evaluator.includeEntity(entityModel);
+            } catch (ContentProviderException ex) {
+                exception.set(ex);
+                return true;
+            }
+        }));
+        if (exception.get() != null) throw exception.get();
     }
 
     /**

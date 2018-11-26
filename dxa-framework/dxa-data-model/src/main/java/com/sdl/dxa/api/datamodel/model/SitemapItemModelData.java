@@ -6,10 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ComparisonChain;
 import com.sdl.dxa.api.datamodel.json.Polymorphic;
-import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
@@ -36,7 +34,6 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
     @JsonProperty("Title")
     private String title;
 
-    @Setter(value = AccessLevel.PRIVATE)
     @JsonProperty("OriginalTitle")
     private String originalTitle;
 

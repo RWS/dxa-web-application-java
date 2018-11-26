@@ -12,6 +12,7 @@ import com.sdl.dxa.tridion.broker.QueryProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.generated.Component;
 import com.sdl.web.pca.client.contentmodel.generated.CustomMetaEdge;
 import com.sdl.web.pca.client.contentmodel.generated.Item;
@@ -19,7 +20,6 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
-import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -37,6 +37,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpSession;
@@ -65,27 +66,27 @@ public class GraphQLContentProvider implements ContentProvider {
 
     private WebRequestContext webRequestContext;
 
-    private LinkResolver linkResolver;
-
     private StaticContentResolver staticContentResolver;
-
-    private ApiClientProvider clientProvider;
 
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
+    private GraphQLBinaryContentProvider graphQLBinaryContentProvider;
+
+    private ApiClient pcaClient;
+
     @Autowired
-    public GraphQLContentProvider(WebRequestContext webRequestContext,
-                              StaticContentResolver staticContentResolver,
-                              LinkResolver linkResolver,
-                              ModelBuilderPipeline builderPipeline,
-                              ModelServiceProvider modelService,
-                              ApiClientProvider clientProvider) {
+    public GraphQLContentProvider(WebApplicationContext webApplicationContext,
+                                  WebRequestContext webRequestContext,
+                                  StaticContentResolver staticContentResolver,
+                                  ModelBuilderPipeline builderPipeline,
+                                  ModelServiceProvider modelService,
+                                  ApiClientProvider pcaClientProvider) {
+        this.pcaClient = pcaClientProvider.getClient();
+        this.graphQLBinaryContentProvider = new GraphQLBinaryContentProvider(pcaClientProvider.getClient(), webApplicationContext);
         this.webRequestContext = webRequestContext;
-        this.linkResolver = linkResolver;
         this.staticContentResolver = staticContentResolver;
         this.builderPipeline = builderPipeline;
         this.modelService = modelService;
-        this.clientProvider = clientProvider;
     }
 
     @Autowired(required = false)
@@ -149,7 +150,7 @@ public class GraphQLContentProvider implements ContentProvider {
         simpleBrokerQuery.setStartAt(start);
         dynamicList.setStart(cursors.getStart());
 
-        QueryProvider brokerQuery = new GraphQLQueryProvider(clientProvider.getClient());
+        QueryProvider brokerQuery = new GraphQLQueryProvider(pcaClient);
 
         List<Item> components = brokerQuery.executeQueryItems(simpleBrokerQuery);
         log.debug("Broker query returned {} results. hasMore={}", components.size(), brokerQuery.hasMore());
@@ -259,7 +260,6 @@ public class GraphQLContentProvider implements ContentProvider {
     @Override
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
-
         return staticContentResolver.getStaticContent(
                 StaticContentRequestDto.builder(path, localizationId)
                         .localizationPath(localizationPath)
@@ -284,5 +284,15 @@ public class GraphQLContentProvider implements ContentProvider {
         } catch (DxaException e) {
             throw new ContentProviderException("Cannot build the entity model for componentId" + componentId, e);
         }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
+    @Override
+    public StaticContentItem getStaticContent(int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
+        return graphQLBinaryContentProvider.getStaticContent(this, binaryId, localizationId, localizationPath);
     }
 }

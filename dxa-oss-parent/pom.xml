@@ -50,7 +50,7 @@
         <!-- Apache -->
         <commons-io-version>2.6</commons-io-version>
         <commons-lang3.version>3.8.1</commons-lang3.version>
-        <commons-collections4.version>4.2</commons-collections4.version>
+        <commons-collections4.version>4.1</commons-collections4.version>
         <commons-validator.version>1.6</commons-validator.version>
         <httpcomponents-client-version>4.5.6</httpcomponents-client-version>
         <httpcomponents.core.version>4.4.10</httpcomponents.core.version>
@@ -61,8 +61,8 @@
         <joda-time-version>2.10</joda-time-version>
 
         <jackson.version>2.9.6</jackson.version>
-        <woodstox-version>4.4.1</woodstox-version>
-        <lombok.version>1.16.12</lombok.version>
+        <woodstox-core.version>4.4.1</woodstox-core.version>
+        <lombok.version>1.18.2</lombok.version>
 
         <!-- Logging -->
         <logback.version>1.2.3</logback.version>
@@ -88,7 +88,7 @@
         <xalan-version>2.7.2</xalan-version>
 
         <dozer.version>5.5.1</dozer.version>
-        <device-detection.version>3.2.4.5</device-detection.version>
+        <device-detection.version>3.2.17.2</device-detection.version>
 
         <aspectj.version>1.9.1</aspectj.version>
         <findbugs.annotations.version>3.0.1</findbugs.annotations.version>
@@ -97,7 +97,7 @@
         <jaxen.version>1.1.6</jaxen.version>
         <jdom2.version>2.0.6</jdom2.version>
         <powermock.version>1.7.4</powermock.version>
-        <ehcache.version>3.6.1</ehcache.version>
+        <ehcache.version>3.6.2</ehcache.version>
         <cache-api.version>1.1.0</cache-api.version>
         <jsonassert.version>1.5.0</jsonassert.version>
 
@@ -112,7 +112,7 @@
         <!-- Versions which do differ for each Tridion version -->
 
         <!-- Web 8: 1.9 -->
-        <commons-codec.version>1.8</commons-codec.version>
+        <commons-codec.version>1.11</commons-codec.version>
 
         <easylicense.version>2.5</easylicense.version>
         <el-impl.version>2.2</el-impl.version>
@@ -717,7 +717,7 @@
             <dependency>
                 <groupId>org.codehaus.woodstox</groupId>
                 <artifactId>woodstox-core-asl</artifactId>
-                <version>${woodstox-version}</version>
+                <version>${woodstox-core.version}</version>
                 <scope>runtime</scope>
             </dependency>
 

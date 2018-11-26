@@ -26,6 +26,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -56,8 +57,15 @@ import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.KEY
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.PAGE;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapIdentifier;
 
+/**
+ * Dynamic navigation model provider implementation.
+ *
+ * @deprecated since PCA implementation added which supports mashup scenario.
+ */
 @Slf4j
 @Service
+@Profile("cil.providers.active")
+@Deprecated
 public class DynamicNavigationModelProviderImpl implements NavigationModelProvider, OnDemandNavigationModelProvider {
 
     private final WebTaxonomyFactory taxonomyFactory;
@@ -111,7 +119,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
         log.debug("Overridden depth counter using value from descendants level: {}", request);
 
         if (isNullOrEmpty(request.getSitemapId())) {
-            if(request.getNavigationFilter().getDescendantLevels() != 0) {
+            if (request.getNavigationFilter().getDescendantLevels() != 0) {
                 log.trace("Sitemap ID is empty, expanding all taxonomy roots");
 
                 // normally expand level is equal to requested descendants level, but when we load categories (=roots) instead
@@ -355,8 +363,8 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
 
     private boolean needsToAddChildren(@NotNull Keyword keyword, @NotNull SitemapRequestDto requestDto) {
         return requestDto.getExpandLevels().isNotTooDeep() &&
-            keyword.getReferencedContentCount() > 0 &&
-            requestDto.getNavigationFilter().getDescendantLevels() != 0;
+                keyword.getReferencedContentCount() > 0 &&
+                requestDto.getNavigationFilter().getDescendantLevels() != 0;
     }
 
     protected String getKeywordMetaUri(String taxonomyId, SitemapRequestDto requestDto, List<SitemapItemModelData> children, Keyword keyword, boolean needsToAddChildren) {

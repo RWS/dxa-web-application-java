@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.google.common.base.MoreObjects;
 import com.sdl.dxa.common.util.PathUtils;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
@@ -47,4 +48,11 @@ public class Link extends AbstractEntityModel {
         return PathUtils.isActiveContextPath(requestPath, localization.getPath(), getUrl());
     }
 
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this)
+                .add("url", url)
+                .add("text", linkText)
+                .toString();
+    }
 }

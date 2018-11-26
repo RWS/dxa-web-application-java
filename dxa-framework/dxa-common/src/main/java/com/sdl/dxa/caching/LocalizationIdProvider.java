@@ -9,8 +9,8 @@ package com.sdl.dxa.caching;
 public interface LocalizationIdProvider {
 
     /**
-     * Return current localization ID. By intention, is only used in caching mechanism. I
-     * f localization ID is not important for the current implementation, may return a dummy value.
+     * Return current localization ID. By intention, is only used in caching mechanism.
+     * If localization ID is not important for the current implementation, may return a dummy value.
      * Note thought that if value is not specified and there are multiple publications served by the application,
      * then this may lead to cache key collision.
      *

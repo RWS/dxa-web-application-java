@@ -11,7 +11,6 @@ import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -20,11 +19,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Rest dynamic navigation model provider implementation.
+ *
+ * @deprecated since PCA implementation added which supports mashup scenario.
+ */
 @Slf4j
 @Service
-//TODO fix by TSI-3494
-//@Profile("cil.providers.active")
-@Primary
+@Profile("cil.providers.active")
+@Deprecated
 public class RestDynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
 
     private final ModelServiceConfiguration configuration;

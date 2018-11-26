@@ -2,6 +2,7 @@ package com.sdl.dxa.tridion.linking;
 
 import com.sdl.dxa.exception.DxaTridionCommonException;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.webapp.tridion.linking.AbstractLinkResolver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,36 +16,42 @@ import java.util.function.Function;
 @Profile("!cil.providers.active")
 public class GraphQLLinkResolver extends AbstractLinkResolver {
 
+    private ApiClient apiClient;
+
+    public GraphQLLinkResolver() {
+    }
+
     @Autowired
-    private ApiClientProvider apiClientProvider;
+    public GraphQLLinkResolver(ApiClientProvider apiClientProvider) {
+        this.apiClient = apiClientProvider.getClient();
+    }
 
     @Override
     protected Function<ResolvingData, Optional<String>> _componentResolver() {
         return resolvingData -> Optional.ofNullable(
-                apiClientProvider.getClient().resolveComponentLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), null, null, false));
+                apiClient.resolveComponentLink(resolveNamespace(resolvingData.getUri()),
+                        resolvingData.getPublicationId(), resolvingData.getItemId(), null,
+                        null, false));
     }
 
-    private ContentNamespace resolveNamespace(String uri)
-    {
-        if(uri.startsWith("tcm:"))
+    private ContentNamespace resolveNamespace(String uri) {
+        if (uri.startsWith("tcm:"))
             return ContentNamespace.Sites;
-        else if(uri.startsWith("ish:"))
+        else if (uri.startsWith("ish:"))
             return ContentNamespace.Docs;
         else
-            throw new DxaTridionCommonException("Not a valid Tridion CmUri request");
+            throw new DxaTridionCommonException("Not a valid Tridion CmUri request uri " + uri);
     }
 
     @Override
     protected Function<ResolvingData, Optional<String>> _pageResolver() {
-
         return resolvingData -> Optional.ofNullable(
-                apiClientProvider.getClient().resolvePageLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), false));
+                apiClient.resolvePageLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), false));
     }
 
     @Override
     protected Function<ResolvingData, Optional<String>> _binaryResolver() {
-
         return resolvingData -> Optional.ofNullable(
-                apiClientProvider.getClient().resolveBinaryLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), null, false));
+                apiClient.resolveBinaryLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), null, false));
     }
 }

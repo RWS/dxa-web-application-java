@@ -26,6 +26,19 @@ public class DepthCounterTest {
     }
 
     @Test
+    public void shouldIncreaseByManyLevelsCheck() {
+        //given
+        DepthCounter counter = new DepthCounter(15);
+
+        assertTrue(counter.depthIncreaseAndCheckIfSafe(10));
+        assertEquals(5, counter.getCounter());
+        assertFalse(counter.depthIncreaseAndCheckIfSafe(10));
+        assertTrue(counter.depthIncreaseAndCheckIfSafe(counter.getCounter()));
+        assertFalse(counter.depthIncreaseAndCheckIfSafe(5));
+    }
+
+
+    @Test
     public void shouldDecreaseDepth() {
         DepthCounter counter = new DepthCounter(0);
         counter.depthDecrease();

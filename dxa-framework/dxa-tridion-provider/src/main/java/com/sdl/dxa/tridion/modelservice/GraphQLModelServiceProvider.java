@@ -23,7 +23,9 @@ import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
 import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
 import com.sdl.web.pca.client.contentmodel.enums.DcpType;
+import com.sdl.web.pca.client.contentmodel.enums.ModelServiceLinkRendering;
 import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
+import com.sdl.web.pca.client.contentmodel.enums.TcdlLinkRendering;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -45,21 +47,22 @@ import static org.springframework.util.ClassUtils.getDefaultClassLoader;
 @Profile("!cil.providers.active")
 public class GraphQLModelServiceProvider implements ModelServiceProvider {
 
-    private ApiClientProvider apiClientProvider;
-
     private ApiClient pcaClient;
 
     private ObjectMapper mapper;
 
     GraphQLModelServiceProvider() {
-        this.mapper = getObjectMapper();
+        mapper = getObjectMapper();
     }
 
     @Autowired
     public GraphQLModelServiceProvider(ApiClientProvider apiClientProvider) {
-        this.apiClientProvider = apiClientProvider;
-        this.pcaClient = apiClientProvider.getClient();
-        this.mapper = getObjectMapper();
+        mapper = getObjectMapper();
+        pcaClient = apiClientProvider.getClient();
+        pcaClient.setDefaultModelType(DataModelType.R2);
+        pcaClient.setDefaultContentType(ContentType.MODEL);
+        pcaClient.setModelSericeLinkRenderingType(ModelServiceLinkRendering.RELATIVE);
+        pcaClient.setTcdlLinkRenderingType(TcdlLinkRendering.RELATIVE);
     }
 
     @NotNull
@@ -102,31 +105,36 @@ public class GraphQLModelServiceProvider implements ModelServiceProvider {
                     contentType,
                     DataModelType.valueOf(pageRequest.getDataModelType().toString()),
                     PageInclusion.valueOf(pageRequest.getIncludePages().toString()),
-                    ContentIncludeMode.INCLUDE,
+                    ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
                     null
             );
             T result = mapToType(type, pageNode);
-            log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
+            if (log.isTraceEnabled()) {
+                log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
+            }
             return result;
         } catch (IOException e) {
-            log.debug("Page not found by path {}, trying to find by path {}",
-                    normalizePathToDefaults(pageRequest.getPath()),
-                    normalizePathToDefaults(pageRequest.getPath(), true));
+            String pathToDefaults = normalizePathToDefaults(pageRequest.getPath(), true);
+            log.info("Page not found by " + pageRequest + ", trying to find it by path " + pathToDefaults);
+            JsonNode node = null;
             try {
-                JsonNode pageNode = pcaClient.getPageModelData(
-                        ContentNamespace.Sites,
+                node = pcaClient.getPageModelData(ContentNamespace.Sites,
                         pageRequest.getPublicationId(),
-                        normalizePathToDefaults(pageRequest.getPath(), true),
+                        pathToDefaults,
                         contentType,
                         DataModelType.valueOf(pageRequest.getDataModelType().toString()),
                         PageInclusion.valueOf(pageRequest.getIncludePages().toString()),
-                        ContentIncludeMode.INCLUDE,
-                        null
-                );
-                T result = mapToType(type, pageNode);
-                log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
+                        ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
+                        null);
+                T result = mapToType(type, node);
+                if (log.isTraceEnabled()) {
+                    log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
+                }
                 return result;
             } catch (IOException ex) {
+                if (log.isTraceEnabled()) {
+                    log.trace("Response for request " + pageRequest + " is " + node, e);
+                }
                 throw new PageNotFoundException("Unable to load page, by request " + pageRequest, ex);
             }
         }
@@ -153,24 +161,28 @@ public class GraphQLModelServiceProvider implements ModelServiceProvider {
     @NotNull
     @Override
     public EntityModelData loadEntity(EntityRequestDto entityRequest) throws ContentProviderException {
+        JsonNode node = null;
         try {
-            JsonNode node = pcaClient.getEntityModelData(
-                    ContentNamespace.Sites,
+            node = pcaClient.getEntityModelData(ContentNamespace.Sites,
                     entityRequest.getPublicationId(),
                     entityRequest.getComponentId(),
                     entityRequest.getTemplateId(),
                     ContentType.valueOf(entityRequest.getContentType().toString()),
                     DataModelType.valueOf(entityRequest.getDataModelType().toString()),
                     DcpType.valueOf(entityRequest.getDcpType().toString()),
-                    ContentIncludeMode.INCLUDE_AND_RENDER,
-                    null
-            );
+                    ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
+                    null);
 
             EntityModelData modelData = mapper.readValue(node.toString(), EntityModelData.class);
-            log.trace("Loaded '{}' for entityId '{}'", modelData, entityRequest.getComponentId());
+            if (log.isTraceEnabled()) {
+                log.trace("Loaded '{}' for entityId '{}'", modelData, entityRequest.getComponentId());
+            }
             return modelData;
         } catch (IOException e) {
-            throw new ContentProviderException("Entity " + entityRequest + " not found", e);
+            if (log.isTraceEnabled()) {
+                log.trace("Response for request " + entityRequest + " is " + node, e);
+            }
+            throw new ContentProviderException("Entity not found ny request " + entityRequest, e);
         }
     }
 

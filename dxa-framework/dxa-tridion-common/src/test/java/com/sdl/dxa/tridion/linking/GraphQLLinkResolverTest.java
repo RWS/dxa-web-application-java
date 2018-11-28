@@ -34,7 +34,7 @@ public class GraphQLLinkResolverTest {
     @Test
     public void resolvePageLink() {
 
-        when(apiClientProvider.getClient().resolvePageLink(ContentNamespace.Sites,2,3,false)).thenReturn("/index.html");
+        when(apiClientProvider.getClient().resolvePageLink(ContentNamespace.Sites,2,3,true)).thenReturn("/index.html");
 
         String pageLinkresult = linkResovler.resolveLink("tcm:2-3-64", "2", false);
         assertEquals(pageLinkresult, "/index.html");
@@ -51,7 +51,7 @@ public class GraphQLLinkResolverTest {
 
     @Test
     public void resolveBinaryLink() {
-        when(apiClientProvider.getClient().resolveBinaryLink(ContentNamespace.Sites,2,3,null,false)).thenReturn("/media/baloon.png");
+        when(apiClientProvider.getClient().resolveBinaryLink(ContentNamespace.Sites,2,3,null,true)).thenReturn("/media/baloon.png");
 
         String binaryLinkresult = linkResovler.resolveLink("tcm:2-3", "2", true);
         assertEquals(binaryLinkresult, "/media/baloon.png");

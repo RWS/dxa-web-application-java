@@ -46,12 +46,12 @@ public class GraphQLLinkResolver extends AbstractLinkResolver {
     @Override
     protected Function<ResolvingData, Optional<String>> _pageResolver() {
         return resolvingData -> Optional.ofNullable(
-                apiClient.resolvePageLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), false));
+                apiClient.resolvePageLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), true));
     }
 
     @Override
     protected Function<ResolvingData, Optional<String>> _binaryResolver() {
         return resolvingData -> Optional.ofNullable(
-                apiClient.resolveBinaryLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), null, false));
+                apiClient.resolveBinaryLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), null, true));
     }
 }

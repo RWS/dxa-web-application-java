@@ -229,7 +229,7 @@ public class DefaultPageModelTest {
 
         //when
         String asString = objectMapper.writeValueAsString(pageModel);
-System.out.println(asString.replaceAll("[\r|\n]", ""));
+
         //then
         Matcher matcher = Pattern.compile(".*\"Id\"\\s*:\\s*\"1\".*", Pattern.MULTILINE)
                 .matcher(asString.replaceAll("[\r|\n]", ""));

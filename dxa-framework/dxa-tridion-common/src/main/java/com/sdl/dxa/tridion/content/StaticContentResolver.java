@@ -1,8 +1,6 @@
 package com.sdl.dxa.tridion.content;
 
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
-import com.sdl.web.api.meta.WebComponentMetaFactory;
-import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
@@ -15,6 +13,7 @@ import com.tridion.data.BinaryData;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import com.tridion.meta.BinaryMeta;
 import com.tridion.meta.ComponentMeta;
+import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.PublicationMeta;
 import com.tridion.meta.PublicationMetaFactory;
 import lombok.SneakyThrows;
@@ -127,7 +126,7 @@ public class StaticContentResolver {
 
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
         BinaryMeta binaryMeta;
-        WebComponentMetaFactory factory = new WebComponentMetaFactoryImpl(publicationId);
+        ComponentMetaFactory factory = new ComponentMetaFactory(publicationId);
         ComponentMeta componentMeta;
         int itemId;
 

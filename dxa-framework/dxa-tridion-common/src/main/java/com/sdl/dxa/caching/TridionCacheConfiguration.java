@@ -3,6 +3,7 @@ package com.sdl.dxa.caching;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
@@ -13,6 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -55,14 +57,16 @@ public class TridionCacheConfiguration extends CachingConfigurerSupport {
     public CacheResolver cacheResolver() {
         return context -> context.getOperation().getCacheNames().stream()
                 .peek(name -> log.debug("Requested cache name = '{}', cache manager caches = {}", name, compositeCacheManager.getCacheNames()))
-                .map(name -> compositeCacheManager.getCache(name))
-                .peek(cache -> {
+                .map(name -> {
+                    Cache cache = compositeCacheManager.getCache(name);
                     if (cache == null) {
-                        log.warn("Cache {} is not found");
-                    } else {
-                        log.debug("Resolved cache {} which is a {} cache", cache.getName(), cache.getClass());
+                        log.warn("Cache {} is not found", name);
+                        return null;
                     }
+                    log.debug("Resolved cache {} which is a {} cache", cache.getName(), cache.getClass());
+                    return cache;
                 })
+                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 

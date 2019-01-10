@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Configuration
@@ -50,6 +51,7 @@ public class TridionCacheConfiguration extends CachingConfigurerSupport {
     public CacheResolver cacheResolver() {
         return context -> context.getOperation().getCacheNames().stream()
                 .map(name -> cacheManager().getCache(name))
+                .filter(Objects::nonNull)
                 .peek(cache -> log.trace("Resolved cache {} which is a {} cache", cache.getName(), cache.getClass()))
                 .collect(Collectors.toList());
     }

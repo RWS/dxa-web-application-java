@@ -5,7 +5,6 @@ import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.common.util.PathUtils;
-import com.sdl.web.api.dynamic.taxonomies.WebTaxonomyFactory;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.controller.exception.BadRequestException;
 import com.sdl.webapp.common.util.TcmUtils;
@@ -14,6 +13,7 @@ import com.tridion.broker.StorageException;
 import com.tridion.meta.PageMeta;
 import com.tridion.meta.PageMetaFactory;
 import com.tridion.taxonomies.Keyword;
+import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.TaxonomyRelationManager;
 import com.tridion.taxonomies.filters.DepthFilter;
 import lombok.AllArgsConstructor;
@@ -74,7 +74,7 @@ public class DynamicNavigationModelProviderTest {
     private PageMetaFactory pageMetaFactory;
 
     @Mock
-    private WebTaxonomyFactory taxonomyFactory;
+    private TaxonomyFactory taxonomyFactory;
 
     @Mock
     private TaxonomyRelationManager relationManager;

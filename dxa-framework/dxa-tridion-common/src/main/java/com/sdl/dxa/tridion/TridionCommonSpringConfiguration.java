@@ -1,7 +1,7 @@
 package com.sdl.dxa.tridion;
 
 import com.sdl.web.api.dynamic.taxonomies.WebTaxonomyFactory;
-import com.sdl.web.api.taxonomies.WebTaxonomyFactoryImpl;
+import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.TaxonomyRelationManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -13,7 +13,7 @@ public class TridionCommonSpringConfiguration {
 
     @Bean
     public WebTaxonomyFactory webTaxonomyFactory() {
-        return new WebTaxonomyFactoryImpl();
+        return new TaxonomyFactory();
     }
 
     @Bean

@@ -50,9 +50,10 @@ public class TridionCacheConfiguration extends CachingConfigurerSupport {
     @Override
     public CacheResolver cacheResolver() {
         return context -> context.getOperation().getCacheNames().stream()
+                .peek(name -> log.debug("Requested cache name = '{}', cache manager caches = {}", name, cacheManager().getCacheNames()))
                 .map(name -> cacheManager().getCache(name))
                 .filter(Objects::nonNull)
-                .peek(cache -> log.trace("Resolved cache {} which is a {} cache", cache.getName(), cache.getClass()))
+                .peek(cache -> log.debug("Resolved cache {} which is a {} cache", cache.getName(), cache.getClass()))
                 .collect(Collectors.toList());
     }
 }

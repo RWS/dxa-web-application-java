@@ -2,11 +2,9 @@ package com.sdl.dxa.tridion;
 
 import com.sdl.web.api.content.BinaryContentRetriever;
 import com.sdl.web.api.dynamic.BinaryContentRetrieverImpl;
-import com.sdl.web.api.dynamic.taxonomies.WebTaxonomyFactory;
-import com.sdl.web.api.meta.WebPublicationMetaFactory;
-import com.sdl.web.api.meta.WebPublicationMetaFactoryImpl;
-import com.sdl.web.api.taxonomies.WebTaxonomyFactoryImpl;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
+import com.tridion.meta.PublicationMetaFactory;
+import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.TaxonomyRelationManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -26,8 +24,8 @@ public class TridionCommonSpringConfiguration {
     @Bean
     // TODO uncomment when tridion docs module will use graphql providers
     // @Profile("cil.providers.active")
-    public WebTaxonomyFactory webTaxonomyFactory() {
-        return new WebTaxonomyFactoryImpl();
+    public TaxonomyFactory webTaxonomyFactory() {
+        return new TaxonomyFactory();
     }
 
     @Bean
@@ -52,8 +50,8 @@ public class TridionCommonSpringConfiguration {
 
     @Bean
     @Profile("cil.providers.active")
-    public WebPublicationMetaFactory webPublicationMetaFactory() {
-        return new WebPublicationMetaFactoryImpl();
+    public PublicationMetaFactory webPublicationMetaFactory() {
+        return new PublicationMetaFactory();
     }
 
 }

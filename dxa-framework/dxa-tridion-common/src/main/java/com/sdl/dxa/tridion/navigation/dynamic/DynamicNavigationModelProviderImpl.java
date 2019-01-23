@@ -7,7 +7,6 @@ import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.common.util.PathUtils;
 import com.sdl.dxa.exception.DxaTridionCommonException;
-import com.sdl.web.api.dynamic.taxonomies.WebTaxonomyFactory;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.TaxonomyUrisHolder;
 import com.sdl.webapp.common.controller.exception.BadRequestException;
@@ -17,6 +16,7 @@ import com.tridion.broker.StorageException;
 import com.tridion.meta.PageMeta;
 import com.tridion.meta.PageMetaFactory;
 import com.tridion.taxonomies.Keyword;
+import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.TaxonomyRelationManager;
 import com.tridion.taxonomies.filters.DepthFilter;
 import lombok.NonNull;
@@ -68,7 +68,7 @@ import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapI
 @Deprecated
 public class DynamicNavigationModelProviderImpl implements NavigationModelProvider, OnDemandNavigationModelProvider {
 
-    private final WebTaxonomyFactory taxonomyFactory;
+    private final TaxonomyFactory taxonomyFactory;
 
     private final TaxonomyRelationManager relationManager;
 
@@ -85,7 +85,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
     protected String sitemapItemTypePage;
 
     @Autowired
-    public DynamicNavigationModelProviderImpl(WebTaxonomyFactory taxonomyFactory, TaxonomyRelationManager relationManager) {
+    public DynamicNavigationModelProviderImpl(TaxonomyFactory taxonomyFactory, TaxonomyRelationManager relationManager) {
         this.taxonomyFactory = taxonomyFactory;
         this.relationManager = relationManager;
     }

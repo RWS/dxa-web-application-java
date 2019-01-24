@@ -16,7 +16,7 @@
     </description>
 
     <properties>
-        <cd_broker.version>[10.1.0, 10.2.0)</cd_broker.version>
+        <cd_broker.version>[8.5.0,8.5.0-2000)</cd_broker.version>
     </properties>
 
     <dependencies>

@@ -37,8 +37,8 @@ import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
  * @deprecated since PCA implementation added which supports mashup scenario.
  */
 @Slf4j
-@Service
-@Profile("cil.providers.active")
+@Service("cilStaticContentResolver")
+@Profile({"cil.providers.active"})
 @Deprecated
 public class CilStaticContentResolver extends GenericStaticContentResolver implements StaticContentResolver {
 

@@ -207,12 +207,30 @@ public class DynamicNavigationModelProviderTest {
     }
 
     private ArgumentMatcher<DepthFilter> depthFilterMatcher(int direction, int depth) {
+
+        String directionAsString;
+        switch(direction) {
+            case 0:
+                directionAsString = "Up";
+                break;
+            case 1:
+                directionAsString = "Down";
+                break;
+            default:
+                directionAsString = "None";
+        }
+
         return new ArgumentMatcher<DepthFilter>() {
             @Override
             public boolean matches(Object argument) {
-                Pattern pattern = Pattern.compile("[^\\d]+\\((?<depth>-?\\d+),(?<direction>\\d)\\)");
-                Matcher matcher = pattern.matcher(((DepthFilter) argument).toTaxonomyFilterUriRepresentation());
-                return matcher.matches() && matcher.group("direction").equals(String.valueOf(direction))
+
+
+
+                String toMatch = ((DepthFilter) argument).toString();
+                Pattern pattern = Pattern.compile(
+                        "DepthFilter \\(MaxDepth:\\s*(?<depth>-?\\d+),\\s*Direction:\\s*(?<direction>\\w+)\\)");
+                Matcher matcher = pattern.matcher(toMatch);
+                return matcher.matches() && matcher.group("direction").equals(directionAsString)
                         && (depth == 666 || matcher.group("depth").equals(String.valueOf(depth)));
             }
         };

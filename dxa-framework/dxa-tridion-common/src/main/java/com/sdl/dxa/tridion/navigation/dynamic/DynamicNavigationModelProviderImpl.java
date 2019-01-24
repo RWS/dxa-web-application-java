@@ -166,6 +166,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
         // and we want top-level keywords
         final int maximumDepth = navigationFilter.getDescendantLevels() > 0 ?
                 navigationFilter.getDescendantLevels() - 1 : navigationFilter.getDescendantLevels();
+
         DepthFilter depthFilter = new DepthFilter(maximumDepth, DepthFilter.FILTER_DOWN);
 
         return Arrays.stream(taxonomyFactory.getTaxonomies(TcmUtils.buildPublicationTcmUri(requestDto.getLocalizationId())))

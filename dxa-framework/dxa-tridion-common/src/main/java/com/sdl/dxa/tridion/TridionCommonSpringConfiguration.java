@@ -1,7 +1,6 @@
 package com.sdl.dxa.tridion;
 
-import com.sdl.web.api.content.BinaryContentRetriever;
-import com.sdl.web.api.dynamic.BinaryContentRetrieverImpl;
+import com.tridion.content.BinaryFactory;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import com.tridion.meta.PublicationMetaFactory;
 import com.tridion.taxonomies.TaxonomyFactory;
@@ -44,8 +43,10 @@ public class TridionCommonSpringConfiguration {
     @Bean
     // TODO uncomment when tridion docs module will use graphql providers
     // @Profile("cil.providers.active")
-    public BinaryContentRetriever binaryContentRetriever() {
-        return new BinaryContentRetrieverImpl();
+    public BinaryFactory binaryContentRetriever() {
+
+        // Stay backward compatible
+        return new BinaryFactory();
     }
 
     @Bean

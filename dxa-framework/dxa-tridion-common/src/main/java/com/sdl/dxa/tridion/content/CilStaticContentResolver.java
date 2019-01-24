@@ -1,10 +1,6 @@
 package com.sdl.dxa.tridion.content;
 
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
-import com.sdl.web.api.content.BinaryContentRetriever;
-import com.sdl.web.api.meta.WebComponentMetaFactory;
-import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
-import com.sdl.web.api.meta.WebPublicationMetaFactory;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
@@ -12,11 +8,14 @@ import com.sdl.webapp.common.api.content.StaticContentNotLoadedException;
 import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.common.util.TcmUtils;
 import com.tridion.broker.StorageException;
+import com.tridion.content.BinaryFactory;
 import com.tridion.data.BinaryData;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import com.tridion.meta.BinaryMeta;
 import com.tridion.meta.ComponentMeta;
+import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.PublicationMeta;
+import com.tridion.meta.PublicationMetaFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -45,21 +44,21 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
 
     private final DynamicMetaRetriever dynamicMetaRetriever;
 
-    private final BinaryContentRetriever binaryContentRetriever;
+    private final BinaryFactory binaryFactory;
 
-    private final WebPublicationMetaFactory webPublicationMetaFactory;
+    private final PublicationMetaFactory webPublicationMetaFactory;
 
     private static final Object LOCK = new Object();
 
     @Autowired
     public CilStaticContentResolver(WebApplicationContext webApplicationContext,
                                     DynamicMetaRetriever dynamicMetaRetriever,
-                                    BinaryContentRetriever binaryContentRetriever,
-                                    WebPublicationMetaFactory webPublicationMetaFactory) {
+                                    BinaryFactory binaryFactory,
+                                    PublicationMetaFactory publicationMetaFactory) {
         this.webApplicationContext = webApplicationContext;
         this.dynamicMetaRetriever = dynamicMetaRetriever;
-        this.binaryContentRetriever = binaryContentRetriever;
-        this.webPublicationMetaFactory = webPublicationMetaFactory;
+        this.binaryFactory = binaryFactory;
+        this.webPublicationMetaFactory = publicationMetaFactory;
     }
 
     @NotNull
@@ -106,7 +105,7 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
 
     @NotNull
     private ComponentMeta getComponentMeta(ImageUtils.StaticContentPathInfo pathInfo, int publicationId, int itemId) throws StaticContentNotFoundException {
-        WebComponentMetaFactory factory = new WebComponentMetaFactoryImpl(publicationId);
+        ComponentMetaFactory factory = new ComponentMetaFactory(publicationId);
         ComponentMeta componentMeta = factory.getMeta(itemId);
         if (componentMeta == null) {
             throw new StaticContentNotFoundException("No meta meta found for: [" + publicationId + "] " +
@@ -127,7 +126,7 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
 
     private void refreshBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId, BinaryMeta binaryMeta, int itemId) throws ContentProviderException {
         try {
-            BinaryData binaryData = binaryContentRetriever.getBinary(publicationId, itemId, binaryMeta.getVariantId());
+            BinaryData binaryData = binaryFactory.getBinary(publicationId, itemId, binaryMeta.getVariantId());
             refreshBinary(file, pathInfo, binaryData.getBytes());
         } catch (IOException e) {
             throw new StaticContentNotLoadedException("Cannot write new loaded content to a file " + file, e);

@@ -12,8 +12,6 @@ import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
 import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
 import com.sdl.web.api.broker.querying.sorting.SortParameter;
-import com.sdl.web.api.meta.WebComponentMetaFactory;
-import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProvider;
@@ -41,6 +39,7 @@ import com.tridion.broker.querying.filter.LimitFilter;
 import com.tridion.broker.querying.filter.PagingFilter;
 import com.tridion.broker.querying.sorting.SortDirection;
 import com.tridion.meta.ComponentMeta;
+import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.NameValuePair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
@@ -281,7 +280,7 @@ public class DefaultContentProvider implements ContentProvider {
     protected List<ComponentMetadata> executeMetadataQuery(SimpleBrokerQuery simpleBrokerQuery) {
         List<String> ids = executeQuery(simpleBrokerQuery);
 
-        final WebComponentMetaFactory cmf = new WebComponentMetaFactoryImpl(simpleBrokerQuery.getPublicationId());
+        final ComponentMetaFactory cmf = new ComponentMetaFactory(simpleBrokerQuery.getPublicationId());
         simpleBrokerQuery.setHasMore(ids.size() > simpleBrokerQuery.getPageSize());
 
         return ids.stream()

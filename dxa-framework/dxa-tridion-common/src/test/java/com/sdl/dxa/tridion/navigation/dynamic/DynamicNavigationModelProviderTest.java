@@ -79,6 +79,9 @@ public class DynamicNavigationModelProviderTest {
     @Mock
     private TaxonomyRelationManager relationManager;
 
+    @Mock
+    private com.sdl.web.api.taxonomies.TaxonomyRelationManager webTaxonomyRelationManager;
+
     @InjectMocks
     private DynamicNavigationModelProviderImpl navigationModelProvider;
 
@@ -92,11 +95,12 @@ public class DynamicNavigationModelProviderTest {
 
     @Before
     public void init() throws Exception {
+
         ReflectionTestUtils.setField(navigationModelProvider, "taxonomyNavigationMarker", "[Taxonomy]");
         ReflectionTestUtils.setField(navigationModelProvider, "sitemapItemTypePage", "Page");
         ReflectionTestUtils.setField(navigationModelProvider, "sitemapItemTypeTaxonomyNode", "TaxonomyNode");
         ReflectionTestUtils.setField(navigationModelProvider, "sitemapItemTypeStructureGroup", "StructureGroup");
-
+        ReflectionTestUtils.setField(navigationModelProvider, "webTaxonomyRelationManager", webTaxonomyRelationManager);
         taxonomies = new String[]{"tcm:42-1-512", "tcm:42-22-512", "tcm:42-33-512"};
 
 //        @formatter:off
@@ -199,6 +203,9 @@ public class DynamicNavigationModelProviderTest {
     private void prepareRelationManager(String pageUri, Keyword... keyword) throws StorageException {
         doReturn(keyword).when(relationManager).getTaxonomyKeywords(anyString(), eq(pageUri), any(Keyword[].class),
                 argThat(depthFilterMatcher(DepthFilter.FILTER_UP)), eq(ItemTypes.PAGE));
+
+        doReturn(keyword).when(webTaxonomyRelationManager).getTaxonomyKeywords(anyString(), eq(pageUri), any(Keyword[].class),
+                argThat(depthFilterMatcher(DepthFilter.FILTER_UP)), eq(ItemTypes.PAGE));
     }
 
     @NotNull
@@ -227,10 +234,14 @@ public class DynamicNavigationModelProviderTest {
 
 
                 String toMatch = ((DepthFilter) argument).toString();
-                Pattern pattern = Pattern.compile(
-                        "DepthFilter \\(MaxDepth:\\s*(?<depth>-?\\d+),\\s*Direction:\\s*(?<direction>\\w+)\\)");
-                Matcher matcher = pattern.matcher(toMatch);
-                return matcher.matches() && matcher.group("direction").equals(directionAsString)
+
+                Pattern pattern = Pattern.compile("[^\\d]+\\((?<depth>-?\\d+),(?<direction>\\d)\\)");
+                Matcher matcher = pattern.matcher(((DepthFilter) argument).toTaxonomyFilterUriRepresentation());
+
+//                Pattern pattern = Pattern.compile(
+//                        "DepthFilter \\(MaxDepth:\\s*(?<depth>-?\\d+),\\s*Direction:\\s*(?<direction>\\w+)\\)");
+//                Matcher matcher = pattern.matcher(toMatch);
+                return matcher.matches() && matcher.group("direction").equals(String.valueOf(direction))
                         && (depth == 666 || matcher.group("depth").equals(String.valueOf(depth)));
             }
         };
@@ -246,7 +257,7 @@ public class DynamicNavigationModelProviderTest {
 
         verify(taxonomyFactory, verificationMode).getTaxonomyKeywords(captor.capture(), argThat(depthFilterMatcher(direction)));
         verify(taxonomyFactory, verificationMode).getTaxonomyKeywords(captor.capture(), argThat(depthFilterMatcher(direction)), anyString());
-        verify(relationManager, verificationMode).getTaxonomyKeywords(captor.capture(), anyString(), any(Keyword[].class),
+        verify(webTaxonomyRelationManager, verificationMode).getTaxonomyKeywords(captor.capture(), anyString(), any(Keyword[].class),
                 argThat(depthFilterMatcher(direction)), eq(ItemTypes.PAGE));
 
         if (wasCalled) {

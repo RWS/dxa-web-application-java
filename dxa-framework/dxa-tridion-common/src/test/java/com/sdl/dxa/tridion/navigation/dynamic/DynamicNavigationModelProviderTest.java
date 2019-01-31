@@ -16,6 +16,7 @@ import com.tridion.taxonomies.Keyword;
 import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.TaxonomyRelationManager;
 import com.tridion.taxonomies.filters.DepthFilter;
+import com.tridion.taxonomies.filters.TaxonomyFilter;
 import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
@@ -96,6 +97,8 @@ public class DynamicNavigationModelProviderTest {
         ReflectionTestUtils.setField(navigationModelProvider, "sitemapItemTypePage", "Page");
         ReflectionTestUtils.setField(navigationModelProvider, "sitemapItemTypeTaxonomyNode", "TaxonomyNode");
         ReflectionTestUtils.setField(navigationModelProvider, "sitemapItemTypeStructureGroup", "StructureGroup");
+        ReflectionTestUtils.setField(navigationModelProvider, "webTaxonomyRelationManager", null);
+
 
         taxonomies = new String[]{"tcm:42-1-512", "tcm:42-22-512", "tcm:42-33-512"};
 
@@ -202,11 +205,11 @@ public class DynamicNavigationModelProviderTest {
     }
 
     @NotNull
-    private ArgumentMatcher<DepthFilter> depthFilterMatcher(int direction) {
+    private ArgumentMatcher<TaxonomyFilter> depthFilterMatcher(int direction) {
         return depthFilterMatcher(direction, 666);
     }
 
-    private ArgumentMatcher<DepthFilter> depthFilterMatcher(int direction, int depth) {
+    private ArgumentMatcher<TaxonomyFilter> depthFilterMatcher(int direction, int depth) {
         String directionAsString;
         switch(direction) {
             case 0:
@@ -218,7 +221,7 @@ public class DynamicNavigationModelProviderTest {
             default:
                 directionAsString = "None";
         }
-        return new ArgumentMatcher<DepthFilter>() {
+        return new ArgumentMatcher<TaxonomyFilter>() {
             @Override
             public boolean matches(Object argument) {
                 String toMatch = ((DepthFilter) argument).toString();

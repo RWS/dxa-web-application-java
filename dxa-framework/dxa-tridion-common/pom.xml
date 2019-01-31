@@ -15,15 +15,41 @@
         DD4T)
     </description>
 
+    <properties>
+        <cd_broker.version>[8.5.0,8.5.0-2000)</cd_broker.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sdl.web</groupId>
+                    <artifactId>content-compatible</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.sdl.web</groupId>
             <artifactId>cil</artifactId>
             <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.sdl.web</groupId>
+                    <artifactId>content-compatible</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_broker</artifactId>
+            <version>${cd_broker.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_dynamic</artifactId>
+            <version>${cd_broker.version}</version>
         </dependency>
         <!-- pca Model -->
         <dependency>
@@ -48,6 +74,13 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.sdl.web</groupId>
+            <artifactId>content-compatible</artifactId>
+            <version>${cd_broker.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>

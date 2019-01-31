@@ -9,9 +9,6 @@ import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
-import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
-import com.sdl.web.api.broker.querying.sorting.SortParameter;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProvider;
@@ -37,7 +34,10 @@ import com.tridion.broker.querying.criteria.operators.AndCriteria;
 import com.tridion.broker.querying.criteria.taxonomy.TaxonomyKeywordCriteria;
 import com.tridion.broker.querying.filter.LimitFilter;
 import com.tridion.broker.querying.filter.PagingFilter;
+import com.tridion.broker.querying.sorting.SortColumn;
 import com.tridion.broker.querying.sorting.SortDirection;
+import com.tridion.broker.querying.sorting.SortParameter;
+import com.tridion.broker.querying.sorting.column.CustomMetaKeyColumn;
 import com.tridion.meta.ComponentMeta;
 import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.NameValuePair;
@@ -357,7 +357,7 @@ public class DefaultContentProvider implements ContentProvider {
                 .build();
     }
 
-    private BrokerSortColumn getSortColumn(SimpleBrokerQuery simpleBrokerQuery) {
+    private SortColumn getSortColumn(SimpleBrokerQuery simpleBrokerQuery) {
         final String sortTrim = simpleBrokerQuery.getSort().trim();
         final int pos = sortTrim.indexOf(' ');
         final String sortCol = pos > 0 ? sortTrim.substring(0, pos) : sortTrim;

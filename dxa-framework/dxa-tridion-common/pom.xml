@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:SchemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>dxa-framework</artifactId>
@@ -14,42 +14,18 @@
     <description>Tridion Common contains common code for Tridion for other DXA artifacts expect model-specific (like
         DD4T)
     </description>
-
     <properties>
-        <cd_broker.version>[8.5.0,8.5.0-2000)</cd_broker.version>
+        <cd_broker.version>(,11.0.1)</cd_broker.version>
     </properties>
-
     <dependencies>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common</artifactId>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sdl.web</groupId>
-                    <artifactId>content-compatible</artifactId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.sdl.web</groupId>
             <artifactId>cil</artifactId>
             <type>pom</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>com.sdl.web</groupId>
-                    <artifactId>content-compatible</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_broker</artifactId>
-            <version>${cd_broker.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.tridion</groupId>
-            <artifactId>cd_dynamic</artifactId>
-            <version>${cd_broker.version}</version>
         </dependency>
         <!-- pca Model -->
         <dependency>
@@ -77,13 +53,6 @@
         </dependency>
 
         <dependency>
-            <groupId>com.sdl.web</groupId>
-            <artifactId>content-compatible</artifactId>
-            <version>${cd_broker.version}</version>
-            <scope>test</scope>
-        </dependency>
-
-        <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito</artifactId>
         </dependency>
@@ -96,6 +65,18 @@
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_broker</artifactId>
+            <version>${cd_broker.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.tridion</groupId>
+            <artifactId>cd_dynamic</artifactId>
+            <version>${cd_broker.version}</version>
+        </dependency>
+
     </dependencies>
 
 </project>

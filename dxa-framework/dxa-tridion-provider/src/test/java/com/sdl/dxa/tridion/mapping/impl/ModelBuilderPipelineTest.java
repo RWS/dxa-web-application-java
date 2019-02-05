@@ -92,9 +92,6 @@ public class ModelBuilderPipelineTest {
 
     @Test
     public void shouldIterate_AllPageModelBuilders() throws Exception {
-        //given
-        PageRequestDto.PageInclusion pageInclusion = PageRequestDto.PageInclusion.INCLUDE;
-
         //when
         PageModel pageModel = pipeline.createPageModel(pageModelData);
 
@@ -135,11 +132,8 @@ public class ModelBuilderPipelineTest {
         ModelBuilderPipeline pipeline = new ModelBuilderPipelineImpl();
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData);
-        EntityModel entityModel = pipeline.createEntityModel(entityModelData);
-
-        //then
-        //IAE
+        pipeline.createPageModel(pageModelData);
+        pipeline.createEntityModel(entityModelData);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -150,11 +144,8 @@ public class ModelBuilderPipelineTest {
         pipeline.setPageModelBuilders(Collections.emptyList());
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData);
-        EntityModel entityModel = pipeline.createEntityModel(entityModelData);
-
-        //then
-        //IAE
+        pipeline.createPageModel(pageModelData);
+        pipeline.createEntityModel(entityModelData);
     }
 
     @Configuration

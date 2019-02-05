@@ -172,7 +172,7 @@ public class SemanticMapperImpl implements SemanticMapper {
             if (LOG.isDebugEnabled() && !foundMatch && !registrySemantics.isEmpty()) {
                 // This not necessarily means there is a problem; for some components in the input, not all fields
                 // of the entity are mapped
-                LOG.trace("No match found for field: {}; registry semantics: {} did not match with supplied " +
+                LOG.debug("No match found for field: {}; registry semantics: {} did not match with supplied " +
                         "semantics: {}", field, registrySemantics, semanticFields);
             }
         });
@@ -180,6 +180,10 @@ public class SemanticMapperImpl implements SemanticMapper {
         // Set property data (used for semantic markup)
         if (AbstractEntityModel.class.isAssignableFrom(entity.getClass())) {
             ((AbstractEntityModel) entity).setXpmPropertyMetadata(xpmPropertyMetadata);
+        }
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Created: " + entity);
         }
     }
 

@@ -203,7 +203,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         if (modelData.getExtensionData() == null) {
             return semanticFields;
         }
-            Object schemas = modelData.getExtensionData().get("Schemas");
+        Object schemas = modelData.getExtensionData().get("Schemas");
         if (schemas == null ||
             !(schemas instanceof ListWrapper) ||
             ((ListWrapper) schemas).getValues().isEmpty()) {
@@ -211,7 +211,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         }
         if (log.isDebugEnabled()) log.debug("Found additional semantic schemas {} used in the view model {}", schemas, modelData);
 
-                Localization localization = webRequestContext.getLocalization();
+        Localization localization = webRequestContext.getLocalization();
         Map<FieldSemantics, SemanticField> allAncestorsSemanticFields = new HashMap<>(semanticFields);
 
                 //noinspection unchecked
@@ -281,8 +281,9 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     public PageModel buildPageModel(@Nullable PageModel originalPageModel, @NotNull PageModelData modelData) throws SemanticMappingException {
         LocalizationAwareCacheKey cacheKey = pagesCopyingCache.getSpecificKey(modelData);
         synchronized (this) {
-            if (pagesCopyingCache.containsKey(cacheKey)) {
-                return pagesCopyingCache.get(cacheKey);
+            PageModel pageModel = pagesCopyingCache.get(cacheKey);
+            if (pageModel != null) {
+                return pageModel;
             }
         }
 

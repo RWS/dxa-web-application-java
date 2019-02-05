@@ -94,9 +94,9 @@ node("dxadocker") {
             }
             stage("Gradle buildDxa") {
                 dir("build\\web-application-java") {
-                        withCredentials([file(credentialsId: 'masterbuild-settings-xml', variable: 'mavensettings')]) {
+                        withCredentials([file(credentialsId: 'dxa-maven-settings', variable: 'MAVEN_SETTINGS_PATH')]) {
                             // Inject settings.xml to Maven as secret file located in credential storage in Jenkins
-                            powershell '$a = Get-Content -Raw -Path $env:mavensettings;Set-Content -Path C:\\maven\\conf\\settings.xml -Value $a'
+                            powershell '$a = Get-Content -Raw -Path $env:MAVEN_SETTINGS_PATH; Set-Content -Path C:\\maven\\conf\\settings.xml -Value $a'
                         }
                         bat "gradlew.bat -Pcommand=\"org.jacoco:jacoco-maven-plugin:prepare-agent install javadoc:jar -Pcoverage-per-test,local-m2-remote,nexus-sdl\" -PmavenProperties=\"-e -Dmaven.repo.local=${lpr}\" -Dmaven.repo.local=${lpr} -Pbatch buildDxa"
                 }

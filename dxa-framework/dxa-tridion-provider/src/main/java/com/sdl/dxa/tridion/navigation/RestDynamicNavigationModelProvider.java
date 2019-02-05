@@ -19,9 +19,15 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Rest dynamic navigation model provider implementation.
+ *
+ * @deprecated since PCA implementation added which supports mashup scenario.
+ */
 @Slf4j
 @Service
 @Profile("cil.providers.active")
+@Deprecated
 public class RestDynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
 
     private final ModelServiceConfiguration configuration;

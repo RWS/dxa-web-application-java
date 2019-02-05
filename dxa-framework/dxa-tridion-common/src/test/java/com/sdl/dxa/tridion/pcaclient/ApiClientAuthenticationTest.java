@@ -31,6 +31,6 @@ public class ApiClientAuthenticationTest {
 
         authentication.applyManualAuthentication(request);
 
-        assertEquals("Bearer12345", request.getFirstHeader("Authorization").getValue());
+        assertEquals("Bearer 12345", request.getFirstHeader("Authorization").getValue());
     }
 }

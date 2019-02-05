@@ -1,8 +1,6 @@
 package com.sdl.dxa.tridion.content;
 
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
-import com.sdl.web.api.meta.WebComponentMetaFactory;
-import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
@@ -15,6 +13,7 @@ import com.tridion.data.BinaryData;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import com.tridion.meta.BinaryMeta;
 import com.tridion.meta.ComponentMeta;
+import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.PublicationMeta;
 import com.tridion.meta.PublicationMetaFactory;
 import lombok.extern.slf4j.Slf4j;
@@ -31,26 +30,35 @@ import java.io.IOException;
 import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
 
 /**
- * Static content resolver is capable to resolve static (also versioned) binary content from broker database, and to cache it for same request.
+ * Static content resolver is capable to resolve static (also versioned) binary content from broker database,
+ * and to cache it for same request.
  *
  * @dxa.publicApi
+ * @deprecated since PCA implementation added which supports mashup scenario.
  */
 @Slf4j
-@Service
-@Profile("cil.providers.active")
+@Service("cilStaticContentResolver")
+@Profile({"cil.providers.active"})
+@Deprecated
 public class CilStaticContentResolver extends GenericStaticContentResolver implements StaticContentResolver {
 
-    private final DynamicMetaRetriever dynamicMetaRetriever = new DynamicMetaRetriever();
+    private final DynamicMetaRetriever dynamicMetaRetriever;
 
-    private final BinaryFactory binaryContentRetriever = new BinaryFactory();
+    private final BinaryFactory binaryFactory;
 
-    private final PublicationMetaFactory publicationMetaFactory = new PublicationMetaFactory();
+    private final PublicationMetaFactory webPublicationMetaFactory;
 
     private static final Object LOCK = new Object();
 
     @Autowired
-    public CilStaticContentResolver(WebApplicationContext webApplicationContext) {
+    public CilStaticContentResolver(WebApplicationContext webApplicationContext,
+                                    DynamicMetaRetriever dynamicMetaRetriever,
+                                    BinaryFactory binaryFactory,
+                                    PublicationMetaFactory publicationMetaFactory) {
         this.webApplicationContext = webApplicationContext;
+        this.dynamicMetaRetriever = dynamicMetaRetriever;
+        this.binaryFactory = binaryFactory;
+        this.webPublicationMetaFactory = publicationMetaFactory;
     }
 
     @NotNull
@@ -60,49 +68,44 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
                                                         int publicationId,
                                                         ImageUtils.StaticContentPathInfo pathInfo,
                                                         String urlPath) throws ContentProviderException {
-        BinaryMeta binaryMeta;
+        BinaryMeta binaryMeta = getBinaryMeta(urlPath, publicationId);
 
-        synchronized (LOCK) {
-            binaryMeta = getBinaryMeta(urlPath, publicationId);
+        int itemId = (int) binaryMeta.getURI().getItemId();
+        ComponentMeta componentMeta = getComponentMeta(pathInfo, publicationId, itemId);
 
-            int itemId = (int) binaryMeta.getURI().getItemId();
-            ComponentMeta componentMeta = getComponentMeta(pathInfo, publicationId, itemId);
+        long componentTime = componentMeta.getLastPublicationDate().getTime();
 
-            long componentTime = componentMeta.getLastPublicationDate().getTime();
+        boolean shouldRefresh = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
 
-            boolean shouldRefresh = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
-
-            if (shouldRefresh) {
+        if (shouldRefresh) {
+            log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
+            synchronized (LOCK) {
                 refreshBinary(file, pathInfo, publicationId, binaryMeta, itemId);
-            } else {
-                log.debug("File does not need to be refreshed: {}", file);
             }
+        } else {
+            log.debug("File does not need to be refreshed: {}", file.getAbsolutePath());
         }
 
         String contentType = StringUtils.isEmpty(binaryMeta.getType()) ? DEFAULT_CONTENT_TYPE : binaryMeta.getType();
         boolean versioned = requestDto.getBinaryPath().contains("/system/");
-        StaticContentItem staticContentItem = new StaticContentItem(contentType,
-                file,
-                versioned);
-        return staticContentItem;
+        return new StaticContentItem(contentType, file, versioned);
     }
 
     @Override
     protected String _resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
-        PublicationMeta meta;
         String localizationId = requestDto.getLocalizationId();
         try {
-            meta = publicationMetaFactory.getMeta(TcmUtils.buildPublicationTcmUri(localizationId));
+            PublicationMeta meta = webPublicationMetaFactory.getMeta(TcmUtils.buildPublicationTcmUri(localizationId));
+            log.debug("Resolved url '{}' for publication id {}", meta.getPublicationPath(), localizationId);
+            return meta.getPublicationUrl();
         } catch (StorageException e) {
             throw new StaticContentNotLoadedException("Cannot resolve localization path for localization '" + localizationId + "'", e);
         }
-        log.debug("Resolved url '{}' for publication id {}", meta.getPublicationPath(), localizationId);
-        return meta.getPublicationUrl();
     }
 
     @NotNull
     private ComponentMeta getComponentMeta(ImageUtils.StaticContentPathInfo pathInfo, int publicationId, int itemId) throws StaticContentNotFoundException {
-        WebComponentMetaFactory factory = new WebComponentMetaFactoryImpl(publicationId);
+        ComponentMetaFactory factory = new ComponentMetaFactory(publicationId);
         ComponentMeta componentMeta = factory.getMeta(itemId);
         if (componentMeta == null) {
             throw new StaticContentNotFoundException("No meta meta found for: [" + publicationId + "] " +
@@ -123,7 +126,7 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
 
     private void refreshBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId, BinaryMeta binaryMeta, int itemId) throws ContentProviderException {
         try {
-            BinaryData binaryData = binaryContentRetriever.getBinary(publicationId, itemId, binaryMeta.getVariantId());
+            BinaryData binaryData = binaryFactory.getBinary(publicationId, itemId, binaryMeta.getVariantId());
             refreshBinary(file, pathInfo, binaryData.getBytes());
         } catch (IOException e) {
             throw new StaticContentNotLoadedException("Cannot write new loaded content to a file " + file, e);

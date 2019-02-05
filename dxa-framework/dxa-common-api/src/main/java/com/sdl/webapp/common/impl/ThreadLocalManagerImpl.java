@@ -33,7 +33,7 @@ public class ThreadLocalManagerImpl implements ThreadLocalManager {
     /**
      * <p>clearAll.</p>
      */
-    public void clearAll() {
+    synchronized public void clearAll() {
         for (ThreadLocal<?> threadLocal : this.threadLocals) {
             threadLocal.remove();
         }

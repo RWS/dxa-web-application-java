@@ -7,7 +7,7 @@ import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.common.util.PathUtils;
 import com.sdl.dxa.exception.DxaTridionCommonException;
-import com.sdl.web.api.dynamic.taxonomies.WebTaxonomyFactory;
+import com.sdl.web.api.dynamic.taxonomies.filters.WebTaxonomyFilter;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.TaxonomyUrisHolder;
 import com.sdl.webapp.common.controller.exception.BadRequestException;
@@ -17,8 +17,10 @@ import com.tridion.broker.StorageException;
 import com.tridion.meta.PageMeta;
 import com.tridion.meta.PageMetaFactory;
 import com.tridion.taxonomies.Keyword;
+import com.tridion.taxonomies.TaxonomyFactory;
 import com.tridion.taxonomies.TaxonomyRelationManager;
 import com.tridion.taxonomies.filters.DepthFilter;
+import com.tridion.taxonomies.filters.TaxonomyFilter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +28,7 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
@@ -56,11 +59,18 @@ import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.KEY
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.SitemapItemType.PAGE;
 import static com.sdl.webapp.common.util.TcmUtils.Taxonomies.getTaxonomySitemapIdentifier;
 
+/**
+ * Dynamic navigation model provider implementation.
+ *
+ * @deprecated since PCA implementation added which supports mashup scenario.
+ */
 @Slf4j
 @Service
+@Profile("cil.providers.active")
+@Deprecated
 public class DynamicNavigationModelProviderImpl implements NavigationModelProvider, OnDemandNavigationModelProvider {
 
-    private final WebTaxonomyFactory taxonomyFactory;
+    private final TaxonomyFactory taxonomyFactory;
 
     private final TaxonomyRelationManager relationManager;
 
@@ -76,10 +86,28 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
     @Value("${dxa.tridion.navigation.taxonomy.type.page}")
     protected String sitemapItemTypePage;
 
+    private Object webTaxonomyRelationManager = null;
+
     @Autowired
-    public DynamicNavigationModelProviderImpl(WebTaxonomyFactory taxonomyFactory, TaxonomyRelationManager relationManager) {
+    public DynamicNavigationModelProviderImpl(TaxonomyFactory taxonomyFactory, TaxonomyRelationManager relationManager) {
         this.taxonomyFactory = taxonomyFactory;
         this.relationManager = relationManager;
+        initRelationManager();
+    }
+
+    private void initRelationManager() {
+
+        try {
+            Class relationManagerClazz =
+                    Class.forName(
+                            "com.sdl.web.api.taxonomies.TaxonomyRelationManager");
+
+            if (relationManagerClazz != null) {
+                this.webTaxonomyRelationManager = relationManagerClazz.newInstance();
+            }
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+            log.info("We're in process, so using the TaxonomyRelationManager.");
+        }
     }
 
     @Override
@@ -111,7 +139,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
         log.debug("Overridden depth counter using value from descendants level: {}", request);
 
         if (isNullOrEmpty(request.getSitemapId())) {
-            if(request.getNavigationFilter().getDescendantLevels() != 0) {
+            if (request.getNavigationFilter().getDescendantLevels() != 0) {
                 log.trace("Sitemap ID is empty, expanding all taxonomy roots");
 
                 // normally expand level is equal to requested descendants level, but when we load categories (=roots) instead
@@ -165,7 +193,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
         // and we want top-level keywords
         final int maximumDepth = navigationFilter.getDescendantLevels() > 0 ?
                 navigationFilter.getDescendantLevels() - 1 : navigationFilter.getDescendantLevels();
-        DepthFilter depthFilter = new DepthFilter(maximumDepth, DepthFilter.FILTER_DOWN);
+        TaxonomyFilter depthFilter = new DepthFilter(maximumDepth, DepthFilter.FILTER_DOWN);
 
         return Arrays.stream(taxonomyFactory.getTaxonomies(TcmUtils.buildPublicationTcmUri(requestDto.getLocalizationId())))
                 .distinct()
@@ -297,8 +325,8 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
             throw new IllegalArgumentException(String.format("Method for pages was called for not a page! uris: %s, request: %s", uris, requestDto));
         }
 
-        DepthFilter depthFilter = new DepthFilter(DepthFilter.UNLIMITED_DEPTH, DepthFilter.FILTER_UP);
-        Keyword[] keywords = relationManager.getTaxonomyKeywords(uris.getTaxonomyUri(), uris.getPageUri(), null, depthFilter, ItemTypes.PAGE);
+        TaxonomyFilter depthFilter = new DepthFilter(DepthFilter.UNLIMITED_DEPTH, DepthFilter.FILTER_UP);
+        Keyword[] keywords = getRelationTaxonomyKeywords(uris, depthFilter);
 
         if (keywords == null || keywords.length == 0) {
             log.debug("Page {} is not classified in taxonomy {}", uris.getPageUri(), uris.getTaxonomyUri());
@@ -308,6 +336,24 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
         return Arrays.stream(keywords)
                 .map(keyword -> createTaxonomyNode(keyword, requestDto.toBuilder().expandLevels(DepthCounter.UNLIMITED_DEPTH).build()))
                 .collect(Collectors.toList());
+    }
+
+    private Keyword[] getRelationTaxonomyKeywords(@NotNull final TaxonomyUrisHolder uris,
+                                                  final TaxonomyFilter depthFilter) {
+
+
+        if (this.webTaxonomyRelationManager != null) {
+            return
+                    ((com.sdl.web.api.taxonomies.TaxonomyRelationManager)
+                            this.webTaxonomyRelationManager).getTaxonomyKeywords(
+                            uris.getTaxonomyUri(), uris.getPageUri(), null, (WebTaxonomyFilter) depthFilter,
+                            ItemTypes.PAGE);
+        }
+
+        return relationManager
+                .getTaxonomyKeywords(
+                        uris.getTaxonomyUri(), uris.getPageUri(), null, depthFilter,
+                        ItemTypes.PAGE);
     }
 
     /**
@@ -325,7 +371,7 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
             throw new IllegalArgumentException(String.format("Method for keywords was called for not a keyword! uris: %s, request: %s", uris, requestDto));
         }
 
-        DepthFilter depthFilter = new DepthFilter(DepthFilter.UNLIMITED_DEPTH, DepthFilter.FILTER_UP);
+        TaxonomyFilter depthFilter = new DepthFilter(DepthFilter.UNLIMITED_DEPTH, DepthFilter.FILTER_UP);
         Keyword taxonomyRoot = taxonomyFactory.getTaxonomyKeywords(uris.getTaxonomyUri(), depthFilter, uris.getKeywordUri());
 
         if (taxonomyRoot == null) {
@@ -355,8 +401,8 @@ public class DynamicNavigationModelProviderImpl implements NavigationModelProvid
 
     private boolean needsToAddChildren(@NotNull Keyword keyword, @NotNull SitemapRequestDto requestDto) {
         return requestDto.getExpandLevels().isNotTooDeep() &&
-            keyword.getReferencedContentCount() > 0 &&
-            requestDto.getNavigationFilter().getDescendantLevels() != 0;
+                keyword.getReferencedContentCount() > 0 &&
+                requestDto.getNavigationFilter().getDescendantLevels() != 0;
     }
 
     protected String getKeywordMetaUri(String taxonomyId, SitemapRequestDto requestDto, List<SitemapItemModelData> children, Keyword keyword, boolean needsToAddChildren) {

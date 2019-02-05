@@ -31,7 +31,7 @@ public final class PathUtils {
 
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile(".*?/?(?<fileName>[^/.]*)(\\.(?<extension>[^/.]*))?$");
 
-    private static final Pattern INDEX_PATH_REGEXP = Pattern.compile("^(?<main>.*)(?<index>/(index(\\.html)?)?)$");
+    private static final Pattern INDEX_PATH_REGEXP = Pattern.compile("^(?<main>.*)(?<index>/(index(\\.html)?)?)$", Pattern.CASE_INSENSITIVE);
 
     private PathUtils() {
     }

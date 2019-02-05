@@ -59,7 +59,7 @@
         <appender-ref ref="appender.dxa"/>
     </logger>
 
-    <logger name="org.apache.http" level="WARN">
+    <logger name="org.apache.http" level="INFO">
         <appender-ref ref="appender.dxa"/>
     </logger>
 

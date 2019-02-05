@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-@ToString
+@ToString(callSuper = true)
 @NoArgsConstructor
 @Data
 @Accessors(chain = true)

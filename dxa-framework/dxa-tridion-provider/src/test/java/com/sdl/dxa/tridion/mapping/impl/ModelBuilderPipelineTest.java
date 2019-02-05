@@ -3,6 +3,7 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.google.common.collect.Lists;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
@@ -91,6 +92,9 @@ public class ModelBuilderPipelineTest {
 
     @Test
     public void shouldIterate_AllPageModelBuilders() throws Exception {
+        //given
+        PageRequestDto.PageInclusion pageInclusion = PageRequestDto.PageInclusion.INCLUDE;
+
         //when
         PageModel pageModel = pipeline.createPageModel(pageModelData);
 
@@ -131,8 +135,11 @@ public class ModelBuilderPipelineTest {
         ModelBuilderPipeline pipeline = new ModelBuilderPipelineImpl();
 
         //when
-        pipeline.createPageModel(pageModelData);
-        pipeline.createEntityModel(entityModelData);
+        PageModel pageModel = pipeline.createPageModel(pageModelData);
+        EntityModel entityModel = pipeline.createEntityModel(entityModelData);
+
+        //then
+        //IAE
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -143,8 +150,11 @@ public class ModelBuilderPipelineTest {
         pipeline.setPageModelBuilders(Collections.emptyList());
 
         //when
-        pipeline.createPageModel(pageModelData);
-        pipeline.createEntityModel(entityModelData);
+        PageModel pageModel = pipeline.createPageModel(pageModelData);
+        EntityModel entityModel = pipeline.createEntityModel(entityModelData);
+
+        //then
+        //IAE
     }
 
     @Configuration

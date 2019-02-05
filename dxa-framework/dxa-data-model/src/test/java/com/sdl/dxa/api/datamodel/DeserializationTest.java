@@ -275,11 +275,19 @@ public class DeserializationTest {
     }
 
     @Data
-    @AllArgsConstructor
     @SuppressWarnings("DefaultAnnotationParam")
     @JsonIgnoreProperties(ignoreUnknown = false)
     //particularly this class should not tolerate unknown properties (check that $type is no in JSON)
     private static class DeserializeTrip {
+        public DeserializeTrip() {
+        }
+
+        public DeserializeTrip(ExternalContentData externalContentData, Date date, DeserializeTrip deserializeTrip, Object nullField) {
+            this.externalContentData = externalContentData;
+            this.date = date;
+            this.deserializeTrip = deserializeTrip;
+            this.nullField = nullField;
+        }
 
         public ExternalContentData externalContentData;
 

@@ -9,11 +9,6 @@ import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
-import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
-import com.sdl.web.api.broker.querying.sorting.SortParameter;
-import com.sdl.web.api.meta.WebComponentMetaFactory;
-import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProvider;
@@ -39,8 +34,12 @@ import com.tridion.broker.querying.criteria.operators.AndCriteria;
 import com.tridion.broker.querying.criteria.taxonomy.TaxonomyKeywordCriteria;
 import com.tridion.broker.querying.filter.LimitFilter;
 import com.tridion.broker.querying.filter.PagingFilter;
+import com.tridion.broker.querying.sorting.SortColumn;
 import com.tridion.broker.querying.sorting.SortDirection;
+import com.tridion.broker.querying.sorting.SortParameter;
+import com.tridion.broker.querying.sorting.column.CustomMetaKeyColumn;
 import com.tridion.meta.ComponentMeta;
+import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.NameValuePair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
@@ -48,7 +47,6 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -69,11 +67,12 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
  * Content Provider default implementation. Look at {@link ContentProvider} documentation for details.
  *
  * @dxa.publicApi
+ * @deprecated since PCA implementation added which supports mashup scenario.
  */
 @Service(value = "DefaultContentProvider")
 @Profile("cil.providers.active")
-@Primary
 @Slf4j
+@Deprecated
 public class DefaultContentProvider implements ContentProvider {
 
     private final ModelBuilderPipeline builderPipeline;
@@ -281,7 +280,7 @@ public class DefaultContentProvider implements ContentProvider {
     protected List<ComponentMetadata> executeMetadataQuery(SimpleBrokerQuery simpleBrokerQuery) {
         List<String> ids = executeQuery(simpleBrokerQuery);
 
-        final WebComponentMetaFactory cmf = new WebComponentMetaFactoryImpl(simpleBrokerQuery.getPublicationId());
+        final ComponentMetaFactory cmf = new ComponentMetaFactory(simpleBrokerQuery.getPublicationId());
         simpleBrokerQuery.setHasMore(ids.size() > simpleBrokerQuery.getPageSize());
 
         return ids.stream()
@@ -358,7 +357,7 @@ public class DefaultContentProvider implements ContentProvider {
                 .build();
     }
 
-    private BrokerSortColumn getSortColumn(SimpleBrokerQuery simpleBrokerQuery) {
+    private SortColumn getSortColumn(SimpleBrokerQuery simpleBrokerQuery) {
         final String sortTrim = simpleBrokerQuery.getSort().trim();
         final int pos = sortTrim.indexOf(' ');
         final String sortCol = pos > 0 ? sortTrim.substring(0, pos) : sortTrim;

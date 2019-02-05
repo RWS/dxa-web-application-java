@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xsi:SchemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>dxa-framework</artifactId>
@@ -15,18 +15,30 @@
         DD4T)
     </description>
     <properties>
-        <cd-cil.version>11.0.0-SNAPSHOT</cd-cil.version>
+        <cd_broker.version>(,11.0.1)</cd_broker.version>
     </properties>
-
     <dependencies>
+
+        <dependency>
+            <groupId>com.sdl.delivery</groupId>
+            <artifactId>udp-api-broker</artifactId>
+            <version>${cd_broker.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sdl.delivery</groupId>
+            <artifactId>udp-api-dynamic</artifactId>
+            <version>${cd_broker.version}</version>
+        </dependency>
+
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.sdl.web</groupId>
+            <groupId>com.sdl.delivery</groupId>
             <artifactId>cil</artifactId>
             <type>pom</type>
+
         </dependency>
         <!-- pca Model -->
         <dependency>
@@ -40,10 +52,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
+            <version>4.3.3.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
+            <version>4.3.3.RELEASE</version>
         </dependency>
 
         <dependency>
@@ -64,6 +78,7 @@
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
+
     </dependencies>
 
 </project>

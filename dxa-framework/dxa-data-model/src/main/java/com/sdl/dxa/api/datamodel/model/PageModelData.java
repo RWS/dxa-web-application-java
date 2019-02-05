@@ -19,7 +19,7 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @Accessors(chain = true)
-@ToString
+@ToString(callSuper = true)
 public class PageModelData extends ViewModelData {
 
     private String id;

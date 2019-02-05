@@ -1,7 +1,6 @@
 package com.sdl.dxa.tridion.content;
 
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
-import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.tridion.broker.StorageException;
@@ -10,6 +9,7 @@ import com.tridion.data.BinaryData;
 import com.tridion.dynamiccontent.DynamicMetaRetriever;
 import com.tridion.meta.BinaryMeta;
 import com.tridion.meta.ComponentMeta;
+import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.PublicationMeta;
 import com.tridion.meta.PublicationMetaFactory;
 import com.tridion.util.TCDURI;
@@ -55,7 +55,7 @@ public class CilStaticContentResolverTest {
     private WebApplicationContext webApplicationContext;
 
     @Mock
-    private WebComponentMetaFactoryImpl webComponentMetaFactory;
+    private ComponentMetaFactory webComponentMetaFactory;
 
     @Mock
     private PublicationMeta publicationMeta;
@@ -76,7 +76,7 @@ public class CilStaticContentResolverTest {
         PowerMockito.whenNew(DynamicMetaRetriever.class).withAnyArguments().thenReturn(dynamicMetaRetriever);
         PowerMockito.whenNew(BinaryFactory.class).withAnyArguments().thenReturn(binaryFactory);
         PowerMockito.whenNew(PublicationMetaFactory.class).withAnyArguments().thenReturn(publicationMetaFactory);
-        PowerMockito.whenNew(WebComponentMetaFactoryImpl.class).withAnyArguments().thenReturn(webComponentMetaFactory);
+        PowerMockito.whenNew(ComponentMetaFactory.class).withAnyArguments().thenReturn(webComponentMetaFactory);
 
         when(publicationMetaFactory.getMeta(anyString())).thenReturn(publicationMeta);
         when(publicationMeta.getPublicationUrl()).thenReturn("/");
@@ -95,7 +95,8 @@ public class CilStaticContentResolverTest {
         MockServletContext context = new MockServletContext();
         when(webApplicationContext.getServletContext()).thenReturn(context);
 
-        staticContentResolver = new CilStaticContentResolver(webApplicationContext);
+        staticContentResolver = new CilStaticContentResolver(
+                webApplicationContext, dynamicMetaRetriever, binaryFactory, publicationMetaFactory);
     }
 
     @Test
@@ -168,6 +169,7 @@ public class CilStaticContentResolverTest {
         staticContentResolver.getStaticContent(requestDto);
 
         //then
-        assertTrue(new File(webApplicationContext.getServletContext().getRealPath("/") + "/BinaryData/42/system/version").exists());
+        assertTrue(new File(webApplicationContext.getServletContext().getRealPath("/")
+                + "/BinaryData/42/system/version").exists());
     }
 }

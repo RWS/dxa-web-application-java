@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.Sets;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
+import com.sdl.dxa.api.datamodel.model.MvcModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
@@ -30,11 +31,13 @@ import com.sdl.webapp.common.api.mapping.views.AbstractModuleInitializer;
 import com.sdl.webapp.common.api.mapping.views.RegisteredViewModel;
 import com.sdl.webapp.common.api.mapping.views.RegisteredViewModels;
 import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.MvcData;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
+import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.impl.mapping.SemanticMapperImpl;
@@ -55,15 +58,18 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import javax.cache.Cache;
+import java.io.IOException;
 import java.util.Collections;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -82,9 +88,6 @@ public class DefaultModelBuilderTest {
 
     @Autowired
     private PagesCopyingCache pagesCopyingCache;
-
-    @Autowired
-    private EntitiesCache entitiesCache;
 
     @Test
     public void shouldBuildPageModel_OutOfModelDataR2() throws Exception {
@@ -106,22 +109,26 @@ public class DefaultModelBuilderTest {
         assertEquals("000 Home", pageModel.getMeta().get("sitemapKeyword"));
         assertEquals("<p>text<a href=\"resolved-link\">text</a></p>", pageModel.getMeta().get("richText"));
 
-        // region (0). region (0) -> Header region
+        // region (0). region (0) -> Header
         RegionModelData regionModelData = pageModelData.getRegions().get(0);
         RegionModel headerRegion = pageModel.getRegions().get("Header");
         assertEqualsAndNotNull(regionModelData.getName(), headerRegion.getName());
 
-        // Header region (0) -> Info sub-region
+        // Header region (0) -> Info
         RegionModelData subRegionModelData = regionModelData.getRegions().get(0);
         RegionModel infoRegion = headerRegion.getRegions().get("Info");
         assertEqualsAndNotNull(subRegionModelData.getName(), infoRegion.getName());
 
-        // Info sub-region -> entity (0)
+        // Info .entity (0)
         EntityModelData entityModelData = subRegionModelData.getEntities().get(0);
         EntityModel infoRegionEntities = infoRegion.getEntities().get(0);
         assertEqualsAndNotNull(entityModelData.getId(), infoRegionEntities.getId());
 
         assertEquals(2, infoRegion.getEntities().size());
+
+        // TODO
+        // region(0).region(0).entity(0).Content
+        //assertEqualsAndNotNull(entityModelData.getContent().get("headline"), ((EntityModel) infoRegionEntities).getContent().get("headline"));
 
         // region(0).region(0).entity(0).MvcData
         assertEqualsAndNotNull(entityModelData.getMvcData().getViewName(), infoRegionEntities.getMvcData().getViewName());
@@ -133,8 +140,16 @@ public class DefaultModelBuilderTest {
         assertXpmMetadata(entityModelData, infoRegionEntities, "ComponentTemplateModified");
         assertXpmMetadata(entityModelData, infoRegionEntities, "IsRepositoryPublished");
 
+        // TODO
+        // region(0).region(0).entity(0).schemaId
+        //assertEqualsAndNotNull(entityModelData.getSchemaId(), ((EntityModel) infoRegionEntities).getSchemaId());
+
         // region(0).region(0).MvcData
         assertEqualsAndNotNull(subRegionModelData.getMvcData().getViewName(), infoRegion.getMvcData().getViewName());
+
+        // TODO
+        // region(0).IncludePageUrl
+        //assertEqualsAndNotNull(regionModelData.getIncludePageId(), ((RegionModel) headerRegion).getIncludePageId());
 
         // region(0).MvcData
         assertEqualsAndNotNull(regionModelData.getMvcData().getViewName(), headerRegion.getMvcData().getViewName());
@@ -153,10 +168,26 @@ public class DefaultModelBuilderTest {
         assertXpmMetadata(pageModelData, pageModel, "PageTemplateID");
         assertXpmMetadata(pageModelData, pageModel, "PageTemplateModified");
 
+        // TODO
+        // page.Metadata
+        //noinspection unchecked
+        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("sitemapKeyword")).get("Id"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("Id"));
+        //noinspection unchecked
+        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("sitemapKeyword")).get("Title"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("Title"));
+        //noinspection unchecked
+        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("Description")).get("Id"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("Description"));
+        //noinspection unchecked
+        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("Key")).get("Id"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("Key"));
+        //noinspection unchecked
+        //assertEqualsAndNotNull(((Map<String, Object>) pageModelData.getMetadata().get("sitemapKeyword")).get("TaxonomyId"), ((Map<String, Object>) pageModel.getMetadata().get("sitemapKeyword")).get("TaxonomyId"));
+
+        // TODO
+        // page.SchemaId
+        //assertEqualsAndNotNull(pageModelData.getSchemaId(), pageModel.getSchemaId());
 
 //        ((ItemList) pageModel.getRegions().get("Hero").getEntity("1472"))
 
-        verify(pagesCopyingCache).containsKey(pagesCopyingCache.getSpecificKey(pageModelData));
+        verify(pagesCopyingCache).containsKey(eq(pagesCopyingCache.getSpecificKey(pageModelData)));
     }
 
     private void assertEqualsAndNotNull(Object expected, Object actual) {
@@ -198,10 +229,10 @@ public class DefaultModelBuilderTest {
         public LocalizationIdProvider webRequestContextLocalizationIdProvider() {
             return new WebRequestContextLocalizationIdProvider();
         }
-
+        
         @Bean
         public LocalizationAwareKeyGenerator localizationAwareKeyGenerator() {
-            return spy(LocalizationAwareKeyGenerator.class);
+            return mock(LocalizationAwareKeyGenerator.class);
         }
 
         @Bean

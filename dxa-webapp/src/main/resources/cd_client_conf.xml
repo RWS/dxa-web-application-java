@@ -6,6 +6,6 @@
     <!-- Specify your CIS Environment's Discovery Service URL below -->
     <DiscoveryService ServiceUri="${DISCOVERY_URL:-http://localhost:8082/discovery.svc}"/>
 
-    <TokenService ClientId="cduser" ClientSecret="${TOKEN_CDUSER_SECRET:-encrypted:o/cgCBwmULeOyUZghFaKJA==}"/>
+    <TokenService ClientId="cduser" ClientSecret="${cduserpassword:-encrypted:o/cgCBwmULeOyUZghFaKJA==}"/>
 </ServiceConfig>
 

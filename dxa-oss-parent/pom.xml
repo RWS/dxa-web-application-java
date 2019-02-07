@@ -12,7 +12,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-oss-parent</artifactId>
-    <version>2.1.0-SNAPSHOT</version>
+    <version>2.1.1</version>
     <packaging>pom</packaging>
 
     <name>DXA - OSS Parent, BOM</name>
@@ -26,7 +26,15 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <cd-cil.version>11.0.0-SNAPSHOT</cd-cil.version>
+        <cd-cil.version>11.0.0-1027</cd-cil.version>
+        <cd-delivery-cil.version>11.0.0-1034</cd-delivery-cil.version>
+        <cd-xo.version>${cd-delivery-cil.version}</cd-xo.version>
+        <udp-common-config-legacy.version>11.0.0-1028</udp-common-config-legacy.version>
+        <udp-context-client.version>${cd-delivery-cil.version}</udp-context-client.version>
+        <udp-discovery-client-lightweight.version>11.0.0-1040</udp-discovery-client-lightweight.version>
+        <udp-cil-api.version>11.0.0-1037</udp-cil-api.version>
+        <udp-ugc-cil-api.version>11.0.0-1039</udp-ugc-cil-api.version>
+
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>
@@ -383,18 +391,18 @@
             <dependency>
                 <groupId>com.sdl.tridion.xo</groupId>
                 <artifactId>xo-compatible-client</artifactId>
-                <version>${cd-cil.version}</version>
+                <version>${cd-xo.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl.delivery</groupId>
                 <artifactId>cil</artifactId>
-                <version>${cd-cil.version}</version>
+                <version>${cd-delivery-cil.version}</version>
                 <type>pom</type>
             </dependency>
             <dependency>
                 <groupId>com.sdl.delivery</groupId>
                 <artifactId>udp-common-config-legacy</artifactId>
-                <version>${cd-cil.version}</version>
+                <version>${udp-common-config-legacy.version}</version>
             </dependency>
 
             <dependency>

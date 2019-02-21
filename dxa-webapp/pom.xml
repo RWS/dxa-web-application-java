@@ -129,7 +129,7 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-tridion-docs-search</artifactId>
-                    <version>${parent.version}</version>
+		    <version>${project.version}</version>
                 </dependency>
             </dependencies>
         </profile>

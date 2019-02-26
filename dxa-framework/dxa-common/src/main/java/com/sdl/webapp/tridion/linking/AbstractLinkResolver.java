@@ -7,6 +7,7 @@ import com.sdl.webapp.common.util.TcmUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,21 +38,28 @@ public abstract class AbstractLinkResolver implements LinkResolver {
     private boolean shouldStripIndexPath;
 
     @Override
-    @Cacheable(value = "defaultCache", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary }")
-    public String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary) {
+    @Cacheable(value = "defaultCache", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary, #contextId }")
+    public String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary, @Nullable String contextId) {
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
 
-        String resolvedLink = _resolveLink(url, publicationId, resolveToBinary);
+        String resolvedLink = _resolveLink(url, publicationId, resolveToBinary, contextId);
         String resolvedUrl = shouldStripIndexPath ? PathUtils.stripIndexPath(resolvedLink) : resolvedLink;
         return shouldRemoveExtension ? PathUtils.stripDefaultExtension(resolvedUrl) : resolvedUrl;
     }
 
     @Contract("null, _, _ -> null; !null, _, _ -> !null")
-    private String _resolveLink(String uri, int publicationId, boolean isBinary) {
+    private String _resolveLink(String uri, int publicationId, boolean isBinary, String contextId) {
         if (uri == null || !TcmUtils.isTcmUri(uri)) {
             return uri;
         }
-
+        //Page ID is either tcm uri or int (in string form) -1 means no page context
+        int pageId = -1;
+        if (contextId != null && TcmUtils.isTcmUri(contextId)) {
+            pageId = TcmUtils.getItemId(contextId);
+        }
+        else{
+            pageId = NumberUtils.toInt(contextId,-1);
+        }
         Function<ResolvingData, Optional<String>> resolver;
         switch (TcmUtils.getItemType(uri)) {
             case TcmUtils.COMPONENT_ITEM_TYPE:
@@ -67,7 +75,7 @@ public abstract class AbstractLinkResolver implements LinkResolver {
 
         ResolvingData resolvingData = ResolvingData.of(
                 publicationId == 0 ? TcmUtils.getPublicationId(uri) : publicationId,
-                TcmUtils.getItemId(uri), uri);
+                TcmUtils.getItemId(uri), uri, pageId);
 
         return resolver.apply(resolvingData).orElse("");
     }
@@ -94,5 +102,7 @@ public abstract class AbstractLinkResolver implements LinkResolver {
         private int itemId;
 
         private String uri;
+
+        private int pageId;
     }
 }

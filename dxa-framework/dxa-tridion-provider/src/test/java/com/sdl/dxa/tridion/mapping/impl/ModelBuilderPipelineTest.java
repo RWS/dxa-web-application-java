@@ -3,7 +3,6 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.google.common.collect.Lists;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
-import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
@@ -42,7 +41,7 @@ public class ModelBuilderPipelineTest {
 
     private PageModelData pageModelData = new PageModelData("1", "tcm", null, null, null, "title", null, null);
 
-    private EntityModelData entityModelData = new EntityModelData("1", "tcm", "url", null, null, null);
+    private EntityModelData entityModelData = new EntityModelData("1", "2", "tcm", "url", null, null, null);
 
     private PageModel firstPageModel = new DefaultPageModel();
 

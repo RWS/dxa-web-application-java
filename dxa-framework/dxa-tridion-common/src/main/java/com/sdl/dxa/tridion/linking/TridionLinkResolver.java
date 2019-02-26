@@ -1,8 +1,8 @@
 package com.sdl.dxa.tridion.linking;
 
+import com.sdl.web.api.linking.ComponentLinkImpl;
 import com.sdl.webapp.tridion.linking.AbstractLinkResolver;
 import com.tridion.linking.BinaryLink;
-import com.tridion.linking.ComponentLink;
 import com.tridion.linking.PageLink;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -23,7 +23,9 @@ public class TridionLinkResolver extends AbstractLinkResolver {
     @Override
     protected Function<ResolvingData, Optional<String>> _componentResolver() {
         return resolvingData -> Optional.ofNullable(
-                new ComponentLink(resolvingData.getPublicationId()).getLink(resolvingData.getItemId()).getURL());
+                new ComponentLinkImpl(resolvingData.getPublicationId()).getLink(resolvingData.getPageId(),
+                        resolvingData.getItemId(), -1, null, "",
+                        false, false).getURL());
     }
 
     @Override

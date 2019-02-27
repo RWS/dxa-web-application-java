@@ -100,16 +100,6 @@ public interface WebRequestContext {
      */
     void popContainerSize();
 
-    /**
-     * Return the current page model.
-     *
-     * @return the current page model
-     */
-    PageModel getPage();
-
-    @Deprecated
-    void setPage(PageModel page);
-
     boolean isDeveloperMode();
 
     boolean isInclude();

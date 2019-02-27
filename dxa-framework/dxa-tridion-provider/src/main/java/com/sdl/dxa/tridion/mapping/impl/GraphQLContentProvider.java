@@ -33,7 +33,6 @@ import com.sdl.webapp.common.exceptions.DxaRuntimeException;
 import com.sdl.webapp.common.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
@@ -180,8 +179,6 @@ public class GraphQLContentProvider implements ContentProvider {
         if (!standardMeta.containsKey("dateCreated")) {
             standardMeta.put("dateCreated", component.getLastPublishDate());
         }
-        final String dateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS";
-        standardMeta.put("dateCreated", new DateTime(component.getLastPublishDate()).toString(dateTimeFormat));
 
         if (!standardMeta.containsKey("name")) {
             standardMeta.put("name", component.getTitle());

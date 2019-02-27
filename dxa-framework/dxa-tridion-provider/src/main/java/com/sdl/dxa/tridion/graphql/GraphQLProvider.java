@@ -1,13 +1,8 @@
 package com.sdl.dxa.tridion.graphql;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.*;
-import com.fasterxml.jackson.databind.util.StdDateFormat;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
-import com.sdl.dxa.api.datamodel.json.Polymorphic;
-import com.sdl.dxa.api.datamodel.json.PolymorphicObjectMixin;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
@@ -18,15 +13,11 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
-import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
 import static com.sdl.dxa.common.util.PathUtils.normalizePathToDefaults;
-import static javax.cache.Caching.getDefaultClassLoader;
-import static org.springframework.util.ClassUtils.forName;
 
 /**
  * Common class for interaction with GraphQL backend.
@@ -39,9 +30,8 @@ public class GraphQLProvider {
     private ObjectMapper objectMapper;
 
     @Autowired
-    public GraphQLProvider(ApiClientProvider pcaClientProvider) {
-        this.objectMapper = getObjectMapper();
-
+    public GraphQLProvider(ApiClientProvider pcaClientProvider, ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
         this.pcaClient = pcaClientProvider.getClient();
         pcaClient.setDefaultModelType(DataModelType.R2);
         pcaClient.setDefaultContentType(ContentType.MODEL);
@@ -128,32 +118,6 @@ public class GraphQLProvider {
             }
             throw new ContentProviderException("Entity not found ny request " + entityRequest, e);
         }
-    }
-
-    ObjectMapper getObjectMapper() {
-        ObjectMapper objectMapper = new ObjectMapper();
-
-        objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategy.UpperCamelCaseStrategy());
-        objectMapper.registerModule(new JodaModule());
-        objectMapper.setDateFormat(new StdDateFormat());
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
-
-        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
-        scanner.addIncludeFilter(new AnnotationTypeFilter(Polymorphic.class));
-        scanner.findCandidateComponents(DataModelSpringConfiguration.class.getPackage().getName())
-                .forEach(type -> {
-                    try {
-                        Class<?> aClass = forName(type.getBeanClassName(), getDefaultClassLoader());
-                        objectMapper.addMixIn(aClass, PolymorphicObjectMixin.class);
-                    } catch (ClassNotFoundException e) {
-                        throw new RuntimeException("Class not found while mapping model data to typeIDs. Should never happen.", e);
-                    }
-                });
-        objectMapper.addMixIn(Object.class, PolymorphicObjectMixin.class);
-
-        return objectMapper;
     }
 
     private <T> T mapToType(Class<T> type, JsonNode result) throws JsonProcessingException {

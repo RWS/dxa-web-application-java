@@ -269,8 +269,7 @@ public class GraphQLContentProvider implements ContentProvider {
                 .build();
         PageModelData pageModelData = graphQLProvider._loadPage(PageModelData.class, pageRequest, ContentType.MODEL);
 
-        PageModel pageModel = builderPipeline.createPageModel(pageModelData);
-        return pageModel;
+        return builderPipeline.createPageModel(pageModelData);
     }
 
     @NotNull

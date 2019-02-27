@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.MissingNode;
 import com.google.common.base.Charsets;
 import com.google.common.io.Resources;
+import com.sdl.dxa.DxaSpringInitialization;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
@@ -40,8 +41,8 @@ public class GraphQLProviderTest {
     @Before
     public void setup() {
         when(apiClientProvider.getClient()).thenReturn(pcaClient);
-        graphQLProvider = new GraphQLProvider(apiClientProvider);
-        mapper = graphQLProvider.getObjectMapper();
+        mapper = new DxaSpringInitialization().objectMapper();
+        graphQLProvider = new GraphQLProvider(apiClientProvider, mapper);
     }
 
     @Test

@@ -32,6 +32,9 @@ public abstract class CopyingCache<B, V> extends SimpleCacheWrapper<B, V> {
     protected abstract V copy(V value);
 
     private V _checkAndCopy(V value) {
+        if (value == null) {
+            return null;
+        }
         return isCachingEnabled() ? copy(value) : value;
     }
 

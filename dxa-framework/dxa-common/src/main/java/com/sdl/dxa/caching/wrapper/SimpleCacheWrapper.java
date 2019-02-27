@@ -104,6 +104,10 @@ public abstract class SimpleCacheWrapper<B, V> {
             return value;
         }
 
+        if (value == null) {
+            return null;
+        }
+
         if (value.getClass().isAnnotationPresent(NeverCached.class)) {
             log.trace("Value of class {} is never cached", value.getClass());
             return value;

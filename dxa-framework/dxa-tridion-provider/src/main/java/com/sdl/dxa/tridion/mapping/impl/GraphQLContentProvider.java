@@ -4,15 +4,17 @@ import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.caching.wrapper.CopyingCache;
+import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
-import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.broker.GraphQLQueryProvider;
 import com.sdl.dxa.tridion.broker.QueryProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
+import com.sdl.dxa.tridion.graphql.GraphQLProvider;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.ApiClient;
+import com.sdl.web.pca.client.contentmodel.enums.ContentType;
 import com.sdl.web.pca.client.contentmodel.generated.Component;
 import com.sdl.web.pca.client.contentmodel.generated.CustomMetaEdge;
 import com.sdl.web.pca.client.contentmodel.generated.Item;
@@ -47,10 +49,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
-
 /**
- * Content Provider default implementation. Look at {@link ContentProvider} documentation for details.
+ * Content Provider GraphQL implementation. Look at {@link ContentProvider} documentation for details.
  *
  * @dxa.publicApi
  */
@@ -62,8 +62,6 @@ public class GraphQLContentProvider implements ContentProvider {
 
     private ModelBuilderPipeline builderPipeline;
 
-    private ModelServiceProvider modelService;
-
     private WebRequestContext webRequestContext;
 
     private StaticContentResolver staticContentResolver;
@@ -71,22 +69,21 @@ public class GraphQLContentProvider implements ContentProvider {
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
     private GraphQLBinaryContentProvider graphQLBinaryContentProvider;
-
+    private GraphQLProvider graphQLProvider;
     private ApiClient pcaClient;
 
     @Autowired
     public GraphQLContentProvider(WebApplicationContext webApplicationContext,
                                   WebRequestContext webRequestContext,
                                   StaticContentResolver staticContentResolver,
-                                  ModelBuilderPipeline builderPipeline,
-                                  ModelServiceProvider modelService,
+                                  ModelBuilderPipeline builderPipeline, GraphQLProvider graphQLProvider,
                                   ApiClientProvider pcaClientProvider) {
         this.pcaClient = pcaClientProvider.getClient();
         this.graphQLBinaryContentProvider = new GraphQLBinaryContentProvider(pcaClientProvider.getClient(), webApplicationContext);
         this.webRequestContext = webRequestContext;
         this.staticContentResolver = staticContentResolver;
         this.builderPipeline = builderPipeline;
-        this.modelService = modelService;
+        this.graphQLProvider = graphQLProvider;
     }
 
     @Autowired(required = false)
@@ -104,8 +101,6 @@ public class GraphQLContentProvider implements ContentProvider {
         PageModel pageModel = _loadPage(path, localization);
 
         pageModel.filterConditionalEntities(entityEvaluators);
-        //todo dxa2 refactor this, remove usage of deprecated method
-        webRequestContext.setPage(pageModel);
 
         return pageModel;
     }
@@ -269,18 +264,23 @@ public class GraphQLContentProvider implements ContentProvider {
     }
 
     protected PageModel _loadPage(String path, Localization localization) throws ContentProviderException {
-        PageModelData modelData = modelService.loadPageModel(
-                PageRequestDto.builder(localization.getId(), path)
-                        .includePages(INCLUDE)
-                        .build());
-        return builderPipeline.createPageModel(modelData);
+        PageRequestDto pageRequest = PageRequestDto.builder(localization.getId(), path)
+                .includePages(PageRequestDto.PageInclusion.INCLUDE)
+                .build();
+        PageModelData pageModelData = graphQLProvider._loadPage(PageModelData.class, pageRequest, ContentType.MODEL);
+
+        return builderPipeline.createPageModel(pageModelData);
     }
 
     @NotNull
     protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
-        EntityModelData modelData = modelService.loadEntity(webRequestContext.getLocalization().getId(), componentId);
+        Localization localization = webRequestContext.getLocalization();
+        EntityRequestDto entityRequest = EntityRequestDto.builder(localization.getId(), componentId).build();
+
+        EntityModelData entityModelData = graphQLProvider.getEntityModelData(entityRequest);
+
         try {
-            return builderPipeline.createEntityModel(modelData);
+            return builderPipeline.createEntityModel(entityModelData);
         } catch (DxaException e) {
             throw new ContentProviderException("Cannot build the entity model for componentId" + componentId, e);
         }
@@ -295,4 +295,5 @@ public class GraphQLContentProvider implements ContentProvider {
     public StaticContentItem getStaticContent(int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
         return graphQLBinaryContentProvider.getStaticContent(this, binaryId, localizationId, localizationPath);
     }
+
 }

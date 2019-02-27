@@ -25,10 +25,7 @@ import java.io.Serializable;
 import static javax.cache.Caching.getCachingProvider;
 import static org.ehcache.config.builders.CacheConfigurationBuilder.newCacheConfigurationBuilder;
 import static org.ehcache.jsr107.Eh107Configuration.fromEhcacheCacheConfiguration;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -149,13 +146,27 @@ public class CopyingCacheTest {
 
     @Test
     public void shouldCalculateKey() {
-        //given 
+        //given
 
         //when
         LocalizationAwareCacheKey key = testingCache.getKey("1", "2", "3");
 
         //then
         assertEquals(new LocalizationAwareCacheKey("42", new SimpleKey("1", "2", "3")), key);
+    }
+
+    @Test
+    public void shouldBeNullSafe() {
+        //given
+
+        //when
+        LocalizationAwareCacheKey key = testingCache.getKey("1", "2", "3");
+        Object added = testingCache.addAndGet(key, null);
+        Object get = testingCache.get(key);
+
+        //then
+        assertNull("Null object should return null", added);
+        assertNull("Null object should return null", get);
     }
 
     private static class TestingCache extends CopyingCache<Object, Serializable> {

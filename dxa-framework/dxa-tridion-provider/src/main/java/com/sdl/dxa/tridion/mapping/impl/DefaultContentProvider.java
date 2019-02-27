@@ -10,11 +10,7 @@ import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
-import com.sdl.webapp.common.api.content.ContentProvider;
-import com.sdl.webapp.common.api.content.ContentProviderException;
-import com.sdl.webapp.common.api.content.LinkResolver;
-import com.sdl.webapp.common.api.content.StaticContentItem;
+import com.sdl.webapp.common.api.content.*;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
@@ -51,13 +47,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -180,8 +170,6 @@ public class DefaultContentProvider implements ContentProvider {
         PageModel pageModel = _loadPage(path, localization);
 
         pageModel.filterConditionalEntities(entityEvaluators);
-        //todo dxa2 refactor this, remove usage of deprecated method
-        webRequestContext.setPage(pageModel);
 
         return pageModel;
     }

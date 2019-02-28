@@ -1,13 +1,7 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
 import com.google.common.base.Strings;
-import com.sdl.dxa.api.datamodel.model.BinaryContentData;
-import com.sdl.dxa.api.datamodel.model.EntityModelData;
-import com.sdl.dxa.api.datamodel.model.ExternalContentData;
-import com.sdl.dxa.api.datamodel.model.MvcModelData;
-import com.sdl.dxa.api.datamodel.model.PageModelData;
-import com.sdl.dxa.api.datamodel.model.RegionModelData;
-import com.sdl.dxa.api.datamodel.model.ViewModelData;
+import com.sdl.dxa.api.datamodel.model.*;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
 import com.sdl.dxa.caching.ConditionalKey;
 import com.sdl.dxa.caching.ConditionalKey.ConditionalKeyBuilder;
@@ -25,14 +19,7 @@ import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
-import com.sdl.webapp.common.api.model.AbstractViewModel;
-import com.sdl.webapp.common.api.model.EntityModel;
-import com.sdl.webapp.common.api.model.MvcData;
-import com.sdl.webapp.common.api.model.PageModel;
-import com.sdl.webapp.common.api.model.RegionModel;
-import com.sdl.webapp.common.api.model.RegionModelSet;
-import com.sdl.webapp.common.api.model.ViewModel;
-import com.sdl.webapp.common.api.model.ViewModelRegistry;
+import com.sdl.webapp.common.api.model.*;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.EclItem;
 import com.sdl.webapp.common.api.model.entity.ExceptionEntity;
@@ -50,15 +37,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Constructor;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
-
-import static com.sdl.webapp.common.util.StringUtils.dashify;
 
 /**
  * Default implementation of {@link EntityModelBuilder} and {@link PageModelBuilder}. Priority of this builder is always {@code highest precedence}.
@@ -437,7 +418,6 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     }
 
     ViewModel createRegionModel(RegionModelData regionModelData, Class<? extends ViewModel> viewModelType) throws ReflectiveOperationException {
-        String name = dashify(regionModelData.getName());
         Constructor<? extends ViewModel> constructorExists = null;
         for (Constructor constructor : viewModelType.getDeclaredConstructors()){
             if (constructor.getParameterTypes().length == 1 && constructor.getParameterTypes()[0] == String.class) {
@@ -447,7 +427,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         if (constructorExists == null) {
             throw new IllegalStateException("ViewModel implementor class (" + viewModelType.getCanonicalName() + ") should have had constructor with single String 'name' argument");
         }
-        return constructorExists.newInstance(name);
+        return constructorExists.newInstance(regionModelData.getName());
     }
 
     EntityModel createEntityModel(EntityModelData entityModelData, ConditionalKeyBuilder cacheRequest) {

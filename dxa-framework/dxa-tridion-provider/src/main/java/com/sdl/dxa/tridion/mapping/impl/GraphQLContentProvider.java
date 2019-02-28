@@ -97,7 +97,7 @@ public class GraphQLContentProvider implements ContentProvider {
      */
     @Override
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
-        PageModel pageModel = _loadPage(path, localization);
+        PageModel pageModel = loadPage(path, localization);
 
         pageModel.filterConditionalEntities(entityEvaluators);
 
@@ -111,9 +111,9 @@ public class GraphQLContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
-    public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
+    public EntityModel getEntityModel(@NotNull String id, Localization localization) throws ContentProviderException {
         Assert.notNull(id);
-        EntityModel entityModel = _getEntityModel(id);
+        EntityModel entityModel = getEntityModel(id);
         if (entityModel.getXpmMetadata() != null) {
             entityModel.getXpmMetadata().put("IsQueryBased", true);
         }
@@ -260,17 +260,17 @@ public class GraphQLContentProvider implements ContentProvider {
                         .build());
     }
 
-    protected PageModel _loadPage(String path, Localization localization) throws ContentProviderException {
+    protected PageModel loadPage(String path, Localization localization) throws ContentProviderException {
         PageRequestDto pageRequest = PageRequestDto.builder(localization.getId(), path)
                 .includePages(PageRequestDto.PageInclusion.INCLUDE)
                 .build();
-        PageModelData pageModelData = graphQLProvider._loadPage(PageModelData.class, pageRequest, ContentType.MODEL);
+        PageModelData pageModelData = graphQLProvider.loadPage(PageModelData.class, pageRequest, ContentType.MODEL);
 
         return builderPipeline.createPageModel(pageModelData);
     }
 
     @NotNull
-    protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
+    protected EntityModel getEntityModel(String componentId) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
         EntityRequestDto entityRequest = EntityRequestDto.builder(localization.getId(), componentId).build();
 

@@ -35,7 +35,7 @@ public final class CollectionUtils {
         }
         StringTokenizer stringTokenizer = new StringTokenizer(keyPath.replaceFirst("^/", "").replaceFirst("/$", ""), "/");
 
-        Object value = _getByCompoundKeyOrAlternative(stringTokenizer, map);
+        Object value = getByCompoundKeyOrAlternative(stringTokenizer, map);
         if (value == null) {
             log.debug("Found null value for key '{}', alternative '{}'", keyPath, alternative);
             return alternative;
@@ -51,7 +51,7 @@ public final class CollectionUtils {
     }
 
     @Nullable
-    private static Object _getByCompoundKeyOrAlternative(StringTokenizer key, @Nullable Map<String, ?> map) {
+    private static Object getByCompoundKeyOrAlternative(StringTokenizer key, @Nullable Map<String, ?> map) {
         String token = key.nextToken();
         if (map == null || !map.containsKey(token)) {
             return null;
@@ -65,7 +65,7 @@ public final class CollectionUtils {
         }
 
         //noinspection unchecked
-        return value instanceof Map ? _getByCompoundKeyOrAlternative(key, (Map<String, ?>) value) : null;
+        return value instanceof Map ? getByCompoundKeyOrAlternative(key, (Map<String, ?>) value) : null;
     }
 
 }

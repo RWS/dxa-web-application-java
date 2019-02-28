@@ -59,7 +59,7 @@ public class GraphQLProviderTest {
                 ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
                 null))
                 .thenReturn(node);
-        PageModelData result = graphQLProvider._loadPage(PageModelData.class, request, ContentType.MODEL);
+        PageModelData result = graphQLProvider.loadPage(PageModelData.class, request, ContentType.MODEL);
 
         assertEquals("/index", result.getUrlPath());
         assertEquals("Home", result.getTitle());
@@ -95,7 +95,7 @@ public class GraphQLProviderTest {
                 null))
                 .thenReturn(node);
 
-        PageModelData result = graphQLProvider._loadPage(PageModelData.class, request, ContentType.MODEL);
+        PageModelData result = graphQLProvider.loadPage(PageModelData.class, request, ContentType.MODEL);
 
         assertEquals("/index", result.getUrlPath());
         assertEquals("Home", result.getTitle());
@@ -118,7 +118,7 @@ public class GraphQLProviderTest {
                 null))
                 .thenReturn(node);
 
-        String result = graphQLProvider._loadPage(String.class, request, ContentType.RAW);
+        String result = graphQLProvider.loadPage(String.class, request, ContentType.RAW);
 
         assertEquals(expected, result);
     }

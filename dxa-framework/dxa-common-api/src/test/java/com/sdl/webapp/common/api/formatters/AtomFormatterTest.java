@@ -12,9 +12,7 @@ import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -27,7 +25,7 @@ public class AtomFormatterTest {
         AtomFormatter atomFormatter = new AtomFormatter(null, null);
 
         //when
-        List<String> mediaTypes = (List<String>) ReflectionTestUtils.getField(atomFormatter, "_mediaTypes");
+        List<String> mediaTypes = (List<String>) ReflectionTestUtils.getField(atomFormatter, "mediaTypes");
 
         //then
         assertTrue(mediaTypes.contains("application/atom+xml"));

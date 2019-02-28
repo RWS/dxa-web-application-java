@@ -42,7 +42,7 @@ public class DefaultModelServiceProvider implements ModelServiceProvider {
     @NotNull
     @Override
     public PageModelData loadPageModel(PageRequestDto pageRequest) throws ContentProviderException {
-        return _loadPage(configuration.getPageModelUrl(), PageModelData.class, pageRequest);
+        return loadPage(configuration.getPageModelUrl(), PageModelData.class, pageRequest);
     }
 
     /**
@@ -57,10 +57,10 @@ public class DefaultModelServiceProvider implements ModelServiceProvider {
     @Override
     public String loadPageContent(PageRequestDto pageRequest) throws ContentProviderException {
         String serviceUrl = UriComponentsBuilder.fromUriString(configuration.getPageModelUrl()).queryParam("raw", "true").build().toUriString();
-        return _loadPage(serviceUrl, String.class, pageRequest);
+        return loadPage(serviceUrl, String.class, pageRequest);
     }
 
-    private <T> T _loadPage(String serviceUrl, Class<T> type, PageRequestDto pageRequest) throws ContentProviderException {
+    private <T> T loadPage(String serviceUrl, Class<T> type, PageRequestDto pageRequest) throws ContentProviderException {
         try {
             T page = modelServiceClient.getForType(serviceUrl, type,
                     pageRequest.getUriType(),

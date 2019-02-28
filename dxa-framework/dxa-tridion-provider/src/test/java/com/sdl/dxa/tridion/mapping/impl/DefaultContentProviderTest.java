@@ -64,7 +64,7 @@ public class DefaultContentProviderTest {
         //given
 
         //when
-        contentProvider._loadPage("/path", localization);
+        contentProvider.loadPage("/path", localization);
 
         //then
         verify(defaultModelService).loadPageModel(eq(PageRequestDto.builder(42, "/path").build()));
@@ -75,7 +75,7 @@ public class DefaultContentProviderTest {
         //given
 
         //when
-        contentProvider._getEntityModel("1-2");
+        contentProvider.getEntityModel("1-2");
 
         //then
         verify(defaultModelService).loadEntity(eq("42"), eq("1-2"));
@@ -92,7 +92,7 @@ public class DefaultContentProviderTest {
         ReflectionTestUtils.setField(provider, "webRequestContext", mock(WebRequestContext.class));
         ReflectionTestUtils.setField(provider, "entityEvaluators", evaluators);
         when(provider.getPageModel(anyString(), any(Localization.class))).thenCallRealMethod();
-        when(provider._loadPage(anyString(), any(Localization.class))).thenReturn(pageModel);
+        when(provider.loadPage(anyString(), any(Localization.class))).thenReturn(pageModel);
 
         //when
         PageModel model = provider.getPageModel("", null);

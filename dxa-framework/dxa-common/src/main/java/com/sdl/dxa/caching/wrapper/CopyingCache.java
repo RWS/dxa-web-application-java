@@ -20,18 +20,18 @@ public abstract class CopyingCache<B, V> extends SimpleCacheWrapper<B, V> {
      */
     @Override
     public V addAndGet(LocalizationAwareCacheKey key, V value) {
-        return _checkAndCopy(super.addAndGet(key, value));
+        return checkAndCopy(super.addAndGet(key, value));
     }
 
     @Nullable
     @Override
     public V get(LocalizationAwareCacheKey key) {
-        return _checkAndCopy(super.get(key));
+        return checkAndCopy(super.get(key));
     }
 
     protected abstract V copy(V value);
 
-    private V _checkAndCopy(V value) {
+    private V checkAndCopy(V value) {
         if (value == null) {
             return null;
         }

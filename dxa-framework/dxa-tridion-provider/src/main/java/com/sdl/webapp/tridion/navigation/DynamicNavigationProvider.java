@@ -29,11 +29,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -70,29 +66,29 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
 
     @Override
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
-        Optional<SitemapItemModelData> navigationModel = _getNavigationModel(localization);
+        Optional<SitemapItemModelData> navigationModel = getNavigationModelInternal(localization);
 
         if (!navigationModel.isPresent()) {
             return staticNavigationProvider.getNavigationModel(localization);
         }
 
-        return _convert(navigationModel.get());
+        return convert(navigationModel.get());
     }
 
     @Override
     public NavigationLinks getTopNavigationLinks(String requestPath, Localization localization) throws NavigationProviderException {
-        Optional<SitemapItemModelData> navigationModel = _getNavigationModel(localization);
+        Optional<SitemapItemModelData> navigationModel = getNavigationModelInternal(localization);
 
         if (!navigationModel.isPresent()) {
             return staticNavigationProvider.getTopNavigationLinks(requestPath, localization);
         }
 
-        return _toNavigationLinks(navigationModel.get().getItems(), true, localization);
+        return toNavigationLinksInternal(navigationModel.get().getItems(), true, localization);
     }
 
     @Override
     public NavigationLinks getContextNavigationLinks(String requestPath, Localization localization) throws NavigationProviderException {
-        Optional<SitemapItemModelData> navigationModel = _getNavigationModel(localization);
+        Optional<SitemapItemModelData> navigationModel = getNavigationModelInternal(localization);
 
         if (!navigationModel.isPresent()) {
             return staticNavigationProvider.getContextNavigationLinks(requestPath, localization);
@@ -104,12 +100,12 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
             currentLevel = currentLevel.getParent();
         }
 
-        return _toNavigationLinks(currentLevel == null ? Collections.emptySet() : currentLevel.getItems(), true, localization);
+        return toNavigationLinksInternal(currentLevel == null ? Collections.emptySet() : currentLevel.getItems(), true, localization);
     }
 
     @Override
     public NavigationLinks getBreadcrumbNavigationLinks(String requestPath, Localization localization) throws NavigationProviderException {
-        Optional<SitemapItemModelData> navigationModel = _getNavigationModel(localization);
+        Optional<SitemapItemModelData> navigationModel = getNavigationModelInternal(localization);
 
         if (!navigationModel.isPresent()) {
             return staticNavigationProvider.getBreadcrumbNavigationLinks(requestPath, localization);
@@ -117,7 +113,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
 
         SitemapItemModelData currentLevel = navigationModel.get().findWithUrl(PathUtils.stripDefaultExtension(requestPath));
 
-        return _toNavigationLinks(currentLevel == null ? Collections.emptySet() : _collectBreadcrumbsToLevel(currentLevel, localization),
+        return toNavigationLinksInternal(currentLevel == null ? Collections.emptySet() : collectBreadcrumbsToLevel(currentLevel, localization),
                 false, localization);
     }
 
@@ -138,22 +134,22 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
         }
 
         return subtree.get().stream()
-                .map(this::_convert)
+                .map(this::convert)
                 .collect(Collectors.toList());
     }
 
     @NotNull
-    private NavigationLinks _toNavigationLinks(Collection<SitemapItemModelData> items,
+    private NavigationLinks toNavigationLinksInternal(Collection<SitemapItemModelData> items,
                                                boolean onlyVisible, Localization localization) {
         return items.stream()
                 .filter(model -> !onlyVisible || (model.isVisible() && !isNullOrEmpty(model.getUrl())))
-                .map(this::_convert)
+                .map(this::convert)
                 .map(item -> item.createLink(linkResolver, localization))
                 .collect(Collectors.collectingAndThen(Collectors.toList(), NavigationLinks::new));
     }
 
     @NotNull
-    private List<SitemapItemModelData> _collectBreadcrumbsToLevel(SitemapItemModelData currentLevel,
+    private List<SitemapItemModelData> collectBreadcrumbsToLevel(SitemapItemModelData currentLevel,
                                                                   final Localization localization) {
         List<SitemapItemModelData> breadcrumbs = new LinkedList<>();
 
@@ -182,7 +178,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
     }
 
     @NotNull
-    private Optional<SitemapItemModelData> _getNavigationModel(Localization localization) {
+    private Optional<SitemapItemModelData> getNavigationModelInternal(Localization localization) {
         SitemapRequestDto requestDto = SitemapRequestDto.wholeTree(Integer.parseInt(localization.getId())).build();
         Optional<TaxonomyNodeModelData> navigationModel = navigationModelProvider.getNavigationModel(requestDto);
         if (!navigationModel.isPresent()) {
@@ -194,8 +190,8 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
     }
 
     @NotNull
-    private SitemapItem _convert(@NotNull SitemapItemModelData model) {
-        SitemapItem item = _instantiateSitemap(model);
+    private SitemapItem convert(@NotNull SitemapItemModelData model) {
+        SitemapItem item = instantiateSitemap(model);
         item.setId(model.getId());
         item.setVisible(model.isVisible());
         if (!Strings.isNullOrEmpty(model.getUrl())) item.setUrl("/" + model.getUrl().replaceAll("^/?(.*)", "$1"));
@@ -203,12 +199,12 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
         item.setOriginalTitle(model.getOriginalTitle());
         item.setPublishedDate(model.getPublishedDate());
         item.setType(model.getType());
-        model.getItems().forEach(modelData -> item.addItem(_convert(modelData)));
+        model.getItems().forEach(modelData -> item.addItem(convert(modelData)));
         return item;
     }
 
     @NotNull
-    private SitemapItem _instantiateSitemap(@NotNull SitemapItemModelData model) {
+    private SitemapItem instantiateSitemap(@NotNull SitemapItemModelData model) {
         if (model instanceof TaxonomyNodeModelData) {
             TaxonomyNodeModelData taxonomyModel = (TaxonomyNodeModelData) model;
             TaxonomyNode item = new TaxonomyNode();

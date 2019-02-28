@@ -22,20 +22,16 @@ public abstract class BaseFormatter implements DataFormatter {
 
     protected final WebRequestContext context;
 
-    private final List<String> _mediaTypes = new ArrayList<>();
+    private final List<String> mediaTypes = new ArrayList<>();
 
-    /**
-     * @deprecated since 2.0, use {@link #_addMediaType(String)} instead
-     */
-    @Deprecated
-    public void addMediaType(String mediaType) {
-        _addMediaType(mediaType);
+    void addMediaType(String mediaType) {
+        mediaTypes.add(mediaType);
     }
 
     @Override
     public double score() {
         double score = 0.0;
-        List<String> validTypes = getValidTypes(_mediaTypes);
+        List<String> validTypes = getValidTypes(mediaTypes);
         if (validTypes == null || validTypes.isEmpty()) {
             return score;
         }
@@ -78,9 +74,5 @@ public abstract class BaseFormatter implements DataFormatter {
         }
 
         return result;
-    }
-
-    void _addMediaType(String mediaType) {
-        _mediaTypes.add(mediaType);
     }
 }

@@ -64,11 +64,11 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
 
     @Nullable
     public static DefaultSemanticFieldDataProvider getFor(ViewModelData model, SemanticSchema semanticSchema) {
-        return _getFor(model, semanticSchema);
+        return getFor((Object) model, semanticSchema);
     }
 
     @Nullable
-    private static DefaultSemanticFieldDataProvider _getFor(@NotNull Object model, SemanticSchema semanticSchema) {
+    private static DefaultSemanticFieldDataProvider getFor(@NotNull Object model, SemanticSchema semanticSchema) {
         if (!(model instanceof CanWrapContentAndMetadata)) {
             log.debug("Type {} is not supported by embedded SemanticFieldDataProvider", model.getClass());
             return null;
@@ -86,7 +86,7 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
      */
     @Nullable
     public DefaultSemanticFieldDataProvider iteration(Object model, SemanticField semanticField, int index) {
-        DefaultSemanticFieldDataProvider provider = _getFor(model, semanticSchema);
+        DefaultSemanticFieldDataProvider provider = getFor(model, semanticSchema);
         if (provider != null) {
             provider.embeddingLevel = this.embeddingLevel;
             provider.iteration = index + 1;
@@ -105,7 +105,7 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
      */
     @Nullable
     public DefaultSemanticFieldDataProvider embedded(Object value) {
-        DefaultSemanticFieldDataProvider provider = _getFor(value, this.semanticSchema);
+        DefaultSemanticFieldDataProvider provider = getFor(value, this.semanticSchema);
         if (provider != null) {
             provider.iteration = this.iteration;
             provider.context = this.context;
@@ -162,7 +162,7 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
                 
         for (Map.Entry<String, Object> entry : Stream.concat(content, metadata).collect(Collectors.toSet())) 
           {
-             this.<T>_getAllFieldsData(entry, fieldData, targetType);
+             this.<T>getAllFieldsData(entry, fieldData, targetType);
           }
           
          return fieldData;
@@ -172,7 +172,7 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
         return contentModelData != null ? contentModelData.entrySet().stream() : Stream.empty();
     }
     
-    private <T> void _getAllFieldsData(Map.Entry<String, Object> entry, Map<String, T> fieldData ,Class<T> targetType) throws FieldConverterException {
+    private <T> void getAllFieldsData(Map.Entry<String, Object> entry, Map<String, T> fieldData ,Class<T> targetType) throws FieldConverterException {
         if ("settings".equals(entry.getKey())) {
             throw new UnsupportedOperationException("'settings' field handling"); //todo dxa2 implement
         }
@@ -218,11 +218,11 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
 
     @Nullable
     private FieldPath getCurrentPath(SemanticField semanticField) {
-        FieldPath _path = semanticField.getPath().getTail();
-        for (int i = 0; i < embeddingLevel && _path != null; i++) {
-            _path = _path.getTail();
+        FieldPath path = semanticField.getPath().getTail();
+        for (int i = 0; i < embeddingLevel && path != null; i++) {
+            path = path.getTail();
         }
-        return _path;
+        return path;
     }
 
     @NotNull

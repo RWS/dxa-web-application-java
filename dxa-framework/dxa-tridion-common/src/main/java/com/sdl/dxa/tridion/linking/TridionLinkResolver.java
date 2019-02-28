@@ -21,19 +21,19 @@ import java.util.function.Function;
 public class TridionLinkResolver extends AbstractLinkResolver {
 
     @Override
-    protected Function<ResolvingData, Optional<String>> _componentResolver() {
+    protected Function<ResolvingData, Optional<String>> componentResolver() {
         return resolvingData -> Optional.ofNullable(
                 new ComponentLink(resolvingData.getPublicationId()).getLink(resolvingData.getItemId()).getURL());
     }
 
     @Override
-    protected Function<ResolvingData, Optional<String>> _pageResolver() {
+    protected Function<ResolvingData, Optional<String>> pageResolver() {
         return resolvingData -> Optional.ofNullable(
                 new PageLink(resolvingData.getPublicationId()).getLink(resolvingData.getItemId()).getURL());
     }
 
     @Override
-    protected Function<ResolvingData, Optional<String>> _binaryResolver() {
+    protected Function<ResolvingData, Optional<String>> binaryResolver() {
         return resolvingData -> {
             String uri = resolvingData.getUri();
 

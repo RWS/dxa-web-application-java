@@ -58,25 +58,25 @@ public interface SemanticModelConverter<T> {
     @NotNull
     default Number toSpecificNumber(Number number, Class<?> objectType) {
         // conversion to string helps to prevent floating point accuracy issues
-        Number _number = new BigDecimal(String.valueOf(number));
+        BigDecimal bigDecimal = new BigDecimal(String.valueOf(number));
         if (Float.class == objectType) {
-            return _number.floatValue();
+            return bigDecimal.floatValue();
         }
         if (Double.class == objectType) {
-            return _number.doubleValue();
+            return bigDecimal.doubleValue();
         }
         if (Integer.class == objectType) {
-            return _number.intValue();
+            return bigDecimal.intValue();
         }
         if (Long.class == objectType) {
-            return _number.longValue();
+            return bigDecimal.longValue();
         }
         if (Byte.class == objectType) {
-            return _number.byteValue();
+            return bigDecimal.byteValue();
         }
         if (Short.class == objectType) {
-            return _number.shortValue();
+            return bigDecimal.shortValue();
         }
-        return _number;
+        return bigDecimal;
     }
 }

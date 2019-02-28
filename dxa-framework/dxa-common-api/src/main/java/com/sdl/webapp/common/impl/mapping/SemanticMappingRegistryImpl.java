@@ -1,19 +1,9 @@
 package com.sdl.webapp.common.impl.mapping;
 
-import com.google.common.collect.LinkedHashMultimap;
-import com.google.common.collect.LinkedListMultimap;
-import com.google.common.collect.ListMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.collect.SetMultimap;
+import com.google.common.collect.*;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
-import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntities;
-import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
-import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntityInfo;
-import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticMappingIgnore;
-import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperties;
-import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
-import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticPropertyInfo;
+import com.sdl.webapp.common.api.mapping.semantic.annotations.*;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -31,16 +21,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 @Slf4j
 @Component
@@ -224,10 +205,10 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
             PackageUtils.doWithClasses(basePackage, metadataReader -> {
                 final ClassMetadata classMetadata = metadataReader.getClassMetadata();
                 if (!classMetadata.isInterface()) {
-                    final Class<?> _class = ClassUtils.resolveClassName(classMetadata.getClassName(),
+                    final Class<?> clazz = ClassUtils.resolveClassName(classMetadata.getClassName(),
                             ClassUtils.getDefaultClassLoader());
-                    if (EntityModel.class.isAssignableFrom(_class)) {
-                        registerEntity(_class.asSubclass(EntityModel.class));
+                    if (EntityModel.class.isAssignableFrom(clazz)) {
+                        registerEntity(clazz.asSubclass(EntityModel.class));
                     }
                 }
             });

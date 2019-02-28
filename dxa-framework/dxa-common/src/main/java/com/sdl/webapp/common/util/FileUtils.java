@@ -84,8 +84,8 @@ public final class FileUtils {
      * @return whether DXA need this file to start
      */
     public static boolean isEssentialConfiguration(@NotNull String path, String localizationPath) {
-        String _path = !"/".equals(localizationPath) && path.startsWith(localizationPath) ? path.replaceFirst(localizationPath, "") : path;
-        return VERSION_JSON.equals(_path) || SYSTEM_FOLDER_PATTERN.matcher(_path).matches() || isFavicon(_path);
+        String processedPath = !"/".equals(localizationPath) && path.startsWith(localizationPath) ? path.replaceFirst(localizationPath, "") : path;
+        return VERSION_JSON.equals(processedPath) || SYSTEM_FOLDER_PATTERN.matcher(processedPath).matches() || isFavicon(processedPath);
     }
 
     /**

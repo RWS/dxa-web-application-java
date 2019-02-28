@@ -49,8 +49,7 @@ public final class HtmlBuilders {
         if (href == null) {
             return a;
         }
-        String _href = href.trim();
-        return _href.isEmpty() ? a : a.withHref(_href);
+        return href.trim().isEmpty() ? a : a.withHref(href);
     }
 
     public static ButtonElementBuilder button() {

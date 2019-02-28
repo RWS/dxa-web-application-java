@@ -114,7 +114,7 @@ public abstract class SimpleCacheWrapper<B, V> {
         }
 
         getCache().put(key, value);
-        _logPut(key, getCache().getName());
+        logPut(key, getCache().getName());
         return value;
     }
 
@@ -150,9 +150,9 @@ public abstract class SimpleCacheWrapper<B, V> {
         }
         boolean contains = getCache().containsKey(key);
         if (contains) {
-            _logHit(key, getCache().getName());
+            logHit(key, getCache().getName());
         } else {
-            _logMiss(key, getCache().getName());
+            logMiss(key, getCache().getName());
         }
         return contains;
     }
@@ -161,15 +161,15 @@ public abstract class SimpleCacheWrapper<B, V> {
         return this.keyGenerator.generate(keyParams);
     }
 
-    private void _logPut(LocalizationAwareCacheKey key, String cacheName) {
+    private void logPut(LocalizationAwareCacheKey key, String cacheName) {
         log.trace("Cache entry for key '{}' put in cache '{}'", key, cacheName);
     }
 
-    private void _logHit(LocalizationAwareCacheKey key, String cacheName) {
+    private void logHit(LocalizationAwareCacheKey key, String cacheName) {
         log.trace("Cache entry for key '{}' found in cache '{}'", key, cacheName);
     }
 
-    private void _logMiss(LocalizationAwareCacheKey key, String cacheName) {
+    private void logMiss(LocalizationAwareCacheKey key, String cacheName) {
         log.trace("No cache entry for key '{}' in cache '{}'", key, cacheName);
     }
 }

@@ -7,11 +7,7 @@ import com.fasterxml.jackson.databind.DeserializationConfig;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.SerializationConfig;
 import com.fasterxml.jackson.databind.introspect.ClassIntrospector;
-import com.fasterxml.jackson.databind.jsontype.NamedType;
-import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
-import com.fasterxml.jackson.databind.jsontype.TypeIdResolver;
-import com.fasterxml.jackson.databind.jsontype.TypeResolverBuilder;
-import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
+import com.fasterxml.jackson.databind.jsontype.*;
 import com.fasterxml.jackson.databind.jsontype.impl.AsPropertyTypeDeserializer;
 import com.fasterxml.jackson.databind.jsontype.impl.AsPropertyTypeSerializer;
 import com.fasterxml.jackson.databind.jsontype.impl.StdTypeResolverBuilder;
@@ -36,7 +32,7 @@ public class ModelDataTypeResolver extends StdTypeResolverBuilder {
     public TypeSerializer buildTypeSerializer(SerializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
         return useForType(baseType, config) ?
                 (_includeAs == JsonTypeInfo.As.PROPERTY ?
-                        _buildModelDataTypeSerializer(config, baseType, subtypes) :
+                        buildModelDataTypeSerializer(config, baseType, subtypes) :
                         super.buildTypeSerializer(config, baseType, subtypes)) :
                 null;
     }
@@ -45,7 +41,7 @@ public class ModelDataTypeResolver extends StdTypeResolverBuilder {
     public TypeDeserializer buildTypeDeserializer(DeserializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
         return useForType(baseType, config) ?
                 (_includeAs == JsonTypeInfo.As.PROPERTY ?
-                        _buildModelDataTypeDeserializer(config, baseType, subtypes)
+                        buildModelDataTypeDeserializer(config, baseType, subtypes)
                         : super.buildTypeDeserializer(config, baseType, subtypes)) :
                 null;
     }
@@ -56,13 +52,13 @@ public class ModelDataTypeResolver extends StdTypeResolverBuilder {
     }
 
     @NotNull
-    private TypeDeserializer _buildModelDataTypeDeserializer(DeserializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
+    private TypeDeserializer buildModelDataTypeDeserializer(DeserializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
         TypeIdResolver idRes = idResolver(config, baseType, subtypes, false, true);
         return new AsPropertyTypeDeserializer(baseType, idRes, _typeProperty, _typeIdVisible,
                 TypeFactory.defaultInstance().constructSpecializedType(unknownType(), UnknownModelData.class));
     }
 
-    private TypeSerializer _buildModelDataTypeSerializer(SerializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
+    private TypeSerializer buildModelDataTypeSerializer(SerializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
         TypeIdResolver idRes = idResolver(config, baseType, subtypes, true, false);
         return new DxaAsPropertyTypeSerializer(idRes);
     }

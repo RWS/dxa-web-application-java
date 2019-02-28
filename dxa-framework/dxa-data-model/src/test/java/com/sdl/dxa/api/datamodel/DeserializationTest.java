@@ -82,21 +82,21 @@ public class DeserializationTest {
 
     private void assertExtensionData(PageModelData page) throws IOException {
         Map<String, Object> extensionData = page.getExtensionData();
-        _assertExtensionData(extensionData);
+        assertExtensionData(extensionData);
 
         // what if we serialize and deserialize? do we still have type info for unknown classes?
         String serialized1 = objectMapper.writeValueAsString(page);
-        _assertExtensionData(objectMapper.readValue(serialized1, PageModelData.class).getExtensionData());
+        assertExtensionData(objectMapper.readValue(serialized1, PageModelData.class).getExtensionData());
 
         // and again to confirm that deserializing of previously serialized content results in the same
         String serialized2 = objectMapper.writeValueAsString(page);
-        _assertExtensionData(objectMapper.readValue(serialized2, PageModelData.class).getExtensionData());
+        assertExtensionData(objectMapper.readValue(serialized2, PageModelData.class).getExtensionData());
 
         // and even content is the same
         assertEquals(serialized1, serialized2);
     }
 
-    private void _assertExtensionData(Map<String, Object> extensionData) throws IOException {
+    private void assertExtensionData(Map<String, Object> extensionData) throws IOException {
         assertTrue(extensionData.get("EntityModelData") instanceof EntityModelData);
 
         assertTrue(extensionData.get("EntityModelDatas") instanceof ListWrapper);

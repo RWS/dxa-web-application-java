@@ -106,17 +106,17 @@ public class AbstractLinkResolverTest {
         }
 
         @Override
-        protected Function<ResolvingData, Optional<String>> _binaryResolver() {
+        protected Function<ResolvingData, Optional<String>> binaryResolver() {
             return resolvingData -> Optional.of("resolved-binary-" + resolvingData.getPublicationId());
         }
 
         @Override
-        protected Function<ResolvingData, Optional<String>> _componentResolver() {
+        protected Function<ResolvingData, Optional<String>> componentResolver() {
             return resolvingData -> Optional.of("resolved-component-" + resolvingData.getPublicationId());
         }
 
         @Override
-        protected Function<ResolvingData, Optional<String>> _pageResolver() {
+        protected Function<ResolvingData, Optional<String>> pageResolver() {
             return resolvingData -> Optional.of("resolved-page-" + resolvingData.getPublicationId());
         }
     }

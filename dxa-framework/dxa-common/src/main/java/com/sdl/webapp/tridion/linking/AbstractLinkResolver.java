@@ -41,13 +41,13 @@ public abstract class AbstractLinkResolver implements LinkResolver {
     public String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary) {
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
 
-        String resolvedLink = _resolveLink(url, publicationId, resolveToBinary);
+        String resolvedLink = resolveLink(url, publicationId, resolveToBinary);
         String resolvedUrl = shouldStripIndexPath ? PathUtils.stripIndexPath(resolvedLink) : resolvedLink;
         return shouldRemoveExtension ? PathUtils.stripDefaultExtension(resolvedUrl) : resolvedUrl;
     }
 
     @Contract("null, _, _ -> null; !null, _, _ -> !null")
-    private String _resolveLink(String uri, int publicationId, boolean isBinary) {
+    private String resolveLink(String uri, int publicationId, boolean isBinary) {
         if (uri == null || !TcmUtils.isTcmUri(uri)) {
             return uri;
         }
@@ -55,10 +55,10 @@ public abstract class AbstractLinkResolver implements LinkResolver {
         Function<ResolvingData, Optional<String>> resolver;
         switch (TcmUtils.getItemType(uri)) {
             case TcmUtils.COMPONENT_ITEM_TYPE:
-                resolver = isBinary ? _componentBinaryResolver() : _componentResolver();
+                resolver = isBinary ? componentBinaryResolver() : componentResolver();
                 break;
             case TcmUtils.PAGE_ITEM_TYPE:
-                resolver = _pageResolver();
+                resolver = pageResolver();
                 break;
             default:
                 log.warn("Could not resolve link: {}", uri);
@@ -72,18 +72,18 @@ public abstract class AbstractLinkResolver implements LinkResolver {
         return resolver.apply(resolvingData).orElse("");
     }
 
-    private Function<ResolvingData, Optional<String>> _componentBinaryResolver() {
+    private Function<ResolvingData, Optional<String>> componentBinaryResolver() {
         return resolvingData -> {
-            Optional<String> binary = _binaryResolver().apply(resolvingData);
-            return binary.isPresent() ? binary : _componentResolver().apply(resolvingData);
+            Optional<String> binary = binaryResolver().apply(resolvingData);
+            return binary.isPresent() ? binary : componentResolver().apply(resolvingData);
         };
     }
 
-    protected abstract Function<ResolvingData, Optional<String>> _componentResolver();
+    protected abstract Function<ResolvingData, Optional<String>> componentResolver();
 
-    protected abstract Function<ResolvingData, Optional<String>> _pageResolver();
+    protected abstract Function<ResolvingData, Optional<String>> pageResolver();
 
-    protected abstract Function<ResolvingData, Optional<String>> _binaryResolver();
+    protected abstract Function<ResolvingData, Optional<String>> binaryResolver();
 
     @AllArgsConstructor(staticName = "of")
     @Getter

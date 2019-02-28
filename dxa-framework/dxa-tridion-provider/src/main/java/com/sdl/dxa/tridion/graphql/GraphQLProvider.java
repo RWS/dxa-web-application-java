@@ -50,7 +50,7 @@ public class GraphQLProvider {
     // know upfront if the URL addresses a regular Page or an index Page (within a nested SG).
     // To determine this, DXA first tries the regular Page and if it doesn't exist, it appends /index.html and tries again.
     // TODO: The above should be handled by GraphQL (See CRQ-11703)
-    public <T> T _loadPage(Class<T> type, PageRequestDto pageRequest, ContentType contentType) throws ContentProviderException {
+    public <T> T loadPage(Class<T> type, PageRequestDto pageRequest, ContentType contentType) throws ContentProviderException {
         try {
             JsonNode pageNode = pcaClient.getPageModelData(
                     ContentNamespace.Sites,

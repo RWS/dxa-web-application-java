@@ -23,7 +23,7 @@ public class BaseFormatterTest {
         BaseFormatter baseFormatter = getBaseFormatter(expected);
 
         //when
-        baseFormatter._addMediaType(expected);
+        baseFormatter.addMediaType(expected);
         List<String> list = baseFormatter.getValidTypes(Collections.singletonList(expected));
 
         //then
@@ -109,7 +109,7 @@ public class BaseFormatterTest {
     public void shouldGetPreferableScoreForCurrentFormatter() {
         //given
         @NotNull BaseFormatter baseFormatter = getBaseFormatter("text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c");
-        baseFormatter._addMediaType("text/x-dvi");
+        baseFormatter.addMediaType("text/x-dvi");
 
         //when
         double score = baseFormatter.score();
@@ -135,8 +135,8 @@ public class BaseFormatterTest {
     public void shouldSelectBestPreferableScoreForCurrentFormatter() {
         //given
         @NotNull BaseFormatter baseFormatter = getBaseFormatter("text/plain; q=0.5, text/html, text/x-dvi; q=0.8, text/x-c");
-        baseFormatter._addMediaType("text/x-dvi");
-        baseFormatter._addMediaType("text/html");
+        baseFormatter.addMediaType("text/x-dvi");
+        baseFormatter.addMediaType("text/html");
 
         //when
         double score = baseFormatter.score();

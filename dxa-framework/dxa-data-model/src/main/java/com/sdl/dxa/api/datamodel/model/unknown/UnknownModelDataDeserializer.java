@@ -58,10 +58,10 @@ public class UnknownModelDataDeserializer extends JsonDeserializer<UnknownModelD
         }
 
         // and we move the token to the next
-        _nextToken(p, builder);
+        nextToken(p, builder);
     }
 
-    private void _nextToken(JsonParser p, StringBuilder builder) throws IOException {
+    private void nextToken(JsonParser p, StringBuilder builder) throws IOException {
         // check is we need a comma between two tokens
         if (isCommaNeeded(p.currentToken(), p.nextToken())) {
             builder.append(",");

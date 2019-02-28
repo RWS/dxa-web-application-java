@@ -32,14 +32,14 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
 
         StaticContentRequestDto adaptedRequest = requestDto.isLocalizationPathSet() ? requestDto :
                 requestDto.toBuilder().localizationPath(
-                        _resolveLocalizationPath(requestDto)).build();
+                        resolveLocalizationPath(requestDto)).build();
 
-        final String contentPath = _getContentPath(adaptedRequest.getBinaryPath(), adaptedRequest.getLocalizationPath());
+        final String contentPath = getContentPath(adaptedRequest.getBinaryPath(), adaptedRequest.getLocalizationPath());
 
-        return _getStaticContentFile(contentPath, adaptedRequest);
+        return getStaticContentFile(contentPath, adaptedRequest);
     }
 
-    private String _getContentPath(@NotNull String binaryPath, @NotNull String localizationPath) {
+    private String getContentPath(@NotNull String binaryPath, @NotNull String localizationPath) {
         if (localizationPath.length() > 1) {
             String path = binaryPath.startsWith(localizationPath) ? binaryPath.substring(localizationPath.length()) : binaryPath;
             return localizationPath + removeVersionNumber(path);
@@ -52,7 +52,7 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
         return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
 
-    private StaticContentItem _getStaticContentFile(String path, StaticContentRequestDto requestDto)
+    private StaticContentItem getStaticContentFile(String path, StaticContentRequestDto requestDto)
             throws ContentProviderException {
         String parentPath = StringUtils.join(new String[]{
                 webApplicationContext.getServletContext().getRealPath("/"), STATIC_FILES_DIR, requestDto.getLocalizationId()
@@ -65,13 +65,13 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
 
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
 
-        String urlPath = _prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl());
+        String urlPath = prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl());
 
         return createStaticContentItem(requestDto, file, publicationId, pathInfo, urlPath);
     }
 
     @SneakyThrows(UnsupportedEncodingException.class)
-    private String _prependFullUrlIfNeeded(String path, String baseUrl) {
+    private String prependFullUrlIfNeeded(String path, String baseUrl) {
         if (path.contains(baseUrl)) {
             return path;
         }
@@ -94,5 +94,5 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
                                                       ImageUtils.StaticContentPathInfo pathInfo,
                                                       String urlPath) throws ContentProviderException;
 
-    protected abstract String _resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException;
+    protected abstract String resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException;
 }

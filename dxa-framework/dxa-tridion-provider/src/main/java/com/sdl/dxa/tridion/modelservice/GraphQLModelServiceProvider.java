@@ -30,7 +30,7 @@ public class GraphQLModelServiceProvider implements ModelServiceProvider {
     @NotNull
     @Override
     public PageModelData loadPageModel(PageRequestDto pageRequest) throws ContentProviderException {
-        return graphQLProvider._loadPage(PageModelData.class, pageRequest, ContentType.MODEL);
+        return graphQLProvider.loadPage(PageModelData.class, pageRequest, ContentType.MODEL);
     }
 
     /**
@@ -44,7 +44,7 @@ public class GraphQLModelServiceProvider implements ModelServiceProvider {
     @NotNull
     @Override
     public String loadPageContent(PageRequestDto pageRequest) throws ContentProviderException {
-        return graphQLProvider._loadPage(String.class, pageRequest, ContentType.RAW);
+        return graphQLProvider.loadPage(String.class, pageRequest, ContentType.RAW);
     }
 
     /**

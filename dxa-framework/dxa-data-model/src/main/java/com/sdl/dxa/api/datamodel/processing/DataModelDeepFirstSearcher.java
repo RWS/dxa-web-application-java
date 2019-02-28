@@ -89,25 +89,25 @@ public class DataModelDeepFirstSearcher {
 
             log.trace("Traversing '{}'", value);
 
-            if (_isCollectionType(value)) { // is it a collection type?
+            if (isCollectionType(value)) { // is it a collection type?
                 // then let's expand everything and do not expect it to have anything more than concrete types
-                _traverseCollection(value);
+                traverseCollection(value);
                 return;
             }
 
             // ok, we have one of concrete models, which one? do we want to process/expand it?
             if (value instanceof PageModelData) { // maybe it's a Page?
-                _traversePageModel((PageModelData) value);
+                traversePageModel((PageModelData) value);
             } else if (value instanceof RegionModelData) { // this is not a page, so maybe region?
-                _traverseRegionModel((RegionModelData) value);
+                traverseRegionModel((RegionModelData) value);
             } else { // it's one of data models (entities, keywords, etc...)
-                _traverseDataModel(value);
+                traverseDataModel(value);
             }
 
             // if it may have own content or metadata, let's process it also, maybe we can find models there
             // should go last because content may appear during other expansions
             if (value instanceof CanWrapContentAndMetadata) {
-                _traverseWrapper((CanWrapContentAndMetadata) value);
+                traverseWrapper((CanWrapContentAndMetadata) value);
             }
 
         } finally {
@@ -115,11 +115,11 @@ public class DataModelDeepFirstSearcher {
         }
     }
 
-    private boolean _isCollectionType(Object value) {
+    private boolean isCollectionType(Object value) {
         return value instanceof ListWrapper || value instanceof Collection || value instanceof Map;
     }
 
-    private void _traverseCollection(Object value) {
+    private void traverseCollection(Object value) {
         Collection<?> values;
 
         if (value instanceof Map) { // ok, found a Map (CMD?)
@@ -135,7 +135,7 @@ public class DataModelDeepFirstSearcher {
         }
     }
 
-    private void _traversePageModel(PageModelData page) {
+    private void traversePageModel(PageModelData page) {
         // let's expand all regions, one by one
         if (page.getRegions() != null) {
             for (RegionModelData region : page.getRegions()) {
@@ -146,7 +146,7 @@ public class DataModelDeepFirstSearcher {
         processPageModel(page);
     }
 
-    private void _traverseRegionModel(RegionModelData region) {
+    private void traverseRegionModel(RegionModelData region) {
         if (region.getRegions() != null) { // then it may have nested regions
             for (RegionModelData nestedRegion : region.getRegions()) {
                 traverseObject(nestedRegion);
@@ -160,7 +160,7 @@ public class DataModelDeepFirstSearcher {
         }
     }
 
-    private void _traverseDataModel(Object value) {
+    private void traverseDataModel(Object value) {
         if (value instanceof EntityModelData) {
             processEntityModel((EntityModelData) value);
         }
@@ -174,7 +174,7 @@ public class DataModelDeepFirstSearcher {
         }
     }
 
-    private void _traverseWrapper(CanWrapContentAndMetadata value) {
+    private void traverseWrapper(CanWrapContentAndMetadata value) {
         ModelDataWrapper wrapper = value.getDataWrapper();
         if (wrapper.getContent() != null) {
             traverseObject(wrapper.getContent());

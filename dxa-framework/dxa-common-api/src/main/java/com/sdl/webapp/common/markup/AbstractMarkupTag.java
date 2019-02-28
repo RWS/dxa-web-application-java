@@ -32,7 +32,7 @@ public class AbstractMarkupTag extends TagSupport {
     }
 
     protected String processInclude(String include, ViewModel model) throws IOException, ServletException {
-        return _processInclude(include, model).toHtml();
+        return processIncludeInternal(include, model).toHtml();
     }
 
     protected void decorateException(ViewModel model) throws JspException {
@@ -46,7 +46,7 @@ public class AbstractMarkupTag extends TagSupport {
     protected void decorateInclude(String include, ViewModel model) throws IOException, ServletException {
         HtmlNode decoratedMarkup = null;
         try {
-            decoratedMarkup = _processInclude(include, model);
+            decoratedMarkup = processIncludeInternal(include, model);
         } finally {
             if (decoratedMarkup != null) {
                 pageContext.getOut().write(decoratedMarkup.toHtml());
@@ -80,7 +80,7 @@ public class AbstractMarkupTag extends TagSupport {
         return ApplicationContextHolder.getContext().getBean(OutputCache.class);
     }
 
-    private HtmlNode _processInclude(String include, ViewModel model) throws ServletException, IOException {
+    private HtmlNode processIncludeInternal(String include, ViewModel model) throws ServletException, IOException {
         pageContext.getRequest().setAttribute("ParentModel", model);
 
         OutputCache outputCache = getOutputCache();

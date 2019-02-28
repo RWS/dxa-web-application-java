@@ -34,12 +34,12 @@ public class GraphQLModelServiceProviderTest {
         PageRequestDto request = PageRequestDto.builder(5, "/index").build();
 
         //When
-        when(graphQLProvider._loadPage(any(), any(), any())).thenReturn(pageModelData);
+        when(graphQLProvider.loadPage(any(), any(), any())).thenReturn(pageModelData);
         PageModelData result = modelServiceProvider.loadPageModel(request);
 
         //Then
         assertEquals(pageModelData, result);
-        verify(graphQLProvider)._loadPage(eq(PageModelData.class), eq(request), eq(ContentType.MODEL));
+        verify(graphQLProvider).loadPage(eq(PageModelData.class), eq(request), eq(ContentType.MODEL));
     }
 
     @Test
@@ -49,12 +49,12 @@ public class GraphQLModelServiceProviderTest {
         String expected = "result";
 
         //When
-        when(graphQLProvider._loadPage(any(), any(), any())).thenReturn(expected);
+        when(graphQLProvider.loadPage(any(), any(), any())).thenReturn(expected);
         String result = modelServiceProvider.loadPageContent(request);
 
         //Then
         assertEquals(expected, result);
-        verify(graphQLProvider)._loadPage(eq(String.class), eq(request), eq(ContentType.RAW));
+        verify(graphQLProvider).loadPage(eq(String.class), eq(request), eq(ContentType.RAW));
     }
 
     @Test

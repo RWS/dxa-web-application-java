@@ -82,7 +82,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     }
 
     @Override
-    protected String _resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
+    protected String resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
         ContextData contextData = createContextData(requestDto.getClaims());
         Publication publication = apiClient.getPublication(ContentNamespace.Sites,

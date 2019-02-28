@@ -91,7 +91,7 @@ public class DefaultContentProvider implements ContentProvider {
         this.modelService = modelService;
     }
 
-    protected PageModel _loadPage(String path, Localization localization) throws ContentProviderException {
+    protected PageModel loadPage(String path, Localization localization) throws ContentProviderException {
         PageModelData modelData = modelService.loadPageModel(
                 PageRequestDto.builder(localization.getId(), path)
                         .includePages(INCLUDE)
@@ -100,7 +100,7 @@ public class DefaultContentProvider implements ContentProvider {
     }
 
     @NotNull
-    protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
+    protected EntityModel getEntityModel(String componentId) throws ContentProviderException {
         EntityModelData modelData = modelService.loadEntity(webRequestContext.getLocalization().getId(), componentId);
         try {
             return builderPipeline.createEntityModel(modelData);
@@ -109,7 +109,7 @@ public class DefaultContentProvider implements ContentProvider {
         }
     }
 
-    protected <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws DxaException {
+    protected <T extends EntityModel> List<T> convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws DxaException {
         List<T> entities = new ArrayList<>();
         for (ComponentMetadata metadata : components) {
             entities.add(builderPipeline.createEntityModel(EntityModelData.builder()
@@ -167,7 +167,7 @@ public class DefaultContentProvider implements ContentProvider {
      */
     @Override
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
-        PageModel pageModel = _loadPage(path, localization);
+        PageModel pageModel = loadPage(path, localization);
 
         pageModel.filterConditionalEntities(entityEvaluators);
 
@@ -181,9 +181,9 @@ public class DefaultContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
-    public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
+    public EntityModel getEntityModel(@NotNull String id, Localization localization) throws ContentProviderException {
         Assert.notNull(id);
-        EntityModel entityModel = _getEntityModel(id);
+        EntityModel entityModel = getEntityModel(id);
         if (entityModel.getXpmMetadata() != null) {
             entityModel.getXpmMetadata().put("IsQueryBased", true);
         }
@@ -203,7 +203,7 @@ public class DefaultContentProvider implements ContentProvider {
         }
         SimpleBrokerQuery query = dynamicList.getQuery(localization);
         try {
-            dynamicList.setQueryResults(_convertEntities(executeMetadataQuery(query), dynamicList.getEntityType(), localization), query.isHasMore());
+            dynamicList.setQueryResults(convertEntities(executeMetadataQuery(query), dynamicList.getEntityType(), localization), query.isHasMore());
         } catch (DxaException e) {
             throw new ContentProviderException("Cannot populate a dynamic list " + dynamicList.getId() + " localization " + localization.getId(), e);
         }

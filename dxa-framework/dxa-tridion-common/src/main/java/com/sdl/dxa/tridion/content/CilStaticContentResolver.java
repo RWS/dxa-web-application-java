@@ -92,7 +92,7 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
     }
 
     @Override
-    protected String _resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
+    protected String resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
         String localizationId = requestDto.getLocalizationId();
         try {
             PublicationMeta meta = webPublicationMetaFactory.getMeta(TcmUtils.buildPublicationTcmUri(localizationId));

@@ -7,9 +7,6 @@ import com.tridion.linking.PageLink;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-import java.util.function.Function;
-
 /**
  * Tridion link resolver.
  *
@@ -21,27 +18,22 @@ import java.util.function.Function;
 public class TridionLinkResolver extends AbstractLinkResolver {
 
     @Override
-    protected Function<ResolvingData, Optional<String>> componentResolver() {
-        return resolvingData -> Optional.ofNullable(
-                new ComponentLink(resolvingData.getPublicationId()).getLink(resolvingData.getItemId()).getURL());
+    protected String resolveComponent(ResolvingData resolvingData) {
+        return new ComponentLink(resolvingData.getPublicationId()).getLink(resolvingData.getItemId()).getURL();
     }
 
     @Override
-    protected Function<ResolvingData, Optional<String>> pageResolver() {
-        return resolvingData -> Optional.ofNullable(
-                new PageLink(resolvingData.getPublicationId()).getLink(resolvingData.getItemId()).getURL());
+    protected String resolvePage(ResolvingData resolvingData) {
+        return new PageLink(resolvingData.getPublicationId()).getLink(resolvingData.getItemId()).getURL();
     }
 
     @Override
-    protected Function<ResolvingData, Optional<String>> binaryResolver() {
-        return resolvingData -> {
-            String uri = resolvingData.getUri();
+    protected String resolveBinary(ResolvingData resolvingData) {
+        String uri = resolvingData.getUri();
 
-            String componentURI = uri.startsWith("tcm:") ? uri : ("tcm:" + uri);
-            return Optional.ofNullable(
-                    new BinaryLink(resolvingData.getPublicationId())
-                            .getLink(componentURI, null, null, null, false)
-                            .getURL());
-        };
+        String componentURI = uri.startsWith("tcm:") ? uri : ("tcm:" + uri);
+        return new BinaryLink(resolvingData.getPublicationId())
+                        .getLink(componentURI, null, null, null, false)
+                        .getURL();
     }
 }

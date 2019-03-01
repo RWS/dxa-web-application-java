@@ -108,7 +108,7 @@ node("dxadocker") {
             }
             stage("Maven build modules") {
                 dir("build\\dxa-modules\\webapp-java") {
-                        bat "mvn -Dmaven.repo.local=${lpr} install"
+                    bat "mvn -Dmaven.repo.local=${lpr} install"
                 }
             }
             stage("Build-webapp") {

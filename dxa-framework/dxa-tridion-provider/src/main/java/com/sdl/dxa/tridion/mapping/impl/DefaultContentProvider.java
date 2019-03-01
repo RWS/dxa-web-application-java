@@ -171,6 +171,9 @@ public class DefaultContentProvider implements ContentProvider {
 
         pageModel.filterConditionalEntities(entityEvaluators);
 
+        //todo dxa2 refactor this, remove usage of deprecated method
+        webRequestContext.setPage(pageModel);
+
         return pageModel;
     }
 

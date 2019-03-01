@@ -106,9 +106,9 @@ node("dxadocker") {
                         bat "mvn -f dxa-framework\\pom.xml -Dmaven.repo.local=${lpr} javadoc:aggregate@publicApi"
                 }
             }
-            stage("Gradle buildModules") {
+            stage("Maven build modules") {
                 dir("build\\dxa-modules\\webapp-java") {
-                        bat "gradlew.bat -Pcommand=\"install javadoc:jar -Pcoverage-per-test,local-m2-remote,nexus-sdl\" -PmavenProperties=\"-e -Dmaven.repo.local=${lpr}\" -Dmaven.repo.local=${lpr} -Pbatch buildModules"
+                    bat "mvn -Dmaven.repo.local=${lpr} install"
                 }
             }
             stage("Build-webapp") {

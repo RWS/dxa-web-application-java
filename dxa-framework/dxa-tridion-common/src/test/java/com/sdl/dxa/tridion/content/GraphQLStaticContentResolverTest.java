@@ -184,7 +184,7 @@ public class GraphQLStaticContentResolverTest {
 
 
                 new File(webApplicationContext.getServletContext().getRealPath("/") +
-                        "/BinaryData/42/" + "Publication URL/" +
+                        "/BinaryData/42/" + "publication URL/" +
                 "system/version").exists());
     }
 }

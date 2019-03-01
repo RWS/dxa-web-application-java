@@ -108,7 +108,7 @@ node("dxadocker") {
             }
             stage("Maven build modules") {
                 dir("build\\dxa-modules\\webapp-java") {
-                        bat "mvn install -Pcoverage-per-test,local-m2-remote,nexus-sdl"
+                        bat "mvn -Dmaven.repo.local=${lpr} install"
                 }
             }
             stage("Build-webapp") {

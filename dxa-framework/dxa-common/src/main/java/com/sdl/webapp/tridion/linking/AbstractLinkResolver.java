@@ -37,9 +37,14 @@ public abstract class AbstractLinkResolver implements LinkResolver {
             return uri;
         }
 
-        int publicationId1 = publicationId == 0 ? TcmUtils.getPublicationId(uri) : publicationId;
         int itemId = TcmUtils.getItemId(uri);
-        ResolvingData resolvingData = new ResolvingData(publicationId1, itemId, uri);
+
+        ResolvingData resolvingData;
+        if (publicationId <= 0) {
+            resolvingData = new ResolvingData(TcmUtils.getPublicationId(uri), itemId, uri);
+        } else {
+            resolvingData = new ResolvingData(publicationId, itemId, uri);
+        }
 
         String result = "";
         switch (TcmUtils.getItemType(uri)) {

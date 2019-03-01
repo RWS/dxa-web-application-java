@@ -23,6 +23,16 @@
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-tridion-common</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_broker</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>com.tridion</groupId>
+                    <artifactId>cd_dynamic</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
@@ -38,6 +48,7 @@
             <artifactId>cil</artifactId>
             <type>pom</type>
         </dependency>
+
 
         <!-- Spring Framework -->
         <dependency>

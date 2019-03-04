@@ -27,8 +27,7 @@ public abstract class AbstractLinkResolver implements LinkResolver {
 
     @Override
     @Cacheable(value = "defaultCache", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary, #contextId }")
-    public String resolveLink(@Nullable String url, @Nullable String localizationId,
-                              boolean resolveToBinary, @Nullable String contextId) {
+    public String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary, @Nullable String contextId) {
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
 
         String resolvedLink = _resolveLink(url, publicationId, resolveToBinary, contextId);
@@ -41,10 +40,14 @@ public abstract class AbstractLinkResolver implements LinkResolver {
         if (uri == null || !TcmUtils.isTcmUri(uri)) {
             return uri;
         }
-
-        int pageId = (contextId != null && TcmUtils.isTcmUri(contextId)) ?
-                TcmUtils.getItemId(contextId) : NumberUtils.toInt(contextId,-1);
-
+        //Page ID is either tcm uri or int (in string form) -1 means no page context
+        int pageId = -1;
+        if (contextId != null && TcmUtils.isTcmUri(contextId)) {
+            pageId = TcmUtils.getItemId(contextId);
+        }
+        else{
+            pageId = NumberUtils.toInt(contextId,-1);
+        }
         Function<ResolvingData, Optional<String>> resolver;
         switch (TcmUtils.getItemType(uri)) {
             case TcmUtils.COMPONENT_ITEM_TYPE:

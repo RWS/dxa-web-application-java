@@ -21,7 +21,7 @@ import java.util.function.Function;
 public class TridionLinkResolver extends AbstractLinkResolver {
 
     @Override
-    protected Function<ResolvingData, Optional<String>> resolveComponent() {
+    protected Function<ResolvingData, Optional<String>> _componentResolver() {
         return resolvingData -> Optional.ofNullable(
                 new ComponentLinkImpl(resolvingData.getPublicationId()).getLink(resolvingData.getPageId(),
                         resolvingData.getItemId(), -1, null, "",
@@ -29,13 +29,13 @@ public class TridionLinkResolver extends AbstractLinkResolver {
     }
 
     @Override
-    protected Function<ResolvingData, Optional<String>> resolvePage() {
+    protected Function<ResolvingData, Optional<String>> _pageResolver() {
         return resolvingData -> Optional.ofNullable(
                 new PageLink(resolvingData.getPublicationId()).getLink(resolvingData.getItemId()).getURL());
     }
 
     @Override
-    protected Function<ResolvingData, Optional<String>> resolveBinary() {
+    protected Function<ResolvingData, Optional<String>> _binaryResolver() {
         return resolvingData -> {
             String uri = resolvingData.getUri();
 

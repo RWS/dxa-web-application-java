@@ -67,8 +67,8 @@ public class CacheTest {
         MvcModelData mvcData = new MvcModelData("a", "a", "a", "c", "v", null);
         PageModelData pageData = (PageModelData) new PageModelData("1", "tcm", null, null, null, null, null, "/url")
                 .setMvcData(mvcData);
-        EntityModelData entityData = (EntityModelData) new EntityModelData("2", null, null, null, null, null, "1", "tcm", "/url", null, null, null);
-        EntityModelData entityMvcData = (EntityModelData) new EntityModelData("2", null, null, null, null, mvcData, "1", "tcm", "/url", null, null, null)
+        EntityModelData entityData = new EntityModelData("2", null, null, null, null, null, "1", "2", "tcm", "/url", null, null, null);
+        EntityModelData entityMvcData = (EntityModelData) new EntityModelData("3", null, null, null, null, mvcData, "1", "2", "tcm", "/url", null, null, null)
                 .setMvcData(mvcData);
 
         //when
@@ -79,8 +79,8 @@ public class CacheTest {
         Object entitiesExpectedClassCacheKey = entitiesCache.getSpecificKey(entityData,expectedClass);
         //then
         assertEquals(keyGenerator.generate("/url", mvcData), pagesCopyingCacheKey);
-        assertEquals(keyGenerator.generate("1", "2", mvcData), entitiesCacheKey);
-        assertEquals(keyGenerator.generate("1", "2", null), entitiesNoMvcCacheKey);
+        assertEquals(keyGenerator.generate("1", "2", "3", mvcData), entitiesCacheKey);
+        assertEquals(keyGenerator.generate("1", "2", "2", null), entitiesNoMvcCacheKey);
         assertNotEquals(keyGenerator.generate("1", "2", null), entitiesExpectedClassCacheKey);
     }
 

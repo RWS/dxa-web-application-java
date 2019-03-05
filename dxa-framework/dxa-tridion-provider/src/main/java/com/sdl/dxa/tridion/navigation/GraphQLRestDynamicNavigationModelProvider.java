@@ -141,9 +141,9 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
                     // Requesting from root so just return descendants from root
                     depth--;
                 }
-                TaxonomySitemapItem[] clientRespone = apiClient
+                TaxonomySitemapItem[] clientResponse = apiClient
                         .getSitemapSubtree(Sites, requestDto.getLocalizationId(), sitemapId, depth, NONE, null);
-                return asList(clientRespone)
+                return asList(clientResponse)
                         .stream()
                         .sorted(Comparator.comparing(sitemapItem -> sitemapItem.getOriginalTitle()))
                         .collect(Collectors.toList());

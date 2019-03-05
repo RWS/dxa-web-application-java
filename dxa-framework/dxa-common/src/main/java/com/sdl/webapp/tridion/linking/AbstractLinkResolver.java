@@ -51,10 +51,10 @@ public abstract class AbstractLinkResolver implements LinkResolver {
         Function<ResolvingData, Optional<String>> resolver;
         switch (TcmUtils.getItemType(uri)) {
             case TcmUtils.COMPONENT_ITEM_TYPE:
-                resolver = isBinary ? _componentBinaryResolver() : _componentBinaryResolver();
+                resolver = isBinary ? _componentBinaryResolver() : _componentResolver();
                 break;
             case TcmUtils.PAGE_ITEM_TYPE:
-                resolver = resolvePage();
+                resolver = _pageResolver();
                 break;
             default:
                 log.warn("Could not resolve link: {}", uri);
@@ -70,16 +70,16 @@ public abstract class AbstractLinkResolver implements LinkResolver {
 
     private Function<ResolvingData, Optional<String>> _componentBinaryResolver() {
         return resolvingData -> {
-            Optional<String> binary = resolveBinary().apply(resolvingData);
-            return binary.isPresent() ? binary : resolveComponent().apply(resolvingData);
+            Optional<String> binary = _binaryResolver().apply(resolvingData);
+            return binary.isPresent() ? binary : _componentResolver().apply(resolvingData);
         };
     }
 
-    protected abstract Function<ResolvingData, Optional<String>> resolveComponent();
+    protected abstract Function<ResolvingData, Optional<String>> _componentResolver();
 
-    protected abstract Function<ResolvingData, Optional<String>> resolvePage();
+    protected abstract Function<ResolvingData, Optional<String>> _pageResolver();
 
-    protected abstract Function<ResolvingData, Optional<String>> resolveBinary();
+    protected abstract Function<ResolvingData, Optional<String>> _binaryResolver();
 
     @AllArgsConstructor(staticName = "of")
     @Getter

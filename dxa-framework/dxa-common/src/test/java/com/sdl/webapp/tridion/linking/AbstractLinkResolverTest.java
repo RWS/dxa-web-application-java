@@ -4,6 +4,9 @@ import org.junit.Test;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.util.ReflectionTestUtils;
 
+import java.util.Optional;
+import java.util.function.Function;
+
 import static org.junit.Assert.assertEquals;
 
 public class AbstractLinkResolverTest {
@@ -103,18 +106,24 @@ public class AbstractLinkResolverTest {
         }
 
         @Override
-        protected String resolveComponent(ResolvingData resolvingData) {
-            return "resolved-component-" + resolvingData.getPublicationId();
+        protected Function<ResolvingData, Optional<String>> _componentResolver() {
+            return resolvingData -> Optional.ofNullable(
+              "resolved-component-" + resolvingData.getPublicationId()
+            );
         }
 
         @Override
-        protected String resolvePage(ResolvingData resolvingData) {
-            return "resolved-page-" + resolvingData.getPublicationId();
+        protected Function<ResolvingData, Optional<String>> _pageResolver() {
+            return resolvingData -> Optional.ofNullable(
+              "resolved-page-" + resolvingData.getPublicationId()
+            );
         }
 
         @Override
-        protected String resolveBinary(ResolvingData resolvingData) {
-            return "resolved-binary-" + resolvingData.getPublicationId();
+        protected Function<ResolvingData, Optional<String>> _binaryResolver() {
+            return resolvingData -> Optional.ofNullable(
+              "resolved-binary-" + resolvingData.getPublicationId()
+            );
         }
     }
 }

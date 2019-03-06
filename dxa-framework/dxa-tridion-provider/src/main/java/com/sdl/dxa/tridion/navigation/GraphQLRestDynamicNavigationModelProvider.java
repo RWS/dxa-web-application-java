@@ -152,7 +152,7 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
     }
 
     private List<SitemapItem> getEntireNavigationSubtreeInternal(@NotNull SitemapRequestDto request) {
-        int depth = getDepth(request);
+        int depth = defaultDescendantDepth;
 
         List<SitemapItem> rootItems = asList(apiClient
                 .getSitemapSubtree(Sites,

@@ -115,39 +115,40 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
         int depth = getDepth(requestDto);
         String sitemapId = requestDto.getSitemapId();
 
+        List<SitemapItem> siteMapsItems;
         if (requestDto.getExpandLevels().isUnlimited()) {
-            List<SitemapItem> entireTree = getEntireNavigationSubtreeInternal(requestDto);
-            if (sitemapId == null) {
-                // if parent node not specified we return entire tree
-                return entireTree;
-            } else {
-                // root node specified so return the direct children of this node
-                return entireTree.stream()
-                        .flatMap(sitemapItem -> ((TaxonomySitemapItem) sitemapItem).getItems().stream())
-                        .sorted(Comparator.comparing(sitemapItem -> sitemapItem.getOriginalTitle()))
-                        .collect(Collectors.toList());
-            }
+            siteMapsItems = getEntireNavigationSubtreeInternal(requestDto);
         } else {
             boolean withAncestors = requestDto.getNavigationFilter().isWithAncestors();
             if (withAncestors) {
                 // we are looking for a particular item, we need to request the entire subtree first
-                List<SitemapItem> entireTree = getEntireNavigationSubtreeInternal(requestDto);
-                // Prune descendants from our deseried node
-                SitemapItem node = findNode(entireTree, sitemapId);
+                siteMapsItems = getEntireNavigationSubtreeInternal(requestDto);
+                // Prune descendants from our desired node
+                SitemapItem node = findNode(siteMapsItems, sitemapId);
                 prune(node, 0, depth);
-                return entireTree;
             } else {
                 if (sitemapId == null && depth > 0) {
                     // Requesting from root so just return descendants from root
                     depth--;
                 }
-                TaxonomySitemapItem[] clientResponse = apiClient
-                        .getSitemapSubtree(Sites, requestDto.getLocalizationId(), sitemapId, depth, NONE, null);
-                return asList(clientResponse)
-                        .stream()
-                        .sorted(Comparator.comparing(sitemapItem -> sitemapItem.getOriginalTitle()))
-                        .collect(Collectors.toList());
+                siteMapsItems = asList(apiClient
+                        .getSitemapSubtree(Sites, requestDto.getLocalizationId(), sitemapId, depth, NONE, null));
             }
+        }
+
+        if (sitemapId == null) {
+            // if parent node not specified we return entire tree
+            return siteMapsItems
+                    .stream()
+                    .sorted(Comparator.comparing(sitemapItem -> sitemapItem.getOriginalTitle()))
+                    .collect(Collectors.toList());
+        } else {
+            // root node specified so return the direct children of this node
+            return siteMapsItems
+                    .stream()
+                    .flatMap(sitemapItem -> ((TaxonomySitemapItem) sitemapItem).getItems().stream())
+                    .sorted(Comparator.comparing(sitemapItem -> sitemapItem.getOriginalTitle()))
+                    .collect(Collectors.toList());
         }
     }
 

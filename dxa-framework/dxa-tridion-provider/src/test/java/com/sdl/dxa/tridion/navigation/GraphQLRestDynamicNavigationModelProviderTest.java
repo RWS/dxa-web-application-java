@@ -29,19 +29,9 @@ import static com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites;
 import static com.sdl.web.pca.client.contentmodel.generated.Ancestor.INCLUDE;
 import static com.sdl.web.pca.client.contentmodel.generated.Ancestor.NONE;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.*;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GraphQLRestDynamicNavigationModelProviderTest {
@@ -96,13 +86,20 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
             assertTrue(target.isVisible());
         }
         if (verifyChildren) {
-            assertEquals(3, target.getItems().size());
-            assertEquals(ID + "_" + ID + "_1", target.getItems().first().getId());
-            assertEquals(0, target.getItems().first().getItems().size());
-            assertEquals(ID + "_" + ID + "_3", target.getItems().last().getId());
-            assertEquals(1, target.getItems().last().getItems().size());
-            assertEquals(ID + "_" + ID + "_" + ID + "_1", target.getItems().last().getItems().first().getId());
+            verifyChildren(new ArrayList<>(target.getItems()));
         }
+    }
+
+    private void verifyChildren(List<SitemapItemModelData> items) {
+        assertEquals(3, items.size());
+        SitemapItemModelData first = items.get(0);
+        SitemapItemModelData last = items.get(items.size() - 1);
+
+        assertEquals(ID + "_" + ID + "_1", first.getId());
+        assertEquals(0, first.getItems().size());
+        assertEquals(ID + "_" + ID + "_3", last.getId());
+        assertEquals(1, last.getItems().size());
+        assertEquals(ID + "_" + ID + "_" + ID + "_1", last.getItems().first().getId());
     }
 
     @NotNull
@@ -231,17 +228,18 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
     @Test
     public void getNavigationSubtree() {
         TaxonomySitemapItem[] result = new TaxonomySitemapItem[]{createTaxonomySitemapItem(ID, true)};
+        TaxonomySitemapItem[] childTaxonomySitemap = new TaxonomySitemapItem[0];
+
         doReturn(result).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID),
                 eq(DEPTH_COUNTER_TEST_BOUND), eq(INCLUDE), any(ContextData.class));
-        doReturn(new TaxonomySitemapItem[0]).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID),
+        doReturn(childTaxonomySitemap).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID),
                 anyString(), eq(DEPTH_COUNTER_TEST_BOUND), eq(NONE), any(ContextData.class));
 
         Collection<SitemapItemModelData> sitemapItemModelData = provider.getNavigationSubtree(requestDto).get();
-
-        verifyCreatedObject(sitemapItemModelData.toArray(EMPTY)[0], true, true);
+        verifyChildren(new ArrayList<>(sitemapItemModelData));
         verify(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER_TEST_BOUND),
                 eq(INCLUDE), any(ContextData.class));
-        verify(provider, times(5)).convert(any(TaxonomySitemapItem.class));
+        verify(provider, times(4)).convert(any(TaxonomySitemapItem.class));
     }
 
     @Test
@@ -252,8 +250,8 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
 
         doReturn(result).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID),
                 eq(DEPTH_COUNTER_TEST_BOUND), eq(INCLUDE), any(ContextData.class));
-        doReturn(childTaxonomySitemap).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), anyString(),
-                eq(DEPTH_COUNTER_TEST_BOUND), eq(NONE), any(ContextData.class));
+        doReturn(childTaxonomySitemap).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID),
+                anyString(), eq(DEPTH_COUNTER_TEST_BOUND), eq(NONE), any(ContextData.class));
 
         SitemapRequestDto sitemapRequestDto = createSitemapRequestDto(-1);
         Collection<SitemapItemModelData> sitemapItemModelData = provider
@@ -263,6 +261,7 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
         verify(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER_TEST_BOUND),
                 eq(INCLUDE), any(ContextData.class));
     }
+
 
     private SitemapRequestDto createSitemapRequestDto(int depth) {
         NavigationFilter withAncestorsFilter = new NavigationFilter();

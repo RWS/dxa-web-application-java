@@ -13,9 +13,6 @@ import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 
-import java.util.Optional;
-import java.util.function.Function;
-
 @Slf4j
 public abstract class AbstractLinkResolver implements LinkResolver {
 
@@ -40,48 +37,51 @@ public abstract class AbstractLinkResolver implements LinkResolver {
         if (uri == null || !TcmUtils.isTcmUri(uri)) {
             return uri;
         }
+
         //Page ID is either tcm uri or int (in string form) -1 means no page context
         int pageId = -1;
-        if (contextId != null && TcmUtils.isTcmUri(contextId)) {
+        if (TcmUtils.isTcmUri(contextId)) {
             pageId = TcmUtils.getItemId(contextId);
+        } else {
+            pageId = NumberUtils.toInt(contextId, -1);
         }
-        else{
-            pageId = NumberUtils.toInt(contextId,-1);
+
+        int itemId = TcmUtils.getItemId(uri);
+
+        ResolvingData resolvingData;
+        if (publicationId <= 0) {
+            resolvingData = new ResolvingData(TcmUtils.getPublicationId(uri), itemId, uri, pageId);
+        } else {
+            resolvingData = new ResolvingData(publicationId, itemId, uri, pageId);
         }
-        Function<ResolvingData, Optional<String>> resolver;
+
+        String result = "";
         switch (TcmUtils.getItemType(uri)) {
             case TcmUtils.COMPONENT_ITEM_TYPE:
-                resolver = isBinary ? _componentBinaryResolver() : _componentResolver();
+                if (isBinary) {
+                    result = resolveBinary(resolvingData);
+                } else {
+                    result = resolveComponent(resolvingData);
+                }
                 break;
             case TcmUtils.PAGE_ITEM_TYPE:
-                resolver = _pageResolver();
+                result = resolvePage(resolvingData);
                 break;
             default:
                 log.warn("Could not resolve link: {}", uri);
                 return "";
         }
 
-        ResolvingData resolvingData = ResolvingData.of(
-                publicationId == 0 ? TcmUtils.getPublicationId(uri) : publicationId,
-                TcmUtils.getItemId(uri), uri, pageId);
-
-        return resolver.apply(resolvingData).orElse("");
+        return result;
     }
 
-    private Function<ResolvingData, Optional<String>> _componentBinaryResolver() {
-        return resolvingData -> {
-            Optional<String> binary = _binaryResolver().apply(resolvingData);
-            return binary.isPresent() ? binary : _componentResolver().apply(resolvingData);
-        };
-    }
+    protected abstract String resolveComponent(ResolvingData resolvingData);
 
-    protected abstract Function<ResolvingData, Optional<String>> _componentResolver();
+    protected abstract String resolvePage(ResolvingData resolvingData);
 
-    protected abstract Function<ResolvingData, Optional<String>> _pageResolver();
+    protected abstract String resolveBinary(ResolvingData resolvingData);
 
-    protected abstract Function<ResolvingData, Optional<String>> _binaryResolver();
-
-    @AllArgsConstructor(staticName = "of")
+    @AllArgsConstructor
     @Getter
     protected static class ResolvingData {
 

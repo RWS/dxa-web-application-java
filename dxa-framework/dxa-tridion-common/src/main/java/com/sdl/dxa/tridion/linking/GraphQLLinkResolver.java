@@ -9,9 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
-import java.util.Optional;
-import java.util.function.Function;
-
 @Component
 @Profile("!cil.providers.active")
 public class GraphQLLinkResolver extends AbstractLinkResolver {
@@ -27,26 +24,32 @@ public class GraphQLLinkResolver extends AbstractLinkResolver {
     }
 
     @Override
-    protected Function<ResolvingData, Optional<String>> _componentResolver() {
-        return resolvingData -> Optional.ofNullable(
-            apiClient.resolveComponentLink(resolveNamespace(resolvingData.getUri()),
+    protected String resolveComponent(ResolvingData resolvingData) {
+        String componentLink = apiClient.resolveComponentLink(resolveNamespace(resolvingData.getUri()),
                 resolvingData.getPublicationId(), resolvingData.getItemId(), null,
-                null, false));
+                null, false);
+        if ("null".equals(componentLink)) {
+            return null;
+        }
+        return componentLink;
     }
 
     @Override
-    protected Function<ResolvingData, Optional<String>> _pageResolver() {
-        return resolvingData -> Optional.ofNullable(
-            apiClient.resolvePageLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(),
-                    resolvingData.getItemId(), true));
+    protected String resolvePage(ResolvingData resolvingData) {
+        String pageLink = apiClient.resolvePageLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), true);
+        if ("null".equals(pageLink)) {
+            return null;
+        }
+        return pageLink;
     }
 
     @Override
-    protected Function<ResolvingData, Optional<String>> _binaryResolver() {
-        return resolvingData -> Optional.ofNullable(
-            apiClient.resolveBinaryLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(),
-                    resolvingData.getItemId(), null, true)
-        );
+    protected String resolveBinary(ResolvingData resolvingData) {
+        String binaryLink = apiClient.resolveBinaryLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), null, true);
+        if ("null".equals(binaryLink)) {
+            return null;
+        }
+        return binaryLink;
     }
 
     private ContentNamespace resolveNamespace(String uri) {

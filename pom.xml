@@ -11,12 +11,12 @@
     </parent>
 
     <groupId>com.sdl.dxa</groupId>
-    <artifactId>dxa-oss-parent</artifactId>
+    <artifactId>dxa-parent</artifactId>
     <version>2.2.0-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>DXA - OSS Parent, BOM</name>
-    <description>Parent artifact for all DXA OSS projects with BOM</description>
+    <name>DXA - Parent</name>
+    <description>Parent artifact for DXA</description>
 
     <url>http://www.sdl.com/cxc/digital-experience/web-experience-management/digital-experience-accelerator.html</url>
 
@@ -220,6 +220,16 @@
             <organizationUrl>http://www.sdl.com</organizationUrl>
         </developer>
     </developers>
+
+    <modules>
+        <module>dxa-dd4t-ms-provider</module>
+        <module>dxa-framework</module>
+        <module>dxa-javadoc-tools</module>
+        <module>dxa-model-service-client</module>
+	<!--<module>dxa-oss-parent</module>
+	     -->
+        <module>dxa-webapp</module>
+    </modules>
 
     <profiles>
         <profile>
@@ -958,4 +968,6 @@
         </plugins>
     </build>
 
-</project>
+</project>.
+
+

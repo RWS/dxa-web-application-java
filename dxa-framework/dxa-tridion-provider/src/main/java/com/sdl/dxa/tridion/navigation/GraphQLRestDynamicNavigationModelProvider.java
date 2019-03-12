@@ -126,6 +126,7 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
                 // Prune descendants from our desired node
                 SitemapItem node = findNode(siteMapsItems, sitemapId);
                 prune(node, 0, depth);
+                return siteMapsItems;
             } else {
                 if (sitemapId == null && depth > 0) {
                     // Requesting from root so just return descendants from root

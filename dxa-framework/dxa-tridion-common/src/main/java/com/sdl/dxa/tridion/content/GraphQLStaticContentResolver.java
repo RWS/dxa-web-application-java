@@ -37,7 +37,8 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     private BinaryContentDownloader contentDownloader;
 
     @Autowired
-    public GraphQLStaticContentResolver(WebApplicationContext webApplicationContext, ApiClientProvider apiClientProvider,
+    public GraphQLStaticContentResolver(WebApplicationContext webApplicationContext,
+                                        ApiClientProvider apiClientProvider,
                                         BinaryContentDownloader contentDownloader) {
         this.apiClient = apiClientProvider.getClient();
         this.contentDownloader = contentDownloader;

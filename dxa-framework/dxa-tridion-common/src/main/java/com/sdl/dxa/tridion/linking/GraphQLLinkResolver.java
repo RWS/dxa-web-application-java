@@ -27,7 +27,7 @@ public class GraphQLLinkResolver extends AbstractLinkResolver {
     protected String resolveComponent(ResolvingData resolvingData) {
         String componentLink = apiClient.resolveComponentLink(resolveNamespace(resolvingData.getUri()),
                 resolvingData.getPublicationId(), resolvingData.getItemId(), null,
-                null, false);
+                null, true);
         if ("null".equals(componentLink)) {
             return null;
         }

@@ -41,7 +41,7 @@ public class GraphQLLinkResolverTest {
 
     @Test
     public void resolveComponentLink() {
-        when(apiClientProvider.getClient().resolveComponentLink(ContentNamespace.Sites,2,3,null,null,false)).thenReturn("/resolved-component-2");
+        when(apiClientProvider.getClient().resolveComponentLink(ContentNamespace.Sites,2,3,null,null,true)).thenReturn("/resolved-component-2");
 
 
         String componentLinkresult = linkResolver.resolveLink("tcm:2-3", "2", false);

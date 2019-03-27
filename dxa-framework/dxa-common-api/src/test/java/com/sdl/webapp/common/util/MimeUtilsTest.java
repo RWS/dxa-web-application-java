@@ -24,4 +24,13 @@ public class MimeUtilsTest {
 
         assertNull(MimeUtils.getMimeType("not_existing_mime_type"));
     }
+
+    @Test
+    public void shouldLoadUserProperties() {
+        //The "foo" mimetype is defined in src/test/resource/dxa.user.mimetypes.properties
+        //MimeUtils should allow people to add new mimetype by creating this file in the classpath.
+
+        assertEquals("bar", MimeUtils.getMimeType("foo"));
+        assertEquals("bar", MimeUtils.getMimeType("foo"));
+    }
 }

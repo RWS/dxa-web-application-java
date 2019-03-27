@@ -226,8 +226,6 @@
         <module>dxa-framework</module>
         <module>dxa-javadoc-tools</module>
         <module>dxa-model-service-client</module>
-	<!--<module>dxa-oss-parent</module>
-	     -->
         <module>dxa-webapp</module>
     </modules>
 

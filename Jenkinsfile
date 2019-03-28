@@ -43,14 +43,15 @@ pipeline {
             }
         }
 
+
         stage('Build and deploy from develop') {
-            when { branch 'develop' }
+            //when { branch 'develop' }
             steps {
                 withCredentials([file(credentialsId: 'dxa-maven-settings', variable: 'MAVEN_SETTINGS_PATH')]) {
                     script {
                         //Build on JDK8 and deploy it to local repository:
                         jdk8BuilderImage.inside {
-                            sh "mvn -B -s $MAVEN_SETTINGS_PATH -Plocal-repository clean source:jar deploy"
+                            sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar deploy"
                         }
                     }
                 }
@@ -58,6 +59,7 @@ pipeline {
             post {
                 always {
                     junit '**/target/surefire-reports/*.xml'
+                    archiveArtifacts artifacts: "local-project-repo/**,not-public-repo/**,dxa-webapp.war,docs/**", excludes: 'target/**/local-project-repo/**/*,target/**/gradle/**/*,target/**/.gradle/**/*,target/**/*-javadoc.jar,target/**/*-sources.jar'
                 }
             }
         }

@@ -51,7 +51,8 @@ pipeline {
                     script {
                         //Build on JDK8 and deploy it to local repository:
                         jdk8BuilderImage.inside {
-                            sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar deploy"
+                            sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar deploy javadoc:aggregate@publicApi"
+                            sh "mv target/site/publicApi/apidocs/ ./docs"
                         }
                     }
                 }
@@ -59,7 +60,7 @@ pipeline {
             post {
                 always {
                     junit '**/target/surefire-reports/*.xml'
-                    archiveArtifacts artifacts: "local-project-repo/**,not-public-repo/**,dxa-webapp/target/dxa-webapp.war,docs/**", excludes: 'target/**/local-project-repo/**/*,target/**/gradle/**/*,target/**/.gradle/**/*,target/**/*-javadoc.jar,target/**/*-sources.jar'
+                    archiveArtifacts artifacts: "local-project-repo/**,dxa-webapp/target/dxa-webapp.war,docs/**"
                 }
             }
         }

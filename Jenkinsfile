@@ -53,10 +53,12 @@ pipeline {
                         jdk8BuilderImage.inside {
                             sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar deploy javadoc:aggregate@publicApi"
 
+                            //Build the archetype:
+                            sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar install -f dxa-webapp/target/generated-sources/archetype/pom.xml "
+
                             //Move stuff around for archiving:
                             sh "mv target/site/publicApi/apidocs/ ./docs"
                             sh "mv dxa-webapp/target/dxa-webapp.war ."
-                            sh "mv dxa-webapp/target/generated-sources/archetype/src/main/resources/archetype-resources/pom.xml dxa-webapp/target/generated-sources/archetype/pom.xml"
                         }
                     }
                 }

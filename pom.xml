@@ -178,6 +178,19 @@
         <tag>HEAD</tag>
     </scm>
 
+    <distributionManagement>
+        <repository>
+            <id>releases-nexus</id>
+            <name>SDL Releases</name>
+            <url>https://nexus.sdl.com/repository/releases</url>
+        </repository>
+        <snapshotRepository>
+            <id>snapshots-nexus</id>
+            <name>SDL Snapshots</name>
+            <url>https://nexus.sdl.com/repository/snapshots</url>
+        </snapshotRepository>
+    </distributionManagement>
+
     <developers>
         <developer>
             <id>okondratiuk</id>
@@ -253,6 +266,21 @@
             <properties>
                 <toolsjar>${java.home}/../Classes/classes.jar</toolsjar>
             </properties>
+        </profile>
+        <profile>
+            <id>sonatype-repository</id>
+            <distributionManagement>
+                <repository>
+                    <id>sonatype-nexus-staging</id>
+                    <name>Nexus Staging Repository</name>
+                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+                </repository>
+                <snapshotRepository>
+                    <id>sonatype-nexus-snapshots</id>
+                    <name>Sonatype Nexus Snapshots</name>
+                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+                </snapshotRepository>
+            </distributionManagement>
         </profile>
     </profiles>
 

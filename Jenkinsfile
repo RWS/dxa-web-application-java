@@ -43,6 +43,7 @@ pipeline {
             }
         }
 
+
         stage('Build and deploy from develop') {
             when { branch 'develop' }
             steps {
@@ -50,7 +51,8 @@ pipeline {
                     script {
                         //Build on JDK8 and deploy it to local repository:
                         jdk8BuilderImage.inside {
-                            sh "mvn -B -s $MAVEN_SETTINGS_PATH -Plocal-repository clean source:jar deploy"
+                            sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar deploy javadoc:aggregate@publicApi"
+                            sh "mv target/site/publicApi/apidocs/ ./docs"
                         }
                     }
                 }
@@ -58,6 +60,7 @@ pipeline {
             post {
                 always {
                     junit '**/target/surefire-reports/*.xml'
+                    archiveArtifacts artifacts: "local-project-repo/**,dxa-webapp/target/dxa-webapp.war,docs/**"
                 }
             }
         }

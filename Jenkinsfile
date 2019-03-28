@@ -51,6 +51,10 @@ pipeline {
                     script {
                         //Build on JDK8 and deploy it to local repository:
                         jdk8BuilderImage.inside {
+                            //Cleanup:
+                            sh "rm -fr docs dxa-webapp.war"
+
+                            //Main build:
                             sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar deploy javadoc:aggregate@publicApi"
 
                             //Build the archetype:

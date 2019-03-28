@@ -52,7 +52,11 @@ pipeline {
                         //Build on JDK8 and deploy it to local repository:
                         jdk8BuilderImage.inside {
                             sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar deploy javadoc:aggregate@publicApi"
+
+                            //Move stuff around for archiving:
                             sh "mv target/site/publicApi/apidocs/ ./docs"
+                            sh "mv dxa-webapp/target/dxa-webapp.war ."
+                            sh "mv dxa-webapp/target/generated-sources/archetype/src/main/resources/archetype-resources/pom.xml dxa-webapp/target/generated-sources/archetype/pom.xml"
                         }
                     }
                 }
@@ -60,7 +64,7 @@ pipeline {
             post {
                 always {
                     junit '**/target/surefire-reports/*.xml'
-                    archiveArtifacts artifacts: "local-project-repo/**,dxa-webapp/target/dxa-webapp.war,docs/**"
+                    archiveArtifacts artifacts: "local-project-repo/**,dxa-webapp.war,docs/**"
                 }
             }
         }

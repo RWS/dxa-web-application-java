@@ -59,7 +59,7 @@ pipeline {
             post {
                 always {
                     junit '**/target/surefire-reports/*.xml'
-                    archiveArtifacts artifacts: "local-project-repo/**,not-public-repo/**,dxa-webapp.war,docs/**", excludes: 'target/**/local-project-repo/**/*,target/**/gradle/**/*,target/**/.gradle/**/*,target/**/*-javadoc.jar,target/**/*-sources.jar'
+                    archiveArtifacts artifacts: "local-project-repo/**,not-public-repo/**,dxa-webapp/target/dxa-webapp.war,docs/**", excludes: 'target/**/local-project-repo/**/*,target/**/gradle/**/*,target/**/.gradle/**/*,target/**/*-javadoc.jar,target/**/*-sources.jar'
                 }
             }
         }

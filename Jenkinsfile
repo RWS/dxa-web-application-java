@@ -45,7 +45,7 @@ pipeline {
 
 
         stage('Build and deploy from develop') {
-            //when { branch 'develop' }
+            when { branch 'develop' }
             steps {
                 withCredentials([file(credentialsId: 'dxa-maven-settings', variable: 'MAVEN_SETTINGS_PATH')]) {
                     script {

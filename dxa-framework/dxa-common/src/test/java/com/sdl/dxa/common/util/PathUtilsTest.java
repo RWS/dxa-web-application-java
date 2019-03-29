@@ -246,4 +246,11 @@ public class PathUtilsTest {
         assertTrue(hasExtension);
         assertFalse(hasNoExtension);
     }
+
+    @Test
+    public void testStrippingBinary() {
+        String resolvedLink = "/media/iStock_80038439_XXXLARGE_1920x520_tcm14-1675595.jpg";
+        String resolvedUrl = PathUtils.stripIndexPath(resolvedLink);
+        assertEquals(resolvedLink, PathUtils.stripDefaultExtension(resolvedUrl));
+    }
 }

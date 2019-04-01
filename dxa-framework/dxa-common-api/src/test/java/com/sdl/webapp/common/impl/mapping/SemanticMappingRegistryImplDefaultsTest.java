@@ -63,7 +63,6 @@ public class SemanticMappingRegistryImplDefaultsTest {
                 is(new FieldSemantics(SDL_CORE_VOCABULARY, "TE2", "F1")));
         assertThat("The default semantics must be second in the list", iterator1.next(),
                 is(new FieldSemantics(SDL_CORE_VOCABULARY, TestEntity2.class.getSimpleName(), "field1")));
-
     }
 
     /**

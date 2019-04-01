@@ -1,7 +1,6 @@
 package com.sdl.dxa.tridion.linking;
 
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
-import com.sdl.web.pca.client.DefaultApiClient;
 import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import org.junit.Before;
@@ -24,7 +23,7 @@ public class GraphQLLinkResolverTest {
     private ApiClient publicContentApi;
 
     @InjectMocks
-    private GraphQLLinkResolver linkResovler = new GraphQLLinkResolver();
+    private GraphQLLinkResolver linkResolver = new GraphQLLinkResolver();
 
     @Before
     public void setup(){
@@ -36,16 +35,16 @@ public class GraphQLLinkResolverTest {
 
         when(apiClientProvider.getClient().resolvePageLink(ContentNamespace.Sites,2,3,true)).thenReturn("/index.html");
 
-        String pageLinkresult = linkResovler.resolveLink("tcm:2-3-64", "2", false);
+        String pageLinkresult = linkResolver.resolveLink("tcm:2-3-64", "2", false);
         assertEquals(pageLinkresult, "/index.html");
     }
 
     @Test
     public void resolveComponentLink() {
-        when(apiClientProvider.getClient().resolveComponentLink(ContentNamespace.Sites,2,3,null,null,false)).thenReturn("/resolved-component-2");
+        when(apiClientProvider.getClient().resolveComponentLink(ContentNamespace.Sites,2,3,null,null,true)).thenReturn("/resolved-component-2");
 
 
-        String componentLinkresult = linkResovler.resolveLink("tcm:2-3", "2", false);
+        String componentLinkresult = linkResolver.resolveLink("tcm:2-3", "2", false);
         assertEquals(componentLinkresult, "/resolved-component-2");
     }
 
@@ -53,7 +52,7 @@ public class GraphQLLinkResolverTest {
     public void resolveBinaryLink() {
         when(apiClientProvider.getClient().resolveBinaryLink(ContentNamespace.Sites,2,3,null,true)).thenReturn("/media/baloon.png");
 
-        String binaryLinkresult = linkResovler.resolveLink("tcm:2-3", "2", true);
+        String binaryLinkresult = linkResolver.resolveLink("tcm:2-3", "2", true);
         assertEquals(binaryLinkresult, "/media/baloon.png");
     }
 }

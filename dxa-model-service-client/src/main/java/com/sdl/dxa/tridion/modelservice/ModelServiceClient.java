@@ -51,10 +51,10 @@ public class ModelServiceClient {
     @CacheResult(cacheName = "model-service",
                  exceptionCacheName = "failures", cachedExceptions = {ItemNotFoundInModelServiceException.class})
     public <T> T getForType(String serviceUrl, Class<T> type, Object... params) throws ItemNotFoundInModelServiceException {
-        return _makeRequest(serviceUrl, type, false, params);
+        return makeRequest(serviceUrl, type, false, params);
     }
 
-    private <T> T _makeRequest(String serviceUrl, Class<T> type, boolean isRetry, Object... params) throws ItemNotFoundInModelServiceException {
+    private <T> T makeRequest(String serviceUrl, Class<T> type, boolean isRetry, Object... params) throws ItemNotFoundInModelServiceException {
         try {
             HttpHeaders headers = new HttpHeaders();
             processModuleSpecificCookies(headers);
@@ -72,7 +72,7 @@ public class ModelServiceClient {
                     throw new ItemNotFoundInModelServiceException(message, e);
                 } else if (statusCode == HttpStatus.UNAUTHORIZED && !isRetry) {
                     log.warn("Got 401 status code, reason: {}, check if token is expired and retry if so ", statusCode.getReasonPhrase(), e);
-                    return _makeRequest(serviceUrl, type, true, params);
+                    return makeRequest(serviceUrl, type, true, params);
                 } else {
                     log.warn("Got error response with a status code {} and body '{}' with message '{}' and response headers: {}", statusCode, e.getResponseBodyAsString(), e.getMessage(), e.getResponseHeaders() );
                     String message = "Wrong request to the model service: " + serviceUrl + ", reason: " + statusCode.getReasonPhrase() + " error code: " + statusCode.value();
@@ -95,9 +95,9 @@ public class ModelServiceClient {
 
     private void processPreviewToken(HttpHeaders headers) {
         //noinspection unchecked
-        String previewToken = _getClaimValue(WebClaims.REQUEST_HEADERS, X_PREVIEW_SESSION_TOKEN,
+        String previewToken = getClaimValue(WebClaims.REQUEST_HEADERS, X_PREVIEW_SESSION_TOKEN,
                 claim -> Optional.of(((List<String>) claim).get(0)))
-                .orElseGet(() -> _getClaimValue(WebClaims.REQUEST_COOKIES, PREVIEW_SESSION_TOKEN,
+                .orElseGet(() -> getClaimValue(WebClaims.REQUEST_COOKIES, PREVIEW_SESSION_TOKEN,
                         claim -> Optional.of(claim.toString()))
                         .orElse(null));
 
@@ -116,7 +116,7 @@ public class ModelServiceClient {
         }
     }
 
-    private Optional<String> _getClaimValue(URI uri, String key, Function<Object, Optional<String>> deriveValue) {
+    private Optional<String> getClaimValue(URI uri, String key, Function<Object, Optional<String>> deriveValue) {
         ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
         if (claimStore == null) return Optional.empty();
         Map claims = claimStore.get(uri, Map.class);

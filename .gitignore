@@ -11,3 +11,4 @@ temp/
 .gradle
 build/
 logs/
+pom.xml.versionsBackup

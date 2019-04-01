@@ -31,7 +31,7 @@ public final class PathUtils {
 
     private static final Pattern FILE_NAME_PATTERN = Pattern.compile(".*?/?(?<fileName>[^/.]*)(\\.(?<extension>[^/.]*))?$");
 
-    private static final Pattern INDEX_PATH_REGEXP = Pattern.compile("^(?<main>.*)(?<index>/(index(\\.html)?)?)$");
+    private static final Pattern INDEX_PATH_REGEXP = Pattern.compile("^(?<main>.*)(?<index>/(index(\\.html)?)?)$", Pattern.CASE_INSENSITIVE);
 
     private PathUtils() {
     }
@@ -269,7 +269,7 @@ public final class PathUtils {
      */
     @Contract("null -> null")
     public static String getFileName(@Nullable String fullFileName) {
-        return _getFromFileName(fullFileName, "fileName");
+        return getFromFileName(fullFileName, "fileName");
     }
 
     /**
@@ -280,12 +280,12 @@ public final class PathUtils {
      */
     @Contract("null -> null")
     public static String getExtension(@Nullable String fullFileName) {
-        return _getFromFileName(fullFileName, "extension");
+        return getFromFileName(fullFileName, "extension");
     }
 
     @Nullable
     @Contract("null, _ -> null")
-    private static String _getFromFileName(@Nullable String fullFileName, String groupName) {
+    private static String getFromFileName(@Nullable String fullFileName, String groupName) {
         if (fullFileName == null) {
             return null;
         }

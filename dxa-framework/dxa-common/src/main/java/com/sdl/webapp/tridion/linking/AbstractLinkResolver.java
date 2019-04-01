@@ -7,28 +7,14 @@ import com.sdl.webapp.common.util.TcmUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 
-import java.util.Optional;
-import java.util.function.Function;
-
 @Slf4j
 public abstract class AbstractLinkResolver implements LinkResolver {
-
-    /**
-     * @deprecated since 2.0, use {@link PathUtils#getDefaultPageName()}
-     */
-    @Deprecated
-    public static final String DEFAULT_PAGE_NAME = PathUtils.getDefaultPageName();
-
-    /**
-     * @deprecated since 2.0, use {@link PathUtils#getDefaultPageExtension()}
-     */
-    @Deprecated
-    public static final String DEFAULT_PAGE_EXTENSION = PathUtils.getDefaultPageExtension();
 
     @Value("${dxa.web.link-resolver.remove-extension:#{true}}")
     private boolean shouldRemoveExtension;
@@ -37,55 +23,65 @@ public abstract class AbstractLinkResolver implements LinkResolver {
     private boolean shouldStripIndexPath;
 
     @Override
-    @Cacheable(value = "defaultCache", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary }")
-    public String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary) {
+    @Cacheable(value = "defaultCache", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary, #contextId }")
+    public String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary, @Nullable String contextId) {
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
 
-        String resolvedLink = _resolveLink(url, publicationId, resolveToBinary);
+        String resolvedLink = _resolveLink(url, publicationId, resolveToBinary, contextId);
         String resolvedUrl = shouldStripIndexPath ? PathUtils.stripIndexPath(resolvedLink) : resolvedLink;
         return shouldRemoveExtension ? PathUtils.stripDefaultExtension(resolvedUrl) : resolvedUrl;
     }
 
     @Contract("null, _, _ -> null; !null, _, _ -> !null")
-    private String _resolveLink(String uri, int publicationId, boolean isBinary) {
+    private String _resolveLink(String uri, int publicationId, boolean isBinary, String contextId) {
         if (uri == null || !TcmUtils.isTcmUri(uri)) {
             return uri;
         }
 
-        Function<ResolvingData, Optional<String>> resolver;
+        //Page ID is either tcm uri or int (in string form) -1 means no page context
+        int pageId = -1;
+        if (TcmUtils.isTcmUri(contextId)) {
+            pageId = TcmUtils.getItemId(contextId);
+        } else {
+            pageId = NumberUtils.toInt(contextId, -1);
+        }
+
+        int itemId = TcmUtils.getItemId(uri);
+
+        ResolvingData resolvingData;
+        if (publicationId <= 0) {
+            resolvingData = new ResolvingData(TcmUtils.getPublicationId(uri), itemId, uri, pageId);
+        } else {
+            resolvingData = new ResolvingData(publicationId, itemId, uri, pageId);
+        }
+
+        String result = "";
         switch (TcmUtils.getItemType(uri)) {
             case TcmUtils.COMPONENT_ITEM_TYPE:
-                resolver = isBinary ? _componentBinaryResolver() : _componentResolver();
+                if (isBinary) {
+                    result = resolveBinary(resolvingData);
+                } else {
+                    result = resolveComponent(resolvingData);
+                }
                 break;
             case TcmUtils.PAGE_ITEM_TYPE:
-                resolver = _pageResolver();
+                result = resolvePage(resolvingData);
                 break;
             default:
                 log.warn("Could not resolve link: {}", uri);
                 return "";
         }
 
-        ResolvingData resolvingData = ResolvingData.of(
-                publicationId == 0 ? TcmUtils.getPublicationId(uri) : publicationId,
-                TcmUtils.getItemId(uri), uri);
-
-        return resolver.apply(resolvingData).orElse("");
+        return result;
     }
 
-    private Function<ResolvingData, Optional<String>> _componentBinaryResolver() {
-        return resolvingData -> {
-            Optional<String> binary = _binaryResolver().apply(resolvingData);
-            return binary.isPresent() ? binary : _componentResolver().apply(resolvingData);
-        };
-    }
+    protected abstract String resolveComponent(ResolvingData resolvingData);
 
-    protected abstract Function<ResolvingData, Optional<String>> _componentResolver();
+    protected abstract String resolvePage(ResolvingData resolvingData);
 
-    protected abstract Function<ResolvingData, Optional<String>> _pageResolver();
+    protected abstract String resolveBinary(ResolvingData resolvingData);
 
-    protected abstract Function<ResolvingData, Optional<String>> _binaryResolver();
-
-    @AllArgsConstructor(staticName = "of")
+    @AllArgsConstructor
     @Getter
     protected static class ResolvingData {
 
@@ -94,5 +90,7 @@ public abstract class AbstractLinkResolver implements LinkResolver {
         private int itemId;
 
         private String uri;
+
+        private int pageId;
     }
 }

@@ -23,11 +23,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.sdl.dxa.tridion.common.ContextDataCreator.createContextData;
@@ -81,7 +77,7 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
             TaxonomySitemapItem node = leafNodes.remove(0);
             if (node.getHasChildNodes()) {
                 TaxonomySitemapItem[] subtree = apiClient
-                        .getSitemapSubtree(Sites, request.getLocalizationId(), node.getId(), depth, NONE, contextData);
+                        .getSitemapSubtree(Sites, request.getLocalizationId(), node.getId(), depth, NONE, null);
                 if (node.getItems() == null) {
                     node.setItems(new ArrayList<>());
                 }
@@ -118,49 +114,47 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
     private List<SitemapItem> getNavigationSubtreeInternal(@NotNull SitemapRequestDto requestDto) {
         int depth = getDepth(requestDto);
         String sitemapId = requestDto.getSitemapId();
-        ContextData contextData = createContextData(requestDto.getClaims());
 
+        List<SitemapItem> siteMapsItems;
         if (requestDto.getExpandLevels().isUnlimited()) {
-            List<SitemapItem> entireTree = getEntireNavigationSubtreeInternal(requestDto);
-            if (sitemapId == null) {
-                // if parent node not specified we return entire tree
-                return entireTree;
-            } else {
-                // root node specified so return the direct children of this node
-                return entireTree.stream()
-                        .flatMap(sitemapItem -> ((TaxonomySitemapItem) sitemapItem).getItems().stream())
-                        .sorted(Comparator.comparing(sitemapItem -> sitemapItem.getOriginalTitle()))
-                        .collect(Collectors.toList());
-            }
+            siteMapsItems = getEntireNavigationSubtreeInternal(requestDto);
         } else {
             boolean withAncestors = requestDto.getNavigationFilter().isWithAncestors();
-            if (sitemapId == null) {
-                // Requesting from root so just return descendants from root
-                int adjustedDepth = depth > 0 ? depth - 1 : depth;
-                return asList(apiClient.getSitemapSubtree(Sites, requestDto.getLocalizationId(),
-                        null, adjustedDepth, withAncestors ? Ancestor.INCLUDE : NONE, contextData));
-            } else if (withAncestors) {
+            if (withAncestors) {
                 // we are looking for a particular item, we need to request the entire subtree first
-                List<SitemapItem> entireTree = getEntireNavigationSubtreeInternal(requestDto);
-                // Prune descendants from our deseried node
-                SitemapItem node = findNode(entireTree, sitemapId);
+                siteMapsItems = getEntireNavigationSubtreeInternal(requestDto);
+                // Prune descendants from our desired node
+                SitemapItem node = findNode(siteMapsItems, sitemapId);
                 prune(node, 0, depth);
-                return entireTree;
+                return siteMapsItems;
             } else {
-                return asList(apiClient
-                        .getSitemapSubtree(Sites, requestDto.getLocalizationId(), sitemapId, depth, NONE, contextData))
-                        .stream().map(item -> item.getItems())
-                        .filter(sitemapItems -> sitemapItems != null)
-                        .flatMap(sitemapItems -> sitemapItems.stream())
-                        .sorted(Comparator.comparing(sitemapItem -> sitemapItem.getOriginalTitle()))
-                        .collect(Collectors.toList());
+                if (sitemapId == null && depth > 0) {
+                    // Requesting from root so just return descendants from root
+                    depth--;
+                }
+                siteMapsItems = asList(apiClient
+                        .getSitemapSubtree(Sites, requestDto.getLocalizationId(), sitemapId, depth, NONE, null));
             }
+        }
+
+        if (sitemapId == null) {
+            // if parent node not specified we return entire tree
+            return siteMapsItems
+                    .stream()
+                    .sorted(Comparator.comparing(sitemapItem -> sitemapItem.getOriginalTitle()))
+                    .collect(Collectors.toList());
+        } else {
+            // root node specified so return the direct children of this node
+            return siteMapsItems
+                    .stream()
+                    .flatMap(sitemapItem -> ((TaxonomySitemapItem) sitemapItem).getItems().stream())
+                    .sorted(Comparator.comparing(sitemapItem -> sitemapItem.getOriginalTitle()))
+                    .collect(Collectors.toList());
         }
     }
 
     private List<SitemapItem> getEntireNavigationSubtreeInternal(@NotNull SitemapRequestDto request) {
-        int depth = getDepth(request);
-        ContextData contextData = createContextData(request.getClaims());
+        int depth = defaultDescendantDepth;
 
         List<SitemapItem> rootItems = asList(apiClient
                 .getSitemapSubtree(Sites,
@@ -168,7 +162,7 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
                         request.getSitemapId(),
                         depth,
                         request.getNavigationFilter().isWithAncestors() ? Ancestor.INCLUDE : NONE,
-                        contextData));
+                        null));
 
         if (rootItems.isEmpty()) {
             return emptyList();
@@ -182,7 +176,7 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
             List<TaxonomySitemapItem> leafNodes = getLeafNodes(root);
             for (TaxonomySitemapItem item : leafNodes) {
                 TaxonomySitemapItem[] subtree = apiClient
-                        .getSitemapSubtree(Sites, request.getLocalizationId(), item.getId(), depth, NONE, contextData);
+                        .getSitemapSubtree(Sites, request.getLocalizationId(), item.getId(), depth, NONE, null);
                 if (subtree.length > 0) {
                     item.setItems(subtree[0].getItems());
                     tempRoots.addAll(getLeafNodes(item));

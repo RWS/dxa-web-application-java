@@ -26,8 +26,8 @@ import static com.sdl.dxa.tridion.common.ContextDataCreator.createContextData;
 import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
 
 @Slf4j
-@Service
-@Profile("!cil.providers.active")
+@Service("graphQLStaticContentResolver")
+@Profile({"!cil.providers.active"})
 public class GraphQLStaticContentResolver extends GenericStaticContentResolver implements StaticContentResolver {
 
     private static final Object LOCK = new Object();
@@ -82,7 +82,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     }
 
     @Override
-    protected String _resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
+    protected String resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
         ContextData contextData = createContextData(requestDto.getClaims());
         Publication publication = apiClient.getPublication(ContentNamespace.Sites,

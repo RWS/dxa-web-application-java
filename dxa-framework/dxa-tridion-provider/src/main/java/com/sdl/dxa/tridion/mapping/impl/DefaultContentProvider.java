@@ -9,17 +9,8 @@ import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
-import com.sdl.web.api.broker.querying.sorting.BrokerSortColumn;
-import com.sdl.web.api.broker.querying.sorting.CustomMetaKeyColumn;
-import com.sdl.web.api.broker.querying.sorting.SortParameter;
-import com.sdl.web.api.meta.WebComponentMetaFactory;
-import com.sdl.web.api.meta.WebComponentMetaFactoryImpl;
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
-import com.sdl.webapp.common.api.content.ContentProvider;
-import com.sdl.webapp.common.api.content.ContentProviderException;
-import com.sdl.webapp.common.api.content.LinkResolver;
-import com.sdl.webapp.common.api.content.StaticContentItem;
+import com.sdl.webapp.common.api.content.*;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
@@ -39,8 +30,12 @@ import com.tridion.broker.querying.criteria.operators.AndCriteria;
 import com.tridion.broker.querying.criteria.taxonomy.TaxonomyKeywordCriteria;
 import com.tridion.broker.querying.filter.LimitFilter;
 import com.tridion.broker.querying.filter.PagingFilter;
+import com.tridion.broker.querying.sorting.SortColumn;
 import com.tridion.broker.querying.sorting.SortDirection;
+import com.tridion.broker.querying.sorting.SortParameter;
+import com.tridion.broker.querying.sorting.column.CustomMetaKeyColumn;
 import com.tridion.meta.ComponentMeta;
+import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.NameValuePair;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
@@ -52,13 +47,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -102,7 +91,7 @@ public class DefaultContentProvider implements ContentProvider {
         this.modelService = modelService;
     }
 
-    protected PageModel _loadPage(String path, Localization localization) throws ContentProviderException {
+    protected PageModel loadPage(String path, Localization localization) throws ContentProviderException {
         PageModelData modelData = modelService.loadPageModel(
                 PageRequestDto.builder(localization.getId(), path)
                         .includePages(INCLUDE)
@@ -111,7 +100,7 @@ public class DefaultContentProvider implements ContentProvider {
     }
 
     @NotNull
-    protected EntityModel _getEntityModel(String componentId) throws ContentProviderException {
+    protected EntityModel getEntityModel(String componentId) throws ContentProviderException {
         EntityModelData modelData = modelService.loadEntity(webRequestContext.getLocalization().getId(), componentId);
         try {
             return builderPipeline.createEntityModel(modelData);
@@ -120,7 +109,7 @@ public class DefaultContentProvider implements ContentProvider {
         }
     }
 
-    protected <T extends EntityModel> List<T> _convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws DxaException {
+    protected <T extends EntityModel> List<T> convertEntities(List<ComponentMetadata> components, Class<T> entityClass, Localization localization) throws DxaException {
         List<T> entities = new ArrayList<>();
         for (ComponentMetadata metadata : components) {
             entities.add(builderPipeline.createEntityModel(EntityModelData.builder()
@@ -178,9 +167,10 @@ public class DefaultContentProvider implements ContentProvider {
      */
     @Override
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
-        PageModel pageModel = _loadPage(path, localization);
+        PageModel pageModel = loadPage(path, localization);
 
         pageModel.filterConditionalEntities(entityEvaluators);
+
         //todo dxa2 refactor this, remove usage of deprecated method
         webRequestContext.setPage(pageModel);
 
@@ -194,9 +184,9 @@ public class DefaultContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
-    public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
+    public EntityModel getEntityModel(@NotNull String id, Localization localization) throws ContentProviderException {
         Assert.notNull(id);
-        EntityModel entityModel = _getEntityModel(id);
+        EntityModel entityModel = getEntityModel(id);
         if (entityModel.getXpmMetadata() != null) {
             entityModel.getXpmMetadata().put("IsQueryBased", true);
         }
@@ -216,7 +206,7 @@ public class DefaultContentProvider implements ContentProvider {
         }
         SimpleBrokerQuery query = dynamicList.getQuery(localization);
         try {
-            dynamicList.setQueryResults(_convertEntities(executeMetadataQuery(query), dynamicList.getEntityType(), localization), query.isHasMore());
+            dynamicList.setQueryResults(convertEntities(executeMetadataQuery(query), dynamicList.getEntityType(), localization), query.isHasMore());
         } catch (DxaException e) {
             throw new ContentProviderException("Cannot populate a dynamic list " + dynamicList.getId() + " localization " + localization.getId(), e);
         }
@@ -281,7 +271,7 @@ public class DefaultContentProvider implements ContentProvider {
     protected List<ComponentMetadata> executeMetadataQuery(SimpleBrokerQuery simpleBrokerQuery) {
         List<String> ids = executeQuery(simpleBrokerQuery);
 
-        final WebComponentMetaFactory cmf = new WebComponentMetaFactoryImpl(simpleBrokerQuery.getPublicationId());
+        final ComponentMetaFactory cmf = new ComponentMetaFactory(simpleBrokerQuery.getPublicationId());
         simpleBrokerQuery.setHasMore(ids.size() > simpleBrokerQuery.getPageSize());
 
         return ids.stream()
@@ -358,7 +348,7 @@ public class DefaultContentProvider implements ContentProvider {
                 .build();
     }
 
-    private BrokerSortColumn getSortColumn(SimpleBrokerQuery simpleBrokerQuery) {
+    private SortColumn getSortColumn(SimpleBrokerQuery simpleBrokerQuery) {
         final String sortTrim = simpleBrokerQuery.getSort().trim();
         final int pos = sortTrim.indexOf(' ');
         final String sortCol = pos > 0 ? sortTrim.substring(0, pos) : sortTrim;

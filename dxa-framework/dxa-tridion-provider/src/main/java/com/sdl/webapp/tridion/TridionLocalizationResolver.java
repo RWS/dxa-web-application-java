@@ -105,7 +105,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
             PublicationMapping publicationMapping = dynamicMappingsRetriever.getPublicationMapping(url);
 
             if (publicationMapping == null) {
-                throw new PublicationMappingNotFoundException("Publication mapping not found. There is no any publication mapping " +
+                throw new PublicationMappingNotFoundException("Publication mapping not found. There is not any publication mapping " +
                         "that matches this URL: " + url);
             }
 

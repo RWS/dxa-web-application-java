@@ -3,7 +3,6 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.google.common.collect.Lists;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
-import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
@@ -42,7 +41,7 @@ public class ModelBuilderPipelineTest {
 
     private PageModelData pageModelData = new PageModelData("1", "tcm", null, null, null, "title", null, null);
 
-    private EntityModelData entityModelData = new EntityModelData("1", "tcm", "url", null, null, null);
+    private EntityModelData entityModelData = new EntityModelData("1", "2", "tcm", "url", null, null, null);
 
     private PageModel firstPageModel = new DefaultPageModel();
 
@@ -92,9 +91,6 @@ public class ModelBuilderPipelineTest {
 
     @Test
     public void shouldIterate_AllPageModelBuilders() throws Exception {
-        //given
-        PageRequestDto.PageInclusion pageInclusion = PageRequestDto.PageInclusion.INCLUDE;
-
         //when
         PageModel pageModel = pipeline.createPageModel(pageModelData);
 
@@ -135,11 +131,8 @@ public class ModelBuilderPipelineTest {
         ModelBuilderPipeline pipeline = new ModelBuilderPipelineImpl();
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData);
-        EntityModel entityModel = pipeline.createEntityModel(entityModelData);
-
-        //then
-        //IAE
+        pipeline.createPageModel(pageModelData);
+        pipeline.createEntityModel(entityModelData);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -150,11 +143,8 @@ public class ModelBuilderPipelineTest {
         pipeline.setPageModelBuilders(Collections.emptyList());
 
         //when
-        PageModel pageModel = pipeline.createPageModel(pageModelData);
-        EntityModel entityModel = pipeline.createEntityModel(entityModelData);
-
-        //then
-        //IAE
+        pipeline.createPageModel(pageModelData);
+        pipeline.createEntityModel(entityModelData);
     }
 
     @Configuration

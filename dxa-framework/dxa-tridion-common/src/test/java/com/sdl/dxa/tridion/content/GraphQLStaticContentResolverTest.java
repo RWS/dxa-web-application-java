@@ -160,6 +160,16 @@ public class GraphQLStaticContentResolverTest {
         assertTrue(new File(webApplicationContext.getServletContext().getRealPath("/") + "/BinaryData/42/loc_root").exists());
     }
 
+
+    /*
+        TODO:
+        Check line 182. Why do we need the Publication URL in the path?.
+        Should this not be:
+        a) the publication and media path?
+        b) nothing at all?
+
+        This test is not valid otherwise.
+     */
     @Test
     public void shouldRemoveVersionNumber_FromRequestedBinary() throws ContentProviderException {
         //given
@@ -170,6 +180,11 @@ public class GraphQLStaticContentResolverTest {
         graphQLStaticContentResolver.getStaticContent(requestDto);
 
         //then
-        assertTrue(new File(webApplicationContext.getServletContext().getRealPath("/") + "/BinaryData/42/system/version").exists());
+        assertTrue(
+
+
+                new File(webApplicationContext.getServletContext().getRealPath("/") +
+                        "/BinaryData/42/" + "publication URL/" +
+                "system/version").exists());
     }
 }

@@ -1,5 +1,7 @@
 package com.sdl.dxa;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -7,6 +9,9 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
+import com.sdl.dxa.api.datamodel.json.Polymorphic;
+import com.sdl.dxa.api.datamodel.json.PolymorphicObjectMixin;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
 import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
@@ -16,14 +21,12 @@ import com.sdl.webapp.common.views.JsonView;
 import com.sdl.webapp.common.views.RssView;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
+import org.springframework.context.annotation.*;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.core.env.MutablePropertySources;
 import org.springframework.core.env.PropertiesPropertySource;
+import org.springframework.core.type.filter.AnnotationTypeFilter;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
 import org.springframework.web.servlet.view.BeanNameViewResolver;
@@ -35,6 +38,8 @@ import java.util.Locale;
 
 import static com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter.FILTER_NAME;
 import static com.sdl.webapp.common.util.InitializationUtils.traceBeanInitialization;
+import static org.springframework.util.ClassUtils.forName;
+import static org.springframework.util.ClassUtils.getDefaultClassLoader;
 
 /**
  * <p>Entry point for Spring initialization for DXA Framework which also triggers initialization for default paths
@@ -160,12 +165,27 @@ public class DxaSpringInitialization {
     @Primary
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(SerializationFeature.INDENT_OUTPUT, true);
+
         objectMapper.registerModule(new JodaModule());
         objectMapper.setFilterProvider(jsonFilterProvider());
         objectMapper.setDateFormat(new StdDateFormat());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategy.UpperCamelCaseStrategy());
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        objectMapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
+
+        ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
+        scanner.addIncludeFilter(new AnnotationTypeFilter(Polymorphic.class));
+        scanner.findCandidateComponents(DataModelSpringConfiguration.class.getPackage().getName())
+                .forEach(type -> {
+                    try {
+                        Class<?> aClass = forName(type.getBeanClassName(), getDefaultClassLoader());
+                        objectMapper.addMixIn(aClass, PolymorphicObjectMixin.class);
+                    } catch (ClassNotFoundException e) {
+                        throw new RuntimeException("Class not found while mapping model data to typeIDs. Should never happen.", e);
+                    }
+                });
+        objectMapper.addMixIn(Object.class, PolymorphicObjectMixin.class);
         traceBeanInitialization(objectMapper);
         return objectMapper;
     }

@@ -80,6 +80,13 @@ public abstract class ContextClaims {
                     convertNumberToTargetClass((Number) value, RAW_NUMBER_CLASSES.get(cls)).toString());
         }
 
+        //Boolean classes work slightly differently, namely that Boolean.class.isInstance("true") returns false.
+        //So here we explicitly check for Booleans and the values.
+        if (Boolean.class.equals(cls) && ("true".equals(value) || "false".equals(value))) {
+            log.debug("Boolean class is requested");
+            return cls.getConstructor(String.class).newInstance(value);
+        }
+
         log.warn("Cannot cast {} to {}", value, cls);
         return null;
     }

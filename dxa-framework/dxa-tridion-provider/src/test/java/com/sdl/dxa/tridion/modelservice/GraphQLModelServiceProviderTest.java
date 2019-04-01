@@ -1,147 +1,73 @@
 package com.sdl.dxa.tridion.modelservice;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.common.base.Charsets;
-import com.google.common.io.Resources;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
-import com.sdl.web.pca.client.ApiClient;
-import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
-import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
+import com.sdl.dxa.tridion.graphql.GraphQLProvider;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
-import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
-import com.sdl.web.pca.client.contentmodel.enums.DcpType;
-import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.core.io.ClassPathResource;
 
-import java.io.IOException;
-
-import static com.sdl.dxa.common.util.PathUtils.normalizePathToDefaults;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GraphQLModelServiceProviderTest {
-    private ObjectMapper mapper;
 
     @Mock
-    private ApiClient pcaClient;
+    private GraphQLProvider graphQLProvider;
 
     @InjectMocks
-    private GraphQLModelServiceProvider modelServiceProvider = new GraphQLModelServiceProvider();
-
-    @Before
-    public void setup() {
-        mapper = modelServiceProvider.getObjectMapper();
-    }
+    private GraphQLModelServiceProvider modelServiceProvider;
 
     @Test
     public void loadPageModel() throws Exception {
+        //Given
+        PageModelData pageModelData = new PageModelData();
         PageRequestDto request = PageRequestDto.builder(5, "/index").build();
-        JsonNode node = mapper.readTree(new ClassPathResource("pcaPageModel.json").getInputStream());
-        when(pcaClient.getPageModelData(
-                ContentNamespace.Sites,
-                request.getPublicationId(),
-                "/index.html",
-                ContentType.MODEL,
-                DataModelType.valueOf(request.getDataModelType().toString()),
-                PageInclusion.valueOf(request.getIncludePages().toString()),
-                ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
-                null))
-                .thenReturn(node);
 
+        //When
+        when(graphQLProvider.loadPage(any(), any(), any())).thenReturn(pageModelData);
         PageModelData result = modelServiceProvider.loadPageModel(request);
 
-        assertEquals("/index", result.getUrlPath());
-        assertEquals("Home", result.getTitle());
-        assertEquals("640", result.getId());
-    }
-
-    @Test
-    public void loadPageContentSecondTry() throws Exception {
-        PageRequestDto request = PageRequestDto.builder(5, "/asdf").build();
-        JsonNode node = mapper.readTree(new ClassPathResource("pcaPageModel.json").getInputStream());
-        when(pcaClient.getPageModelData(
-                ContentNamespace.Sites,
-                request.getPublicationId(),
-                // path for the first try
-                "/asdf.html",
-                ContentType.MODEL,
-                DataModelType.valueOf(request.getDataModelType().toString()),
-                PageInclusion.valueOf(request.getIncludePages().toString()),
-                ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
-                null))
-                .thenThrow(IOException.class);
-
-        when(pcaClient.getPageModelData(
-                ContentNamespace.Sites,
-                request.getPublicationId(),
-                // path for second try
-                "/asdf/index.html",
-                ContentType.MODEL,
-                DataModelType.valueOf(request.getDataModelType().toString()),
-                PageInclusion.valueOf(request.getIncludePages().toString()),
-                ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
-                null))
-                .thenReturn(node);
-
-        PageModelData result = modelServiceProvider.loadPageModel(request);
-
-        assertEquals("/index", result.getUrlPath());
-        assertEquals("Home", result.getTitle());
-        assertEquals("640", result.getId());
+        //Then
+        assertEquals(pageModelData, result);
+        verify(graphQLProvider).loadPage(eq(PageModelData.class), eq(request), eq(ContentType.MODEL));
     }
 
     @Test
     public void loadPageContent() throws Exception {
+        //Given
         PageRequestDto request = PageRequestDto.builder(5, "/index").build();
-        JsonNode node = mapper.readTree(new ClassPathResource("pcaPageModel.json").getInputStream());
-        String expected = Resources.toString(Resources.getResource("pcaPageModelExpected.json"), Charsets.UTF_8);
-        when(pcaClient.getPageModelData(
-                ContentNamespace.Sites,
-                request.getPublicationId(),
-                normalizePathToDefaults("/index"),
-                ContentType.RAW,
-                DataModelType.valueOf(request.getDataModelType().toString()),
-                PageInclusion.valueOf(request.getIncludePages().toString()),
-                ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
-                null))
-                .thenReturn(node);
+        String expected = "result";
 
+        //When
+        when(graphQLProvider.loadPage(any(), any(), any())).thenReturn(expected);
         String result = modelServiceProvider.loadPageContent(request);
 
+        //Then
         assertEquals(expected, result);
+        verify(graphQLProvider).loadPage(eq(String.class), eq(request), eq(ContentType.RAW));
     }
 
     @Test
     public void loadEntity() throws Exception {
+        //Given
         EntityRequestDto request = EntityRequestDto.builder(5, "333-444").build();
-        JsonNode node = mapper.readTree(new ClassPathResource("pcaEntityModel.json").getInputStream());
-        when(pcaClient.getEntityModelData(
-                ContentNamespace.Sites,
-                5,
-                333,
-                444,
-                ContentType.MODEL,
-                DataModelType.R2,
-                DcpType.DEFAULT,
-                ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
-                null
-        )).thenReturn(node);
 
+        //When
+        EntityModelData response = new EntityModelData();
+        when(graphQLProvider.getEntityModelData(any())).thenReturn(response);
+
+        //Then
         EntityModelData result = modelServiceProvider.loadEntity(request);
-
-        assertEquals("1458-9195", result.getId());
-        assertEquals("/about", result.getLinkUrl());
-        assertEquals("tcm", result.getNamespace());
+        assertEquals(response, result);
     }
 }

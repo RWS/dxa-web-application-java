@@ -14,7 +14,7 @@ public class RssFormatter extends FeedFormatter {
 
     public RssFormatter(HttpServletRequest request, WebRequestContext context) {
         super(request, context);
-        this._addMediaType("application/rss+xml");
+        this.addMediaType("application/rss+xml");
     }
 
     @Override

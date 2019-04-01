@@ -17,7 +17,7 @@ public class JsonFormatterTest {
         JsonFormatter jsonFormatter = new JsonFormatter(null, null);
 
         //when
-        List<String> mediaTypes = (List<String>) ReflectionTestUtils.getField(jsonFormatter, "_mediaTypes");
+        List<String> mediaTypes = (List<String>) ReflectionTestUtils.getField(jsonFormatter, "mediaTypes");
 
         //then
         assertTrue(mediaTypes.contains("application/json"));

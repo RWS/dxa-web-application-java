@@ -22,7 +22,7 @@ public class RssFormatterTest {
         RssFormatter rssFormatter = new RssFormatter(null, null);
 
         //when
-        List<String> mediaTypes = (List<String>) ReflectionTestUtils.getField(rssFormatter, "_mediaTypes");
+        List<String> mediaTypes = (List<String>) ReflectionTestUtils.getField(rssFormatter, "mediaTypes");
 
         //then
         assertTrue(mediaTypes.contains("application/rss+xml"));

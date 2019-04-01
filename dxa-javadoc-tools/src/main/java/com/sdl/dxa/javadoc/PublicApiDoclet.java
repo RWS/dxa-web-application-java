@@ -1,24 +1,13 @@
 package com.sdl.dxa.javadoc;
 
-import com.sun.javadoc.ClassDoc;
-import com.sun.javadoc.Doc;
-import com.sun.javadoc.DocErrorReporter;
-import com.sun.javadoc.MethodDoc;
-import com.sun.javadoc.PackageDoc;
-import com.sun.javadoc.ProgramElementDoc;
-import com.sun.javadoc.RootDoc;
+import com.sun.javadoc.*;
 import com.sun.tools.doclets.standard.Standard;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static com.sdl.dxa.javadoc.Constants.PUBLIC_API_TAG;
 
@@ -61,14 +50,14 @@ public class PublicApiDoclet {
     }
 
     public static boolean isPublicApiDoc(Doc doc, Set<String> parentPackages, Set<String> parentClasses) {
-        return _isPublicApi(doc, parentPackages, parentClasses) && _memorizeParents(doc, parentPackages, parentClasses);
+        return isPublicApi(doc, parentPackages, parentClasses) && memorizeParents(doc, parentPackages, parentClasses);
     }
 
-    private static boolean _isPublicApi(Doc doc, Set<String> parentPackages, Set<String> parentClasses) {
+    private static boolean isPublicApi(Doc doc, Set<String> parentPackages, Set<String> parentClasses) {
         if (doc instanceof RootDoc) {
             return true;
         }
-        if (_isDeclaredPublicApi(doc)) {
+        if (isDeclaredPublicApi(doc)) {
             return true;
         }
         if (doc instanceof PackageDoc && parentPackages.contains(doc.name())) {
@@ -82,10 +71,10 @@ public class PublicApiDoclet {
             ClassDoc classDoc = (ClassDoc) doc;
             if (classDoc.methods() != null) {
                 Optional<MethodDoc> methodDoc = Arrays.stream(classDoc.methods())
-                        .filter(PublicApiDoclet::_isDeclaredPublicApi)
+                        .filter(PublicApiDoclet::isDeclaredPublicApi)
                         .findAny();
                 if (methodDoc.isPresent()) {
-                    return _memorizeParents(methodDoc.get(), parentPackages, parentClasses);
+                    return memorizeParents(methodDoc.get(), parentPackages, parentClasses);
                 }
             }
         }
@@ -94,17 +83,17 @@ public class PublicApiDoclet {
             ClassDoc containingClass = ((MethodDoc) doc).containingClass();
             //we can decide for interfaces or final util classes
             boolean possibleToGuess = Utils.forcesChildrenToBePublic(containingClass);
-            return possibleToGuess && _isDeclaredPublicApi(containingClass) &&
-                    _memorizeParents(doc, parentPackages, parentClasses);
+            return possibleToGuess && isDeclaredPublicApi(containingClass) &&
+                    memorizeParents(doc, parentPackages, parentClasses);
         }
         return false;
     }
 
-    private static boolean _isDeclaredPublicApi(Doc doc) {
+    private static boolean isDeclaredPublicApi(Doc doc) {
         return doc.tags(PUBLIC_API_TAG).length > 0;
     }
 
-    private static boolean _memorizeParents(Doc doc, Set<String> parentPackages, Set<String> parentClasses) {
+    private static boolean memorizeParents(Doc doc, Set<String> parentPackages, Set<String> parentClasses) {
         if (doc instanceof ProgramElementDoc) {
             ProgramElementDoc elementDoc = (ProgramElementDoc) doc;
             parentPackages.add(elementDoc.containingPackage().name());

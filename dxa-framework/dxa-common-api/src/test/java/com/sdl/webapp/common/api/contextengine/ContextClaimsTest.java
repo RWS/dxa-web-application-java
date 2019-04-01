@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.contextengine;
 
 import com.google.common.collect.ImmutableMap;
+import org.jetbrains.annotations.Nullable;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -11,15 +12,14 @@ import java.util.Objects;
 import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.*;
 
 public class ContextClaimsTest {
 
     private static final ImmutableMap<String, Object> CLAIMS = ImmutableMap.<String, Object>builder()
             .put(getClaimName("boolean"), true)
+            .put(getClaimName("BooleanTrue"), "true")
+            .put(getClaimName("BooleanFalse"), "false")
             .put(getClaimName("string"), "string")
             .put(getClaimName("integer"), 12345)
             .put(getClaimName("long"), 12345L)
@@ -219,6 +219,21 @@ public class ContextClaimsTest {
 
         //then
         assertEquals("123.45", result);
+    }
+
+    @Test
+    public void claimBooleanGetBoolean() {
+        //given
+        TestClaims claims = new TestClaims();
+        claims.setClaims(CLAIMS);
+
+        //when
+        Boolean booleanTrue = claims.getSingleClaim("BooleanTrue", Boolean.class);
+        Boolean booleanFalse = claims.getSingleClaim("BooleanFalse", Boolean.class);
+
+        //then
+        assertTrue("Claim not right", booleanTrue);
+        assertFalse("Claim not right", booleanFalse);
     }
 
     private static class TestClaims extends ContextClaims {

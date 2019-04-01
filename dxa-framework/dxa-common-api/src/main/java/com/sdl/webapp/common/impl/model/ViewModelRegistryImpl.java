@@ -142,7 +142,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         try {
             return getMappedModelTypes(semanticTypeName, null);
         } catch (DxaException e) {
-            log.warn("Cannot get entity model type for {}", semanticTypeName, e);
+            log.warn("Cannot get entity model type for " + semanticTypeName, e);
             return null;
         }
     }

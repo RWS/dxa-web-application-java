@@ -50,7 +50,9 @@ import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -254,15 +256,12 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
 
         for (int i = 0; i < htmlNodes.getLength(); i++) {
             Node htmlNode = htmlNodes.item(i);
-            if (htmlNode instanceof Element) {
+            if (htmlNode.getNodeType() == Node.ELEMENT_NODE) {
                 Element htmlElement = (Element) htmlNode;
 
                 String[] classes = htmlElement.getAttribute("class").split(" ");
-                for (String s : classes) {
-                    if (ditaPropertyName.equals(s)) {
-                        result.add(htmlElement);
-                        break;
-                    }
+                if (new HashSet(Arrays.asList(classes)).contains(ditaPropertyName)) {
+                    result.add(htmlElement);
                 }
             }
         }
@@ -360,7 +359,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
                         break;
                     LOG.debug("No XHTML elements found for DITA property '" + ditaPropertyName + "'.");
                 } catch (XPathExpressionException e) {
-                    e.printStackTrace();
+                    LOG.warn("Failed to evaluate Xpath", e);
                 }
                 if (htmlElements == null || htmlElements.isEmpty()) {
                     LOG.debug("Unable to map property '" + fieldSemantics.getPropertyName() + "'");

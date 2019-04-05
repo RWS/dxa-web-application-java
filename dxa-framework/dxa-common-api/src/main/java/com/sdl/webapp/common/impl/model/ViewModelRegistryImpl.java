@@ -20,12 +20,11 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.getDefaultAreaName;
@@ -38,9 +37,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewModelRegistryImpl.class);
 
-    private static final Map<MvcData, Class<? extends ViewModel>> viewEntityClassMap = new HashMap<>();
-
-    private static ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private final Map<MvcData, Class<? extends ViewModel>> viewEntityClassMap = new ConcurrentHashMap<>();
 
     @Autowired
     private SemanticMappingRegistry semanticMappingRegistry;
@@ -62,17 +59,11 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             areaName = parts[0];
             scopedViewName = parts[1];
         }
-        ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
-        try {
-            readLock.lock();
-            return viewEntityClassMap.entrySet().stream()
-                    .filter(mvcData -> mvcData.getKey().getAreaName().equals(areaName) && mvcData.getKey().getViewName().equals(scopedViewName))
-                    .findFirst()
-                    .map(Map.Entry::getValue)
-                    .orElseThrow(() -> new DxaException(String.format("Could not find a view model for the view name %s", viewName)));
-        } finally {
-            readLock.unlock();
-        }
+        return viewEntityClassMap.entrySet().stream()
+                .filter(mvcData -> mvcData.getKey().getAreaName().equals(areaName) && mvcData.getKey().getViewName().equals(scopedViewName))
+                .findFirst()
+                .map(Map.Entry::getValue)
+                .orElseThrow(() -> new DxaException(String.format("Could not find a view model for the view name %s", viewName)));
     }
 
     /**
@@ -116,16 +107,11 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     @Override
     @Cacheable
     public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName, @Nullable Class<? extends EntityModel> expectedClass) throws DxaException {
-
         Class<? extends ViewModel> retval;
-        ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
         try {
-            readLock.lock();
             retval = this.semanticMappingRegistry.getEntityClassByFullyQualifiedName(semanticTypeName, expectedClass);
         } catch (SemanticMappingException e) {
             throw new DxaException("Cannot get a view model tpe because of semantic mapping exception", e);
-        } finally {
-            readLock.unlock();
         }
 
         if (retval != null) {
@@ -153,22 +139,19 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     @Override
     @Cacheable
     public Class<? extends ViewModel> getViewModelType(final MvcData viewData) {
+        //Entries with matching viewname
         Set<Map.Entry<MvcData, Class<? extends ViewModel>>> entries = new HashSet<>();
-        ReentrantReadWriteLock.ReadLock readLock = lock.readLock();
-        try{
-            readLock.lock();
-            entries.addAll(viewEntityClassMap.entrySet().stream().filter(mvcData -> {
-                MvcData key = mvcData.getKey();
-                return key.getViewName().equals(viewData.getViewName());
-            }).collect(Collectors.toSet()));
-        } finally {
-            readLock.unlock();
-        }
+        entries.addAll(viewEntityClassMap.entrySet().stream().filter(mvcData -> {
+            MvcData key = mvcData.getKey();
+            return key.getViewName().equals(viewData.getViewName());
+        }).collect(Collectors.toSet()));
+
+        //Match on Controllername and AreaName
         Class<? extends ViewModel> exactClassForModelData = entries.stream()
                 .filter(mvcData -> {
                     MvcData key = mvcData.getKey();
                     return key.getControllerName().equals(viewData.getControllerName()) &&
-                           key.getAreaName().equals(viewData.getAreaName());
+                            key.getAreaName().equals(viewData.getAreaName());
                 })
                 .map(Map.Entry::getValue)
                 .findFirst()
@@ -178,6 +161,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
             return exactClassForModelData;
         }
 
+        //Match on Controllername
         Class<? extends ViewModel> probablyClassForModelData = entries.stream()
                 .filter(mvcData -> {
                     MvcData key = mvcData.getKey();
@@ -186,6 +170,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
                 .map(Map.Entry::getValue)
                 .findFirst()
                 .orElse(null);
+
         if (probablyClassForModelData != null) {
             return probablyClassForModelData;
         }
@@ -197,19 +182,13 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
      */
     @Override
     public void registerViewModel(MvcData viewData, Class<? extends ViewModel> entityClass) {
-        ReentrantReadWriteLock.WriteLock writeLock = lock.writeLock();
-        try {
-            writeLock.lock();
-            if (viewData != null) {
-                if (viewEntityClassMap.containsKey(viewData)) {
-                    LOG.warn("View {} registered multiple times, ignoring.", viewData);
-                    return;
-                }
-                viewEntityClassMap.put(viewData, entityClass);
+        if (viewData != null) {
+            if (viewEntityClassMap.containsKey(viewData)) {
+                LOG.warn("View {} registered multiple times, ignoring.", viewData);
+                return;
             }
-            semanticMappingRegistry.registerEntity((Class<? extends EntityModel>) entityClass);
-        } finally {
-            writeLock.unlock();
+            viewEntityClassMap.put(viewData, entityClass);
         }
+        semanticMappingRegistry.registerEntity((Class<? extends EntityModel>) entityClass);
     }
 }

@@ -11,6 +11,8 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
 public @interface SemanticProperty {
+    String ALL_FIELDS = "_all";
+    String SELF = "_self";
 
     String propertyName() default "";
 

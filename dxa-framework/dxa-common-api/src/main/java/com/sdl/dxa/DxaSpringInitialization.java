@@ -229,4 +229,9 @@ public class DxaSpringInitialization {
             return exists;
         }
     }
+
+    @Bean
+    public IshClassInitializer IshClassInitializer() {
+        return new IshClassInitializer();
+    }
 }

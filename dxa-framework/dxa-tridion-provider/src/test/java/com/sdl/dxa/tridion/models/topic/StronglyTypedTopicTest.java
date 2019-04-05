@@ -13,7 +13,7 @@ import java.util.List;
 
 @SemanticEntity(vocabulary = SemanticVocabulary.SDL_DITA, entityName = "body")
 // TODO: Support for low-level XPaths: [SemanticEntity(Vocab = XPathVocabulary, EntityName = ".//*[contains(@class, 'body ')]", Prefix ="xpath")]
-public class TestStronglyTypedTopic extends AbstractEntityModel {
+public class StronglyTypedTopicTest extends AbstractEntityModel {
     @SemanticProperty("_topicTitle")
     public String topicTitle;
 
@@ -44,7 +44,7 @@ public class TestStronglyTypedTopic extends AbstractEntityModel {
 
     @Override
     public MvcData getDefaultMvcData() {
-        return MvcDataImpl.newBuilder().areaName("Test").controllerName("Entity").viewName("TestStronglyTypedTopic").build();
+        return MvcDataImpl.newBuilder().areaName("Test").controllerName("Entity").viewName("StronglyTypedTopicTest").build();
     }
 
     public String getTopicTitle() {

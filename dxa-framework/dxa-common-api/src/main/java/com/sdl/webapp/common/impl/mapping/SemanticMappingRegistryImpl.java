@@ -322,9 +322,17 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     public Map<String, Field> getEntitiesByVocabulary(String vocabulary) {
         Map<String, Field> result = new HashMap<>();
 
+        if (vocabulary == null) {
+            return result;
+        }
+
         for (Map.Entry<Field, FieldSemantics> entry : fieldSemanticsMap.entries()) {
-            if (vocabulary.equals(entry.getValue().getVocabulary().getId())) {
-                result.put(entry.getValue().getPropertyName(), entry.getKey());
+            FieldSemantics value = entry.getValue();
+            if (value != null) {
+                SemanticVocabulary valueVocabulary = value.getVocabulary();
+                if (valueVocabulary != null && vocabulary.equals(valueVocabulary.getId())) {
+                    result.put(value.getPropertyName(), entry.getKey());
+                }
             }
         }
         return result;

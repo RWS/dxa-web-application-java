@@ -9,7 +9,7 @@ import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 
 @SemanticEntity(vocabulary = SemanticVocabulary.SDL_DITA, entityName = "lcBaseBody")
-public class TestSpecializedTopic extends AbstractEntityModel {
+public class SpecializedTopicTest extends AbstractEntityModel {
     @SemanticProperty("title")
     public String title;
 
@@ -20,11 +20,11 @@ public class TestSpecializedTopic extends AbstractEntityModel {
     public RichText objectives;
 
     @SemanticProperty("lcBaseBody")
-    public TestSpecializedBody body;
+    public SpecializedBodyTest body;
 
     @Override
     public MvcData getDefaultMvcData() {
-        return MvcDataImpl.newBuilder().areaName("Test").controllerName("Topic").viewName("TestSpecializedTopic").build();
+        return MvcDataImpl.newBuilder().areaName("Test").controllerName("Topic").viewName("SpecializedTopicTest").build();
     }
 
     public String getTitle() {
@@ -51,11 +51,11 @@ public class TestSpecializedTopic extends AbstractEntityModel {
         this.objectives = objectives;
     }
 
-    public TestSpecializedBody getBody() {
+    public SpecializedBodyTest getBody() {
         return body;
     }
 
-    public void setBody(TestSpecializedBody body) {
+    public void setBody(SpecializedBodyTest body) {
         this.body = body;
     }
 }

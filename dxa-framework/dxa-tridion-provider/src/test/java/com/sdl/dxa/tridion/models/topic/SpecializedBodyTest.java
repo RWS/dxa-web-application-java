@@ -12,20 +12,20 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 @SemanticEntity(vocabulary = SemanticVocabulary.SDL_DITA)
-public class TestSpecializedBody extends AbstractEntityModel {
+public class SpecializedBodyTest extends AbstractEntityModel {
 
     @SemanticProperty("lcIntro")
     public RichText intro;
 
     @SemanticProperty("lcObjectives")
-    public TestSpecializedSection objectives;
+    public SpecializedSectionTest objectives;
 
     @SemanticProperty("section")
-    public List<TestSpecializedSection> sections;
+    public List<SpecializedSectionTest> sections;
 
     @Override
     public @Nullable MvcData getDefaultMvcData() {
-        return MvcDataImpl.newBuilder().areaName("Test").controllerName("Entity").viewName("TestSpecializedBody").build();
+        return MvcDataImpl.newBuilder().areaName("Test").controllerName("Entity").viewName("SpecializedBodyTest").build();
     }
 
     public RichText getIntro() {
@@ -36,19 +36,19 @@ public class TestSpecializedBody extends AbstractEntityModel {
         this.intro = intro;
     }
 
-    public TestSpecializedSection getObjectives() {
+    public SpecializedSectionTest getObjectives() {
         return objectives;
     }
 
-    public void setObjectives(TestSpecializedSection objectives) {
+    public void setObjectives(SpecializedSectionTest objectives) {
         this.objectives = objectives;
     }
 
-    public List<TestSpecializedSection> getSections() {
+    public List<SpecializedSectionTest> getSections() {
         return sections;
     }
 
-    public void setSections(List<TestSpecializedSection> sections) {
+    public void setSections(List<SpecializedSectionTest> sections) {
         this.sections = sections;
     }
 }

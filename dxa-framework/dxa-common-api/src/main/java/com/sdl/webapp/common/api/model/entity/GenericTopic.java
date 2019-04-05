@@ -17,7 +17,7 @@ import java.io.Serializable;
  * unless it defines its own View Model Type for generic Topics.
  */
 @SemanticEntity("Topic")
-public class GenericTopic extends AbstractEntityModel implements Serializable {
+public class GenericTopic extends AbstractEntityModel {
 
     /**
      * Gets or sets the topic title.
@@ -54,5 +54,13 @@ public class GenericTopic extends AbstractEntityModel implements Serializable {
 
     public void setTopicBody(String topicBody) {
         this.topicBody = topicBody;
+    }
+
+    @Override
+    public String toString() {
+        return "GenericTopic{" +
+                "topicTitle='" + topicTitle + '\'' +
+                ", topicBody='" + topicBody + '\'' +
+                '}';
     }
 }

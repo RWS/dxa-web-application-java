@@ -231,7 +231,7 @@ public class DxaSpringInitialization {
     }
 
     @Bean
-    public IshClassInitializer IshClassInitializer() {
-        return new IshClassInitializer();
+    public IshClassInitializer ishClassInitializer() { 
+	    return new IshClassInitializer();
     }
 }

@@ -50,9 +50,11 @@ import java.io.StringWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 /**
@@ -83,9 +85,10 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
     private ThreadLocal<Transformer> transformerThreadLocal = new ThreadLocal<>();
     private XPathFactory xPathFactory = XPathFactory.newInstance();
     private final XPathExpression linkXPath;
+    private ThreadLocal<Map<String, XPathExpression>> xpathExpressionCacheThreadLocal = new ThreadLocal<>();
 
     public StronglyTypedTopicBuilder() throws XPathExpressionException {
-        linkXPath = xPathFactory.newXPath().compile(".//a");
+        linkXPath = getXpathExpression(".//a");
     }
 
     /**
@@ -108,8 +111,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
         try {
             rootElement = parseXhtml(genericTopic);
         } catch (Exception ex) {
-            LOG.error("Unable to parse generic Topic XHTML.", ex);
-            LOG.debug(genericTopic.getTopicBody());
+            LOG.error("Unable to parse generic Topic XHTML. Topic body: \"" + genericTopic.getTopicBody() +"\"", ex);
             return null;
         }
 
@@ -191,6 +193,29 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
         return documentBuilder;
     }
 
+    /**
+     * Get a XPathExpression for a string.
+     * This implementation ensures that you get a XPathExpression that is specific for this thread.
+     *
+     * @param xPath
+     * @return a XpathExpression
+     * @throws XPathExpressionException
+     */
+    private XPathExpression getXpathExpression(String xPath) throws XPathExpressionException {
+        Map<String, XPathExpression> xpathExpressionCache = xpathExpressionCacheThreadLocal.get();
+        if (xpathExpressionCache == null) {
+            xpathExpressionCache = new HashMap<>();
+            xpathExpressionCacheThreadLocal.set(xpathExpressionCache);
+        }
+
+        XPathExpression result = xpathExpressionCache.get(xPath);
+        if (result == null) {
+            result = xPathFactory.newXPath().compile(xPath);
+            xpathExpressionCache.put(xPath, result);
+        }
+        return result;
+    }
+
     protected String getPropertyXPath(String propertyName) {
         if (SemanticProperty.SELF.equals(propertyName))
             return ".";
@@ -262,12 +287,12 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
             Element matchedElement = null;
 
             try {
-                xpathToTry = xPathFactory.newXPath().compile(xPath);
+                xpathToTry = getXpathExpression(xPath);
 
                 LOG.debug("Trying XPath \"" + xPath + "\" for type '" + modelType.getDeclaringClass().getName() + "'");
                 matchedElement = (Element) xpathToTry.evaluate(rootElement, XPathConstants.NODE);
             } catch (XPathExpressionException e) {
-                e.printStackTrace();
+                LOG.warn("Error evaluating Xpath", e);
             }
 
             if (matchedElement != null) {
@@ -284,6 +309,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
 
         return bestMatch;
     }
+
 
     protected <E extends EntityModel> E buildStronglyTypedTopic(Class<E> modelType, Element htmlElement) throws IllegalAccessException, InstantiationException {
         LOG.debug("Building Strongly Typed Topic Model '" + modelType.getSimpleName() + "'...");
@@ -319,16 +345,13 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
 
             List<Element> htmlElements = null;
             for (FieldSemantics fieldSemantics : registrySemantics) {
-                if (SemanticVocabulary.SDL_DITA.equals(fieldSemantics.getVocabulary())) {
-                    System.out.println("Dita");
-                }
                 String ditaPropertyName = fieldSemantics.getPropertyName();
                 String propertyXPath = getPropertyXPath(ditaPropertyName);
                 XPathExpression xpathToTry = null;
                 NodeList xPathResults = null;
 
                 try {
-                    xpathToTry = xPathFactory.newXPath().compile(propertyXPath);
+                    xpathToTry = getXpathExpression(propertyXPath);
 
                     LOG.debug("Trying XPath \"" + propertyXPath + "\" for property '" + fieldSemantics.getPropertyName() + "'");
                     xPathResults = (NodeList) xpathToTry.evaluate(rootElement, XPathConstants.NODESET);
@@ -349,51 +372,43 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
                 Object propertyValue = getPropertyValue(field, htmlElements);
                 field.set(stronglyTypedTopic, propertyValue);
             } catch (Exception ex) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Unable to map property " + field.getDeclaringClass().getSimpleName() + "." + field.getName(), ex);
-                }
+                LOG.warn("Unable to map property " + field.getDeclaringClass().getSimpleName() + "." + field.getName(), ex);
             }
         });
     }
 
     protected Object getPropertyValue(Field modelPropertyType, List<Element> htmlElements) throws InstantiationException, IllegalAccessException, DxaException {
-        boolean isListProperty = modelPropertyType.getType().isAssignableFrom(List.class);
         Class targetType = modelPropertyType.getType();
+        boolean isListProperty = targetType.isAssignableFrom(List.class);
+        Object result;
+
         if (isListProperty) {
             ParameterizedType genericType = (ParameterizedType) modelPropertyType.getGenericType();
             targetType = (Class) genericType.getActualTypeArguments()[0];
-        }
-
-        Object result = null;
-        if (targetType.equals(String.class)) {
-            if (isListProperty)
-                result = htmlElements.stream().map(element -> element.getTextContent()).collect(Collectors.toList());
-            else
-                result = htmlElements.get(0).getTextContent();
-        } else if (targetType.equals(RichText.class)) {
-            if (isListProperty)
-                result = htmlElements.stream().map(element -> buildRichText(element)).collect(Collectors.toList());
-            else
-                result = buildRichText(htmlElements.get(0));
-        } else if (targetType.equals(Link.class)) {
-            if (isListProperty)
-                result = htmlElements.stream().map(element -> buildLink(element)).collect(Collectors.toList());
-            else
-                result = buildLink(htmlElements.get(0));
-        } else if (EntityModel.class.isAssignableFrom(targetType)) {
-            if (isListProperty) {
-                List stronglyTypedModels = new ArrayList();
-                for (Element htmlElement : htmlElements) {
-                    stronglyTypedModels.add(buildStronglyTypedTopic(targetType, htmlElement));
-                }
-                result = stronglyTypedModels;
-            } else
-                result = buildStronglyTypedTopic(targetType, htmlElements.get(0));
+            List list = new ArrayList<>();
+            for (Element element: htmlElements) {
+                list.add(convertElement(element, targetType));
+            }
+            result = list;
         } else {
-            throw new DxaException("Unexpected property type '" + targetType.getSimpleName() + "'");
+            result = convertElement(htmlElements.get(0), targetType);
         }
 
         return result;
+    }
+
+    private Object convertElement(Element element, Class targetType) throws DxaException, InstantiationException, IllegalAccessException {
+        if (targetType.equals(String.class)) {
+            return element.getTextContent();
+        } else if (targetType.equals(RichText.class)) {
+            return buildRichText(element);
+        } else if (targetType.equals(Link.class)) {
+            return buildLink(element);
+        } else if (EntityModel.class.isAssignableFrom(targetType)) {
+            return buildStronglyTypedTopic(targetType, element);
+        } else {
+            throw new DxaException("Unexpected property type '" + targetType.getSimpleName() + "'");
+        }
     }
 
     protected RichText buildRichText(Element element) {
@@ -408,9 +423,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
             String str = buffer.toString();
             return new RichText(str);
         } catch (TransformerException e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Could not convert to RichText", e);
-            }
+            LOG.warn("Could not convert to RichText", e);
         }
 
         return null;
@@ -424,7 +437,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
             try {
                 hyperlink = (Element) linkXPath.evaluate(htmlElement, XPathConstants.NODE);
             } catch (XPathExpressionException e) {
-                e.printStackTrace();
+                LOG.warn("Couldn't find <A> tag", e);
             }
             if (hyperlink == null) {
                 LOG.debug("No hyperlink found in XHTML element: " + htmlElement);
@@ -466,9 +479,8 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
             if (stronglyTypedTopic != null) {
                 if (LOG.isDebugEnabled()) LOG.debug("Converted " + genericTopic + " to " + stronglyTypedTopic);
                 return stronglyTypedTopic;
-            } else {
-                if (LOG.isDebugEnabled()) LOG.debug("Unable to convert " + genericTopic + " to Strongly Typed Topic.");
             }
+            if (LOG.isDebugEnabled()) LOG.debug("Unable to convert " + genericTopic + " to Strongly Typed Topic.");
         }
 
         return entityModel;

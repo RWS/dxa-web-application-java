@@ -17,6 +17,6 @@ public class IshClassInitializer extends AbstractModuleInitializer {
 
     @Override
     protected String getAreaName() {
-        return "Ish";
+        return "ish";
     }
 }

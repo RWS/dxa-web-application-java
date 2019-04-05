@@ -14,10 +14,10 @@ import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
 import com.sdl.dxa.tridion.models.entity.Article;
-import com.sdl.dxa.tridion.models.topic.TestSpecializedBody;
-import com.sdl.dxa.tridion.models.topic.TestSpecializedSection;
-import com.sdl.dxa.tridion.models.topic.TestSpecializedTopic;
-import com.sdl.dxa.tridion.models.topic.TestStronglyTypedTopic;
+import com.sdl.dxa.tridion.models.topic.SpecializedBodyTest;
+import com.sdl.dxa.tridion.models.topic.SpecializedSectionTest;
+import com.sdl.dxa.tridion.models.topic.SpecializedTopicTest;
+import com.sdl.dxa.tridion.models.topic.StronglyTypedTopicTest;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMapper;
@@ -44,7 +44,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -60,6 +59,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
+import static junit.framework.TestCase.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -68,11 +68,6 @@ import static org.mockito.Mockito.when;
 @ActiveProfiles("test")
 public class StronglyTypedTopicBuilderTest {
     private ObjectMapper objectMapper;
-
-    @Mock
-    private Localization localization;
-
-    private WebRequestContext webRequestContext;
 
     @Autowired
     private ModelBuilderPipeline modelBuilderPipeline;
@@ -136,8 +131,8 @@ public class StronglyTypedTopicBuilderTest {
 
         outputJson(testEntityModel);
 
-        Assert.assertTrue("result", testEntityModel instanceof TestStronglyTypedTopic);
-        TestStronglyTypedTopic result = (TestStronglyTypedTopic) testEntityModel;
+        Assert.assertTrue("result", testEntityModel instanceof StronglyTypedTopicTest);
+        StronglyTypedTopicTest result = (StronglyTypedTopicTest) testEntityModel;
         Assert.assertEquals("result.TopicTitle", genericTopic.getTopicTitle(), result.getTopicTitle());
         Assert.assertEquals("result.title", testTitle, result.getTitle());
         Assert.assertEquals("result.body", "First sectionSecond section", result.getBody()); // HTML tags should get stripped ("InnerText")
@@ -190,7 +185,7 @@ public class StronglyTypedTopicBuilderTest {
 
         outputJson(pageModel);
 
-        TestStronglyTypedTopic result = (TestStronglyTypedTopic) pageModel.getRegions().get("Main").getEntities().get(0);
+        StronglyTypedTopicTest result = (StronglyTypedTopicTest) pageModel.getRegions().get("Main").getEntities().get(0);
         Assert.assertNotNull(result);
 
         Assert.assertEquals("result.Id", testTopicId, result.getId());
@@ -212,7 +207,7 @@ public class StronglyTypedTopicBuilderTest {
                         "</div>"
         );
 
-        TestStronglyTypedTopic result = stronglyTypedTopicBuilder.tryConvertToStronglyTypedTopic(genericTopic, TestStronglyTypedTopic.class);
+        StronglyTypedTopicTest result = stronglyTypedTopicBuilder.tryConvertToStronglyTypedTopic(genericTopic, StronglyTypedTopicTest.class);
         Assert.assertNotNull("result", result);
 
         outputJson(result);
@@ -239,7 +234,7 @@ public class StronglyTypedTopicBuilderTest {
                 "<h1 class=\"title \">" + testTitle + "</h1><div class=\"body lcBaseBody lcOverviewBody \" id=\"b1\">" + testBody + " </div>"
         );
 
-        TestSpecializedTopic result = stronglyTypedTopicBuilder.tryConvertToStronglyTypedTopic(genericTopic, TestSpecializedTopic.class);
+        SpecializedTopicTest result = stronglyTypedTopicBuilder.tryConvertToStronglyTypedTopic(genericTopic, SpecializedTopicTest.class);
         Assert.assertNotNull("result", result);
 
         outputJson(result);
@@ -283,7 +278,7 @@ public class StronglyTypedTopicBuilderTest {
             System.out.println("---- JSON Representation of " + objectToSerialize.getClass().getName() + "----");
             System.out.println(json);
         } catch (JsonProcessingException e) {
-            e.printStackTrace();
+            fail(e.getMessage());
         }
     }
 
@@ -365,12 +360,12 @@ public class StronglyTypedTopicBuilderTest {
 
         @RegisteredViewModels({
                 @RegisteredViewModel(modelClass = Link.class),
-                @RegisteredViewModel(modelClass = TestSpecializedSection.class),
-                @RegisteredViewModel(modelClass = TestSpecializedBody.class),
-                @RegisteredViewModel(modelClass = TestStronglyTypedTopic.class),
+                @RegisteredViewModel(modelClass = SpecializedSectionTest.class),
+                @RegisteredViewModel(modelClass = SpecializedBodyTest.class),
+                @RegisteredViewModel(modelClass = StronglyTypedTopicTest.class),
                 @RegisteredViewModel(viewName = "SimpleTestPage", modelClass = DefaultPageModel.class), //, controllerName = "Page"),
                 @RegisteredViewModel(viewName = "Main", modelClass = RegionModelImpl.class),
-                @RegisteredViewModel(modelClass = TestSpecializedTopic.class)
+                @RegisteredViewModel(modelClass = SpecializedTopicTest.class)
         })
         private static class TestClassInitializer extends AbstractModuleInitializer {
 

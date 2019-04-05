@@ -7,7 +7,7 @@ import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 
 @SemanticEntity(vocabulary = SemanticVocabulary.SDL_DITA)
-public class TestSpecializedSection extends AbstractEntityModel {
+public class SpecializedSectionTest extends AbstractEntityModel {
     @SemanticProperty("_self")
     public RichText content;
 

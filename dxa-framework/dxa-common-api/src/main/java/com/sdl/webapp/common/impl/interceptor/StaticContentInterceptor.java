@@ -13,7 +13,6 @@ import org.joda.time.Weeks;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServletServerHttpRequest;
@@ -28,7 +27,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
-import java.util.regex.Pattern;
 
 /**
  * Static content interceptor. This interceptor checks if the request is for static content, and if it is, it sends
@@ -40,7 +38,6 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentInterceptor.class);
     private static final String CACHE_CONTROL_WEEK = "public, max-age=" + Weeks.ONE.toStandardSeconds().getSeconds();
     private static final String CACHE_CONTROL_HOUR = "public, max-age=" + Hours.ONE.toStandardSeconds().getSeconds();
-    private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
 
     @Autowired
     private ContentProvider contentProvider;
@@ -51,7 +48,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private static boolean isToBeRefreshed(ServletServerHttpResponse res, long notModifiedSince, long lastModified, boolean isVersioned, boolean isPreview) {
 
         // If preview is enabled we never want to cache images as they may change after editing them
-        if (isPreview){
+        if (isPreview) {
             return true;            
         }
 
@@ -74,7 +71,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     }
 
     private static void fallbackForContentProvider(ServletServerHttpRequest req, String requestPath, ServletServerHttpResponse res, boolean isPreview)
-            throws IOException, StaticContentNotFoundException {
+            throws IOException {
         LOG.warn("Static resource not found in static content provider for " + requestPath + ". Fallback to webapp content...");
 
         URL contentResource = req.getServletRequest().getServletContext().getResource(requestPath);
@@ -99,15 +96,14 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
 
     /**
      * {@inheritDoc}
-     * @throws IOException
      */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException, IOException {
-        return preHandle(request, response, handler, webRequestContext.isPreview());
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException {
+        return preHandle(request, response, webRequestContext.isPreview());
     }
 
 
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler, boolean isPreview) throws ServletException {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, boolean isPreview) throws ServletException {
         final String requestPath = webRequestContext.getRequestPath();
         LOG.trace("preHandle: {}", requestPath);
 
@@ -118,20 +114,20 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
             final ServletServerHttpRequest req = new ServletServerHttpRequest(request);
 
             try (final ServletServerHttpResponse res = new ServletServerHttpResponse(response)) {
-                if (localization.isNonPublishedAsset(requestPath))
-                {
-                    fallbackForContentProvider(req, removeVersionNumber(requestPath), res, isPreview);
+                if (localization.isNonPublishedAsset(requestPath)) {
+                    fallbackForContentProvider(req, requestPath, res, isPreview);
+                    return false;
                 }
-                StaticContentItem staticContentItem = null;
 
+                StaticContentItem staticContentItem = null;
                 try {
                     staticContentItem = contentProvider.getStaticContent(requestPath, localization.getId(), localization.getPath());
                 } catch (StaticContentNotFoundException e) {
-                    fallbackForContentProvider(req, removeVersionNumber(requestPath), res, isPreview);
+                    fallbackForContentProvider(req, requestPath, res, isPreview);
+                    return false;
                 }
 
                 if (staticContentItem != null) {
-
                     res.getHeaders().setContentType(MediaType.parseMediaType(staticContentItem.getContentType()));
 
                     // http://stackoverflow.com/questions/1587667/should-http-304-not-modified-responses-contain-cache-control-headers
@@ -150,9 +146,5 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
         return true;
-    }
-
-    protected static String removeVersionNumber(String path) {
-        return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
 }

@@ -27,6 +27,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.management.ManagementFactory;
 import java.net.URL;
+import java.util.regex.Pattern;
 
 /**
  * Static content interceptor. This interceptor checks if the request is for static content, and if it is, it sends
@@ -38,6 +39,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentInterceptor.class);
     private static final String CACHE_CONTROL_WEEK = "public, max-age=" + Weeks.ONE.toStandardSeconds().getSeconds();
     private static final String CACHE_CONTROL_HOUR = "public, max-age=" + Hours.ONE.toStandardSeconds().getSeconds();
+    private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
 
     @Autowired
     private ContentProvider contentProvider;
@@ -72,6 +74,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
 
     private static void fallbackForContentProvider(ServletServerHttpRequest req, String requestPath, ServletServerHttpResponse res, boolean isPreview)
             throws IOException {
+        requestPath = removeVersionNumber(requestPath);
         LOG.warn("Static resource not found in static content provider for " + requestPath + ". Fallback to webapp content...");
 
         URL contentResource = req.getServletRequest().getServletContext().getResource(requestPath);
@@ -146,5 +149,9 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
             return false;
         }
         return true;
+    }
+
+    protected static String removeVersionNumber(String path) {
+        return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
 }

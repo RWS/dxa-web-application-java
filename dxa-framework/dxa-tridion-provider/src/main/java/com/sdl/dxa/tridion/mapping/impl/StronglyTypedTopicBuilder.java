@@ -19,6 +19,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
@@ -69,6 +70,7 @@ import java.util.stream.Collectors;
  *
  */
 @Service
+@Profile("!dxa.generictopic.disabled")
 public class StronglyTypedTopicBuilder implements EntityModelBuilder {
 
     private static final Logger LOG = LoggerFactory.getLogger(StronglyTypedTopicBuilder.class);
@@ -101,7 +103,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
      * @returns The Strongly Typed Topic Model or null if the generic Topic cannot be converted.
      */
     public <T extends EntityModel> T tryConvertToStronglyTypedTopic(GenericTopic genericTopic, Class<T> ofType) throws DxaException {
-        LOG.debug("Trying to convert " + genericTopic + " to Strongly Typed Topic Model...");
+        LOG.debug("Trying to convert {} to Strongly Typed Topic Model...", genericTopic);
 
         Map<String, Field> registeredTopicTypes = semanticMappingRegistry.getEntitiesByVocabulary(SemanticVocabulary.SDL_DITA);
         if (registeredTopicTypes.isEmpty()) {
@@ -319,7 +321,6 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
 
         // Let the View Model determine the View to be used.
         // Do this after mapping all properties so that the View name can be derived from the properties if needed.
-        // NOTE: Currently passing in null for Context Localization (not expecting this to be used).
         result.setMvcData(((AbstractEntityModel) result).getDefaultMvcData());
 
         return result;
@@ -436,10 +437,10 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
             try {
                 hyperlink = (Element) linkXPath.evaluate(htmlElement, XPathConstants.NODE);
             } catch (XPathExpressionException e) {
-                LOG.warn("Couldn't find <A> tag", e);
+                LOG.warn("Couldn't find <a> tag", e);
             }
             if (hyperlink == null) {
-                LOG.debug("No hyperlink found in XHTML element: " + htmlElement);
+                LOG.debug("No hyperlink found in XHTML element: {}", htmlElement);
                 return null;
             }
         }
@@ -476,10 +477,10 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
             LOG.debug("Generic Topic encountered...");
             T stronglyTypedTopic = tryConvertToStronglyTypedTopic(genericTopic, expectedClass);
             if (stronglyTypedTopic != null) {
-                if (LOG.isDebugEnabled()) LOG.debug("Converted " + genericTopic + " to " + stronglyTypedTopic);
+                LOG.debug("Converted {} to {}" + genericTopic, stronglyTypedTopic);
                 return stronglyTypedTopic;
             }
-            if (LOG.isDebugEnabled()) LOG.debug("Unable to convert " + genericTopic + " to Strongly Typed Topic.");
+            LOG.debug("Unable to convert {} to Strongly Typed Topic.", genericTopic);
         }
 
         return entityModel;

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Lists;
 import com.sdl.dxa.DxaSpringInitialization;
-import com.sdl.dxa.IshClassInitializer;
+import com.sdl.dxa.IshModuleInitializer;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.MvcModelData;
@@ -349,8 +349,8 @@ public class StronglyTypedTopicBuilderTest {
         }
 
         @Bean
-        public IshClassInitializer ishClassInitializer() {
-            return new IshClassInitializer();
+        public IshModuleInitializer ishClassInitializer() {
+            return new IshModuleInitializer();
         }
 
         @Bean

@@ -14,7 +14,7 @@ public final class SemanticVocabulary {
     /**
      * The internal/built-in Vocabulary ID used for DITA mapping.
      */
-    public static final String SDL_DITA = "DitaVocabulary";
+    public static final String SDL_DITA = "http://www.sdl.com/web/schemas/dita";
 
     public static final String SCHEMA_ORG = "http://schema.org/";
 

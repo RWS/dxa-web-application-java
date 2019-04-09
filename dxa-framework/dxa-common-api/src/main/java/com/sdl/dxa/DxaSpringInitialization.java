@@ -231,7 +231,8 @@ public class DxaSpringInitialization {
     }
 
     @Bean
-    public IshClassInitializer ishClassInitializer() { 
-	    return new IshClassInitializer();
+    @Profile("!dxa.generictopic.disabled")
+    public IshModuleInitializer ishClassInitializer() {
+	    return new IshModuleInitializer();
     }
 }

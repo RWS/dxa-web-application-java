@@ -13,7 +13,7 @@ import com.sdl.webapp.common.api.model.entity.GenericTopic;
 @RegisteredViewModels({
         @RegisteredViewModel(viewName = "Topic", modelClass = GenericTopic.class)
 })
-public class IshClassInitializer extends AbstractModuleInitializer {
+public class IshModuleInitializer extends AbstractModuleInitializer {
 
     @Override
     protected String getAreaName() {

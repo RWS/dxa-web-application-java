@@ -55,12 +55,4 @@ public class GenericTopic extends AbstractEntityModel {
     public void setTopicBody(String topicBody) {
         this.topicBody = topicBody;
     }
-
-    @Override
-    public String toString() {
-        return "GenericTopic{" +
-                "topicTitle='" + topicTitle + '\'' +
-                ", topicBody='" + topicBody + '\'' +
-                '}';
-    }
 }

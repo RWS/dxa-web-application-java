@@ -4,7 +4,6 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingRegistry;
-import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -57,8 +56,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 
 /**
  * Model Builder used to convert {@link GenericTopic} Entity Models to Strongly Typed Topic Models.
@@ -72,6 +69,7 @@ import java.util.stream.Collectors;
 @Service
 @Profile("!dxa.generictopic.disabled")
 public class StronglyTypedTopicBuilder implements EntityModelBuilder {
+    private static String SELF = "_self";
 
     private static final Logger LOG = LoggerFactory.getLogger(StronglyTypedTopicBuilder.class);
 
@@ -221,7 +219,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
     }
 
     protected String getPropertyXPath(String propertyName) {
-        if (SemanticProperty.SELF.equals(propertyName))
+        if (SELF.equals(propertyName))
             return ".";
 
         String[] propertyNameSegments = propertyName.split("/");
@@ -244,7 +242,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
 
         List<Element> result = new ArrayList<>(htmlNodes.getLength());
 
-        if (ditaPropertyName.equals(SemanticProperty.SELF)) {
+        if (ditaPropertyName.equals(SELF)) {
             for (int i = 0; i < htmlNodes.getLength(); i++) {
                 result.add((Element) htmlNodes.item(i));
             }

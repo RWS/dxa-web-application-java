@@ -51,10 +51,10 @@ import static org.ehcache.jsr107.Eh107Configuration.fromEhcacheCacheConfiguratio
 @Component
 public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader implements NamedCacheProvider {
 
-    @Value("#{'${dxa.caching.disabled.caches}'.split(',\\s?')}")
+    @Value("#{'${dxa.caching.disabled.caches}'.split('[,\\s]')}")
     private Set<String> disabledCaches;
 
-    @Value("#{'${dxa.caching.required.caches}'.split(',\\s?')}")
+    @Value("#{'${dxa.caching.required.caches}'.split('[,\\s]')}")
     private Set<String> requiredCaches;
 
     @Value("${dxa.caching.configuration:#{null}}")

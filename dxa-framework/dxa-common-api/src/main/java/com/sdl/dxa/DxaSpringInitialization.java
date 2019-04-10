@@ -232,7 +232,7 @@ public class DxaSpringInitialization {
 
     @Bean
     @Profile("!dxa.generictopic.disabled")
-    public IshModuleInitializer ishClassInitializer() {
+    public IshModuleInitializer ishModuleInitializer() {
 	    return new IshModuleInitializer();
     }
 }

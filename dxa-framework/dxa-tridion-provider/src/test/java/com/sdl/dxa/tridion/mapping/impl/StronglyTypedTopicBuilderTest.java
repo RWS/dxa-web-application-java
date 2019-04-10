@@ -349,7 +349,7 @@ public class StronglyTypedTopicBuilderTest {
         }
 
         @Bean
-        public IshModuleInitializer ishClassInitializer() {
+        public IshModuleInitializer ishModuleInitializer() {
             return new IshModuleInitializer();
         }
 

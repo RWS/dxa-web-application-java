@@ -229,4 +229,10 @@ public class DxaSpringInitialization {
             return exists;
         }
     }
+
+    @Bean
+    @Profile("!dxa.generictopic.disabled")
+    public IshModuleInitializer ishModuleInitializer() {
+	    return new IshModuleInitializer();
+    }
 }

@@ -65,6 +65,7 @@ import java.util.Set;
  * * It can act as an Entity Model Builder which is configured in the {@link com.sdl.dxa.tridion.mapping.ModelBuilderPipeline}.
  * * It can be used directly to convert a given {@link GenericTopic}. See {@link #tryConvertToStronglyTypedTopic(GenericTopic, Class)}.
  *
+ * This module is enabled by default. It can be disabled by enabling the Spring profile "dxa.generictopic.disabled"
  */
 @Service
 @Profile("!dxa.generictopic.disabled")

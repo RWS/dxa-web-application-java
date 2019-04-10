@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.model.entity;
 
+import com.sdl.dxa.DxaSpringInitialization;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
 
@@ -15,6 +16,9 @@ import java.io.Serializable;
  * In order to work with Tridion Docs content, it will be associated with specific MVC data.
  * A DXA Web Application/Module that wants to work with Tridion Docs content should include this module
  * unless it defines its own View Model Type for generic Topics.
+ *
+ * This module is enabled by default in {@link DxaSpringInitialization} it can be disabled by enabling
+ * the Spring profile "dxa.generictopic.disabled"
  */
 @SemanticEntity("Topic")
 public class GenericTopic extends AbstractEntityModel {

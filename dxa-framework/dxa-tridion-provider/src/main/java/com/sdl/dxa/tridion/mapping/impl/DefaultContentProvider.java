@@ -167,7 +167,7 @@ public class DefaultContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
-    @Cacheable(unless = "#result != null && #result.canBeCached", cacheNames = "pageModels", key = "{#path, #localization.id}")
+    @Cacheable(condition = "#localization != null", unless = "#result == null || #result.canBeCached", cacheNames = "pageModels", key = "{#path, #localization.id}")
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
         PageModel pageModel = loadPage(path, localization);
 

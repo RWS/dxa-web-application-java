@@ -31,7 +31,7 @@ public class PagesCopyingCacheTest {
         pagesCopyingCache.setCacheProvider(cacheProvider);
 
         // when
-        Cache<LocalizationAwareCacheKey, PageModel> actual = pagesCopyingCache.getCache();
+        Cache<Object, Object> actual = pagesCopyingCache.getCache();
 
         //then
         assertSame(cache, actual);

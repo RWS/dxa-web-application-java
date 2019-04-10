@@ -183,11 +183,10 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     @Override
     public void registerViewModel(MvcData viewData, Class<? extends ViewModel> entityClass) {
         if (viewData != null) {
-            if (viewEntityClassMap.containsKey(viewData)) {
+            if (viewEntityClassMap.putIfAbsent(viewData, entityClass) == null) {
                 LOG.warn("View {} registered multiple times, ignoring.", viewData);
                 return;
             }
-            viewEntityClassMap.put(viewData, entityClass);
         }
         semanticMappingRegistry.registerEntity((Class<? extends EntityModel>) entityClass);
     }

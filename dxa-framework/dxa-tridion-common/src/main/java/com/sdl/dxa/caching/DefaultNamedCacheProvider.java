@@ -102,7 +102,7 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
     @Override
     public <K, V> Cache<K, V> getCache(String cacheName, Class<K> keyType, Class<V> valueType) {
         log.debug("Trying to get cache name {} for key {} and value {}", cacheName, keyType, valueType);
-        Cache<K, V> cache = this.cacheManager.getCache(cacheName, keyType, valueType);
+        Cache<K, V> cache = cacheManager.getCache(cacheName, keyType, valueType);
         if (cache == null) {
             log.debug("Cache name {} for key {} and value {} does not exist, auto-creating", cacheName, keyType, valueType);
             cache = cacheManager.createCache(cacheName, buildDefaultCacheConfiguration(keyType, valueType));

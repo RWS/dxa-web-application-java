@@ -19,13 +19,13 @@ public abstract class CopyingCache<B, V> extends SimpleCacheWrapper<B, V> {
      * <p>Returns deep copy of the instance from cache.</p>
      */
     @Override
-    public V addAndGet(LocalizationAwareCacheKey key, V value) {
+    public V addAndGet(Object key, V value) {
         return checkAndCopy(super.addAndGet(key, value));
     }
 
     @Nullable
     @Override
-    public V get(LocalizationAwareCacheKey key) {
+    public V get(Object key) {
         return checkAndCopy(super.get(key));
     }
 

@@ -100,7 +100,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                     (expectedClass != null
                             ? " from pre-selected class " + expectedClass.getCanonicalName()
                             : " from MvcData class " + mvcData.getClass().getCanonicalName()));
-            LocalizationAwareCacheKey key = entitiesCache.getSpecificKey(modelData, expectedClass);
+            LocalizationAwareCacheKey key = (LocalizationAwareCacheKey)entitiesCache.getSpecificKey(modelData, expectedClass);
             T entityModel = null;
             synchronized (this) {
                 entityModel = (T) entitiesCache.get(key);
@@ -260,7 +260,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
      */
     @Override
     public PageModel buildPageModel(@Nullable PageModel originalPageModel, @NotNull PageModelData modelData) throws SemanticMappingException {
-        LocalizationAwareCacheKey cacheKey = pagesCopyingCache.getSpecificKey(modelData);
+        LocalizationAwareCacheKey cacheKey = (LocalizationAwareCacheKey)pagesCopyingCache.getSpecificKey(modelData);
         synchronized (this) {
             PageModel pageModel = pagesCopyingCache.get(cacheKey);
             if (pageModel != null) {

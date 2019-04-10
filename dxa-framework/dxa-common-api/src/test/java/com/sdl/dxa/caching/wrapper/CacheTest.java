@@ -9,6 +9,7 @@ import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.dxa.caching.WebRequestContextLocalizationIdProvider;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.PageModel;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

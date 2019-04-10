@@ -43,6 +43,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -166,6 +167,7 @@ public class DefaultContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
+    @Cacheable(unless = "#result != null && #result.canBeCached", cacheNames = "pageModels", key = "{#path, #localization.id}")
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
         PageModel pageModel = loadPage(path, localization);
 

@@ -13,6 +13,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import static com.sdl.dxa.common.util.PathUtils.normalizePathToDefaults;
  */
 @Slf4j
 @Component
+@Profile("!cil.providers.active")
 public class GraphQLProvider {
     private ApiClient pcaClient;
 

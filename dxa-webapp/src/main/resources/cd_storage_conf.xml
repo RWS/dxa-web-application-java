@@ -1,0 +1,318 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Version="11.0" xsi:noNamespaceSchemaLocation="schemas/cd_storage_conf.xsd">
+    <!--Optional:-->
+    <!--
+        Default Namespace Configuration
+        The parameter to determine the default namespace
+        'tcm' - SDL Web
+    -->
+    <Namespace default="${namespaceprefix:-tcm}"/>
+    <Global>
+        <!--Optional:-->
+        <ObjectCache Enabled="${objectcacheenabled:-false}">
+            <!--Optional:-->
+            <Policy Class="com.tridion.cache.LRUPolicy" Type="LRU">
+                <!--
+                    The maximum size of memory used by the cache. The string must consist a number
+                    followed by units: "k" or "kb" for kilobytes; "m" or "mb" for megabytes (case insensitive)
+                -->
+                <Param Name="MemSize" Value="${cachesize:-16mb}"/>
+            </Policy>
+            <!--Optional:-->
+            <!-- The Features element specifies classes that add additional functionality to the cache. -->
+            <Features>
+                <Feature Class="com.tridion.cache.DependencyTracker" Type="DependencyTracker"/>
+            </Features>
+            <!--Optional:-->
+            <!--
+                    The optional RemoteSynchronization element specifies a remote Cache Channel Service.
+                    The remote Cache Channel Service is used to send messages between caches that are running
+                    on separate virtual machines. (For example, if the Broker and the Deployer run on separate
+                    virtual machines.)
+                    The Cache Channel Service must be running and listening on the configured host and port for
+                    remote synchronization to function.
+                    If this element is omitted, the cache does not use any inter-virtual machine cache communication.
+                    You must use the RemoteSynchronization element in conjunction with the Cache Channel service in
+                    order for objects to be updated or removed from the Broker's object cache when they are published
+                    or unpublished using the Deployer.
+            -->
+            <!-- RMI CacheChannel Connector example
+
+              <RemoteSynchronization Queuesize="128" ServiceMonitorInterval="10000"
+                  FlushCacheDuringDisconnectInterval="20000">
+
+                  <Connector Class="com.tridion.cache.RMICacheChannelConnector" Host="127.0.0.1" Port="1099" />
+              </RemoteSynchronization>
+              -->
+            <!-- JMS CacheChannel Connector example
+
+              <RemoteSynchronization Queuesize="128" ServiceMonitorInterval="10000"
+                  FlushCacheDuringDisconnectInterval="20000">
+
+                  <Connector Class="com.tridion.cache.JMSCacheChannelConnector" Topic="topicName"
+                      TopicConnectionFactory="jndiNameOfConnectionFactory"/>
+              </RemoteSynchronization>
+              -->
+            <RemoteSynchronization FlushCacheDuringDisconnectInterval="${objectcacheflushinterval:-20000}" Queuesize="${objectcachequeuesize:-1024}" ServiceMonitorInterval="${objectcachemonitorinterval:-10000}">
+                <Connector Class="com.tridion.cache.JMSCacheChannelConnector" Topic="${activemqtopic:-Tridion}">
+                    <JndiContext>
+                        <Property Name="java.naming.factory.initial" Value="org.apache.activemq.jndi.ActiveMQInitialContextFactory"/>
+                        <Property Name="java.naming.provider.url" Value="${activemqurl:-tcp://activemq:61616?soTimeout=50000&amp;useInactivityMonitor=false}"/>
+                        <Property Name="topic.${activemqtopic:-Tridion}" Value="${activemqtopicdest:-SDLWebCCS}"/>
+                        <Property Name="userName" Value="${activemqclientuser:-admin}"/>
+                        <Property Name="password" Value="${activemqclientsecret:-admin}"/>
+                    </JndiContext>
+                </Connector>
+            </RemoteSynchronization>
+        </ObjectCache>
+        <!--Optional:-->
+        <!-- The optional MetaQueryConstants section allows setting of some advanced properties.
+               FindByURLCaseSensitivity overrides the default behaviour of the findByURL methods
+               for retrieving BinaryMeta and PageMeta data.
+        <MetaQueryConstants>
+            <FindByURLCaseSensitivity Value="false"/>
+            <CategoryQuerySeparator Value="/"/>
+        </MetaQueryConstants>
+              -->
+        <!--
+        Specify RMI listening port
+        -->
+        <!--
+        <RMIChannel ListenerPort="1050"/>
+        -->
+        <Storages>
+            <!--
+            <StorageBindings>
+            </StorageBindings>
+            -->
+            <!--
+                Optional:
+                Wrappers enhances the behaviour of DAOs for specific use cases.
+            -->
+            <!--
+            <Wrappers>
+            -->
+            <!--
+            Optional:
+            Wrapper definition for StorageLayer wrapping.
+            This element has the following attributes:
+                Name               The bean wrapper name.
+            -->
+            <!--
+            <Wrapper Name="WrapperName"></Wrapper>
+            -->
+            <!--
+            In order to allow storing of the session data a mechanism should be in place to support storing and
+            retrieving data in a specific user session.
+            -->
+            <!--
+            </Wrappers>
+            -->
+            <!--
+                For Database elements of type sql, you can specify the pooling that
+                should be used with a Pool element. This pooling is independent of the selected database driver.
+
+                This element has the following attributes:
+                    Type               The type should be either jdbc or tridion.
+                    Size               Maximum number of connections to open.
+                    MonitorInterval    Number of seconds between checks on the pool.
+                    IdleTimeout        Number of seconds a connection can be idle before it is closed.
+                    CheckoutTimeout    Number of seconds a connection can be checked out before it is returned to pool.
+            -->
+            <!--
+                Configuration example for MS SQL Database using the MSSQL JDBC driver.
+
+                The DataSource element specifies the class name of the DataSource to use
+                    and properties specific to the datasource.
+                For the MSSQL JDBC driver the minimum set of properties to set are:
+                    serverName: name of the server that hosts the database
+                    portNumber: port number (default 1433) used for TCP/IP connections to the database.
+                    databaseName: name of the database to access
+                    userName: username used to access the database
+                    password: password used to access the database
+
+
+            <Storage Type="persistence" Id="defaultdb" dialect="MSSQL"
+                Class="com.tridion.storage.persistence.JPADAOFactory">
+
+                <Pool Type="jdbc" Size="10" MonitorInterval="60" IdleTimeout="120" CheckoutTimeout="120" />
+                <DataSource Class="com.microsoft.sqlserver.jdbc.SQLServerDataSource">
+                    <Property Name="serverName" Value="SERVER_NAME" />
+                    <Property Name="portNumber" Value="1433" />
+                    <Property Name="databaseName" Value="DATABASE_NAME" />
+                    <Property Name="user" Value="USER_NAME" />
+                    <Property Name="password" Value="PASSWORD" />
+                </DataSource>
+            </Storage>
+            -->
+            <!--
+               Configuration example for Oracle Database using the Oracle JDBC driver.
+
+               The DataSource element specifies the class name of the DataSource to use
+                   and properties specific to the datasource.
+
+               For the Oracle driver the minimum set of properties to set are:
+                   driverType: set to value "thin". Indicates the type of driver to use,
+                       by using "thin" no oracle client installation is required.
+                   networkProtocol: "tcp". Indicates TCP/IP will be used for connectivity.
+                   serverName: name of the server that hosts the database
+                   portNumber: port number (default 1521) used for TCP/IP connections to the database.
+                   databaseName: name of the database to access
+                   userName: username used to access the database
+                   password: password used to access the database
+
+           <Storage Type="persistence" Id="defaultdb2" dialect="ORACLESQL"
+               Class="com.tridion.storage.persistence.JPADAOFactory">
+
+               <Pool Type="jdbc" Size="10" MonitorInterval="60" IdleTimeout="120" CheckoutTimeout="120" />
+               <DataSource Class="oracle.jdbc.pool.OracleDataSource">
+                   <Property Name="driverType" Value="thin"/>
+                   <Property Name="networkProtocol" Value="tcp"/>
+                   <Property Name="serverName" Value="SERVER_NAME"/>
+                   <Property Name="portNumber" Value="1521"/>
+                   <Property Name="databaseName" Value="DATABASE_NAME"/>
+                   <Property Name="user" Value="USER_NAME"/>
+                   <Property Name="password" Value="PASSWORD"/>
+               </DataSource>
+           </Storage>
+           -->
+            <!--
+                 Configuration example of Storage where some values are parameterized.
+
+                 Usage: parameters are specified in form of "${parameter_name}".
+                 Then the parameters might be specified either as operating system environment variables before running
+                 service or as arguments to bash/powershell script in form of "-Dparameter_name=parameter_value"
+
+            <Storage Type="persistence" Id="defaultdb" dialect="${dbdialect}"
+                     Class="com.tridion.storage.persistence.JPADAOFactory">
+                <Pool Type="jdbc" Size="5" MonitorInterval="60" IdleTimeout="120" CheckoutTimeout="120"/>
+                <DataSource Class="${dbclass}">
+                    <Property Name="serverName" Value="${dbhost}"/>
+                    <Property Name="portNumber" Value="${dbport}"/>
+                    <Property Name="databaseName" Value="${dbname}"/>
+                    <Property Name="user" Value="${dbuser}"/>
+                    <Property Name="password" Value="${dbpassword}"/>
+                </DataSource>
+            </Storage>
+            -->
+            <Storage Type="persistence" Id="defaultdb" dialect="${dbdialect}"
+                     Class="com.tridion.storage.persistence.JPADAOFactory">
+                <Pool Type="jdbc" Size="5" MonitorInterval="60" IdleTimeout="120" CheckoutTimeout="120"/>
+                <DataSource Class="${dbclass}">
+                    <Property Name="serverName" Value="${dbhost}"/>
+                    <Property Name="portNumber" Value="${dbport}"/>
+                    <Property Name="databaseName" Value="${dbname}"/>
+                    <Property Name="user" Value="${dbuser}"/>
+                    <Property Name="password" Value="${dbpassword}"/>
+                </DataSource>
+            </Storage>
+        </Storages>
+        <!--
+            Configuration example for using JNDI datasource.
+            Supported dialects are: MSSQL, ORACLESQL.
+         -->
+        <!--
+        <Storage Type="persistence" Class="com.tridion.storage.persistence.JPADAOFactory" dialect="DIALECT"
+            Id="JNDIdb" JNDIName="java:comp/env/jdbc/DATA_SOURCE_NAME"/>
+        -->
+        <!--
+            This configures the taxonomy reference count for keywords,
+            if CountEnabled is set to False the reference count for keywords will not get updated.
+            The default setting is keyword counts are enabled.
+        -->
+        <!-- <Taxonomies CountEnabled="false"/> -->
+        <!--
+            Configures transaction storage settings:
+                 how long before a transaction gets rolled back (default is 120000 ms) and
+                 interval to monitor for outstanding transactions (default is 5000ms).
+        -->
+        <!-- <Transaction Timeout="120000" MonitorInterval="5000"/> -->
+    </Global>
+    <ItemTypes cached="${objectcacheenabled:-false}" defaultStorageId="defaultdb">
+        <!-- Mandatory config if you want link caching! -->
+        <Item cached="true" storageId="defaultdb" typeMapping="Metadata"/>
+        <Item cached="true" storageId="defaultdb" typeMapping="DynamicLinkInfo"/>
+        <!--
+            Query type mapping is replacement for Query generator.
+            If query generator was defined in a Broker configuration, Query type mapping should be bind to default DB.
+        -->
+        <!-- <Item typeMapping="Query" storageId="defaultdb"/> -->
+        <!--Optional:-->
+        <!-- If no item type mappings are defined within ItemTypes or if storages on a lower level do not exist
+             then the storage defined by defaultStorageId attribute will be used.
+             If storage defined by defaultStorageId does not exist then exception will be thrown.
+        -->
+        <!--
+        <Item typeMapping="Binary" itemExtension=".pdf" storageId="defaultFile" cached="true"/>
+        <Item typeMapping="Binary" itemExtension=".iso" storageId="defaultFile" cached="false"/>
+        <Item typeMapping="ComponentLinkClick" cached="true" storageId="defaultFile"/>
+
+        <Item typeMapping="ComponentVisit" cached="true" storageId="defaultFile"/>
+
+
+        <Item typeMapping="Page" cached="false" storageId="defaultFile"/>
+
+        <Item typeMapping="Personalization" cached="true" storageId="defaultdb"/>
+        <Item typeMapping="Taxonomy" cached="true" storageId="defaultdb"/>
+        <Item typeMapping="Timeframe" cached="true" storageId="defaultFile"/>
+        <Item typeMapping="TrackedPage" cached="true" storageId="defaultFile"/>
+        <Item typeMapping="XSLT" cached="true" storageId="defaultFile"/>
+        <Item typeMapping="ExtensionData" cached="true" storageId="defaultdb"/>
+        -->
+        <!--Optional:-->
+        <!--
+            If the publication is defined and storage defined by defaultStorageId is the existing one,
+                that one will be used for that publication unless it is overwritten on a lower level.
+
+            If storage defined by storageId does not exist,
+                then default storage defined by ItemTypes element will be used
+                unless lower level type mappings are not matched.
+        -->
+        <!--
+        <Publication Id="1" defaultStorageId="defaultFile" cached="false">
+        -->
+        <!--Optional:-->
+        <!--
+            If there is a type mapping match and storage is defined for storageId then that storage will be used.
+            Otherwise; first storage defined within publication element will be referenced,
+                and if that one does not exist then the storage from Item elements will be referenced.
+                and at the end storage defined within ItemTypes will be used.-->
+        <!--
+        <Item typeMapping="ComponentPresentation" itemExtension=".Jsp" storageId="defaultFile"/>
+        <Item typeMapping="ComponentPresentation" itemExtension=".Asp" storageId="defaultFile"/>
+        <Item typeMapping="ComponentPresentation" itemExtension=".Xml" storageId="defaultFile"/>
+        <Item typeMapping="ComponentPresentation" itemExtension=".Txt" storageId="defaultFile"/>
+        <Item typeMapping="Metadata" cached="true" storageId="defaultFile"/>
+        <Item typeMapping="Binary" itemExtension=".pdf" storageId="defaultFile" cached="true"/>
+        <Item typeMapping="Binary" itemExtension=".iso" storageId="defaultFile" cached="false"/>
+        <Item typeMapping="ComponentLinkClick" cached="true" storageId="defaultFile"/>
+        <Item typeMapping="ComponentVisit" cached="true" storageId="defaultFile"/>
+        <Item typeMapping="DynamicLinkInfo" cached="true" storageId="defaultFile"/>
+        <Item typeMapping="Page" cached="true" storageId="defaultFile"/>
+        <Item typeMapping="Personalization" cached="true" storageId="defaultdb"/>
+        <Item typeMapping="Taxonomy" cached="true" storageId="defaultdb"/>
+        <Item typeMapping="Timeframe" cached="true" storageId="defaultFile"/>
+        <Item typeMapping="TrackedPage" cached="true" storageId="defaultFile"/>
+        <Item typeMapping="XSLT" cached="true" storageId="defaultFile"/>
+        <Item typeMapping="ExtensionData" cached="true" storageId="defaultdb"/>
+        -->
+        <!--
+        </Publication>
+        -->
+    </ItemTypes>
+    <!--
+    OData specific settings.
+
+    The default top value that will be used if the client doesn't specify one.
+    The fixed publication id to use in the friendly URL, this allows only one
+    publication to be queried through the friendly URL filter.
+    -->
+    <OData>
+        <DefaultTop>25</DefaultTop>
+        <FixedPublicationId>1</FixedPublicationId>
+    </OData>
+    <!-- Specifies the location of the license file. -->
+    <!--
+        <License Location="c:\UDP\cd_licenses.xml"/>
+    -->
+</Configuration>

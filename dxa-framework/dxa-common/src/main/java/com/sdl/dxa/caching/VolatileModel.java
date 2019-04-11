@@ -13,7 +13,7 @@ public interface VolatileModel {
      * @return whether the model never may be cached
      * @dxa.publicApi
      */
-    default boolean canBeCached() {
+    default boolean isPossibleToCache() {
         return !this.getClass().isAnnotationPresent(NeverCached.class) && isStaticModel();
     }
 

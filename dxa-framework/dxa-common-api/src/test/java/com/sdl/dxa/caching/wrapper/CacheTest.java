@@ -90,7 +90,7 @@ public class CacheTest {
 
         NamedCacheProvider cacheProvider = mock(NamedCacheProvider.class);
         //noinspection unchecked
-        when(cacheProvider.getCache(eq(cacheName), any(Class.class), any(Class.class))).thenReturn(cache);
+        when(cacheProvider.getCache(cacheName)).thenReturn(cache);
 
         SimpleCacheWrapper<?, ?> objectCache = supplier.get();
         objectCache.setCacheProvider(cacheProvider);

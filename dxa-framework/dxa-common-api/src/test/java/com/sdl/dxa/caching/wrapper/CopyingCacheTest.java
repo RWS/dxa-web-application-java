@@ -65,7 +65,7 @@ public class CopyingCacheTest {
 
         NamedCacheProvider provider = mock(NamedCacheProvider.class);
 
-        when(provider.getCache(eq("test"), any(), any())).thenReturn(cache);
+        when(provider.getCache("test")).thenReturn(cache);
 
         testingCache.setKeyGenerator(keyGenerator);
         testingCache.setCacheProvider(provider);

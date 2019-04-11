@@ -284,6 +284,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         pageModel.setUrl(modelData.getUrlPath());
         processRegions(modelData.getRegions(), keyBuilder, pageModel.getRegions());
         if (isNeverCachedAnnotation(pageModel)) {
+            log.debug("Page model " + pageModel.getId() + " '" + pageModel.getUrl() + "' [" + pageModel.getName() + "] will not be cached due to anno");
             keyBuilder.skipCaching(true);
         }
         ConditionalKey conditionalKey = keyBuilder.build();
@@ -377,6 +378,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             regionModel.setMvcData(mvcData);
 
             if (isNeverCachedAnnotation(regionModel)) {
+                log.debug("Region model " + regionModel.getSchemaId() + " [" + regionModel.getName() + "] will not be cached due to anno");
                 keyBuilder.skipCaching(true);
             }
             processRegions(regionModelData.getRegions(), keyBuilder, regionModel.getRegions());
@@ -434,6 +436,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         try {
             EntityModel entityModel = modelBuilderPipeline.createEntityModel(entityModelData);
             if (isNeverCachedAnnotation(entityModel)) {
+                log.debug("Entity model " + entityModel.getId() + " [" + entityModel.getClass().getCanonicalName() + "] will not be cached due to anno");
                 cacheRequest.skipCaching(true);
             }
             return entityModel;

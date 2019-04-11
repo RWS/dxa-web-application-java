@@ -167,15 +167,13 @@ public class DefaultContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
-    @Cacheable(condition = "#localization != null", unless = "#result == null || #result.canBeCached", cacheNames = "pageModels", key = "{#path, #localization.id}")
+    @Cacheable(condition = "#localization != null", unless = "#result != null && !#result.possibleToCache", cacheNames = "pageModels", key = "{#path, #localization.id}")
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
+        long time = System.currentTimeMillis();
         PageModel pageModel = loadPage(path, localization);
-
         pageModel.filterConditionalEntities(entityEvaluators);
-
-        //todo dxa2 refactor this, remove usage of deprecated method
         webRequestContext.setPage(pageModel);
-
+        if (localization != null) log.info("Page model " + pageModel.getUrl() + pageModel.getId() + " [" + pageModel.getName() + "] cannot be cached, loading took " + (System.currentTimeMillis() - time) + " ms");
         return pageModel;
     }
 

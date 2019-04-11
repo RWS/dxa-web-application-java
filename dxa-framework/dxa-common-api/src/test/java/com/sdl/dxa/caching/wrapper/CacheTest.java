@@ -94,7 +94,7 @@ public class CacheTest {
         SimpleCacheWrapper<?, ?> objectCache = supplier.get();
         objectCache.setCacheProvider(cacheProvider);
 
-        Cache<LocalizationAwareCacheKey, ?> actual = objectCache.getCache();
+        Cache<Object, Object> actual = objectCache.getCache();
         assertSame(cache, actual);
     }
 }

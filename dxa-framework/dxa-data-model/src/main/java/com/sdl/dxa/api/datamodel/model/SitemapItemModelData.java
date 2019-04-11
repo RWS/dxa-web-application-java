@@ -115,6 +115,7 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
         }
 
         for (SitemapItemModelData item : getItems()) {
+            item.setParent(this);
             SitemapItemModelData withUrl = item.findWithUrl(urlToFind);
             if (withUrl != null) {
                 return withUrl;

@@ -318,6 +318,26 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         return possibleValues.get(0);
     }
 
+    @Override
+    public Map<String, Field> getEntitiesByVocabulary(String vocabulary) {
+        Map<String, Field> result = new HashMap<>();
+
+        if (vocabulary == null) {
+            return result;
+        }
+
+        for (Map.Entry<Field, FieldSemantics> entry : fieldSemanticsMap.entries()) {
+            FieldSemantics value = entry.getValue();
+            if (value != null) {
+                SemanticVocabulary valueVocabulary = value.getVocabulary();
+                if (valueVocabulary != null && vocabulary.equals(valueVocabulary.getId())) {
+                    result.put(value.getPropertyName(), entry.getKey());
+                }
+            }
+        }
+        return result;
+    }
+
     private boolean isPossibleMappedClass(Class<? extends EntityModel> expectedClass, String fullyQualifiedName, Map.Entry<Class<? extends EntityModel>, SemanticEntityInfo> entry) {
         SemanticEntityInfo entityInfo = entry.getValue();
 

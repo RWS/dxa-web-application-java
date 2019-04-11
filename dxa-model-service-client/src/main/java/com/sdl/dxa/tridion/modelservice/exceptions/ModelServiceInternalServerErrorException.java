@@ -29,6 +29,7 @@ public class ModelServiceInternalServerErrorException extends RuntimeException {
         super(message, cause, enableSuppression, writableStackTrace);
     }
 
-    public ModelServiceInternalServerErrorException(String message, HttpStatusCodeException e) {
+    public ModelServiceInternalServerErrorException(String message, HttpStatusCodeException cause) {
+        super(message, cause);
     }
 }

@@ -188,12 +188,25 @@ public class NavigationController extends BaseController {
         moveHomeItemToTopLevelIfNeeded(navigationModel);
 
         suppressTopLevelEmptyItems(navigationModel);
+        suppressDuplicateItem(null, navigationModel.getItems());
 
         request.setAttribute(ENTITY_MODEL, navigationModel);
 
         final MvcData mvcData = entity.getMvcData();
         LOG.trace("Entity MvcData: {}", mvcData);
         return mvcData.getAreaName() + "/Entity/" + mvcData.getViewName();
+    }
+
+    private void suppressDuplicateItem(String url, Set<SitemapItem> items) {
+        Iterator<SitemapItem> iterator = items.iterator();
+        while (iterator.hasNext()) {
+            SitemapItem item = iterator.next();
+            if (item.getUrl().equals(url)) {
+                iterator.remove();
+            } else {
+                suppressDuplicateItem(item.getUrl(), item.getItems());
+            }
+        }
     }
 
     private void suppressTopLevelEmptyItems(SitemapItem navigationModel) {

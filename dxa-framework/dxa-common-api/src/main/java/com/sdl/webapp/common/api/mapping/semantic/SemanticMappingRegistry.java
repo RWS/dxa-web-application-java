@@ -7,6 +7,7 @@ import com.sdl.webapp.common.api.mapping.views.AbstractModuleInitializer;
 import com.sdl.webapp.common.api.model.EntityModel;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -78,5 +79,13 @@ public interface SemanticMappingRegistry {
      * @param expectedClass an expected class or null if none
      */
     Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String entityName, Class<? extends EntityModel> expectedClass) throws SemanticMappingException;
+
+    /**
+     * Get all entities of a vocabulary.
+     *
+     * @return entity class
+     * @param vocabulary the vocabulary
+     */
+    Map<String, Field> getEntitiesByVocabulary(String vocabulary);
 
 }

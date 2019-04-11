@@ -2,6 +2,7 @@ package com.sdl.webapp.tridion.navigation;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.dxa.common.dto.PageRequestDto;
+import com.sdl.dxa.common.util.PathUtils;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -12,7 +13,6 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,7 +23,6 @@ import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
@@ -83,35 +82,22 @@ public class StaticNavigationProvider implements NavigationProvider {
     }
 
     private static boolean createBreadcrumbLinks(SitemapItem item, String requestPath, List<Link> links) {
-        if (requestPath.startsWith(item.getUrl().toLowerCase())) {
-            // Add link for this matching item
+        if (requestPath.equalsIgnoreCase(item.getUrl())) {
+            // This item matches. Add it and exit this function.
             links.add(linkForItem(item));
-
-            // Add links for the following matching subitems
-            // first element was just added, skip it
-            Iterator<SitemapItem> iterator = sitemapIteratorWithoutFirst(item);
-            while (iterator.hasNext()) {
-                if (createBreadcrumbLinks(iterator.next(), requestPath, links)) {
-                    return true;
-                }
-            }
             return true;
         }
 
-        return false;
-    }
-
-    @NotNull
-    private static Iterator<SitemapItem> sitemapIteratorWithoutFirst(SitemapItem item) {
-        if (item.getItems().isEmpty()) {
-            return Collections.<SitemapItem>emptyList().iterator();
-        } else {
-            Iterator<SitemapItem> iterator = item.getItems().iterator();
-            if (iterator.hasNext()) {
-                iterator.next();
+        for (SitemapItem subItem : item.getItems()) {
+            if (createBreadcrumbLinks(subItem, requestPath, links)) {
+                // A child of the item matches, add this item as the path to it.
+                links.add(linkForItem(item));
+                return true;
             }
-            return iterator;
         }
+
+        // Nothing matched
+        return false;
     }
 
     private static Link linkForItem(SitemapItem item) {
@@ -157,7 +143,9 @@ public class StaticNavigationProvider implements NavigationProvider {
         final SitemapItem navigationModel = getNavigationModel(localization);
 
         final List<Link> links = new ArrayList<>();
+        requestPath = PathUtils.stripDefaultExtension(requestPath);
         createBreadcrumbLinks(navigationModel, requestPath, links);
+        Collections.reverse(links);
 
         return new NavigationLinks(links);
     }

@@ -7,6 +7,7 @@ import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.dxa.caching.NeverCached;
 import com.sdl.dxa.caching.VolatileModel;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.K;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,12 +60,15 @@ public abstract class SimpleCacheWrapper<B, V> {
     public abstract Class<V> getValueType();
 
     /**
-     * Returns current cache instance.
+     * Returns current cache instance where:
+     * keys are LocalizationAwareCacheKey.class and
+     * values are V.class.
      *
      * @return current cache for model
      */
-    public Cache<LocalizationAwareCacheKey, V> getCache() {
-        return cacheProvider.getCache(getCacheName(), LocalizationAwareCacheKey.class, getValueType());
+    public Cache<Object, Object> getCache() {
+        Cache<Object, Object> cache = cacheProvider.getCache(getCacheName(), Object.class, Object.class);
+        return cache;
     }
 
     /**
@@ -126,7 +130,7 @@ public abstract class SimpleCacheWrapper<B, V> {
      */
     @Nullable
     public V get(LocalizationAwareCacheKey key) {
-        return containsKey(key) ? getCache().get(key) : null;
+        return containsKey(key) ? (V)getCache().get(key) : null;
     }
 
     /**

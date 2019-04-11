@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration Version="10.1"
+               xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+               xsi:noNamespaceSchemaLocation="schemas/cd_dynamic_conf.xsd">
+    <!-- The URLMappings define the relation between publication id's and domain names. It has optional attribute
+            PathScanDepth which defines the deepest level what will be looked into the URI. The default value is 100.
+            Values below than 1 will be considered 1.            
+    -->
+    <!-- <URLMappings PathScanDepth="20" > -->
+    <URLMappings>
+        <StaticMappings>
+            <!-- The Publications element is a container for separate Publication elements. -->
+            <Publications>
+                <!-- The publication element allows you to specify Publication specific settings.
+                 The Id indicates the id of the publication. This should be a number. -->
+                <Publication Id="1">
+                    <!-- The Host element allows you to specify information about the site that
+                        can be used to create URLs for Dynamic Links.
+                        The following attributes are specified:
+                           Domain    The domain of the website, for example www.sdl.com.
+                           Port      The port of the website, for instance 8080.
+                           Path      The path of the virtual directory of your website.
+                           Protocol  The protocol used for the website. -->
+                    <Host Domain="localhost" Port="80" Protocol="http" Path=""/>
+                    <Host Domain="localhost" Port="8080" Protocol="http" Path=""/>
+                </Publication>
+            </Publications>
+        </StaticMappings>
+        <StorageMapping IdentifyPublicationByProperty="publicationUrl"/>
+    </URLMappings>
+
+    <!-- This node configures the renderer used by the tcdl engine. You can define here custom renderer
+    of the tcdl tags.
+    -->
+    <TCDLEngine>
+        <Properties>
+            <Property Name="prop1" Value="value1"/>
+            <Property Name="prop2" Value="value2"/>
+        </Properties>
+    </TCDLEngine>
+</Configuration>

@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.navigation;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 
@@ -9,6 +10,7 @@ import lombok.experimental.Accessors;
  */
 @Data
 @Accessors(chain = true)
+@EqualsAndHashCode
 @ToString
 public class NavigationFilter {
 

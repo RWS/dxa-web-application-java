@@ -27,7 +27,7 @@ import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
 
 @Slf4j
 @Service("graphQLStaticContentResolver")
-@Profile({"!cil.providers.active"})
+@Profile("!cil.providers.active")
 public class GraphQLStaticContentResolver extends GenericStaticContentResolver implements StaticContentResolver {
 
     private static final Object LOCK = new Object();

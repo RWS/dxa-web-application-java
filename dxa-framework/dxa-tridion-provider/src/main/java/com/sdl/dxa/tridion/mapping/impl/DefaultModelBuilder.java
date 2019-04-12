@@ -100,7 +100,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                     (expectedClass != null
                             ? " from pre-selected class " + expectedClass.getCanonicalName()
                             : " from MvcData class " + mvcData.getClass().getCanonicalName()));
-            LocalizationAwareCacheKey key = entitiesCache.getSpecificKey(modelData, expectedClass);
+            LocalizationAwareCacheKey key = (LocalizationAwareCacheKey)entitiesCache.getSpecificKey(modelData, expectedClass);
             T entityModel = null;
             synchronized (this) {
                 entityModel = (T) entitiesCache.get(key);
@@ -260,7 +260,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
      */
     @Override
     public PageModel buildPageModel(@Nullable PageModel originalPageModel, @NotNull PageModelData modelData) throws SemanticMappingException {
-        LocalizationAwareCacheKey cacheKey = pagesCopyingCache.getSpecificKey(modelData);
+        LocalizationAwareCacheKey cacheKey = (LocalizationAwareCacheKey)pagesCopyingCache.getSpecificKey(modelData);
         synchronized (this) {
             PageModel pageModel = pagesCopyingCache.get(cacheKey);
             if (pageModel != null) {
@@ -284,6 +284,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         pageModel.setUrl(modelData.getUrlPath());
         processRegions(modelData.getRegions(), keyBuilder, pageModel.getRegions());
         if (isNeverCachedAnnotation(pageModel)) {
+            log.debug("Page model " + pageModel.getId() + " '" + pageModel.getUrl() + "' [" + pageModel.getName() + "] will not be cached due to anno");
             keyBuilder.skipCaching(true);
         }
         ConditionalKey conditionalKey = keyBuilder.build();
@@ -377,6 +378,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             regionModel.setMvcData(mvcData);
 
             if (isNeverCachedAnnotation(regionModel)) {
+                log.debug("Region model " + regionModel.getSchemaId() + " [" + regionModel.getName() + "] will not be cached due to anno");
                 keyBuilder.skipCaching(true);
             }
             processRegions(regionModelData.getRegions(), keyBuilder, regionModel.getRegions());
@@ -434,6 +436,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         try {
             EntityModel entityModel = modelBuilderPipeline.createEntityModel(entityModelData);
             if (isNeverCachedAnnotation(entityModel)) {
+                log.debug("Entity model " + entityModel.getId() + " [" + entityModel.getClass().getCanonicalName() + "] will not be cached due to anno");
                 cacheRequest.skipCaching(true);
             }
             return entityModel;

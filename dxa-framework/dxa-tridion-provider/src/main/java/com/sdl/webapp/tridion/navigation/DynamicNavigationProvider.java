@@ -119,23 +119,28 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
 
     @Override
     public Collection<SitemapItem> getNavigationSubtree(@Nullable String sitemapItemId, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) throws DxaItemNotFoundException {
-        Optional<Collection<SitemapItemModelData>> subtree;
-        SitemapRequestDto requestDto = SitemapRequestDto
-                .builder(Integer.parseInt(localization.getId()))
-                .navigationFilter(navigationFilter)
-                .expandLevels(new DepthCounter(navigationFilter.getDescendantLevels()))
-                .sitemapId(sitemapItemId)
-                .build();
+        long time = System.currentTimeMillis();
+        try {
+            Optional<Collection<SitemapItemModelData>> subtree;
+            SitemapRequestDto requestDto = SitemapRequestDto
+                    .builder(Integer.parseInt(localization.getId()))
+                    .navigationFilter(navigationFilter)
+                    .expandLevels(new DepthCounter(navigationFilter.getDescendantLevels()))
+                    .sitemapId(sitemapItemId)
+                    .build();
 
-        subtree = onDemandNavigationModelProvider.getNavigationSubtree(requestDto);
+            subtree = onDemandNavigationModelProvider.getNavigationSubtree(requestDto);
 
-        if (!subtree.isPresent()) {
-            throw new TaxonomyNotFoundException("Keyword '" + requestDto.getSitemapId() + "' in publication '" + requestDto.getLocalizationId() + "' was not found.");
+            if (!subtree.isPresent()) {
+                throw new TaxonomyNotFoundException("Keyword '" + requestDto.getSitemapId() + "' in publication '" + requestDto.getLocalizationId() + "' was not found.");
+            }
+
+            return subtree.get().stream()
+                    .map(this::convert)
+                    .collect(Collectors.toList());
+        } finally {
+            log.debug("getNavigationSubtree for localizationId: {} and sitemapId: {} took {} ms", localization.getId(), sitemapItemId, (System.currentTimeMillis() - time));
         }
-
-        return subtree.get().stream()
-                .map(this::convert)
-                .collect(Collectors.toList());
     }
 
     @NotNull

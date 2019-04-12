@@ -86,7 +86,7 @@ public class AbstractMarkupTag extends TagSupport {
         OutputCache outputCache = getOutputCache();
 
         Optional<CompositeOutputCacheKeyBase> optionalKey = getCacheKey(include, model);
-        LocalizationAwareCacheKey specificKey = optionalKey.map(outputCache::getSpecificKey).orElse(null);
+        LocalizationAwareCacheKey specificKey = (LocalizationAwareCacheKey)optionalKey.map(outputCache::getSpecificKey).orElse(null);
         boolean cacheAccessible = optionalKey.isPresent();
 
         if (cacheAccessible) {

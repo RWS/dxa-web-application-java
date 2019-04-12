@@ -9,6 +9,7 @@ import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.dxa.caching.WebRequestContextLocalizationIdProvider;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.PageModel;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -89,7 +90,7 @@ public class CacheTest {
 
         NamedCacheProvider cacheProvider = mock(NamedCacheProvider.class);
         //noinspection unchecked
-        when(cacheProvider.getCache(eq(cacheName), any(Class.class), any(Class.class))).thenReturn(cache);
+        when(cacheProvider.getCache(cacheName)).thenReturn(cache);
 
         SimpleCacheWrapper<?, ?> objectCache = supplier.get();
         objectCache.setCacheProvider(cacheProvider);

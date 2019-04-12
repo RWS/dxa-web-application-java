@@ -75,9 +75,12 @@ public final class InitializationUtils {
                 current.load(new BOMInputStream(resource.getInputStream()));
                 log.debug("Properties from {} are loaded", resource);
 
-                if (current.containsKey(SPRING_PROFILES_INCLUDE) && dxaProperties.containsKey(SPRING_PROFILES_INCLUDE)) {
+                if (current.containsKey(SPRING_PROFILES_INCLUDE) &&
+                    dxaProperties.containsKey(SPRING_PROFILES_INCLUDE)) {
                     current.setProperty(SPRING_PROFILES_INCLUDE,
-                            Joiner.on(',').join(dxaProperties.getProperty(SPRING_PROFILES_INCLUDE), current.getProperty(SPRING_PROFILES_INCLUDE)));
+                            Joiner.on(',')
+                                    .join(dxaProperties.getProperty(SPRING_PROFILES_INCLUDE),
+                                          current.getProperty(SPRING_PROFILES_INCLUDE)));
                 }
 
                 dxaProperties.putAll(current);
@@ -205,7 +208,7 @@ public final class InitializationUtils {
     private static void addActiveProfiles(ConfigurableWebApplicationContext servletAppContext, String activeProfiles) {
         if (!isEmpty(activeProfiles)) {
             ConfigurableEnvironment environment = servletAppContext.getEnvironment();
-            Arrays.stream(activeProfiles.split(","))
+            Arrays.stream(activeProfiles.split("[, ]"))
                     .filter(StringUtils::isNotEmpty)
                     .forEach(profile -> environment.addActiveProfile(profile.trim()));
         }

@@ -65,7 +65,7 @@ public class CopyingCacheTest {
 
         NamedCacheProvider provider = mock(NamedCacheProvider.class);
 
-        when(provider.getCache(eq("test"), any(), any())).thenReturn(cache);
+        when(provider.getCache("test")).thenReturn(cache);
 
         testingCache.setKeyGenerator(keyGenerator);
         testingCache.setCacheProvider(provider);
@@ -149,7 +149,7 @@ public class CopyingCacheTest {
         //given
 
         //when
-        LocalizationAwareCacheKey key = testingCache.getKey("1", "2", "3");
+        LocalizationAwareCacheKey key = (LocalizationAwareCacheKey)testingCache.getKey("1", "2", "3");
 
         //then
         assertEquals(new LocalizationAwareCacheKey("42", new SimpleKey("1", "2", "3")), key);
@@ -160,7 +160,7 @@ public class CopyingCacheTest {
         //given
 
         //when
-        LocalizationAwareCacheKey key = testingCache.getKey("1", "2", "3");
+        LocalizationAwareCacheKey key = (LocalizationAwareCacheKey)testingCache.getKey("1", "2", "3");
         Object added = testingCache.addAndGet(key, null);
         Object get = testingCache.get(key);
 
@@ -187,7 +187,7 @@ public class CopyingCacheTest {
         }
 
         @Override
-        public LocalizationAwareCacheKey getSpecificKey(Object keyBase, Object... keyParams) {
+        public Object getSpecificKey(Object keyBase, Object... keyParams) {
             return super.getKey(keyBase);
         }
 

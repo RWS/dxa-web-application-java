@@ -84,7 +84,7 @@ public abstract class SimpleCacheWrapper<B, V> {
      * @return value put in cache
      */
     public V addAndGet(@NotNull ConditionalKey key, V value) {
-        if (key.isSkipCaching() || (value instanceof VolatileModel && !((VolatileModel) value).canBeCached())) {
+        if (key.isSkipCaching() || (value instanceof VolatileModel && !((VolatileModel) value).isPossibleToCache())) {
             log.trace("Value for key {} is not cached", key);
             return value;
         }

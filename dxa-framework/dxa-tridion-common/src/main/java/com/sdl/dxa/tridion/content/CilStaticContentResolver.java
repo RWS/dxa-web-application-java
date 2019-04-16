@@ -40,7 +40,7 @@ import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
  */
 @Slf4j
 @Service("cilStaticContentResolver")
-@Profile({"cil.providers.active"})
+@Profile("cil.providers.active")
 @Deprecated
 public class CilStaticContentResolver extends GenericStaticContentResolver implements StaticContentResolver {
 

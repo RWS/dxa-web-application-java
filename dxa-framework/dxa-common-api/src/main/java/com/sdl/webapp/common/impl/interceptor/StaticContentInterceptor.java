@@ -106,15 +106,14 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
 
     /**
      * {@inheritDoc}
-     * @throws IOException
      */
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException, IOException {
-        return preHandle(request, response, handler, webRequestContext.isPreview());
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException {
+        return preHandle(request, response, webRequestContext.isPreview());
     }
 
 
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler, boolean isPreview) throws ServletException {
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, boolean isPreview) throws ServletException {
         final String requestPath = webRequestContext.getRequestPath();
         LOG.trace("preHandle: {}", requestPath);
 

@@ -9,6 +9,7 @@ import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
 import com.sdl.web.pca.client.contentmodel.generated.Publication;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
+import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.content.StaticContentNotLoadedException;
 import com.sdl.webapp.common.util.ImageUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -55,6 +56,11 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
                     pathInfo.getFileName(),
                     "",
                     createContextData(requestDto.getClaims()));
+
+        if (binaryComponent == null) {
+            throw new StaticContentNotFoundException("No binary found for pubId: [" +
+                    publicationId + "] and urlPath: " + urlPath);
+        }
 
         long componentTime = new DateTime(binaryComponent.getLastPublishDate()).getMillis();
 

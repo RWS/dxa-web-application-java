@@ -107,7 +107,7 @@ public final class ImageUtils {
         if (pathInfo.isImage() && pathInfo.isResized()) {
             content = ImageUtils.resizeImage(content, pathInfo);
         }
-
+        file.getParentFile().mkdirs();
         Files.write(content, file);
     }
 

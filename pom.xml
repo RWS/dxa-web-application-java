@@ -235,10 +235,10 @@
     </developers>
 
     <modules>
-        <module>dxa-dd4t-ms-provider</module>
-        <module>dxa-framework</module>
-        <module>dxa-javadoc-tools</module>
         <module>dxa-model-service-client</module>
+        <module>dxa-dd4t-ms-provider</module>
+        <module>dxa-javadoc-tools</module>
+        <module>dxa-framework</module>
         <module>dxa-webapp</module>
     </modules>
 

@@ -213,20 +213,20 @@ public class DynamicNavigationModelProviderTest {
         String directionAsString;
         switch(direction) {
             case 0:
-                directionAsString = "Up";
+                directionAsString = "0";
                 break;
             case 1:
-                directionAsString = "Down";
+                directionAsString = "1";
                 break;
             default:
-                directionAsString = "None";
+                directionAsString = "-1";
         }
         return new ArgumentMatcher<TaxonomyFilter>() {
             @Override
             public boolean matches(Object argument) {
-                String toMatch = ((DepthFilter) argument).toString();
+                String toMatch = ((DepthFilter) argument).toTaxonomyFilterUriRepresentation();
                 Pattern pattern = Pattern.compile(
-                        "DepthFilter \\(MaxDepth:\\s*(?<depth>-?\\d+),\\s*Direction:\\s*(?<direction>\\w+)\\)");
+                        "DepthFilter\\((?<depth>-?\\d+),\\s*(?<direction>\\d+)\\)");
                 Matcher matcher = pattern.matcher(toMatch);
                 return matcher.matches() && matcher.group("direction").equals(directionAsString)
                         && (depth == 666 || matcher.group("depth").equals(String.valueOf(depth)));
@@ -248,7 +248,7 @@ public class DynamicNavigationModelProviderTest {
                 argThat(depthFilterMatcher(direction)), eq(ItemTypes.PAGE));
 
         if (wasCalled) {
-            assertTrue("At least one of filtering methods with direction " + direction + "expected to be called at least once", !captor.getAllValues().isEmpty());
+            assertTrue("At least one of filtering methods with direction equals " + direction + " expected to be called at least once", !captor.getAllValues().isEmpty());
         }
     }
 

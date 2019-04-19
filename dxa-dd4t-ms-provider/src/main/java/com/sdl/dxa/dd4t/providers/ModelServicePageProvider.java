@@ -1,7 +1,7 @@
 package com.sdl.dxa.dd4t.providers;
 
 import com.sdl.dxa.tridion.modelservice.ModelServiceClient;
-import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
+import com.sdl.dxa.tridion.modelservice.ModelServiceClientConfiguration;
 import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import com.tridion.meta.PageMeta;
 import org.dd4t.core.exceptions.ItemNotFoundException;
@@ -24,14 +24,14 @@ public class ModelServicePageProvider extends BrokerPageProvider implements Page
     private ModelServiceClient modelServiceClient;
 
     @Resource
-    private ModelServiceConfiguration modelServiceConfiguration;
+    private ModelServiceClientConfiguration modelServiceClientConfiguration;
 
     public void setModelServiceClient(ModelServiceClient modelServiceClient) {
         this.modelServiceClient = modelServiceClient;
     }
 
-    public void setModelServiceConfiguration(ModelServiceConfiguration modelServiceConfiguration) {
-        this.modelServiceConfiguration = modelServiceConfiguration;
+    public void setModelServiceClientConfiguration(ModelServiceClientConfiguration modelServiceClientConfiguration) {
+        this.modelServiceClientConfiguration = modelServiceClientConfiguration;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class ModelServicePageProvider extends BrokerPageProvider implements Page
     @Override
     public String getPageContentByURL(String url, int publication) throws ItemNotFoundException, SerializationException {
         try {
-            String serviceUrl = fromUriString(modelServiceConfiguration.getPageModelUrl())
+            String serviceUrl = fromUriString(modelServiceClientConfiguration.getPageModelUrl())
                     .queryParam("modelType", "DD4T")
                     .build().toUriString();
 

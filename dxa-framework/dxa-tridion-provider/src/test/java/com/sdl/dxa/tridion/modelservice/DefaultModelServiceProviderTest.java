@@ -9,7 +9,6 @@ import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -24,7 +23,7 @@ import static org.mockito.Mockito.when;
 public class DefaultModelServiceProviderTest {
 
     @Mock
-    private ModelServiceConfiguration configuration;
+    private ModelServiceClientConfiguration configuration;
 
     @Mock
     private Localization localization;

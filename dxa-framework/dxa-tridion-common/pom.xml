@@ -21,17 +21,6 @@
     <dependencies>
 
         <dependency>
-            <groupId>com.sdl.delivery</groupId>
-            <artifactId>udp-cil-api-broker</artifactId>
-            <version>${cd_broker.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.delivery</groupId>
-            <artifactId>udp-cil-api-dynamic</artifactId>
-            <version>${cd_broker.version}</version>
-        </dependency>
-
-        <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common</artifactId>
         </dependency>

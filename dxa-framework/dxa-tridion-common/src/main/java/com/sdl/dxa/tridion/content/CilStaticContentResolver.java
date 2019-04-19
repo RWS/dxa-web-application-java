@@ -18,6 +18,8 @@ import com.tridion.meta.PublicationMeta;
 import com.tridion.meta.PublicationMetaFactory;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
@@ -48,8 +50,6 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
 
     private final PublicationMetaFactory webPublicationMetaFactory;
 
-    private static final Object LOCK = new Object();
-
     @Autowired
     public CilStaticContentResolver(WebApplicationContext webApplicationContext,
                                     DynamicMetaRetriever dynamicMetaRetriever,
@@ -63,8 +63,8 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
 
     @NotNull
     @Override
-    protected StaticContentItem createStaticContentItem(final StaticContentRequestDto requestDto,
-                                                        final File file,
+    protected StaticContentItem createStaticContentItem(StaticContentRequestDto requestDto,
+                                                        File file,
                                                         int publicationId,
                                                         ImageUtils.StaticContentPathInfo pathInfo,
                                                         String urlPath) throws ContentProviderException {
@@ -75,13 +75,11 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
 
         long componentTime = componentMeta.getLastPublicationDate().getTime();
 
-        boolean shouldRefresh = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
+        boolean shouldRefresh = requestDto.isNoMediaCache() || isToBeRefreshed(file, componentTime);
 
         if (shouldRefresh) {
             log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
-            synchronized (LOCK) {
-                refreshBinary(file, pathInfo, publicationId, binaryMeta, itemId);
-            }
+            refreshBinary(file, pathInfo, publicationId, binaryMeta, itemId);
         } else {
             log.debug("File does not need to be refreshed: {}", file.getAbsolutePath());
         }
@@ -125,9 +123,12 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
     }
 
     private void refreshBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId, BinaryMeta binaryMeta, int itemId) throws ContentProviderException {
+        Triple<Integer, Integer, String> key = new ImmutableTriple<>(publicationId, itemId, binaryMeta.getVariantId());
         try {
-            BinaryData binaryData = binaryFactory.getBinary(publicationId, itemId, binaryMeta.getVariantId());
-            refreshBinary(file, pathInfo, binaryData.getBytes());
+            synchronized (key.toString().intern()) {
+                BinaryData binaryData = binaryFactory.getBinary(publicationId, itemId, binaryMeta.getVariantId());
+                refreshBinary(file, pathInfo, binaryData.getBytes());
+            }
         } catch (IOException e) {
             throw new StaticContentNotLoadedException("Cannot write new loaded content to a file " + file, e);
         }

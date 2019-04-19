@@ -46,10 +46,12 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         this.webApplicationContext = webApplicationContext;
     }
 
-    @Override
     @NotNull
-    protected StaticContentItem createStaticContentItem(StaticContentRequestDto requestDto, File file,
-                                                        int publicationId, ImageUtils.StaticContentPathInfo pathInfo,
+    @Override
+    protected StaticContentItem createStaticContentItem(StaticContentRequestDto requestDto,
+                                                        File file,
+                                                        int publicationId,
+                                                        ImageUtils.StaticContentPathInfo pathInfo,
                                                         String urlPath) throws ContentProviderException {
         BinaryComponent binaryComponent = apiClient.getBinaryComponent(ContentNamespace.Sites,
                     publicationId,

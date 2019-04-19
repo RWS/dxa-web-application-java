@@ -218,7 +218,7 @@ public class DefaultContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
-    public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
+    public @NotNull StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
 
         return staticContentResolver.getStaticContent(StaticContentRequestDto

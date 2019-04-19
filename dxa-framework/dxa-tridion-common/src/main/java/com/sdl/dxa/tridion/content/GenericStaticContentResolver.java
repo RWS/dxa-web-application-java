@@ -52,14 +52,14 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
         return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
 
-    private StaticContentItem getStaticContentFile(String path, StaticContentRequestDto requestDto)
+    private @NotNull StaticContentItem getStaticContentFile(String path, StaticContentRequestDto requestDto)
             throws ContentProviderException {
         String parentPath = StringUtils.join(new String[]{
                 webApplicationContext.getServletContext().getRealPath("/"), STATIC_FILES_DIR, requestDto.getLocalizationId()
         }, File.separator);
 
         final File file = new File(parentPath, path);
-        log.trace("getStaticContentFile: {}", file);
+        log.trace("getStaticContentFile: {}", file.getAbsolutePath());
 
         final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
 
@@ -83,13 +83,13 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
         try {
             ImageUtils.writeToFile(file, pathInfo, binaryContent);
         } catch (IOException e) {
-            throw new StaticContentNotLoadedException("Cannot write new loaded content to a file " + file, e);
+            throw new StaticContentNotLoadedException("Cannot write new loaded content to a file " + file.getAbsolutePath(), e);
         }
     }
 
     @NotNull
-    protected abstract StaticContentItem createStaticContentItem(final StaticContentRequestDto requestDto,
-                                                      final File file,
+    protected abstract StaticContentItem createStaticContentItem(StaticContentRequestDto requestDto,
+                                                      File file,
                                                       int publicationId,
                                                       ImageUtils.StaticContentPathInfo pathInfo,
                                                       String urlPath) throws ContentProviderException;

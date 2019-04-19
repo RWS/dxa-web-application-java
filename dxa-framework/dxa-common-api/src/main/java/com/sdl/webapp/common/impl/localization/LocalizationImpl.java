@@ -24,8 +24,8 @@ import java.util.regex.Pattern;
 public class LocalizationImpl implements Localization {
 
     private static final String FAVICON_PATH = "/favicon.ico";
-    private static final Pattern SYSTEM_ASSETS_PATTERN = Pattern.compile("/system(/v\\d+\\.\\d+)?/assets/.*");
-    private static final Pattern SYSTEM_RESOURCES_PATTERN = Pattern.compile("/system(/v\\d+\\.\\d+)?/(resources|config)/.*");
+    private static final Pattern SYSTEM_ASSETS_PATTERN = Pattern.compile("/system/(v\\d++\\.\\d++/)?assets/.*");
+    private static final Pattern SYSTEM_RESOURCES_PATTERN = Pattern.compile("/system/(v\\d++\\.\\d++/)?(resources|config)/.*");
 
     @Getter
     private final String id;
@@ -35,7 +35,7 @@ public class LocalizationImpl implements Localization {
 
     private final String mediaRoot;
 
-    private final boolean default_;
+    private final boolean defaultFlag;
 
     @Getter
     private final boolean staging;
@@ -69,7 +69,7 @@ public class LocalizationImpl implements Localization {
             this.mediaRoot = builder.mediaRoot;
         }
 
-        this.default_ = builder.default_;
+        this.defaultFlag = builder.defaultFlag;
         this.staging = builder.staging;
         this.version = builder.version;
         this.isHtmlDesignPublished = builder.htmlDesignPublished;
@@ -121,7 +121,7 @@ public class LocalizationImpl implements Localization {
      */
     @Override
     public boolean isDefault() {
-        return default_;
+        return defaultFlag;
     }
 
     /** {@inheritDoc} */
@@ -157,14 +157,13 @@ public class LocalizationImpl implements Localization {
     /** {@inheritDoc} */
     @Override
     public String localizePath(String url) {
-        if (!Strings.isNullOrEmpty(path)) {
-            if (path.endsWith("/")) {
-                url = path + (url.startsWith("/") ? url.substring(1) : url);
-            } else {
-                url = path + (url.startsWith("/") ? url : '/' + url);
-            }
+        if (Strings.isNullOrEmpty(path)) {
+            return url;
         }
-        return url;
+        if (path.endsWith("/")) {
+            return path + (url.startsWith("/") ? url.substring(1) : url);
+        }
+        return path + (url.startsWith("/") ? url : '/' + url);
     }
 
     /**
@@ -185,7 +184,7 @@ public class LocalizationImpl implements Localization {
         private String id;
         private String path;
         private String mediaRoot;
-        private boolean default_;
+        private boolean defaultFlag;
         private boolean staging;
         private String version;
         private boolean htmlDesignPublished;
@@ -208,8 +207,8 @@ public class LocalizationImpl implements Localization {
             return this;
         }
 
-        public Builder setDefault(boolean default_) {
-            this.default_ = default_;
+        public Builder setDefault(boolean defaultFlag) {
+            this.defaultFlag = defaultFlag;
             return this;
         }
 

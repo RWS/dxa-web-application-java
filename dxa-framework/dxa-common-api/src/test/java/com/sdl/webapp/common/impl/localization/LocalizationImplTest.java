@@ -80,6 +80,13 @@ public class LocalizationImplTest {
         assertFalse(local.isStaticContent("root/etc/test"));
         assertTrue(local.isStaticContent("/path/media"));
         assertFalse(local.isStaticContent("/path/test"));
+
+        assertTrue(local.isStaticContent("/path/system/v2.0/assets/test"));
+        assertTrue(local.isStaticContent("/path/system/assets/media"));
+        assertTrue(local.isStaticContent("/path/system/v2.0/resources/test"));
+        assertTrue(local.isStaticContent("/path/system/resources/media"));
+        assertTrue(local.isStaticContent("/path/system/v2.0/config/test"));
+        assertTrue(local.isStaticContent("/path/system/config/media"));
     }
 
     @Test

@@ -253,14 +253,15 @@ public class GraphQLContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
-    public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
+    public @NotNull StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
             throws ContentProviderException {
-        return staticContentResolver.getStaticContent(
-                StaticContentRequestDto.builder(path, localizationId)
-                        .localizationPath(localizationPath)
-                        .baseUrl(webRequestContext.getBaseUrl())
-                        .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isPreview())
-                        .build());
+        boolean noCache = webRequestContext.isPreview() && !FileUtils.isEssentialConfiguration(path, localizationPath);
+        StaticContentRequestDto build = StaticContentRequestDto.builder(path, localizationId)
+                .localizationPath(localizationPath)
+                .baseUrl(webRequestContext.getBaseUrl())
+                .noMediaCache(noCache)
+                .build();
+        return staticContentResolver.getStaticContent(build);
     }
 
     protected PageModel loadPage(String path, Localization localization) throws ContentProviderException {

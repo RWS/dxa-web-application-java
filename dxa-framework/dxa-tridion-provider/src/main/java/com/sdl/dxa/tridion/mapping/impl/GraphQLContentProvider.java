@@ -255,7 +255,13 @@ public class GraphQLContentProvider implements ContentProvider {
     @Override
     public @NotNull StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
             throws ContentProviderException {
-        boolean noCache = webRequestContext.isPreview() && !FileUtils.isEssentialConfiguration(path, localizationPath);
+        boolean noCache = false;
+        if (!FileUtils.isEssentialConfiguration(path, localizationPath)) {
+            //Note: webRequestContext.isPreview() eventualy does a request to loadMainConfiguration, which calls getStaticContent (this method)
+            //Without the check for FileUtils.isEssentialConfiguration first, this will lead to a stackoverflow error.
+            noCache = webRequestContext.isPreview();
+        }
+
         StaticContentRequestDto build = StaticContentRequestDto.builder(path, localizationId)
                 .localizationPath(localizationPath)
                 .baseUrl(webRequestContext.getBaseUrl())

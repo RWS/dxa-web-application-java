@@ -29,12 +29,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Deprecated
 public class DefaultModelServiceProvider implements ModelServiceProvider {
 
-    private final ModelServiceConfiguration configuration;
+    private final ModelServiceClientConfiguration configuration;
 
     private final ModelServiceClient modelServiceClient;
 
     @Autowired
-    public DefaultModelServiceProvider(ModelServiceConfiguration configuration, ModelServiceClient modelServiceClient) {
+    public DefaultModelServiceProvider(ModelServiceClientConfiguration configuration, ModelServiceClient modelServiceClient) {
         this.configuration = configuration;
         this.modelServiceClient = modelServiceClient;
     }

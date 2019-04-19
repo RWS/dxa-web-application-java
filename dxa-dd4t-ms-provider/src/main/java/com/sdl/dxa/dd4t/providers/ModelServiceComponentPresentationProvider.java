@@ -3,7 +3,7 @@ package com.sdl.dxa.dd4t.providers;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.dxa.tridion.modelservice.ModelServiceClient;
-import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
+import com.sdl.dxa.tridion.modelservice.ModelServiceClientConfiguration;
 import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import com.sdl.dxa.tridion.modelservice.exceptions.ModelServiceInternalServerErrorException;
 import com.sdl.web.model.componentpresentation.ComponentPresentationImpl;
@@ -24,19 +24,19 @@ public class ModelServiceComponentPresentationProvider extends BrokerComponentPr
     private ModelServiceClient modelServiceClient;
 
     @Resource
-    private ModelServiceConfiguration modelServiceConfiguration;
+    private ModelServiceClientConfiguration modelServiceClientConfiguration;
 
     public void setModelServiceClient(ModelServiceClient modelServiceClient) {
         this.modelServiceClient = modelServiceClient;
     }
 
-    public void setModelServiceConfiguration(ModelServiceConfiguration modelServiceConfiguration) {
-        this.modelServiceConfiguration = modelServiceConfiguration;
+    public void setModelServiceClientConfiguration(ModelServiceClientConfiguration modelServiceClientConfiguration) {
+        this.modelServiceClientConfiguration = modelServiceClientConfiguration;
     }
 
     @Override
     protected ComponentPresentation getComponentPresentation(int componentId, int templateId, int publicationId) throws ItemNotFoundException {
-        String serviceUrl = fromUriString(modelServiceConfiguration.getEntityModelUrl())
+        String serviceUrl = fromUriString(modelServiceClientConfiguration.getEntityModelUrl())
                 .queryParam("dcpType", "HIGHEST_PRIORITY")
                 .build().toUriString();
 

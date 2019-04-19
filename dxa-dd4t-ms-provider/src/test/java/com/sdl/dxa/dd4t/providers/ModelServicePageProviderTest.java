@@ -1,7 +1,7 @@
 package com.sdl.dxa.dd4t.providers;
 
 import com.sdl.dxa.tridion.modelservice.ModelServiceClient;
-import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
+import com.sdl.dxa.tridion.modelservice.ModelServiceClientConfiguration;
 import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
@@ -27,14 +27,14 @@ public class ModelServicePageProviderTest {
     private ModelServiceClient modelServiceClient;
 
     @Mock
-    private ModelServiceConfiguration modelServiceConfiguration;
+    private ModelServiceClientConfiguration modelServiceClientConfiguration;
 
     @InjectMocks
     private ModelServicePageProvider modelServicePageProvider;
 
     @Before
     public void init() {
-        when(modelServiceConfiguration.getPageModelUrl()).thenReturn("/conf");
+        when(modelServiceClientConfiguration.getPageModelUrl()).thenReturn("/conf");
         modelServicePageProvider.setContentIsCompressed("false");
         modelServicePageProvider.setContentIsBase64Encoded(false);
     }

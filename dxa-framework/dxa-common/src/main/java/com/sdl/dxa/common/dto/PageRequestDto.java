@@ -23,6 +23,9 @@ public class PageRequestDto {
 
     private String path;
 
+    /**
+     * namespace {"tcm", "ish"}
+     */
     private String uriType;
 
     private PageInclusion includePages;

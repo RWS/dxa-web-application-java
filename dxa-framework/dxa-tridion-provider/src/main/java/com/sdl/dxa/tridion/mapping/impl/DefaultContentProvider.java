@@ -225,15 +225,17 @@ public class DefaultContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
-    public @NotNull StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
+    public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
 
-        return staticContentResolver.getStaticContent(StaticContentRequestDto
+        StaticContentRequestDto requestDto = StaticContentRequestDto
                 .builder(path, localizationId)
                 .localizationPath(localizationPath)
                 .baseUrl(webRequestContext.getBaseUrl())
                 .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isPreview())
-                .build());
+                .build();
+        StaticContentItem staticContent = staticContentResolver.getStaticContent(requestDto);
+        return staticContent;
     }
 
     protected List<String> executeQuery(SimpleBrokerQuery simpleBrokerQuery) {

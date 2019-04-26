@@ -30,9 +30,9 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
     public @NotNull StaticContentItem getStaticContent(@NotNull StaticContentRequestDto requestDto) throws ContentProviderException {
         log.trace("getStaticContent: {}", requestDto);
 
-        StaticContentRequestDto adaptedRequest = requestDto.isLocalizationPathSet() ? requestDto :
-                requestDto.toBuilder().localizationPath(
-                        resolveLocalizationPath(requestDto)).build();
+        StaticContentRequestDto adaptedRequest = requestDto.isLocalizationPathSet()
+                ? requestDto
+                : requestDto.toBuilder().localizationPath(resolveLocalizationPath(requestDto)).build();
 
         final String contentPath = getContentPath(adaptedRequest.getBinaryPath(), adaptedRequest.getLocalizationPath());
 
@@ -43,9 +43,8 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
         if (localizationPath.length() > 1) {
             String path = binaryPath.startsWith(localizationPath) ? binaryPath.substring(localizationPath.length()) : binaryPath;
             return localizationPath + removeVersionNumber(path);
-        } else {
-            return removeVersionNumber(binaryPath);
         }
+        return removeVersionNumber(binaryPath);
     }
 
     private String removeVersionNumber(String path) {

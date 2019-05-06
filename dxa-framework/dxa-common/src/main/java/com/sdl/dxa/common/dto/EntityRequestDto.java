@@ -32,6 +32,9 @@ public class EntityRequestDto {
      */
     private String entityId;
 
+    /**
+     * namespace {"tcm", "ish"}
+     */
     private String uriType;
 
     private boolean resolveLink;

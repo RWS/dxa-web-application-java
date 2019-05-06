@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.impl.model.ContentNamespace;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -68,12 +69,13 @@ public interface ContentProvider {
     /**
      * Gets a static content binary item by its id for a specific localization.
      *
+     * @param contentNamespace The namespace to distingish Docs and Sites
      * @param binaryId         The id of the static content item.
      * @param localizationId   The localization ID.
      * @param localizationPath The localization path.
      * @return The {@link StaticContentItem}.
      * @throws ContentProviderException If an error occurred so that the static content item could not be retrieved.
      */
-    StaticContentItem getStaticContent(int binaryId, String localizationId, String localizationPath) throws ContentProviderException;
+    StaticContentItem getStaticContent(ContentNamespace contentNamespace, int binaryId, String localizationId, String localizationPath) throws ContentProviderException;
 
 }

@@ -85,6 +85,7 @@ public class DefaultContentProviderTest {
     public void shouldFilterConditionalEntities() throws ContentProviderException {
         //given
         PageModel pageModel = mock(PageModel.class);
+        Localization localization = mock(Localization.class);
 
         List<ConditionalEntityEvaluator> evaluators = Collections.emptyList();
 
@@ -95,7 +96,7 @@ public class DefaultContentProviderTest {
         when(provider.loadPage(anyString(), any(Localization.class))).thenReturn(pageModel);
 
         //when
-        PageModel model = provider.getPageModel("", null);
+        PageModel model = provider.getPageModel("", localization);
 
         //then
         assertEquals(pageModel, model);
@@ -103,21 +104,21 @@ public class DefaultContentProviderTest {
     }
 
     @Test
-    public void shouldDelegateStaticContentResolve_ToStaticContentResolver() throws ContentProviderException {
+    public void shouldDelegateStaticContentResolver_ToStaticContentResolver() throws ContentProviderException {
         //given
         DefaultContentProvider provider = mock(DefaultContentProvider.class);
         when(provider.getStaticContent(anyString(), anyString(), anyString())).thenCallRealMethod();
-        CilStaticContentResolver staticContentResolver = mock(CilStaticContentResolver.class);
+        CilStaticContentResolver cilStaticContentResolver = mock(CilStaticContentResolver.class);
         WebRequestContext webRequestContext = mock(WebRequestContext.class);
         when(webRequestContext.getBaseUrl()).thenReturn("baseUrl");
         ReflectionTestUtils.setField(provider, "webRequestContext", webRequestContext);
-        ReflectionTestUtils.setField(provider, "staticContentResolver", staticContentResolver);
+        ReflectionTestUtils.setField(provider, "staticContentResolver", cilStaticContentResolver);
 
         //when
         provider.getStaticContent("path", "localizationId", "localizationPath");
 
         //then
-        verify(staticContentResolver).getStaticContent(eq(StaticContentRequestDto.builder("path", "localizationId")
+        verify(cilStaticContentResolver).getStaticContent(eq(StaticContentRequestDto.builder("path", "localizationId")
                 .localizationPath("localizationPath")
                 .baseUrl("baseUrl")
                 .build()));

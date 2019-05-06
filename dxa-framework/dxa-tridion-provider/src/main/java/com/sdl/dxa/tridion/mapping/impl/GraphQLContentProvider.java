@@ -30,6 +30,7 @@ import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaRuntimeException;
+import com.sdl.webapp.common.impl.model.ContentNamespace;
 import com.sdl.webapp.common.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -67,7 +68,7 @@ public class GraphQLContentProvider implements ContentProvider {
 
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
-    private GraphQLBinaryContentProvider graphQLBinaryContentProvider;
+    private GraphQLBinaryProvider graphQLBinaryProvider;
     private GraphQLProvider graphQLProvider;
     private ApiClient pcaClient;
 
@@ -78,7 +79,7 @@ public class GraphQLContentProvider implements ContentProvider {
                                   ModelBuilderPipeline builderPipeline, GraphQLProvider graphQLProvider,
                                   ApiClientProvider pcaClientProvider) {
         this.pcaClient = pcaClientProvider.getClient();
-        this.graphQLBinaryContentProvider = new GraphQLBinaryContentProvider(pcaClientProvider.getClient(), webApplicationContext);
+        this.graphQLBinaryProvider = new GraphQLBinaryProvider(pcaClientProvider.getClient(), webApplicationContext);
         this.webRequestContext = webRequestContext;
         this.staticContentResolver = staticContentResolver;
         this.builderPipeline = builderPipeline;
@@ -101,7 +102,6 @@ public class GraphQLContentProvider implements ContentProvider {
 
         pageModel.filterConditionalEntities(entityEvaluators);
 
-        //todo dxa2 refactor this, remove usage of deprecated method
         webRequestContext.setPage(pageModel);
 
         return pageModel;
@@ -253,8 +253,9 @@ public class GraphQLContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
-    public @NotNull StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
-            throws ContentProviderException {
+    public @NotNull StaticContentItem getStaticContent(String path,
+                                                       String localizationId,
+                                                       String localizationPath) throws ContentProviderException {
         boolean noCache = false;
         if (!FileUtils.isEssentialConfiguration(path, localizationPath)) {
             //Note: webRequestContext.isPreview() eventualy does a request to loadMainConfiguration, which calls getStaticContent (this method)
@@ -288,8 +289,8 @@ public class GraphQLContentProvider implements ContentProvider {
 
         try {
             return builderPipeline.createEntityModel(entityModelData);
-        } catch (DxaException e) {
-            throw new ContentProviderException("Cannot build the entity model for componentId" + componentId, e);
+        } catch (DxaException ex) {
+            throw new ContentProviderException("Cannot build the entity model for componentId: " + componentId, ex);
         }
     }
 
@@ -299,8 +300,7 @@ public class GraphQLContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
-    public StaticContentItem getStaticContent(int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
-        return graphQLBinaryContentProvider.getStaticContent(this, binaryId, localizationId, localizationPath);
+    public StaticContentItem getStaticContent(ContentNamespace contentNamespace, int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
+        return graphQLBinaryProvider.getStaticContent(this, contentNamespace, binaryId, localizationId, localizationPath);
     }
-
 }

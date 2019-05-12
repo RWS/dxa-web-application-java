@@ -11,6 +11,10 @@ import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
+import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary;
 import com.sdl.webapp.common.impl.localization.semantics.JsonSchema;
 import com.sdl.webapp.common.impl.localization.semantics.JsonVocabulary;
 import com.sdl.webapp.common.util.InitializationUtils;
@@ -25,7 +29,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +102,11 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                 SEMANTIC_VOCABULARIES_PATH, id, path, new TypeReference<List<JsonVocabulary>>() {
                 });
 
-        builder.addSemanticSchemas(convertSemantics(semanticSchemas, semanticVocabularies));
+        List<SemanticSchema> schemas = convertSemantics(semanticSchemas, semanticVocabularies);
+        SemanticSchema semanticSchema = new SemanticSchema(1, null, new HashSet<>(), getSemanticMappings());
+        schemas.add(semanticSchema);
+
+        builder.addSemanticSchemas(schemas);
 
         loadIncludes(id, path, builder);
 
@@ -104,6 +114,18 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         LOG.info("Localization: " + localization + " is created");
 
         return localization;
+    }
+
+    private Map<FieldSemantics, SemanticField> getSemanticMappings() {
+        Map<FieldSemantics, SemanticField> result = new HashMap<>();
+
+        SemanticField titleSF = new SemanticField("title", "/Topic/topicTitle", false, Collections.EMPTY_MAP);
+        SemanticField topicSF = new SemanticField("topic", "/Topic/topicBody", false, Collections.EMPTY_MAP);
+
+        result.put(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, "Topic", "topicTitle"), titleSF);
+        result.put(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, "Topic", "topicBody"), topicSF);
+
+        return result;
     }
 
     private void loadMainConfiguration(String id, String path, LocalizationImpl.Builder builder)

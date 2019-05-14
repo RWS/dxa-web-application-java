@@ -9,10 +9,15 @@ pipeline {
             steps {
                 //DXA has to be able to be built on JDK11:
                 withDockerContainer("maven:3.6-jdk-11-slim") { 
-                    //DXA has to be able to be build without SDL proprietary dependencies:
-                    //sh "mvn -B dependency:purge-local-repository -DreResolve=false"
+                    //Sometime in the future these maven-settings should not be needed here (model service should build without acces to SDL repositories)
+                    withCredentials([file(credentialsId: 'dxa-maven-settings', variable: 'MAVEN_SETTINGS_PATH')]) {
+                        script {
+                            //DXA has to be able to be build without SDL proprietary dependencies:
+                            //sh "mvn -B dependency:purge-local-repository -DreResolve=false"
 
-                    sh "mvn -B clean verify"
+                            sh "mvn -B clean verify"
+                        }
+                    }
                 }
             }
         }

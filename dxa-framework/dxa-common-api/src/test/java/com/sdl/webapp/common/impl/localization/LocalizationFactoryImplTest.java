@@ -1,63 +1,54 @@
 package com.sdl.webapp.common.impl.localization;
 
-import com.sdl.webapp.common.api.content.ContentProvider;
-import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
-import com.sdl.webapp.common.impl.localization.LocalizationImpl.Builder;
-import org.junit.Before;
+import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringRunner;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-import java.util.Collections;
-import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
+import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = LocalizationFactoryImplTest.SpringConfigurationContext.class)
 public class LocalizationFactoryImplTest {
 
-    @Autowired
-    LocalizationFactory localizationFactory;
-
-    @Before
-    public void init() throws InvocationTargetException, NoSuchMethodException, InstantiationException, IllegalAccessException {
-    }
 
     @Test
     public void shouldAddDocsTopicSchema() throws LocalizationFactoryException {
-        Localization localization = localizationFactory.createLocalization("8", "/");
-        assertEquals(localization.getId(), "8");
+        LocalizationFactoryImpl factory = new LocalizationFactoryImpl();
+
+        SemanticSchema topicSchema = factory.getTopicSchema();
+        assertEquals(1, topicSchema.getId());
+
+        Map<FieldSemantics, SemanticField> semanticFields = topicSchema.getSemanticFields();
+        assertEquals(2, semanticFields.size());
+
+        String topicTitleElem = "topicTitle";
+        String topicBodyElem = "topicBody";
+
+        Optional<Map.Entry<FieldSemantics, SemanticField>> titleSemantics = semanticFields.entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().getPropertyName().equals(topicTitleElem))
+                .findFirst();
+
+        assertTrue(titleSemantics.isPresent());
+        assertEquals(topicTitleElem, titleSemantics.get().getKey().getPropertyName());
+        assertEquals(SDL_CORE_VOCABULARY, titleSemantics.get().getKey().getVocabulary());
+        assertEquals("title", titleSemantics.get().getValue().getName());
+
+        Optional<Map.Entry<FieldSemantics, SemanticField>> bodySemantics = semanticFields.entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().getPropertyName().equals(topicBodyElem))
+                .findFirst();
+
+        assertTrue(bodySemantics.isPresent());
+        assertEquals(topicBodyElem, bodySemantics.get().getKey().getPropertyName());
+        assertEquals(SDL_CORE_VOCABULARY, bodySemantics.get().getKey().getVocabulary());
+        assertEquals("topic", bodySemantics.get().getValue().getName());
     }
 
-    private Builder getLocalizationBuilder() throws NoSuchMethodException, IllegalAccessException, InvocationTargetException, InstantiationException {
-        Constructor<Builder> declaredConstructor = Builder.class.getDeclaredConstructor();
-        declaredConstructor.setAccessible(true);
-        Builder instance = declaredConstructor.newInstance();
-        instance.setMediaRoot("/");
-
-        return instance;
-    }
-
-    @Configuration
-    public static class SpringConfigurationContext {
-        @Bean
-        public LocalizationFactory localizationFactory() {
-            return new LocalizationFactoryImpl();
-        }
-
-        @Bean
-        public ContentProvider contentProvider() {
-            return Mockito.mock(GraphQLContentProvider.class);
-        }
-    }
 }

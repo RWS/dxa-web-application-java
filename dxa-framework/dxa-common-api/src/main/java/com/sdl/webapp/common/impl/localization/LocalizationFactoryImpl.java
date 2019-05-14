@@ -21,7 +21,6 @@ import com.sdl.webapp.common.util.InitializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -103,7 +102,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                 });
 
         List<SemanticSchema> schemas = convertSemantics(semanticSchemas, semanticVocabularies);
-        SemanticSchema semanticSchema = new SemanticSchema(1, null, new HashSet<>(), getSemanticMappings());
+        SemanticSchema semanticSchema = getTopicSchema();
         schemas.add(semanticSchema);
 
         builder.addSemanticSchemas(schemas);
@@ -116,14 +115,26 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         return localization;
     }
 
-    private Map<FieldSemantics, SemanticField> getSemanticMappings() {
+    /**
+     * This method creates specific Schema for Topics that are published from Docs and don't have any schema in Sites
+     *
+     * @return SemanticSchema
+     */
+    SemanticSchema getTopicSchema() {
+        return new SemanticSchema(1, null, new HashSet<>(), getSemanticMappings());
+    }
+
+    Map<FieldSemantics, SemanticField> getSemanticMappings() {
         Map<FieldSemantics, SemanticField> result = new HashMap<>();
+        String rootElementName = "Topic";
+        String topicTitleElem = "topicTitle";
+        String topicBodyElem = "topicBody";
 
-        SemanticField titleSF = new SemanticField("title", "/Topic/topicTitle", false, Collections.EMPTY_MAP);
-        SemanticField topicSF = new SemanticField("topic", "/Topic/topicBody", false, Collections.EMPTY_MAP);
+        SemanticField titleSF = new SemanticField("title", String.format("/{}/{}", rootElementName, topicTitleElem), false, Collections.EMPTY_MAP);
+        SemanticField topicSF = new SemanticField("topic", String.format("/{}/{}", rootElementName, topicBodyElem), false, Collections.EMPTY_MAP);
 
-        result.put(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, "Topic", "topicTitle"), titleSF);
-        result.put(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, "Topic", "topicBody"), topicSF);
+        result.put(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, rootElementName, topicTitleElem), titleSF);
+        result.put(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, rootElementName, topicBodyElem), topicSF);
 
         return result;
     }

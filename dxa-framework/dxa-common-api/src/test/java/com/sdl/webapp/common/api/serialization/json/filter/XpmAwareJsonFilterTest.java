@@ -59,8 +59,6 @@ public class XpmAwareJsonFilterTest {
         AnnotatedMember member = getAnnotatedMember(JsonXpmAware.class);
         PropertyWriter writer = propertyWriter(BeanPropertyWriter.class, "Test", member);
 
-        when(webRequestContext.isPreview()).thenReturn(true);
-
         XpmAwareJsonFilter filter = new XpmAwareJsonFilter(null);
 
         //when
@@ -141,7 +139,6 @@ public class XpmAwareJsonFilterTest {
 
     private PropertyWriter propertyWriter(Class<? extends PropertyWriter> aClass, String propName, AnnotatedMember member) {
         PropertyWriter writer = mock(aClass);
-        when(writer.getName()).thenReturn(propName);
         when(writer.getFullName()).thenReturn(mock(PropertyName.class));
         if (aClass.equals(BeanPropertyWriter.class)) {
             when(writer.getMember()).thenReturn(member);

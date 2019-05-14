@@ -1,8 +1,5 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
-import com.sdl.dxa.api.datamodel.model.EntityModelData;
-import com.sdl.dxa.api.datamodel.model.PageModelData;
-import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
@@ -73,10 +70,9 @@ public class GraphQLContentProviderTest {
     @Test
     public void getEntityModel() throws Exception {
         when(webRequestContext.getLocalization().getId()).thenReturn("5");
-        when(modelServiceProvider.loadEntity("5", "222-333")).thenReturn(new EntityModelData());
         Configuration actual = new Configuration();
         actual.setId("42");
-        when(builderPipeline.createEntityModel(any(EntityModelData.class))).thenReturn(actual);
+        when(builderPipeline.createEntityModel(any())).thenReturn(actual);
 
         EntityModel result = contentProvider.getEntityModel("222-333", localization);
 
@@ -86,11 +82,10 @@ public class GraphQLContentProviderTest {
     @Test
     public void getPageModel() throws Exception {
         when(localization.getId()).thenReturn("5");
-        when(modelServiceProvider.loadPageModel(any(PageRequestDto.class))).thenReturn(new PageModelData());
         PageModel actual = new DefaultPageModel();
         actual.setId("42");
         actual.setUrl("/path.html");
-        when(builderPipeline.createPageModel(any(PageModelData.class))).thenReturn(actual);
+        when(builderPipeline.createPageModel(any())).thenReturn(actual);
 
         PageModel result = contentProvider.getPageModel("/path.html", localization);
 

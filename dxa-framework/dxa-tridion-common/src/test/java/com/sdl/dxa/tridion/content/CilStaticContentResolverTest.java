@@ -31,7 +31,7 @@ import java.util.Date;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -78,10 +78,10 @@ public class CilStaticContentResolverTest {
         PowerMockito.whenNew(PublicationMetaFactory.class).withAnyArguments().thenReturn(publicationMetaFactory);
         PowerMockito.whenNew(ComponentMetaFactory.class).withAnyArguments().thenReturn(webComponentMetaFactory);
 
-        when(publicationMetaFactory.getMeta(anyString())).thenReturn(publicationMeta);
+        when(publicationMetaFactory.getMeta(any())).thenReturn(publicationMeta);
         when(publicationMeta.getPublicationUrl()).thenReturn("/");
 
-        when(dynamicMetaRetriever.getBinaryMetaByURL(anyString())).thenReturn(binaryMeta);
+        when(dynamicMetaRetriever.getBinaryMetaByURL(any())).thenReturn(binaryMeta);
         TCDURI tcduri = mock(TCDURI.class);
         when(binaryMeta.getURI()).thenReturn(tcduri);
         when(tcduri.getItemId()).thenReturn(123L);
@@ -89,7 +89,7 @@ public class CilStaticContentResolverTest {
         when(webComponentMetaFactory.getMeta(eq(123))).thenReturn(componentMeta);
         when(componentMeta.getLastPublicationDate()).thenReturn(new Date());
 
-        when(binaryFactory.getBinary(eq(42), eq(123), anyString())).thenReturn(binaryData);
+        when(binaryFactory.getBinary(eq(42), eq(123), any())).thenReturn(binaryData);
         when(binaryData.getBytes()).thenReturn("hello".getBytes());
 
         MockServletContext context = new MockServletContext();
@@ -142,7 +142,7 @@ public class CilStaticContentResolverTest {
         assertEquals("all_data", IOUtils.toString(item.getContent(), "UTF-8"));
         assertFalse(item.isVersioned());
         assertEquals("application/octet-stream", item.getContentType());
-        verify(publicationMetaFactory, never()).getMeta(anyString());
+        verify(publicationMetaFactory, never()).getMeta(any());
         assertTrue(new File(webApplicationContext.getServletContext().getRealPath("/") + "/BinaryData/42/publication/all_data").exists());
     }
 

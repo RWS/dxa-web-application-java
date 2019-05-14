@@ -9,6 +9,7 @@ import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -59,18 +60,7 @@ public class OnDemandNavigationControllerTest {
 
         //then
         try {
-            verify(onDemandNavigationProvider).getNavigationSubtree(eq("t1-k23"), argThat(new BaseMatcher<NavigationFilter>() {
-                @Override
-                public boolean matches(Object item) {
-                    NavigationFilter filter = (NavigationFilter) item;
-                    return filter.isWithAncestors() && filter.getDescendantLevels() == 123;
-                }
-
-                @Override
-                public void describeTo(Description description) {
-
-                }
-            }), any(Localization.class));
+            verify(onDemandNavigationProvider).getNavigationSubtree(eq("t1-k23"), argThat(filter -> filter.isWithAncestors() && filter.getDescendantLevels() == 123), any());
         } catch (com.sdl.webapp.common.exceptions.DxaItemNotFoundException e) {
             e.printStackTrace();
         }

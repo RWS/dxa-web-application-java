@@ -1,6 +1,5 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
-import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.content.CilStaticContentResolver;
@@ -52,11 +51,9 @@ public class DefaultContentProviderTest {
     private DefaultContentProvider contentProvider;
 
     @Before
-    public void init() throws DxaException {
+    public void init() {
         when(localization.getId()).thenReturn("42");
         when(webRequestContext.getLocalization()).thenReturn(localization);
-        EntityModel mock = mock(EntityModel.class);
-        when(modelBuilderPipeline.createEntityModel(any(EntityModelData.class))).thenReturn(mock);
     }
 
     @Test

@@ -68,24 +68,24 @@ public class ModelBuilderPipelineTest {
 
     @Before
     public void initMocks() throws DxaException {
-        when(firstPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class)))
+        when(firstPageModelBuilder.buildPageModel(any(), any(PageModelData.class)))
                 .thenReturn(firstPageModel);
-        when(secondPageModelBuilder.buildPageModel(any(PageModel.class), any(PageModelData.class)))
+        when(secondPageModelBuilder.buildPageModel(any(), any(PageModelData.class)))
                 .thenReturn(secondPageModel);
 
-        when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
+        when(firstEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), anyObject()))
                 .thenReturn(firstEntityModel);
-        when(secondEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
+        when(secondEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), anyObject()))
                 .thenReturn(secondEntityModel);
 
-        when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
+        when(firstEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), anyObject()))
                 .thenReturn(firstEntityModel);
-        when(secondEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
+        when(secondEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), anyObject()))
                 .thenReturn(secondEntityModel);
 
-        when(firstEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
+        when(firstEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), anyObject()))
                 .thenReturn(firstEntityModel);
-        when(secondEntityModelBuilder.buildEntityModel(any(EntityModel.class), any(EntityModelData.class), anyObject()))
+        when(secondEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), anyObject()))
                 .thenReturn(secondEntityModel);
     }
 

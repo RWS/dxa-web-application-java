@@ -4,20 +4,18 @@ pipeline {
     }
 
     stages {
-/*
-	//Sometime in the future we should be able to build on JDK11:
+
         stage ('Build with JDK11') {
             steps {
                 //DXA has to be able to be built on JDK11:
                 withDockerContainer("maven:3.6-jdk-11-slim") { 
                     //DXA has to be able to be build without SDL proprietary dependencies:
-                    sh "mvn -B dependency:purge-local-repository -DreResolve=false"
+                    //sh "mvn -B dependency:purge-local-repository -DreResolve=false"
 
                     sh "mvn -B clean verify"
                 }
             }
         }
-*/
 
         stage('Create the docker builder image(s)') {
             steps {

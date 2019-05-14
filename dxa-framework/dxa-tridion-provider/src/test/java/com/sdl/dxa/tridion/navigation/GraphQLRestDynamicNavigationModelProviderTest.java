@@ -6,7 +6,6 @@ import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.ApiClient;
-import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.generated.PageSitemapItem;
 import com.sdl.web.pca.client.contentmodel.generated.SitemapItem;
 import com.sdl.web.pca.client.contentmodel.generated.TaxonomySitemapItem;
@@ -207,24 +206,22 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
     @Test
     public void getNavigationModel() {
         doReturn(createTaxonomySitemapItem(ID, false)).when(pcaClient).getSitemap(eq(Sites),
-                eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any(ContextData.class));
-        doReturn(new TaxonomySitemapItem[0]).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID),
-                anyString(), eq(DEPTH_COUNTER), eq(NONE), any(ContextData.class));
+                eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any());
 
         TaxonomyNodeModelData result = provider.getNavigationModel(requestDto).get();
 
-        verify(pcaClient).getSitemap(eq(Sites), eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any(ContextData.class));
+        verify(pcaClient).getSitemap(eq(Sites), eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any());
         verifyCreatedObject(result, true, false);
     }
 
     @Test
     public void getNavigationModelException() {
         doThrow(new ApiClientException()).when(pcaClient).getSitemap(eq(Sites), eq(LOCALIZATION_ID),
-                eq(DEPTH_COUNTER), any(ContextData.class));
+                eq(DEPTH_COUNTER), any());
 
         assertFalse(provider.getNavigationModel(requestDto).isPresent());
 
-        verify(pcaClient).getSitemap(eq(Sites), eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any(ContextData.class));
+        verify(pcaClient).getSitemap(eq(Sites), eq(LOCALIZATION_ID), eq(DEPTH_COUNTER), any());
         verify(provider, never()).convert(any(TaxonomySitemapItem.class));
     }
 
@@ -232,15 +229,15 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
     public void getNavigationSubtree() {
         TaxonomySitemapItem[] result = new TaxonomySitemapItem[]{createTaxonomySitemapItem(ID, true)};
         doReturn(result).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID),
-                eq(DEPTH_COUNTER_TEST_BOUND), eq(INCLUDE), any(ContextData.class));
+                eq(DEPTH_COUNTER_TEST_BOUND), eq(INCLUDE), any());
         doReturn(new TaxonomySitemapItem[0]).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID),
-                anyString(), eq(DEPTH_COUNTER_TEST_BOUND), eq(NONE), any(ContextData.class));
+                anyString(), eq(DEPTH_COUNTER_TEST_BOUND), eq(NONE), any());
 
         Collection<SitemapItemModelData> sitemapItemModelData = provider.getNavigationSubtree(requestDto).get();
 
         verifyCreatedObject(sitemapItemModelData.toArray(EMPTY)[0], true, true);
         verify(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER_TEST_BOUND),
-                eq(INCLUDE), any(ContextData.class));
+                eq(INCLUDE), any());
         verify(provider, times(5)).convert(any(TaxonomySitemapItem.class));
     }
 
@@ -251,9 +248,9 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
                 true)};
 
         doReturn(result).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID),
-                eq(DEPTH_COUNTER_TEST_BOUND), eq(INCLUDE), any(ContextData.class));
+                eq(DEPTH_COUNTER_TEST_BOUND), eq(INCLUDE), any());
         doReturn(childTaxonomySitemap).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), anyString(),
-                eq(DEPTH_COUNTER_TEST_BOUND), eq(NONE), any(ContextData.class));
+                eq(DEPTH_COUNTER_TEST_BOUND), eq(NONE), any());
 
         SitemapRequestDto sitemapRequestDto = createSitemapRequestDto(-1);
         Collection<SitemapItemModelData> sitemapItemModelData = provider
@@ -261,7 +258,7 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
 
         verifyCreatedChildrenObjects(sitemapItemModelData.toArray(EMPTY)[0], true, true);
         verify(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER_TEST_BOUND),
-                eq(INCLUDE), any(ContextData.class));
+                eq(INCLUDE), any());
     }
 
     private SitemapRequestDto createSitemapRequestDto(int depth) {
@@ -304,11 +301,11 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
     @Test
     public void getNavigationSubtreeException() {
         doThrow(new ApiClientException()).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID),
-                eq(SITEMAP_ID), eq(DEPTH_COUNTER_TEST_BOUND), eq(INCLUDE), any(ContextData.class));
+                eq(SITEMAP_ID), eq(DEPTH_COUNTER_TEST_BOUND), eq(INCLUDE), any());
 
         assertFalse(provider.getNavigationSubtree(requestDto).isPresent());
 
         verify(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER_TEST_BOUND),
-                eq(INCLUDE), any(ContextData.class));
+                eq(INCLUDE), any());
     }
 }

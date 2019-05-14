@@ -87,7 +87,7 @@ public class StaticNavigationProviderTest {
         ReflectionTestUtils.setField(provider, "navigationModelUrl", NAVIGATION_JSON);
 
         when(linkResolver.resolveLink(anyString(), anyString())).thenAnswer(invocation ->
-                invocation.getArgumentAt(0, String.class));
+                invocation.getArgument(0));
 
         when(localization.localizePath(eq(NAVIGATION_JSON))).thenReturn(NORMALIZED_PATH);
         when(localization.getId()).thenReturn("1");
@@ -147,9 +147,9 @@ public class StaticNavigationProviderTest {
 
     @SuppressWarnings("unchecked")
     @Test(expected = NavigationProviderException.class)
-    public void shouldRethrowExceptionInGetNavigationModel() throws NavigationProviderException {
+    public void shouldRethrowExceptionInGetNavigationModel() throws ContentProviderException {
         //given
-        when(localization.localizePath(anyString())).thenThrow(ContentProviderException.class);
+        when(defaultModelService.loadPageContent(any())).thenThrow(ContentProviderException.class);
 
         //when
         provider.getNavigationModel(localization);
@@ -160,9 +160,9 @@ public class StaticNavigationProviderTest {
 
     @SuppressWarnings("unchecked")
     @Test(expected = NavigationProviderException.class)
-    public void shouldRethrowExceptionInGetNavigationModel2() throws NavigationProviderException {
+    public void shouldRethrowExceptionInGetNavigationModel2() throws NavigationProviderException, IOException {
         //given
-        when(localization.localizePath(anyString())).thenThrow(IOException.class);
+        when(objectMapper.readValue(any(InputStream.class), any(Class.class))).thenThrow(IOException.class);
 
         //when
         provider.getNavigationModel(localization);

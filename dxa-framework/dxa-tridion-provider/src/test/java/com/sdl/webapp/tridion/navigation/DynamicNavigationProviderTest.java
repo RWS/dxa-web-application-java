@@ -4,7 +4,6 @@ import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
-import com.sdl.dxa.exception.DxaTridionCommonException;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -265,16 +264,12 @@ public class DynamicNavigationProviderTest {
         Collection<SitemapItem> subtree = dynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
 
         //then
-        verify(onDemandNavigationModelProvider).getNavigationSubtree(argThat(new ArgumentMatcher<SitemapRequestDto>() {
-            @Override
-            public boolean matches(Object argument) {
-                SitemapRequestDto dto = (SitemapRequestDto) argument;
-                assertEquals(localization.getId(), String.valueOf(dto.getLocalizationId()));
-                assertEquals(new DepthCounter(666), dto.getExpandLevels());
-                assertEquals(navigationFilter, dto.getNavigationFilter());
-                assertEquals(sitemapItemId, dto.getSitemapId());
-                return true;
-            }
+        verify(onDemandNavigationModelProvider).getNavigationSubtree(argThat(dto -> {
+            assertEquals(localization.getId(), String.valueOf(dto.getLocalizationId()));
+            assertEquals(new DepthCounter(666), dto.getExpandLevels());
+            assertEquals(navigationFilter, dto.getNavigationFilter());
+            assertEquals(sitemapItemId, dto.getSitemapId());
+            return true;
         }));
 
         assertEquals(1, subtree.size());
@@ -317,24 +312,14 @@ public class DynamicNavigationProviderTest {
         dynamicNavigationProvider.getNavigationModel(localization);
 
         //then
-        verify(navigationModelProvider).getNavigationModel(argThat(new ArgumentMatcher<SitemapRequestDto>() {
-            @Override
-            public boolean matches(Object argument) {
-                SitemapRequestDto dto = (SitemapRequestDto) argument;
-                return dto.getLocalizationId() == 42 && dto.getExpandLevels().equals(DepthCounter.UNLIMITED_DEPTH)
-                        && dto.getNavigationFilter().equals(new NavigationFilter().setDescendantLevels(-1));
-            }
-        }));
+        verify(navigationModelProvider).getNavigationModel(argThat(dto ->
+                dto.getLocalizationId() == 42 && dto.getExpandLevels().equals(DepthCounter.UNLIMITED_DEPTH)
+                && dto.getNavigationFilter().equals(new NavigationFilter().setDescendantLevels(-1))));
     }
 
     @NotNull
     private ArgumentMatcher<SitemapRequestDto> getDefaultMatcher() {
-        return new ArgumentMatcher<SitemapRequestDto>() {
-            @Override
-            public boolean matches(Object argument) {
-                return ((SitemapRequestDto) argument).getLocalizationId() == 42;
-            }
-        };
+        return argument -> argument.getLocalizationId() == 42;
     }
 
 }

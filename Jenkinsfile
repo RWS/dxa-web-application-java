@@ -15,7 +15,7 @@ pipeline {
                             //DXA has to be able to be build without SDL proprietary dependencies:
                             //sh "mvn -B dependency:purge-local-repository -DreResolve=false"
 
-                            sh "mvn -B clean verify"
+                            sh "mvn -s $MAVEN_SETTINGS_PATH -B clean verify"
                         }
                     }
                 }

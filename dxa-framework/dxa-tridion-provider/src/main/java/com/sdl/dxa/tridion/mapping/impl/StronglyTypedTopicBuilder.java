@@ -14,6 +14,7 @@ import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.GenericTopic;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.exceptions.DxaException;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +49,9 @@ import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -355,8 +358,13 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
                     LOG.debug("Trying XPath \"" + propertyXPath + "\" for property '" + fieldSemantics.getPropertyName() + "'");
                     xPathResults = (NodeList) xpathToTry.evaluate(rootElement, XPathConstants.NODESET);
                     htmlElements = filterXPathResults(xPathResults, ditaPropertyName);
-                    if (htmlElements != null && !htmlElements.isEmpty())
+                    if (htmlElements != null && !htmlElements.isEmpty()) {
+                        if (!setFieldValueViaSetter(stronglyTypedTopic, field, htmlElements)) {
+                            setFieldValueViaFieldAccess(stronglyTypedTopic, field, htmlElements);
+                        }
                         break;
+                    }
+                    LOG.debug("No XHTML elements found for DITA property '" + ditaPropertyName + "'.");
                     LOG.debug("No XHTML elements found for DITA property '" + ditaPropertyName + "'.");
                 } catch (XPathExpressionException e) {
                     LOG.warn("Failed to evaluate Xpath", e);
@@ -367,13 +375,34 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
                 }
                 LOG.debug(htmlElements.size() + " XHTML elements found.");
             }
-            try {
-                Object propertyValue = getPropertyValue(field, htmlElements);
-                field.set(stronglyTypedTopic, propertyValue);
-            } catch (Exception ex) {
-                LOG.warn("Unable to map property " + field.getDeclaringClass().getSimpleName() + "." + field.getName(), ex);
-            }
         });
+    }
+
+    private boolean setFieldValueViaSetter(AbstractEntityModel stronglyTypedTopic, Field field, List<Element> htmlElements) {
+        String setterName = "set" + StringUtils.capitalize(field.getName());
+        try {
+            Class genericType = (Class)field.getGenericType();
+            Method setterMethod = stronglyTypedTopic.getClass().getDeclaredMethod(setterName, genericType);
+            if (setterMethod != null && setterMethod.getReturnType().equals(Void.TYPE)) {
+                Object propertyValue = getPropertyValue(field, htmlElements);
+                setterMethod.invoke(stronglyTypedTopic, propertyValue);
+                return true;
+            }
+            LOG.warn("Setter '{}' that sets property '{}' should be void", setterName, field.getName());
+        } catch (Exception ex) {
+            LOG.warn("Unable to map property {}.{} via setter {}", field.getDeclaringClass().getSimpleName(), field.getName(), setterName, ex);
+        }
+        return false;
+    }
+
+    private void setFieldValueViaFieldAccess(AbstractEntityModel stronglyTypedTopic, Field field, List<Element> htmlElements) {
+        try {
+            Object propertyValue = getPropertyValue(field, htmlElements);
+            field.setAccessible(true);
+            field.set(stronglyTypedTopic, propertyValue);
+        } catch (Exception ex) {
+            LOG.warn("Unable to map property " + field.getDeclaringClass().getSimpleName() + "." + field.getName(), ex);
+        }
     }
 
     protected Object getPropertyValue(Field modelPropertyType, List<Element> htmlElements) throws InstantiationException, IllegalAccessException, DxaException {
@@ -385,7 +414,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
             ParameterizedType genericType = (ParameterizedType) modelPropertyType.getGenericType();
             targetType = (Class) genericType.getActualTypeArguments()[0];
             List list = new ArrayList<>();
-            for (Element element: htmlElements) {
+            for (Element element : htmlElements) {
                 list.add(convertElement(element, targetType));
             }
             result = list;

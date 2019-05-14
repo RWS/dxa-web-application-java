@@ -11,13 +11,16 @@ import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationFactory;
 import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
+import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
+import com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary;
 import com.sdl.webapp.common.impl.localization.semantics.JsonSchema;
 import com.sdl.webapp.common.impl.localization.semantics.JsonVocabulary;
 import com.sdl.webapp.common.util.InitializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -25,7 +28,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +101,11 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                 SEMANTIC_VOCABULARIES_PATH, id, path, new TypeReference<List<JsonVocabulary>>() {
                 });
 
-        builder.addSemanticSchemas(convertSemantics(semanticSchemas, semanticVocabularies));
+        List<SemanticSchema> schemas = convertSemantics(semanticSchemas, semanticVocabularies);
+        SemanticSchema semanticSchema = getTopicSchema();
+        schemas.add(semanticSchema);
+
+        builder.addSemanticSchemas(schemas);
 
         loadIncludes(id, path, builder);
 
@@ -104,6 +113,30 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         LOG.info("Localization: " + localization + " is created");
 
         return localization;
+    }
+
+    /**
+     * This method creates specific Schema for Topics that are published from Docs and don't have any schema in Sites
+     *
+     * @return SemanticSchema
+     */
+    SemanticSchema getTopicSchema() {
+        return new SemanticSchema(1, null, new HashSet<>(), getSemanticMappings());
+    }
+
+    Map<FieldSemantics, SemanticField> getSemanticMappings() {
+        Map<FieldSemantics, SemanticField> result = new HashMap<>();
+        String rootElementName = "Topic";
+        String topicTitleElem = "topicTitle";
+        String topicBodyElem = "topicBody";
+
+        SemanticField titleSF = new SemanticField("title", String.format("/{}/{}", rootElementName, topicTitleElem), false, Collections.EMPTY_MAP);
+        SemanticField topicSF = new SemanticField("topic", String.format("/{}/{}", rootElementName, topicBodyElem), false, Collections.EMPTY_MAP);
+
+        result.put(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, rootElementName, topicTitleElem), titleSF);
+        result.put(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, rootElementName, topicBodyElem), topicSF);
+
+        return result;
     }
 
     private void loadMainConfiguration(String id, String path, LocalizationImpl.Builder builder)

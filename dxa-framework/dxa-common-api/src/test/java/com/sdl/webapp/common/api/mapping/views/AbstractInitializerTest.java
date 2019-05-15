@@ -55,8 +55,9 @@ public class AbstractInitializerTest {
 
     private void verifyRegistration(final String viewName, final String controllerName, Class<? extends ViewModel> clazz) {
         verify(registry).registerViewModel(argThat(new ArgumentMatcher<MvcData>() {
+
             @Override
-            public boolean matches(MvcData argument) {
+            public boolean matches(Object argument) {
                 if (argument == null || viewName == null) {
                     return viewName == null && argument == null;
                 }

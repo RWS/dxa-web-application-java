@@ -85,7 +85,7 @@
 
         <!-- JUnit and other test libraries -->
         <junit-version>4.12</junit-version>
-        <hamcrest-version>1.3</hamcrest-version>
+        <hamcrest-version>2.1</hamcrest-version>
         <mockito-version>1.10.19</mockito-version>
 
         <!-- Spring -->
@@ -560,11 +560,13 @@
                 <groupId>org.powermock</groupId>
                 <artifactId>powermock-module-junit4</artifactId>
                 <version>${powermock.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.powermock</groupId>
                 <artifactId>powermock-api-mockito2</artifactId>
                 <version>${powermock.version}</version>
+                <scope>test</scope>
             </dependency>
 
             <!-- Spring Framework -->

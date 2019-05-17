@@ -130,8 +130,8 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         String topicTitleElem = "topicTitle";
         String topicBodyElem = "topicBody";
 
-        SemanticField titleSF = new SemanticField("title", String.format("/{}/{}", rootElementName, topicTitleElem), false, Collections.EMPTY_MAP);
-        SemanticField topicSF = new SemanticField("topic", String.format("/{}/{}", rootElementName, topicBodyElem), false, Collections.EMPTY_MAP);
+        SemanticField titleSF = new SemanticField("title", String.format("/%s/%s", rootElementName, topicTitleElem), false, Collections.EMPTY_MAP);
+        SemanticField topicSF = new SemanticField("topic", String.format("/%s/%s", rootElementName, topicBodyElem), false, Collections.EMPTY_MAP);
 
         result.put(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, rootElementName, topicTitleElem), titleSF);
         result.put(new FieldSemantics(SemanticVocabulary.SDL_CORE_VOCABULARY, rootElementName, topicBodyElem), topicSF);

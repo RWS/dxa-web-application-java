@@ -25,6 +25,7 @@ import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import com.sdl.webapp.tridion.fields.exceptions.UnsupportedTargetTypeException;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.core.convert.TypeDescriptor;
@@ -238,11 +239,12 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
                 log.debug("Field with path {} has multiple values, getting first {}", fieldPath, field);
             }
 
-            if (field instanceof ContentModelData) {
-                return findField((ContentModelData) field, fieldPath.getTail());
-            } else {
-                log.warn("Unexpected value type for embedded field \"{}\": {}", fieldPath.getHead(), field.getClass().getSimpleName());
+            if (field instanceof String && StringUtils.isEmpty((String) field)) {
+                //Special case where all fields of ContentModelData are empty.
+                //In this case it gets converted to an empty string ("")
+                return Optional.empty();
             }
+            return findField((ContentModelData) field, fieldPath.getTail());
         }
         return Optional.ofNullable(field);
     }

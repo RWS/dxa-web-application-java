@@ -238,10 +238,13 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
                 log.debug("Field with path {} has multiple values, getting first {}", fieldPath, field);
             }
 
-            return findField((ContentModelData) field, fieldPath.getTail());
-        } else {
-            return Optional.ofNullable(field);
+            if (field instanceof ContentModelData) {
+                return findField((ContentModelData) field, fieldPath.getTail());
+            } else {
+                log.warn("Unexpected value type for embedded field \"{}\": {}", fieldPath.getHead(), field.getClass().getSimpleName());
+            }
         }
+        return Optional.ofNullable(field);
     }
 
 }

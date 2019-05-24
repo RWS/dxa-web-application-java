@@ -2,12 +2,15 @@ package com.sdl.dxa.tridion.mapping.converter;
 
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
+import com.sdl.webapp.common.api.WebRequestContext;
+import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -20,6 +23,11 @@ import java.util.List;
 @Component
 @Slf4j
 public class StringModelConverter implements SemanticModelConverter<String> {
+
+    @Autowired
+    LinkResolver linkResolver;
+    @Autowired
+    WebRequestContext webRequestContext;
 
     @Override
     public Object convert(String toConvert, TypeInformation targetType, SemanticField semanticField,
@@ -42,7 +50,8 @@ public class StringModelConverter implements SemanticModelConverter<String> {
             result = toConvert;
         } else if (Link.class.isAssignableFrom(objectType)) {
             Link link = new Link();
-            link.setUrl(toConvert);
+            String url = linkResolver.resolveLink(toConvert, webRequestContext.getLocalization().getId(), webRequestContext.getPageContextId());
+            link.setUrl(url);
             result = link;
         } else if (RichText.class.isAssignableFrom(objectType)) {
             result = new RichText(toConvert);

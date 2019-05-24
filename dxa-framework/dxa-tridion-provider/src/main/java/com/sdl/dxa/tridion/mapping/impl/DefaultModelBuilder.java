@@ -1,7 +1,13 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
 import com.google.common.base.Strings;
-import com.sdl.dxa.api.datamodel.model.*;
+import com.sdl.dxa.api.datamodel.model.BinaryContentData;
+import com.sdl.dxa.api.datamodel.model.EntityModelData;
+import com.sdl.dxa.api.datamodel.model.ExternalContentData;
+import com.sdl.dxa.api.datamodel.model.MvcModelData;
+import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.api.datamodel.model.RegionModelData;
+import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
 import com.sdl.dxa.caching.ConditionalKey;
 import com.sdl.dxa.caching.ConditionalKey.ConditionalKeyBuilder;
@@ -19,7 +25,14 @@ import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
-import com.sdl.webapp.common.api.model.*;
+import com.sdl.webapp.common.api.model.AbstractViewModel;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.RegionModelSet;
+import com.sdl.webapp.common.api.model.ViewModel;
+import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.EclItem;
 import com.sdl.webapp.common.api.model.entity.ExceptionEntity;
@@ -37,8 +50,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Constructor;
-import java.util.*;
-import java.util.concurrent.atomic.AtomicReference;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
@@ -275,6 +291,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             log.info("Page Model is null, for model data id = {}", modelData.getId());
             return null;
         }
+        webRequestContext.setPageContextId(modelData.getId());
 
         fillViewModel(pageModel, modelData);
         pageModel.setId(modelData.getId());
@@ -284,7 +301,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         pageModel.setUrl(modelData.getUrlPath());
         processRegions(modelData.getRegions(), keyBuilder, pageModel.getRegions());
         if (isNeverCachedAnnotation(pageModel)) {
-            log.debug("Page model " + pageModel.getId() + " '" + pageModel.getUrl() + "' [" + pageModel.getName() + "] will not be cached due to anno");
+            log.debug("Page model {} '{}' [{}] will not be cached due to anno", pageModel.getId(), pageModel.getUrl(), pageModel.getName());
             keyBuilder.skipCaching(true);
         }
         ConditionalKey conditionalKey = keyBuilder.build();
@@ -300,19 +317,10 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         if (regions == null) {
             return;
         }
-        AtomicReference<SemanticMappingException> exception = new AtomicReference<>();
-        regions.stream()
-                .map(regionModelDataLoc -> {
-                    try {
-                        RegionModel regionModel = createRegionModel(regionModelDataLoc, keyBuilder);
-                        return regionModel;
-                    } catch (SemanticMappingException ex) {
-                        if (exception.get() == null) exception.set(ex);
-                        return null;
-                    }
-                })
-                .forEach(regionsToAdd::add);
-        if (exception.get() != null) throw exception.get();
+        for (RegionModelData region : regions) {
+            RegionModel regionModel = createRegionModel(region, keyBuilder);
+            regionsToAdd.add(regionModel);
+        }
     }
 
     @Nullable
@@ -436,7 +444,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         try {
             EntityModel entityModel = modelBuilderPipeline.createEntityModel(entityModelData);
             if (isNeverCachedAnnotation(entityModel)) {
-                log.debug("Entity model " + entityModel.getId() + " [" + entityModel.getClass().getCanonicalName() + "] will not be cached due to anno");
+                log.debug("Entity model {}  [{}] will not be cached due to anno", entityModel.getId(), entityModel.getClass().getCanonicalName());
                 cacheRequest.skipCaching(true);
             }
             return entityModel;

@@ -120,4 +120,7 @@ public interface WebRequestContext {
 
     void popParentRegion();
 
+    String getPageContextId();
+
+    void setPageContextId(String pageContextId);
 }

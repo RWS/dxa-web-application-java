@@ -301,7 +301,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         pageModel.setUrl(modelData.getUrlPath());
         processRegions(modelData.getRegions(), keyBuilder, pageModel.getRegions());
         if (isNeverCachedAnnotation(pageModel)) {
-            log.debug("Page model {} '{}' [{}] will not be cached due to anno", pageModel.getId(), pageModel.getUrl(), pageModel.getName());
+            log.debug("Page model {} '{}' [{}] will not be cached due to annotation", pageModel.getId(), pageModel.getUrl(), pageModel.getName());
             keyBuilder.skipCaching(true);
         }
         ConditionalKey conditionalKey = keyBuilder.build();
@@ -386,7 +386,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             regionModel.setMvcData(mvcData);
 
             if (isNeverCachedAnnotation(regionModel)) {
-                log.debug("Region model " + regionModel.getSchemaId() + " [" + regionModel.getName() + "] will not be cached due to anno");
+                log.debug("Region model {} [{}] will not be cached due to annotation", regionModel.getSchemaId(), regionModel.getName());
                 keyBuilder.skipCaching(true);
             }
             processRegions(regionModelData.getRegions(), keyBuilder, regionModel.getRegions());
@@ -444,7 +444,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         try {
             EntityModel entityModel = modelBuilderPipeline.createEntityModel(entityModelData);
             if (isNeverCachedAnnotation(entityModel)) {
-                log.debug("Entity model {}  [{}] will not be cached due to anno", entityModel.getId(), entityModel.getClass().getCanonicalName());
+                log.debug("Entity model {}  [{}] will not be cached due to annotation", entityModel.getId(), entityModel.getClass().getCanonicalName());
                 cacheRequest.skipCaching(true);
             }
             return entityModel;

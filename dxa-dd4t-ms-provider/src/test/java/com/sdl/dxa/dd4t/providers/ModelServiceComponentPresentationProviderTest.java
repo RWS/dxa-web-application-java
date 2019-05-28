@@ -1,7 +1,7 @@
 package com.sdl.dxa.dd4t.providers;
 
 import com.sdl.dxa.tridion.modelservice.ModelServiceClient;
-import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
+import com.sdl.dxa.tridion.modelservice.ModelServiceClientConfiguration;
 import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import com.sdl.web.model.componentpresentation.ComponentPresentationImpl;
 import com.tridion.dcp.ComponentPresentation;
@@ -31,14 +31,14 @@ public class ModelServiceComponentPresentationProviderTest {
     private ModelServiceClient modelServiceClient;
 
     @Mock
-    private ModelServiceConfiguration modelServiceConfiguration;
+    private ModelServiceClientConfiguration modelServiceClientConfiguration;
 
     @InjectMocks
     private ModelServiceComponentPresentationProvider componentPresentationProvider;
 
     @Before
     public void init() throws ItemNotFoundInModelServiceException, IOException {
-        when(modelServiceConfiguration.getEntityModelUrl()).thenReturn("/conf");
+        when(modelServiceClientConfiguration.getEntityModelUrl()).thenReturn("/conf");
         componentPresentationProvider.setContentIsCompressed("false");
         componentPresentationProvider.setContentIsBase64Encoded(false);
 

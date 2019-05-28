@@ -3,7 +3,7 @@ package com.sdl.dxa.dd4t;
 import com.sdl.dxa.dd4t.providers.ModelServiceComponentPresentationProvider;
 import com.sdl.dxa.dd4t.providers.ModelServicePageProvider;
 import com.sdl.dxa.tridion.modelservice.ModelServiceClient;
-import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
+import com.sdl.dxa.tridion.modelservice.ModelServiceClientConfiguration;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.core.factories.impl.PageFactoryImpl;
 import org.dd4t.providers.PayloadCacheProvider;
@@ -27,7 +27,7 @@ public class DropInExperienceConfiguration implements ApplicationContextAware {
     private ModelServiceClient modelServiceClient;
 
     @Autowired
-    private ModelServiceConfiguration modelServiceConfiguration;
+    private ModelServiceClientConfiguration modelServiceClientConfiguration;
 
     public DropInExperienceConfiguration() {
         // required empty
@@ -57,7 +57,7 @@ public class DropInExperienceConfiguration implements ApplicationContextAware {
         modelServiceComponentPresentationProvider.setContentIsCompressed("false");
         modelServiceComponentPresentationProvider.setCacheProvider(cacheProvider);
         modelServiceComponentPresentationProvider.setModelServiceClient(modelServiceClient);
-        modelServiceComponentPresentationProvider.setModelServiceConfiguration(modelServiceConfiguration);
+        modelServiceComponentPresentationProvider.setModelServiceClientConfiguration(modelServiceClientConfiguration);
         return modelServiceComponentPresentationProvider;
     }
 
@@ -66,7 +66,7 @@ public class DropInExperienceConfiguration implements ApplicationContextAware {
         modelServicePageProvider.setContentIsCompressed("false");
         modelServicePageProvider.setCacheProvider(cacheProvider);
         modelServicePageProvider.setModelServiceClient(modelServiceClient);
-        modelServicePageProvider.setModelServiceConfiguration(modelServiceConfiguration);
+        modelServicePageProvider.setModelServiceClientConfiguration(modelServiceClientConfiguration);
         return modelServicePageProvider;
     }
 }

@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.MimeUtils;
 import org.apache.commons.io.IOUtils;
 import org.joda.time.Hours;
@@ -66,32 +67,38 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
         if (lastModified > notModifiedSince + 1000L) {
             res.setStatusCode(HttpStatus.OK);
             return true;
-        } else {
-            res.setStatusCode(HttpStatus.NOT_MODIFIED);
-            return false;
         }
+        res.setStatusCode(HttpStatus.NOT_MODIFIED);
+        return false;
     }
 
-    private static void fallbackForContentProvider(ServletServerHttpRequest req, String requestPath, ServletServerHttpResponse res, boolean isPreview)
+    private static void fallbackForContentProvider(ServletServerHttpRequest request,
+                                                   ServletServerHttpResponse response,
+                                                   String requestPath,
+                                                   boolean isPreview,
+                                                   DxaItemNotFoundException exception)
             throws IOException {
         requestPath = removeVersionNumber(requestPath);
-        LOG.warn("Static resource not found in static content provider for " + requestPath + ". Fallback to webapp content...");
+        LOG.warn("Static resource not found in static content provider for " + requestPath + ". Fallback to webapp content...", exception);
 
-        URL contentResource = req.getServletRequest().getServletContext().getResource(requestPath);
+        URL contentResource = request.getServletRequest().getServletContext().getResource(requestPath);
         if (contentResource == null) {
-            contentResource = req.getServletRequest().getServletContext().getClassLoader().getResource(requestPath);
+            contentResource = request.getServletRequest().getServletContext().getClassLoader().getResource(requestPath);
         }
 
         if (contentResource == null) {
             return;
         }
         String mimeType = MimeUtils.getMimeType(contentResource);
-        res.getHeaders().setContentType(MediaType.parseMediaType(mimeType));
+        response.getHeaders().setContentType(MediaType.parseMediaType(mimeType));
 
-        if (isToBeRefreshed(res, req.getHeaders().getIfModifiedSince(),
-                ManagementFactory.getRuntimeMXBean().getStartTime(), false, isPreview)) {
+        if (isToBeRefreshed(response,
+                request.getHeaders().getIfModifiedSince(),
+                ManagementFactory.getRuntimeMXBean().getStartTime(),
+                false,
+                isPreview)) {
             try (final InputStream in = contentResource.openStream();
-                 final OutputStream out = res.getBody()) {
+                 final OutputStream out = response.getBody();) {
                 IOUtils.copy(in, out);
             }
         }
@@ -111,44 +118,46 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
         LOG.trace("preHandle: {}", requestPath);
 
         final Localization localization = webRequestContext.getLocalization();
-        if (localization.isStaticContent(requestPath)) {
-            LOG.debug("Handling static content: {}", requestPath);
+        if (!localization.isStaticContent(requestPath)) {
+            return true;
+        }
+        LOG.debug("Handling static content: {}", requestPath);
+        final ServletServerHttpRequest req = new ServletServerHttpRequest(request);
 
-            final ServletServerHttpRequest req = new ServletServerHttpRequest(request);
+        try (final ServletServerHttpResponse res = new ServletServerHttpResponse(response)) {
+            if (localization.isNonPublishedAsset(requestPath)) {
+                fallbackForContentProvider(req, res, requestPath, isPreview, null);
+                return false;
+            }
+            try {
+                StaticContentItem staticContentItem = contentProvider.getStaticContent(requestPath,
+                        localization.getId(),
+                        localization.getPath());
+                res.getHeaders().setContentType(MediaType.parseMediaType(staticContentItem.getContentType()));
 
-            try (final ServletServerHttpResponse res = new ServletServerHttpResponse(response)) {
-                if (localization.isNonPublishedAsset(requestPath)) {
-                    fallbackForContentProvider(req, requestPath, res, isPreview);
-                    return false;
-                }
-
-                StaticContentItem staticContentItem = null;
-                try {
-                    staticContentItem = contentProvider.getStaticContent(requestPath, localization.getId(), localization.getPath());
-                } catch (StaticContentNotFoundException e) {
-                    fallbackForContentProvider(req, requestPath, res, isPreview);
-                    return false;
-                }
-
-                if (staticContentItem != null) {
-                    res.getHeaders().setContentType(MediaType.parseMediaType(staticContentItem.getContentType()));
-
-                    // http://stackoverflow.com/questions/1587667/should-http-304-not-modified-responses-contain-cache-control-headers
-                    if (isToBeRefreshed(res, req.getHeaders().getIfModifiedSince(),
-                            staticContentItem.getLastModified(), staticContentItem.isVersioned(), isPreview)) {
-                        try (final InputStream in = staticContentItem.getContent(); final OutputStream out = res.getBody()) {
-                            IOUtils.copy(in, out);
-                        }
+                // http://stackoverflow.com/questions/1587667/should-http-304-not-modified-responses-contain-cache-control-headers
+                boolean toBeRefreshed = isToBeRefreshed(res,
+                        req.getHeaders().getIfModifiedSince(),
+                        staticContentItem.getLastModified(),
+                        staticContentItem.isVersioned(),
+                        isPreview);
+                if (toBeRefreshed) {
+                    try (final InputStream in = staticContentItem.getContent();
+                         final OutputStream out = res.getBody()) {
+                        IOUtils.copy(in, out);
                     }
                 }
-            } catch (IOException | ContentProviderException e) {
-                LOG.warn("Issues getting the static content {}", requestPath, e);
-                throw new ServletException(e);
+            } catch (StaticContentNotFoundException e) {
+                fallbackForContentProvider(req, res, requestPath, isPreview, e);
+                return false;
             }
 
-            return false;
+
+        } catch (IOException | ContentProviderException e) {
+            LOG.warn("Issues getting the static content {}", requestPath, e);
+            throw new ServletException("Could not get static content by " + requestPath, e);
         }
-        return true;
+        return false;
     }
 
     protected static String removeVersionNumber(String path) {

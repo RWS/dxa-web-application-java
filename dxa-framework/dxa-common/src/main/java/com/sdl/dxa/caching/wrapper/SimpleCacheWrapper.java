@@ -1,13 +1,11 @@
 package com.sdl.dxa.caching.wrapper;
 
 import com.sdl.dxa.caching.ConditionalKey;
-import com.sdl.dxa.caching.LocalizationAwareCacheKey;
 import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.dxa.caching.NeverCached;
 import com.sdl.dxa.caching.VolatileModel;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.K;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,8 +65,7 @@ public abstract class SimpleCacheWrapper<B, V> {
      * @return current cache for model
      */
     public Cache<Object, Object> getCache() {
-        Cache<Object, Object> cache = cacheProvider.getCache(getCacheName(), Object.class, Object.class);
-        return cache;
+        return cacheProvider.getCache(getCacheName());
     }
 
     /**
@@ -81,14 +78,14 @@ public abstract class SimpleCacheWrapper<B, V> {
     }
 
     /**
-     * Checks if conditional key doesn't prevent caching and proceed with {@link #addAndGet(LocalizationAwareCacheKey, Object)}.
+     * Checks if conditional key doesn't prevent caching and proceed with {@link #addAndGet(Object, Object)}.
      *
      * @param key   conditional key with a key formed by {@link #getSpecificKey(Object, Object...)} and a flag whether this needs to be cached
      * @param value value to cache
      * @return value put in cache
      */
     public V addAndGet(@NotNull ConditionalKey key, V value) {
-        if (key.isSkipCaching() || (value instanceof VolatileModel && !((VolatileModel) value).canBeCached())) {
+        if (key.isSkipCaching() || (value instanceof VolatileModel && !((VolatileModel) value).isPossibleToCache())) {
             log.trace("Value for key {} is not cached", key);
             return value;
         }
@@ -103,7 +100,7 @@ public abstract class SimpleCacheWrapper<B, V> {
      * @param key   key formed by {@link #getSpecificKey(Object, Object...)}
      * @return value put in cache
      */
-    public V addAndGet(LocalizationAwareCacheKey key, V value) {
+    public V addAndGet(Object key, V value) {
         if (!isCachingEnabled()) {
             return value;
         }
@@ -129,7 +126,7 @@ public abstract class SimpleCacheWrapper<B, V> {
      * @return value from cache of {@code null} if not found
      */
     @Nullable
-    public V get(LocalizationAwareCacheKey key) {
+    public V get(Object key) {
         return containsKey(key) ? (V)getCache().get(key) : null;
     }
 
@@ -140,7 +137,7 @@ public abstract class SimpleCacheWrapper<B, V> {
      * @param keyParams set of params to form the key
      * @return the cache key
      */
-    public abstract LocalizationAwareCacheKey getSpecificKey(B keyBase, Object... keyParams);
+    public abstract Object getSpecificKey(B keyBase, Object... keyParams);
 
     /**
      * Returns whether caching is enabled and the key based on list of params is cached.
@@ -148,7 +145,7 @@ public abstract class SimpleCacheWrapper<B, V> {
      * @param key key formed by {@link #getSpecificKey(Object, Object...)}
      * @return whether key is in cache
      */
-    public boolean containsKey(LocalizationAwareCacheKey key) {
+    public boolean containsKey(Object key) {
         if (!isCachingEnabled()) {
             return false;
         }
@@ -161,19 +158,19 @@ public abstract class SimpleCacheWrapper<B, V> {
         return contains;
     }
 
-    protected LocalizationAwareCacheKey getKey(Object... keyParams) {
+    protected Object getKey(Object... keyParams) {
         return this.keyGenerator.generate(keyParams);
     }
 
-    private void logPut(LocalizationAwareCacheKey key, String cacheName) {
+    private void logPut(Object key, String cacheName) {
         log.trace("Cache entry for key '{}' put in cache '{}'", key, cacheName);
     }
 
-    private void logHit(LocalizationAwareCacheKey key, String cacheName) {
+    private void logHit(Object key, String cacheName) {
         log.trace("Cache entry for key '{}' found in cache '{}'", key, cacheName);
     }
 
-    private void logMiss(LocalizationAwareCacheKey key, String cacheName) {
+    private void logMiss(Object key, String cacheName) {
         log.trace("No cache entry for key '{}' in cache '{}'", key, cacheName);
     }
 }

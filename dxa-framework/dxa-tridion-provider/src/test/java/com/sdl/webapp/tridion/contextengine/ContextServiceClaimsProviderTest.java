@@ -1,13 +1,10 @@
 package com.sdl.webapp.tridion.contextengine;
 
 import com.sdl.context.api.exception.ResolverException;
-import com.sdl.context.api.resolution.Evidence;
 import com.sdl.context.odata.client.api.ODataContextEngine;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.exceptions.DxaException;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -79,17 +76,7 @@ public class ContextServiceClaimsProviderTest {
 
         //then
         verify(localization).getId();
-        verify(oDataContextEngine).resolve(argThat(new BaseMatcher<Evidence>() {
-            @Override
-            public boolean matches(Object item) {
-                return ((Evidence) item).get("publication-id").getValue().equals(1);
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Evidence should contain publication ID");
-            }
-        }));
+        verify(oDataContextEngine).resolve(argThat(argument -> argument.get("publication-id").getValue().equals(1)));
     }
 
     @Test
@@ -102,16 +89,6 @@ public class ContextServiceClaimsProviderTest {
         contextServiceClaimsProvider.getContextClaims(null);
 
         //then
-        verify(oDataContextEngine).resolve(argThat(new BaseMatcher<Evidence>() {
-            @Override
-            public boolean matches(Object item) {
-                return ((Evidence) item).get("publication-id") == null;
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Evidence should not contain publication ID");
-            }
-        }));
+        verify(oDataContextEngine).resolve(argThat(argument -> argument.get("publication-id") == null));
     }
 }

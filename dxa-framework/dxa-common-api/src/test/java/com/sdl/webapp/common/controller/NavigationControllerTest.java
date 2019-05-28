@@ -70,7 +70,7 @@ public class NavigationControllerTest {
 
     public void mockWithModel(SitemapItem staticModel) throws NavigationProviderException {
         doReturn(staticModel).when(navigationController).getEntityFromRequest(any(HttpServletRequest.class), eq("entityId"));
-        when(navigationProvider.getNavigationModel(any(Localization.class))).thenReturn(staticModel);
+        when(navigationProvider.getNavigationModel(any())).thenReturn(staticModel);
     }
 
     @Test

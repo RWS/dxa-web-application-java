@@ -19,9 +19,9 @@ import java.util.Optional;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
-public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
+public class ModelServiceClientConfiguration extends BaseClientConfigurationLoader {
 
-    private static final Logger log = getLogger(ModelServiceConfiguration.class);
+    private static final Logger log = getLogger(ModelServiceClientConfiguration.class);
 
     private final String pageModelUrl;
 
@@ -37,7 +37,7 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
 
     private String serviceUrl;
 
-    public ModelServiceConfiguration(
+    public ModelServiceClientConfiguration(
             @Value("${dxa.model.service.url.page.model}") String pageModelUrl,
             @Value("${dxa.model.service.url.entity.model}") String entityModelUrl,
             @Value("${dxa.model.service.url.api.navigation}") String navigationApiUrl,
@@ -47,7 +47,7 @@ public class ModelServiceConfiguration extends BaseClientConfigurationLoader {
     }
 
     @Autowired
-    public ModelServiceConfiguration(
+    public ModelServiceClientConfiguration(
             @Value("${dxa.model.service.url.page.model}") String pageModelUrl,
             @Value("${dxa.model.service.url.entity.model}") String entityModelUrl,
             @Value("${dxa.model.service.url.api.navigation}") String navigationApiUrl,

@@ -18,6 +18,7 @@ import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.impl.model.ContentNamespace;
 import com.sdl.webapp.common.util.FileUtils;
 import com.tridion.broker.StorageException;
 import com.tridion.broker.querying.MetadataType;
@@ -43,6 +44,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
@@ -166,14 +168,19 @@ public class DefaultContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
+    @Cacheable(condition = "#localization != null", unless = "#result != null && !#result.possibleToCache", cacheNames = "pageModels", key = "{#path, #localization.id}")
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
+        Assert.notNull(localization);
+        long time = System.currentTimeMillis();
         PageModel pageModel = loadPage(path, localization);
-
         pageModel.filterConditionalEntities(entityEvaluators);
-
-        //todo dxa2 refactor this, remove usage of deprecated method
         webRequestContext.setPage(pageModel);
-
+        log.info("Page model {}{} [{}] got from MS ({}), loading took {} ms",
+                pageModel.getUrl(),
+                pageModel.getId(),
+                pageModel.getName(),
+                (pageModel.isPossibleToCache() ? "can be cached" : "cannot be cached due to dynamic"),
+                (System.currentTimeMillis() - time));
         return pageModel;
     }
 
@@ -221,12 +228,14 @@ public class DefaultContentProvider implements ContentProvider {
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
 
-        return staticContentResolver.getStaticContent(StaticContentRequestDto
+        StaticContentRequestDto requestDto = StaticContentRequestDto
                 .builder(path, localizationId)
                 .localizationPath(localizationPath)
                 .baseUrl(webRequestContext.getBaseUrl())
                 .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isPreview())
-                .build());
+                .build();
+        StaticContentItem staticContent = staticContentResolver.getStaticContent(requestDto);
+        return staticContent;
     }
 
     protected List<String> executeQuery(SimpleBrokerQuery simpleBrokerQuery) {
@@ -371,7 +380,7 @@ public class DefaultContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
-    public StaticContentItem getStaticContent(int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
+    public StaticContentItem getStaticContent(ContentNamespace contentNamespace, int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
         throw new NotImplementedException("CIL does not have such realization. Use GraphQL instead of CIL.");
     }
 }

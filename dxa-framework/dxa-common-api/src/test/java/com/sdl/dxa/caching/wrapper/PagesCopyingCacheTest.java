@@ -1,6 +1,5 @@
 package com.sdl.dxa.caching.wrapper;
 
-import com.sdl.dxa.caching.LocalizationAwareCacheKey;
 import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
@@ -25,7 +24,7 @@ public class PagesCopyingCacheTest {
         Cache<Object, Object> cache = mock(Cache.class);
 
         NamedCacheProvider cacheProvider = mock(NamedCacheProvider.class);
-        when(cacheProvider.getCache(eq("pages"), any(), any())).thenReturn(cache);
+        when(cacheProvider.getCache(eq("pages"))).thenReturn(cache);
 
         PagesCopyingCache pagesCopyingCache = new PagesCopyingCache();
         pagesCopyingCache.setCacheProvider(cacheProvider);

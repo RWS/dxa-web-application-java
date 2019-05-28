@@ -12,15 +12,18 @@ import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.ApiClient;
-import com.sdl.web.pca.client.contentmodel.enums.*;
+import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
+import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
+import com.sdl.web.pca.client.contentmodel.enums.ContentType;
+import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
+import com.sdl.web.pca.client.contentmodel.enums.DcpType;
+import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.core.io.ClassPathResource;
-
-import java.io.IOException;
 
 import static com.sdl.dxa.common.util.PathUtils.normalizePathToDefaults;
 import static org.junit.Assert.assertEquals;
@@ -81,7 +84,7 @@ public class GraphQLProviderTest {
                 PageInclusion.valueOf(request.getIncludePages().toString()),
                 ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
                 null))
-                .thenThrow(IOException.class);
+                .thenReturn(missingNode);
 
         when(pcaClient.getPageModelData(
                 ContentNamespace.Sites,

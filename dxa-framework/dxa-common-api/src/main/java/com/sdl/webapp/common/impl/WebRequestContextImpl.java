@@ -89,6 +89,10 @@ public class WebRequestContextImpl implements WebRequestContext {
     @Setter
     private PageModel page;
 
+    @Getter
+    @Setter
+    private String pageContextId;
+
     private Stack<RegionModel> parentRegionStack = new Stack<>();
 
     private Stack<Integer> containerSizeStack = new Stack<>();
@@ -201,11 +205,12 @@ public class WebRequestContextImpl implements WebRequestContext {
 
     private Localization localization() {
         Localization resolveLocalization = null;
+        String fullUrl = getFullUrl();
         try {
             resolveLocalization = localizationResolver.getLocalization(getFullUrl());
         } catch (LocalizationResolverException e) {
             if (unknownLocalizationHandler != null) {
-                log.warn("Localization is not resolved for " + getFullUrl() + ", Localization handler is set, trying to resolve using it ", e);
+                log.warn("Localization is not resolved for " + fullUrl + ", Localization handler is set, trying to resolve using it ", e);
                 resolveLocalization = unknownLocalizationHandler.handleUnknown(e, servletRequest);
                 if (resolveLocalization == null) {
                     log.error("Unknown Localization handler is set but localization wasn't resolved with it, fallback", e);
@@ -218,10 +223,10 @@ public class WebRequestContextImpl implements WebRequestContext {
             }
         }
         if (resolveLocalization == null) {
-            throw new LocalizationNotFoundException("Localization not found for " + getFullUrl());
+            throw new LocalizationNotFoundException("Localization not found for " + fullUrl);
         }
         if (log.isTraceEnabled()) {
-            log.trace("Localization for {} is: [{}] {}", getFullUrl(), resolveLocalization.getId(), resolveLocalization.getPath());
+            log.trace("Localization for {} is: [{}] {}", fullUrl, resolveLocalization.getId(), resolveLocalization.getPath());
         }
         return resolveLocalization;
     }

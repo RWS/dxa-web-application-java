@@ -11,6 +11,7 @@ import org.springframework.cache.interceptor.CacheResolver;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cache.support.CompositeCacheManager;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
@@ -21,6 +22,7 @@ import java.util.stream.Collectors;
 @EnableCaching
 @Profile("!dxa.no-cache")
 @Slf4j
+@ComponentScan(basePackages = "com.sdl.dxa.caching")
 public class TridionCacheConfiguration extends CachingConfigurerSupport {
 
     private final LocalizationAwareKeyGenerator localizationAwareKeyGenerator;

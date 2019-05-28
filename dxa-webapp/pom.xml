@@ -145,7 +145,15 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-tridion-docs-search</artifactId>
-		    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>tridion-docs-mashup-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-tridion-docs-mashup</artifactId>
                 </dependency>
             </dependencies>
         </profile>
@@ -187,16 +195,6 @@
                 </dependency>
             </dependencies>
         </profile>
-        <profile>
-            <id>tridion-docs-mashup-module</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa.modules</groupId>
-                    <artifactId>dxa-module-tridion-docs-mashup</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-
     </profiles>
 
     <!-- Needed here because archetype comes without parent tag -->
@@ -204,7 +202,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-oss-parent</artifactId>
+                <artifactId>dxa-parent</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
@@ -247,6 +245,23 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
+        </dependency>
+
+	<dependency>
+            <groupId>com.sun.activation</groupId>
+            <artifactId>javax.activation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.xml.bind</groupId>
+            <artifactId>jaxb-impl</artifactId>
+        </dependency>
+	<dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
         </dependency>
 
         <!-- Testing -->

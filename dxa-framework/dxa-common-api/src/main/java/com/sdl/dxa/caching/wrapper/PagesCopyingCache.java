@@ -24,7 +24,7 @@ public class PagesCopyingCache extends CopyingCache<PageModelData, PageModel> {
     }
 
     @Override
-    public LocalizationAwareCacheKey getSpecificKey(PageModelData pageModelData, Object... keyParams) {
+    public Object getSpecificKey(PageModelData pageModelData, Object... keyParams) {
         return getKey(pageModelData.getUrlPath(), pageModelData.getMvcData());
     }
 

@@ -4,7 +4,7 @@ import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.tridion.modelservice.ModelServiceClient;
-import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
+import com.sdl.dxa.tridion.modelservice.ModelServiceClientConfiguration;
 import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
@@ -31,7 +31,7 @@ import static org.mockito.Mockito.when;
 public class RestDynamicNavigationModelProviderTest {
 
     @Mock
-    private ModelServiceConfiguration configuration;
+    private ModelServiceClientConfiguration configuration;
 
     @Mock
     private ModelServiceClient serviceClient;

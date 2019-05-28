@@ -14,7 +14,6 @@ import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
-import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import org.jetbrains.annotations.NotNull;
 import org.junit.Before;
@@ -25,23 +24,18 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.swing.plaf.synth.Region;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
@@ -85,7 +79,7 @@ public class DefaultModelBuilderOnMocksTest {
     @Test(expected = SemanticMappingException.class)
     public void instantiatePageModelException() throws Exception {
         doReturn(mvcData).when(modelBuilder).createMvcData(mvcModelData, DefaultsMvcData.PAGE);
-        doThrow(ReflectiveOperationException.class).when(viewModelRegistry).getViewModelType(mvcData);
+        doThrow(SemanticMappingException.class).when(viewModelRegistry).getViewModelType(mvcData);
 
         modelBuilder.instantiatePageModel(null, pageModelData);
     }

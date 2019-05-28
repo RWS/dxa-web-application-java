@@ -10,10 +10,9 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -21,10 +20,10 @@ import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
@@ -73,18 +72,9 @@ public class ListControllerTest {
         listController.enrichModel(testList, request);
 
         //then
-        verify(contentProvider).populateDynamicList(argThat(new BaseMatcher<DynamicList>() {
-            @Override
-            public boolean matches(Object item) {
-                return item instanceof DynamicList && ((DynamicList) item).getStart() == 5;
-            }
-
-            @Override
-            public void describeTo(Description description) {
-                description.appendText("Start is set");
-            }
-        }), any(Localization.class));
-
+        ArgumentCaptor<DynamicList> captor = ArgumentCaptor.forClass(DynamicList.class);
+        verify(contentProvider).populateDynamicList(captor.capture(), any());
+        assertEquals("Start is set", 5, captor.getValue().getStart());
     }
 
     @Test
@@ -100,7 +90,7 @@ public class ListControllerTest {
 
         //then
         assertSame(dynamicList, viewModel);
-        verify(contentProvider, never()).populateDynamicList(any(DynamicList.class), any(Localization.class));
+        verify(contentProvider, never()).populateDynamicList(any(DynamicList.class), any());
     }
 
     @Test(expected = InternalServerErrorException.class)
@@ -108,7 +98,7 @@ public class ListControllerTest {
         //given
         DynamicList testList = mock(DynamicList.class);
         doThrow(ContentProviderException.class)
-                .when(contentProvider).populateDynamicList(any(DynamicList.class), any(Localization.class));
+                .when(contentProvider).populateDynamicList(any(DynamicList.class), any());
 
         //when
         listController.enrichModel(testList, new MockHttpServletRequest());

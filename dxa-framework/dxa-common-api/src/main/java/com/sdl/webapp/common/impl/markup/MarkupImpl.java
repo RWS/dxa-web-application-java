@@ -18,6 +18,7 @@ import com.sdl.webapp.common.markup.html.HtmlAttribute;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.builders.SimpleElementBuilder;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -26,7 +27,6 @@ import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ReflectionUtils;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.lang.reflect.Field;
 import java.text.MessageFormat;
@@ -140,7 +140,7 @@ public class MarkupImpl implements Markup {
      */
     @Override
     public String page(PageModel page) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("Not implemented");
     }
 
     /**
@@ -182,7 +182,7 @@ public class MarkupImpl implements Markup {
      */
     @Override
     public String property(PageModel page, String fieldName) {
-        throw new NotImplementedException();
+        throw new NotImplementedException("Not implemented");
     }
 
     /**

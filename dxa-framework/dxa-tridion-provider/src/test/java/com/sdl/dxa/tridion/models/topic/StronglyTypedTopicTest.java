@@ -42,6 +42,8 @@ public class StronglyTypedTopicTest extends AbstractEntityModel {
     // TODO: Support for low-level XPaths: [SemanticProperty("xpath:.//*[contains(@class, 'related-links' )]//*[contains(@class, 'childlink' )]")]
     public List<Link> childLinks;
 
+    private boolean setterWasUsed = false;
+
     @Override
     public MvcData getDefaultMvcData() {
         return MvcDataImpl.newBuilder().areaName("Test").controllerName("Entity").viewName("StronglyTypedTopicTest").build();
@@ -53,7 +55,10 @@ public class StronglyTypedTopicTest extends AbstractEntityModel {
 
     public void setTopicTitle(String topicTitle) {
         this.topicTitle = topicTitle;
+        this.setterWasUsed = true;
     }
+
+    public boolean getSetterWasUsed() { return setterWasUsed; }
 
     public String getTitle() {
         return title;

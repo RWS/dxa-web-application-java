@@ -29,7 +29,7 @@ public class OutputCache extends SimpleCacheWrapper<CompositeOutputCacheKeyBase,
     }
 
     @Override
-    public LocalizationAwareCacheKey getSpecificKey(CompositeOutputCacheKeyBase keyBase, Object... keyParams) {
+    public Object getSpecificKey(CompositeOutputCacheKeyBase keyBase, Object... keyParams) {
         HttpServletRequest request = keyBase.getRequest();
         return getKey(keyBase.getPageId(),
                 keyBase.getName(),

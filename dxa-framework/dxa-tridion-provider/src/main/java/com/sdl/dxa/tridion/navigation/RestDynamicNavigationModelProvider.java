@@ -4,7 +4,7 @@ import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.tridion.modelservice.ModelServiceClient;
-import com.sdl.dxa.tridion.modelservice.ModelServiceConfiguration;
+import com.sdl.dxa.tridion.modelservice.ModelServiceClientConfiguration;
 import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
@@ -30,12 +30,12 @@ import java.util.Optional;
 @Deprecated
 public class RestDynamicNavigationModelProvider implements NavigationModelProvider, OnDemandNavigationModelProvider {
 
-    private final ModelServiceConfiguration configuration;
+    private final ModelServiceClientConfiguration configuration;
 
     private final ModelServiceClient modelServiceClient;
 
     @Autowired
-    public RestDynamicNavigationModelProvider(ModelServiceConfiguration configuration, ModelServiceClient modelServiceClient) {
+    public RestDynamicNavigationModelProvider(ModelServiceClientConfiguration configuration, ModelServiceClient modelServiceClient) {
         this.configuration = configuration;
         this.modelServiceClient = modelServiceClient;
     }

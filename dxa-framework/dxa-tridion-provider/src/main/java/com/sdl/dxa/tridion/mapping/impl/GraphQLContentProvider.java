@@ -35,6 +35,7 @@ import com.sdl.webapp.common.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -97,6 +98,7 @@ public class GraphQLContentProvider implements ContentProvider {
      * @dxa.publicApi
      */
     @Override
+    @Cacheable(condition = "#localization != null", cacheNames = "pageModels", key = "'pagemodel' + #path + #localization.id")
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
         PageModel pageModel = loadPage(path, localization);
 

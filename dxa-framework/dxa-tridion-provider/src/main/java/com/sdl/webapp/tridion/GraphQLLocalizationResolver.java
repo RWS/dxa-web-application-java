@@ -1,7 +1,6 @@
 package com.sdl.webapp.tridion;
 
 import com.google.common.base.Strings;
-import com.sdl.dxa.tridion.linking.GraphQLLinkResolver;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
@@ -75,20 +74,19 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
     @SneakyThrows(UnsupportedEncodingException.class)
     public Localization getLocalization(String url) throws LocalizationResolverException {
         LOG.trace("getLocalization: {}", url);
+        if (!localizations.containsKey(url)) {
+            // truncating on first % because of TSI-1281
+            String path = UriUtils.encodePath(url, "UTF-8").split("%")[0];
+            PublicationMappingData data = getPublicationMappingData(path);
 
-        // truncating on first % because of TSI-1281
-        String path = UriUtils.encodePath(url, "UTF-8").split("%")[0];
-        PublicationMappingData data = getPublicationMappingData(path);
+            if (data == null) {
+                throw new LocalizationResolverException("Publication mapping is not resolved for URL: " + url);
+            }
 
-        if (data == null) {
-            throw new LocalizationResolverException("Publication mapping is not resolved for URL: " + url);
+            localizations.put(url, createLocalization(data.id, data.path));
         }
 
-        if (!localizations.containsKey(data.id)) {
-            localizations.put(data.id, createLocalization(data.id, data.path));
-        }
-
-        return localizations.get(data.id);
+        return localizations.get(url);
     }
 
     /**

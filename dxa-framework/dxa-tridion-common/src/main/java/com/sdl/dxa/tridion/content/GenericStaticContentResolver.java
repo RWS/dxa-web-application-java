@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriUtils;
 
@@ -27,6 +28,7 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
     protected WebApplicationContext webApplicationContext;
 
     @Override
+    @Cacheable(condition = "#requestDto != null && #requestDto.localizationPath != null", cacheNames = "defaultCache", unless = "#requestDto.noMediaCache", key = "'staticcontent' + #requestDto.toString()")
     public @NotNull StaticContentItem getStaticContent(@NotNull StaticContentRequestDto requestDto) throws ContentProviderException {
         log.trace("getStaticContent: {}", requestDto);
 

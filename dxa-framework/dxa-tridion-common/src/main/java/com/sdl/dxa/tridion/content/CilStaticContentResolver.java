@@ -5,6 +5,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.content.StaticContentNotLoadedException;
+import com.sdl.webapp.common.impl.model.ContentNamespace;
 import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.common.util.TcmUtils;
 import com.tridion.broker.StorageException;
@@ -17,6 +18,7 @@ import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.PublicationMeta;
 import com.tridion.meta.PublicationMetaFactory;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 import org.apache.commons.lang3.tuple.Triple;
@@ -62,12 +64,17 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
     }
 
     @NotNull
-    @Override
-    protected StaticContentItem createStaticContentItem(StaticContentRequestDto requestDto,
+    protected StaticContentItem createStaticContentItem(
+                                                        StaticContentRequestDto requestDto,
                                                         File file,
                                                         int publicationId,
                                                         ImageUtils.StaticContentPathInfo pathInfo,
                                                         String urlPath) throws ContentProviderException {
+        return createStaticContentItem(null, requestDto, file, publicationId, pathInfo, urlPath);
+    }
+
+    @Override
+    protected @NotNull StaticContentItem createStaticContentItem(ContentNamespace namespace, StaticContentRequestDto requestDto, File file, int publicationId, ImageUtils.StaticContentPathInfo pathInfo, String urlPath) throws ContentProviderException {
         BinaryMeta binaryMeta = getBinaryMeta(urlPath, publicationId);
 
         int itemId = (int) binaryMeta.getURI().getItemId();
@@ -87,10 +94,20 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
         String contentType = StringUtils.isEmpty(binaryMeta.getType()) ? DEFAULT_CONTENT_TYPE : binaryMeta.getType();
         boolean versioned = requestDto.getBinaryPath().contains("/system/");
         return new StaticContentItem(contentType, file, versioned);
+        }
+
+    @Override
+    protected @NotNull StaticContentItem getStaticContentItemById(ContentNamespace namespace, int binaryId, StaticContentRequestDto requestDto) throws ContentProviderException {
+        throw new NotImplementedException("CIL does not have such realization. Use GraphQL instead of CIL.");
     }
 
     @Override
     protected String resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
+        return resolveLocalizationPath(requestDto, ContentNamespace.Sites);
+    }
+
+    @Override
+    protected String resolveLocalizationPath(StaticContentRequestDto requestDto, ContentNamespace namespace) throws StaticContentNotLoadedException {
         String localizationId = requestDto.getLocalizationId();
         try {
             PublicationMeta meta = webPublicationMetaFactory.getMeta(TcmUtils.buildPublicationTcmUri(localizationId));

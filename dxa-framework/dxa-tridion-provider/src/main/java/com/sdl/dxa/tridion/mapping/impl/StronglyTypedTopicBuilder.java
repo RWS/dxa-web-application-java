@@ -365,7 +365,6 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
                         break;
                     }
                     LOG.debug("No XHTML elements found for DITA property '" + ditaPropertyName + "'.");
-                    LOG.debug("No XHTML elements found for DITA property '" + ditaPropertyName + "'.");
                 } catch (XPathExpressionException e) {
                     LOG.warn("Failed to evaluate Xpath", e);
                 }
@@ -381,8 +380,8 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
     private boolean setFieldValueViaSetter(AbstractEntityModel stronglyTypedTopic, Field field, List<Element> htmlElements) {
         String setterName = "set" + StringUtils.capitalize(field.getName());
         try {
-            Class genericType = (Class)field.getGenericType();
-            Method setterMethod = stronglyTypedTopic.getClass().getDeclaredMethod(setterName, genericType);
+            Type genericType = field.getGenericType();
+            Method setterMethod = stronglyTypedTopic.getClass().getDeclaredMethod(setterName, genericType.getClass() );
             if (setterMethod != null && setterMethod.getReturnType().equals(Void.TYPE)) {
                 Object propertyValue = getPropertyValue(field, htmlElements);
                 setterMethod.invoke(stronglyTypedTopic, propertyValue);

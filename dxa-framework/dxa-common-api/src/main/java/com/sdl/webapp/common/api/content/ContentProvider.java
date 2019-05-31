@@ -66,6 +66,8 @@ public interface ContentProvider {
      */
     @NotNull StaticContentItem getStaticContent(String path, String localizationId, String localizationPath) throws ContentProviderException;
 
+    @NotNull StaticContentItem getStaticContent(ContentNamespace namespace, String path, String localizationId, String localizationPath) throws ContentProviderException;
+
     /**
      * Gets a static content binary item by its id for a specific localization.
      *

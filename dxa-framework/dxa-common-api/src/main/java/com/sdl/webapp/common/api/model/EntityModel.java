@@ -15,9 +15,13 @@ import java.util.Map;
  *
  * @dxa.publicApi
  */
-public interface EntityModel extends ViewModel {
+public interface EntityModel extends ViewModel, RichTextFragment {
 
     String getId();
 
     Map<String, String> getXpmPropertyMetadata();
+
+    void setEmbedded(boolean b);
+
+    boolean isEmbedded();
 }

@@ -126,16 +126,16 @@
         <javax.jms.version>1.1-rev-1</javax.jms.version>
         <jetty-util.version>6.1.26</jetty-util.version>
         <javax.validation.version>2.0.1.Final</javax.validation.version>
-	<javax.annotation.version>1.3.2</javax.annotation.version>
+        <javax.annotation.version>1.3.2</javax.annotation.version>
         <jaxws-api.version>2.3.1</jaxws-api.version>
         <resteasy.version>3.0.8.Final</resteasy.version>
         <scala.library.version>2.12.6</scala.library.version>
         <urlrewritefilter.version>4.0.4</urlrewritefilter.version>
         <xml-apis.version>1.4.01</xml-apis.version>
-	<jaxb.api.version>2.3.1</jaxb.api.version>
-	<jaxb.core.version>2.3.0.1</jaxb.core.version>
-	<jaxb.version>2.3.2</jaxb.version>
-	<javax.activation.version>1.2.0</javax.activation.version>
+        <jaxb.api.version>2.3.1</jaxb.api.version>
+        <jaxb.core.version>2.3.0.1</jaxb.core.version>
+        <jaxb.version>2.3.2</jaxb.version>
+        <javax.activation.version>1.2.0</javax.activation.version>
 
         <!-- DD4T dependencies -->
         <!-- These are not really used in the framework and are needed only for Model Service adapter -->
@@ -725,7 +725,7 @@
                 <artifactId>cache-api</artifactId>
                 <version>${cache-api.version}</version>
             </dependency>
-	   <dependency>
+            <dependency>
                 <groupId>javax.annotation</groupId>
                 <artifactId>javax.annotation-api</artifactId>
                 <version>${javax.annotation.version}</version>
@@ -855,17 +855,17 @@
                 <version>${sitemapgen4j.version}</version>
             </dependency>
 
-	    <dependency>
+            <dependency>
                 <groupId>com.sun.activation</groupId>
                 <artifactId>javax.activation</artifactId>
                 <version>${javax.activation.version}</version>
             </dependency>
-	    <dependency>
+            <dependency>
                 <groupId>javax.xml.bind</groupId>
                 <artifactId>jaxb-api</artifactId>
                 <version>${jaxb.api.version}</version>
             </dependency>
-	    <dependency>
+            <dependency>
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-core</artifactId>
                 <version>${jaxb.core.version}</version>

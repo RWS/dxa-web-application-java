@@ -21,11 +21,14 @@ import org.mockito.Answers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -35,8 +38,6 @@ public class GraphQLContentProviderTest {
 
     @Mock
     private Localization localization;
-    @Mock
-    private ModelServiceProvider modelServiceProvider;
     @Mock(answer = Answers.RETURNS_DEEP_STUBS)
     private WebRequestContext webRequestContext;
     @Mock
@@ -51,19 +52,25 @@ public class GraphQLContentProviderTest {
     private GraphQLProvider graphQLProvider;
     @Mock
     private ApiClient pcaClient;
+    @Mock
+    private CacheManager cacheManager;
+    @Mock
+    private Cache cache;
 
     @InjectMocks
     private GraphQLContentProvider contentProvider;
 
     @Before
     public void setup() {
+        when(cacheManager.getCache(anyString())).thenReturn(cache);
         when(apiClientProvider.getClient()).thenReturn(pcaClient);
         contentProvider = spy(new GraphQLContentProvider(webApplicationContext,
                 webRequestContext,
                 staticContentResolver,
                 builderPipeline,
                 graphQLProvider,
-                apiClientProvider
+                apiClientProvider,
+                cacheManager
         ));
     }
 

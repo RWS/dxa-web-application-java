@@ -12,8 +12,6 @@ import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import com.sdl.dxa.caching.LocalizationIdProvider;
 import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.dxa.caching.WebRequestContextLocalizationIdProvider;
-import com.sdl.dxa.caching.wrapper.EntitiesCache;
-import com.sdl.dxa.caching.wrapper.PagesCopyingCache;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.converter.GenericSemanticModelDataConverter;
 import com.sdl.dxa.tridion.mapping.converter.StringModelConverter;
@@ -60,15 +58,12 @@ import java.util.Collections;
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -81,9 +76,6 @@ public class DefaultModelBuilderTest {
 
     @Autowired
     private DefaultModelBuilder modelBuilder;
-
-    @Autowired
-    private PagesCopyingCache pagesCopyingCache;
 
     @Test
     public void shouldBuildPageModel_OutOfModelDataR2() throws Exception {
@@ -151,8 +143,6 @@ public class DefaultModelBuilderTest {
         assertXpmMetadata(pageModelData, pageModel, "PageModified");
         assertXpmMetadata(pageModelData, pageModel, "PageTemplateID");
         assertXpmMetadata(pageModelData, pageModel, "PageTemplateModified");
-
-        verify(pagesCopyingCache).containsKey(pagesCopyingCache.getSpecificKey(pageModelData));
     }
 
     private void assertEqualsAndNotNull(Object expected, Object actual) {
@@ -198,24 +188,6 @@ public class DefaultModelBuilderTest {
         @Bean
         public LocalizationAwareKeyGenerator localizationAwareKeyGenerator() {
             return spy(LocalizationAwareKeyGenerator.class);
-        }
-
-        @Bean
-        public PagesCopyingCache pagesCopyingCache() {
-            LocalizationAwareKeyGenerator keyGenerator = localizationAwareKeyGenerator();
-            PagesCopyingCache copyingCache = new PagesCopyingCache();
-            copyingCache.setCacheProvider(namedCacheProvider());
-            copyingCache.setKeyGenerator(keyGenerator);
-            return spy(copyingCache);
-        }
-
-        @Bean
-        public EntitiesCache entitiesCache() {
-            LocalizationAwareKeyGenerator keyGenerator = localizationAwareKeyGenerator();
-            EntitiesCache entitiesCache = new EntitiesCache();
-            entitiesCache.setCacheProvider(namedCacheProvider());
-            entitiesCache.setKeyGenerator(keyGenerator);
-            return entitiesCache;
         }
 
         @Bean

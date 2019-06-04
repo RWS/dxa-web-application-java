@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.sdl.dxa.caching.VolatileModel;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
@@ -34,7 +33,7 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "id", "name", "title", "url", "meta", "regions" })
 @NoArgsConstructor
-public class DefaultPageModel extends AbstractViewModel implements PageModel, VolatileModel {
+public class DefaultPageModel extends AbstractViewModel implements PageModel {
 
     private static final String XPM_PAGE_SETTINGS_MARKUP = "<!-- Page Settings: {\"PageID\":\"%s\",\"PageModified\":\"%s\",\"PageTemplateID\":\"%s\",\"PageTemplateModified\":\"%s\"} -->";
 
@@ -58,9 +57,6 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel, Vo
     @JsonProperty("Regions")
     protected RegionModelSet regions = new RegionModelSetImpl();
 
-    @JsonIgnore
-    private boolean staticModel;
-
     public DefaultPageModel(PageModel other) {
         super(other);
         this.id = other.getId();
@@ -74,7 +70,6 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel, Vo
             this.regions = new RegionModelSetImpl();
             this.regions.addAll(other.getRegions());
         }
-        this.staticModel = other.isStaticModel();
     }
 
     /**

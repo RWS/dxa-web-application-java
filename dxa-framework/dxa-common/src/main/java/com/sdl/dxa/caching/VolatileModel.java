@@ -26,26 +26,7 @@ public interface VolatileModel {
      * @dxa.publicApi
      */
     default boolean isPossibleToCache() {
-        return !this.getClass().isAnnotationPresent(NeverCached.class) && isStaticModel();
+        return !this.getClass().isAnnotationPresent(NeverCached.class);
     }
 
-    /**
-     * Returns whether the model is static meaning that is can be cached. Can be set dynamically with {@link #setStaticModel(boolean)}.
-     *
-     * @return whether the model is static
-     * @dxa.publicApi
-     */
-    default boolean isStaticModel() {
-        return false;
-    }
-
-    /**
-     * Set if the model is static.
-     *
-     * @param staticModel if the model is static
-     * @dxa.publicApi
-     */
-    default void setStaticModel(boolean staticModel) {
-        // default implementation does nothing
-    }
 }

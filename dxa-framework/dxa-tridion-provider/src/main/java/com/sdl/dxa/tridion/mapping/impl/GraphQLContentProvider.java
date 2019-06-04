@@ -3,7 +3,6 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
-import com.sdl.dxa.caching.wrapper.CopyingCache;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
@@ -19,7 +18,6 @@ import com.sdl.web.pca.client.contentmodel.generated.Component;
 import com.sdl.web.pca.client.contentmodel.generated.CustomMetaEdge;
 import com.sdl.web.pca.client.contentmodel.generated.Item;
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
@@ -35,16 +33,15 @@ import com.sdl.webapp.common.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import org.springframework.util.Assert;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpSession;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,15 +56,11 @@ import java.util.stream.Collectors;
 @Profile("!cil.providers.active")
 @Primary
 @Slf4j
-public class GraphQLContentProvider implements ContentProvider {
+public class GraphQLContentProvider extends AbstractContentProvider implements ContentProvider {
 
     private ModelBuilderPipeline builderPipeline;
 
-    private WebRequestContext webRequestContext;
-
     private StaticContentResolver staticContentResolver;
-
-    private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
 
     private GraphQLBinaryProvider graphQLBinaryProvider;
     private GraphQLProvider graphQLProvider;
@@ -78,51 +71,13 @@ public class GraphQLContentProvider implements ContentProvider {
                                   WebRequestContext webRequestContext,
                                   StaticContentResolver staticContentResolver,
                                   ModelBuilderPipeline builderPipeline, GraphQLProvider graphQLProvider,
-                                  ApiClientProvider pcaClientProvider) {
+                                  ApiClientProvider pcaClientProvider, @Qualifier("compositeCacheManager") CacheManager cacheManager) {
+        super(webRequestContext, cacheManager);
         this.pcaClient = pcaClientProvider.getClient();
         this.graphQLBinaryProvider = new GraphQLBinaryProvider(pcaClientProvider.getClient(), webApplicationContext);
-        this.webRequestContext = webRequestContext;
         this.staticContentResolver = staticContentResolver;
         this.builderPipeline = builderPipeline;
         this.graphQLProvider = graphQLProvider;
-    }
-
-    @Autowired(required = false)
-    public void setEntityEvaluators(List<ConditionalEntityEvaluator> entityEvaluators) {
-        this.entityEvaluators = entityEvaluators;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * @dxa.publicApi
-     */
-    @Override
-    @Cacheable(condition = "#localization != null", cacheNames = "pageModels", key = "'pagemodel' + #path + #localization.id")
-    public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
-        PageModel pageModel = loadPage(path, localization);
-
-        pageModel.filterConditionalEntities(entityEvaluators);
-
-        webRequestContext.setPage(pageModel);
-
-        return pageModel;
-    }
-
-    /**
-     * {@inheritDoc}
-     * If you need copying cache for dynamic logic, use {@link CopyingCache}.
-     *
-     * @dxa.publicApi
-     */
-    @Override
-    public EntityModel getEntityModel(@NotNull String id, Localization localization) throws ContentProviderException {
-        Assert.notNull(id);
-        EntityModel entityModel = getEntityModel(id);
-        if (entityModel.getXpmMetadata() != null) {
-            entityModel.getXpmMetadata().put("IsQueryBased", true);
-        }
-        return entityModel;
     }
 
     /**

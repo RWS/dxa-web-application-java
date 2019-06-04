@@ -12,7 +12,6 @@ import com.sdl.webapp.common.api.content.PageNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +29,6 @@ public class GraphQLModelServiceProvider implements ModelServiceProvider {
 
     @NotNull
     @Override
-    @Cacheable(cacheNames = "pageModels", key = "'pagemodeldata' + #pageRequest.toString()")
     public PageModelData loadPageModel(PageRequestDto pageRequest) throws ContentProviderException {
         return graphQLProvider.loadPage(PageModelData.class, pageRequest, ContentType.MODEL);
     }
@@ -45,7 +43,6 @@ public class GraphQLModelServiceProvider implements ModelServiceProvider {
      */
     @NotNull
     @Override
-    @Cacheable(cacheNames = "pageModels", key = "'pagemodelcontent' + #pageRequest.toString()")
     public String loadPageContent(PageRequestDto pageRequest) throws ContentProviderException {
         return graphQLProvider.loadPage(String.class, pageRequest, ContentType.RAW);
     }
@@ -63,7 +60,6 @@ public class GraphQLModelServiceProvider implements ModelServiceProvider {
 
     @NotNull
     @Override
-    @Cacheable(cacheNames = "entityModels", key = "'entitymodeldata' + #entityRequest.toString()")
     public EntityModelData loadEntity(EntityRequestDto entityRequest) throws ContentProviderException {
         return graphQLProvider.getEntityModelData(entityRequest);
 

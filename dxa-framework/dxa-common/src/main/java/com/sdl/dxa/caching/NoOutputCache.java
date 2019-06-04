@@ -7,14 +7,14 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * Annotates types that should never be cached.
+ * Annotates types that should never be cached in the output cache.
  *
  * @dxa.publicApi
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 @Inherited
-public @interface NeverCached {
+public @interface NoOutputCache {
 
     /**
      * Qualifier of the annotated model to be used as a one-to-one identifier of the type.

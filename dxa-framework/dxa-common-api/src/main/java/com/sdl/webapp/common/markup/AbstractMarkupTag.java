@@ -22,6 +22,7 @@ import java.util.Optional;
 public class AbstractMarkupTag extends TagSupport {
 
     private MarkupDecoratorRegistry markupDecoratorRegistry = null;
+    private OutputCache outputCache;
 
     protected Optional<CompositeOutputCacheKeyBase> getCacheKey(String include, ViewModel model) {
         return Optional.empty();
@@ -77,21 +78,28 @@ public class AbstractMarkupTag extends TagSupport {
     }
 
     protected OutputCache getOutputCache() {
-        return ApplicationContextHolder.getContext().getBean(OutputCache.class);
+        if (this.outputCache == null) {
+            this.outputCache = ApplicationContextHolder.getContext().getBean(OutputCache.class);
+        }
+        return this.outputCache;
     }
 
     private HtmlNode processIncludeInternal(String include, ViewModel model) throws ServletException, IOException {
         pageContext.getRequest().setAttribute("ParentModel", model);
 
         OutputCache outputCache = getOutputCache();
+        boolean cacheAccessible = false;
+        LocalizationAwareCacheKey specificKey = null;
 
-        Optional<CompositeOutputCacheKeyBase> optionalKey = getCacheKey(include, model);
-        LocalizationAwareCacheKey specificKey = (LocalizationAwareCacheKey)optionalKey.map(outputCache::getSpecificKey).orElse(null);
-        boolean cacheAccessible = optionalKey.isPresent();
+        if (outputCache.isCachingEnabled()) {
+            Optional<CompositeOutputCacheKeyBase> optionalKey = getCacheKey(include, model);
+            specificKey = (LocalizationAwareCacheKey) optionalKey.map(outputCache::getSpecificKey).orElse(null);
+            cacheAccessible = optionalKey.isPresent();
 
-        if (cacheAccessible) {
-            HtmlNode cachedNode = outputCache.get(specificKey);
-            if (cachedNode != null) return cachedNode;
+            if (cacheAccessible) {
+                HtmlNode cachedNode = outputCache.get(specificKey);
+                if (cachedNode != null) return cachedNode;
+            }
         }
 
         try (StringWriter sw = new StringWriter()) {

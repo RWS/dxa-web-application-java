@@ -9,12 +9,6 @@ import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
 import com.sdl.dxa.api.datamodel.model.ViewModelData;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
-import com.sdl.dxa.caching.ConditionalKey;
-import com.sdl.dxa.caching.ConditionalKey.ConditionalKeyBuilder;
-import com.sdl.dxa.caching.LocalizationAwareCacheKey;
-import com.sdl.dxa.caching.NeverCached;
-import com.sdl.dxa.caching.wrapper.EntitiesCache;
-import com.sdl.dxa.caching.wrapper.PagesCopyingCache;
 import com.sdl.dxa.tridion.mapping.EntityModelBuilder;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.PageModelBuilder;
@@ -78,12 +72,6 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     @Autowired
     private WebRequestContext webRequestContext;
 
-    @Autowired
-    private PagesCopyingCache pagesCopyingCache;
-
-    @Autowired
-    private EntitiesCache entitiesCache;
-
     @Override
     public int getOrder() {
         return HIGHEST_PRECEDENCE;
@@ -116,26 +104,14 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
                     (expectedClass != null
                             ? " from pre-selected class " + expectedClass.getCanonicalName()
                             : " from MvcData class " + mvcData.getClass().getCanonicalName()));
-            LocalizationAwareCacheKey key = (LocalizationAwareCacheKey)entitiesCache.getSpecificKey(modelData, expectedClass);
-            T entityModel = null;
-            synchronized (this) {
-                entityModel = (T) entitiesCache.get(key);
-            }
-            if (entityModel != null) {
-                //noinspection unchecked
-                return (T) entityModel;
-            }
-            //noinspection unchecked
-            entityModel = (T) createViewModel(modelType, modelData);
+
+            T entityModel = (T) createViewModel(modelType, modelData);
             entityModel.setMvcData(mvcData);
 
             ((AbstractEntityModel) entityModel).setId(modelData.getId());
             fillViewModel(entityModel, modelData);
 
             processMediaItem(modelData, entityModel);
-            synchronized (this) {
-                entitiesCache.addAndGet(key, entityModel);
-            }
             return entityModel;
         } catch (ReflectiveOperationException | DxaException e) {
             throw new DxaException("Exception happened while creating a entity model from: " + modelData, e);
@@ -276,15 +252,6 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
      */
     @Override
     public PageModel buildPageModel(@Nullable PageModel originalPageModel, @NotNull PageModelData modelData) throws SemanticMappingException {
-        LocalizationAwareCacheKey cacheKey = (LocalizationAwareCacheKey)pagesCopyingCache.getSpecificKey(modelData);
-        synchronized (this) {
-            PageModel pageModel = pagesCopyingCache.get(cacheKey);
-            if (pageModel != null) {
-                return pageModel;
-            }
-        }
-
-        ConditionalKeyBuilder keyBuilder = ConditionalKey.builder().key(cacheKey);
         PageModel pageModel = instantiatePageModel(originalPageModel, modelData);
 
         if (pageModel == null) {
@@ -299,26 +266,17 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         pageModel.setName(modelData.getTitle());
         pageModel.setTitle(getPageTitle(modelData));
         pageModel.setUrl(modelData.getUrlPath());
-        processRegions(modelData.getRegions(), keyBuilder, pageModel.getRegions());
-        if (isNeverCachedAnnotation(pageModel)) {
-            log.debug("Page model {} '{}' [{}] will not be cached due to annotation", pageModel.getId(), pageModel.getUrl(), pageModel.getName());
-            keyBuilder.skipCaching(true);
-        }
-        ConditionalKey conditionalKey = keyBuilder.build();
-        pageModel.setStaticModel(!conditionalKey.isSkipCaching());
-        synchronized (this) {
-            return pagesCopyingCache.addAndGet(conditionalKey, pageModel);
-        }
+        processRegions(modelData.getRegions(), pageModel.getRegions());
+        return pageModel;
     }
 
     void processRegions(List<RegionModelData> regions,
-                        ConditionalKeyBuilder keyBuilder,
                         RegionModelSet regionsToAdd) throws SemanticMappingException {
         if (regions == null) {
             return;
         }
         for (RegionModelData region : regions) {
-            RegionModel regionModel = createRegionModel(region, keyBuilder);
+            RegionModel regionModel = createRegionModel(region);
             regionsToAdd.add(regionModel);
         }
     }
@@ -364,7 +322,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         return title + separator + postfix;
     }
 
-    RegionModel createRegionModel(RegionModelData regionModelData, ConditionalKeyBuilder keyBuilder) throws SemanticMappingException {
+    RegionModel createRegionModel(RegionModelData regionModelData) throws SemanticMappingException {
         MvcData mvcData = createMvcData(regionModelData.getMvcData(), DefaultsMvcData.REGION);
         log.debug("MvcData '{}' for RegionModel {}", mvcData, regionModelData);
 
@@ -385,12 +343,8 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             fillViewModel(regionModel, regionModelData);
             regionModel.setMvcData(mvcData);
 
-            if (isNeverCachedAnnotation(regionModel)) {
-                log.debug("Region model {} [{}] will not be cached due to annotation", regionModel.getSchemaId(), regionModel.getName());
-                keyBuilder.skipCaching(true);
-            }
-            processRegions(regionModelData.getRegions(), keyBuilder, regionModel.getRegions());
-            addEntitiesToRegionModels(regionModelData, keyBuilder, regionModel);
+            processRegions(regionModelData.getRegions(), regionModel.getRegions());
+            addEntitiesToRegionModels(regionModelData, regionModel);
 
             return regionModel;
         } catch (ReflectiveOperationException | DxaException e) {
@@ -398,13 +352,13 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         }
     }
 
-    void addEntitiesToRegionModels(RegionModelData regionModelData, ConditionalKeyBuilder keyBuilder, RegionModel regionModel) {
+    void addEntitiesToRegionModels(RegionModelData regionModelData, RegionModel regionModel) {
         if (regionModelData.getEntities() == null) {
             return;
         }
         regionModelData.getEntities().stream()
                 .map(entityModelData -> {
-                    EntityModel entityModel = createEntityModel(entityModelData, keyBuilder);
+                    EntityModel entityModel = createEntityModel(entityModelData);
                     MvcDataImpl.MvcDataImplBuilder creator = MvcDataCreator.creator(entityModel.getMvcData()).builder().regionName(regionModelData.getName());
                     entityModel.setMvcData(creator.build());
                     return entityModel;
@@ -440,22 +394,14 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         return constructorExists.newInstance(regionModelData.getName());
     }
 
-    EntityModel createEntityModel(EntityModelData entityModelData, ConditionalKeyBuilder cacheRequest) {
+    EntityModel createEntityModel(EntityModelData entityModelData) {
         try {
             EntityModel entityModel = modelBuilderPipeline.createEntityModel(entityModelData);
-            if (isNeverCachedAnnotation(entityModel)) {
-                log.debug("Entity model {}  [{}] will not be cached due to annotation", entityModel.getId(), entityModel.getClass().getCanonicalName());
-                cacheRequest.skipCaching(true);
-            }
             return entityModel;
         } catch (Exception e) {
             String message = "Cannot create an entity model for model data " + entityModelData;
             log.error(message, e);
             return new ExceptionEntity(e);
         }
-    }
-
-    private boolean isNeverCachedAnnotation(@NotNull Object object) {
-        return object.getClass().isAnnotationPresent(NeverCached.class);
     }
 }

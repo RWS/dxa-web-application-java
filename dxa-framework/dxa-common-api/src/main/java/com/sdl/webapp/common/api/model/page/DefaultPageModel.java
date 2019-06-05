@@ -10,12 +10,15 @@ import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.AbstractViewModel;
 import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
+import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +60,10 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
     @JsonProperty("Regions")
     protected RegionModelSet regions = new RegionModelSetImpl();
 
-    public DefaultPageModel(PageModel other) {
+    @JsonIgnore
+    private boolean staticModel;
+
+    public DefaultPageModel(DefaultPageModel other) {
         super(other);
         this.id = other.getId();
         this.name = other.getName();
@@ -70,6 +76,7 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
             this.regions = new RegionModelSetImpl();
             this.regions.addAll(other.getRegions());
         }
+        this.staticModel = other.staticModel;
     }
 
     /**
@@ -81,8 +88,17 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
     }
 
     @Override
-    public PageModel deepCopy() {
-        return new DefaultPageModel(this);
+    public PageModel deepCopy() throws DxaException {
+        DefaultPageModel clone = (DefaultPageModel) super.deepCopy();
+        clone.regions = new RegionModelSetImpl();
+        for (RegionModel regionModel : regions) {
+            clone.getRegions().add(regionModel.deepCopy());
+        }
+
+        if (meta != null) {
+            clone.meta = new HashMap<>(meta);
+        }
+        return clone;
     }
 
     @Override

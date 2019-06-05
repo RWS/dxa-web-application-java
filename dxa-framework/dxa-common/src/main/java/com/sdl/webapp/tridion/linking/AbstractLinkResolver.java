@@ -23,7 +23,6 @@ public abstract class AbstractLinkResolver implements LinkResolver {
     private boolean shouldStripIndexPath;
 
     @Override
-    @Cacheable(value = "defaultCache", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary, #contextId }")
     public String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary, @Nullable String contextId) {
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
 

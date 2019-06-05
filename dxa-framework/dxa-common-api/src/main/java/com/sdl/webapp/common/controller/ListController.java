@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.controller;
 
 import com.google.common.base.Strings;
+import com.sdl.dxa.caching.NoOutputCache;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -71,7 +72,7 @@ public class ListController extends EntityController {
             final DynamicList dynamicList = enrichedEntity instanceof EntityModel ? (DynamicList) enrichedEntity : (DynamicList) model;
 
             if (!isEmpty(dynamicList.getQueryResults())) {
-                log.debug("Dynamic list {}is already populated with results, returning model {}", dynamicList, model);
+                log.debug("Dynamic list {} is already populated with results, returning model {}", dynamicList, model);
                 return model;
             }
 

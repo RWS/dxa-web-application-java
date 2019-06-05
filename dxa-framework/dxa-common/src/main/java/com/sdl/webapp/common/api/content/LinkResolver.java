@@ -2,6 +2,7 @@ package com.sdl.webapp.common.api.content;
 
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import org.springframework.cache.annotation.Cacheable;
 
 /**
  * Link resolver that resolves links to components.
@@ -37,6 +38,7 @@ public interface LinkResolver {
      * @return The translated URL.
      */
     @Contract("null, _ -> null; !null, _ -> !null")
+    @Cacheable(value = "defaultCache", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary, #contextId }")
     default String resolveLink(@Nullable String url, @Nullable String localizationId) {
         return resolveLink(url, localizationId, false, null);
     }

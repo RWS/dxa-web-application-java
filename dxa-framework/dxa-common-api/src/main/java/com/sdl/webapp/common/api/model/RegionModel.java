@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model;
 
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
+import com.sdl.webapp.common.exceptions.DxaException;
 
 import java.util.List;
 
@@ -55,5 +56,5 @@ public interface RegionModel extends ViewModel, FeedItemsProvider, CanFilterEnti
      */
     void addEntity(EntityModel entity);
 
-    RegionModel deepCopy();
+    RegionModel deepCopy() throws DxaException;
 }

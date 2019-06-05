@@ -26,7 +26,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.collect.FluentIterable.from;
@@ -179,8 +183,18 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
     }
 
     @Override
-    public RegionModel deepCopy() {
-        return new RegionModelImpl(this);
+    public RegionModel deepCopy() throws DxaException {
+        RegionModelImpl clone = (RegionModelImpl) super.deepCopy();
+        clone.entities = new ArrayList<>();
+        for (EntityModel entityModel : entities) {
+            clone.addEntity(entityModel.deepCopy());
+        }
+
+        clone.regions = new RegionModelSetImpl();
+        for (RegionModel regionModel : regions) {
+            clone.getRegions().add(regionModel.deepCopy());
+        }
+        return clone;
     }
 
     @Override

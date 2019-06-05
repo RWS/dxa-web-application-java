@@ -9,7 +9,9 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.exceptions.DxaException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -74,8 +76,9 @@ public class DefaultContentProviderTest {
     }
 
     @Test
-    public void shouldBuildCorrectEntityRequest() throws ContentProviderException {
+    public void shouldBuildCorrectEntityRequest() throws DxaException {
         //given
+        when(modelBuilderPipeline.createEntityModel(any())).thenReturn(mock(EntityModel.class));
 
         //when
         contentProvider.getEntityModel("1-2");
@@ -85,12 +88,13 @@ public class DefaultContentProviderTest {
     }
 
     @Test
-    public void shouldFilterConditionalEntities() throws ContentProviderException {
+    public void shouldFilterConditionalEntities() throws DxaException {
         //given
         PageModel pageModel = mock(PageModel.class);
         Localization localization = mock(Localization.class);
         when(localization.getId()).thenReturn("123");
         when(modelBuilderPipeline.createPageModel(any())).thenReturn(pageModel);
+        when(pageModel.deepCopy()).thenReturn(pageModel);
 
         List<ConditionalEntityEvaluator> evaluators = Collections.emptyList();
 

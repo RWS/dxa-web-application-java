@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -53,9 +54,8 @@ public abstract class AbstractContentProvider {
         SimpleValueWrapper simpleValueWrapper = (SimpleValueWrapper) pagemodelCache.get(key);
         PageModel pageModel;
         if (simpleValueWrapper != null) {
-            //Pagemodel is in cache, retreive it and create a clone.
-            PageModel cachedPageModel = (PageModel) simpleValueWrapper.get();
-            pageModel = cachedPageModel.deepCopy();
+            //Pagemodel is in cache
+            pageModel = (PageModel) simpleValueWrapper.get();
         } else {
             //Not in cache, load from backend.
             pageModel = loadPage(path, localization);
@@ -63,8 +63,14 @@ public abstract class AbstractContentProvider {
                 pagemodelCache.put(key, pageModel);
             }
         }
+        try {
+            // Make a deep copy
+            pageModel = pageModel.deepCopy();
+        } catch (DxaException e) {
+            throw new ContentProviderException(e);
+        }
 
-        //filterConditionalEntities modifies the pagemodel, that is why the clone is done when the pagemodel is retreived from cache.
+        //filterConditionalEntities modifies the pagemodel, that is why the deep copy is done.
         pageModel.filterConditionalEntities(entityEvaluators);
 
         webRequestContext.setPage(pageModel);

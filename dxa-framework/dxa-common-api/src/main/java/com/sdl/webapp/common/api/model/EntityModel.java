@@ -1,5 +1,7 @@
 package com.sdl.webapp.common.api.model;
 
+import com.sdl.webapp.common.exceptions.DxaException;
+
 import java.util.Map;
 
 /**
@@ -20,4 +22,6 @@ public interface EntityModel extends ViewModel {
     String getId();
 
     Map<String, String> getXpmPropertyMetadata();
+
+    EntityModel deepCopy() throws DxaException;
 }

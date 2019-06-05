@@ -2,6 +2,7 @@ package com.sdl.webapp.common.api.model;
 
 import com.sdl.dxa.caching.VolatileModel;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
+import com.sdl.webapp.common.exceptions.DxaException;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.Map;
@@ -41,7 +42,7 @@ public interface PageModel extends ViewModel, FeedItemsProvider, CanFilterEntiti
 
     void setXpmMetadata(Map<String, Object> xpmMetaData);
 
-    PageModel deepCopy();
+    PageModel deepCopy() throws DxaException;
 
     /**
      * <p>Implementors of this interface may want to save some data in a servlet response.</p>

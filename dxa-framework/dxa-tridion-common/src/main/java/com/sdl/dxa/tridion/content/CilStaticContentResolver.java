@@ -98,7 +98,7 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
 
     @Override
     protected @NotNull StaticContentItem getStaticContentItemById(ContentNamespace namespace, int binaryId, StaticContentRequestDto requestDto) throws ContentProviderException {
-        throw new NotImplementedException("CIL does not have such realization. Use GraphQL instead of CIL.");
+        throw new NotImplementedException("This is not implemented in CIL. Use GraphQL instead of CIL.");
     }
 
     @Override

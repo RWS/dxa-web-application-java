@@ -381,11 +381,11 @@ public class DefaultContentProvider implements ContentProvider {
      */
     @Override
     public StaticContentItem getStaticContent(ContentNamespace contentNamespace, int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
-        throw new NotImplementedException("CIL does not have such realization. Use GraphQL instead of CIL.");
+        throw new NotImplementedException("This is not implemented in CIL. Use GraphQL instead of CIL.");
     }
 
     @Override
     public @NotNull StaticContentItem getStaticContent(ContentNamespace namespace, String path, String localizationId, String localizationPath) throws ContentProviderException {
-        throw new NotImplementedException("CIL does not have such realization. Use GraphQL instead of CIL.");
+        throw new NotImplementedException("This is not implemented in CIL. Use GraphQL instead of CIL.");
     }
 }

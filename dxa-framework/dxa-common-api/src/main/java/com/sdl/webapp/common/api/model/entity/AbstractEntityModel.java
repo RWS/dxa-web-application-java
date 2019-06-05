@@ -35,10 +35,13 @@ import static org.springframework.util.CollectionUtils.isEmpty;
 @SemanticMappingIgnore
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @NoArgsConstructor
-public abstract class AbstractEntityModel extends AbstractViewModel implements EntityModel, RichTextFragment {
+public abstract class AbstractEntityModel extends AbstractViewModel implements EntityModel {
 
     @JsonProperty("Id")
     private String id;
+
+    @JsonProperty("IsEmbedded")
+    private boolean isEmbedded;
 
     @JsonProperty("XpmPropertyMetadata")
     @JsonXpmAware

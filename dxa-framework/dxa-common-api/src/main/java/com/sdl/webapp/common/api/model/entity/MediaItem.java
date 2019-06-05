@@ -58,9 +58,6 @@ public abstract class MediaItem extends AbstractEntityModel {
     @JsonProperty("Url")
     private String url;
 
-    @JsonProperty("IsEmbedded")
-    private boolean isEmbedded;
-
     @JsonProperty("FileName")
     private String fileName;
 

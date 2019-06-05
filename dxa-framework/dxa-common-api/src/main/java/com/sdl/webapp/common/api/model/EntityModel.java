@@ -17,11 +17,15 @@ import java.util.Map;
  *
  * @dxa.publicApi
  */
-public interface EntityModel extends ViewModel {
+public interface EntityModel extends ViewModel, RichTextFragment {
 
     String getId();
 
     Map<String, String> getXpmPropertyMetadata();
 
     EntityModel deepCopy() throws DxaException;
+
+    void setEmbedded(boolean b);
+
+    boolean isEmbedded();
 }

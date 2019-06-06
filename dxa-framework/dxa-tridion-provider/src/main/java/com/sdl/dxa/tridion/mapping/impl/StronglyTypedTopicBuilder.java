@@ -380,8 +380,8 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
     private boolean setFieldValueViaSetter(AbstractEntityModel stronglyTypedTopic, Field field, List<Element> htmlElements) {
         String setterName = "set" + StringUtils.capitalize(field.getName());
         try {
-            Type genericType = field.getGenericType();
-            Method setterMethod = stronglyTypedTopic.getClass().getDeclaredMethod(setterName, genericType.getClass() );
+            Class genericType = (Class)field.getGenericType();
+            Method setterMethod = stronglyTypedTopic.getClass().getDeclaredMethod(setterName, genericType);
             if (setterMethod != null && setterMethod.getReturnType().equals(Void.TYPE)) {
                 Object propertyValue = getPropertyValue(field, htmlElements);
                 setterMethod.invoke(stronglyTypedTopic, propertyValue);

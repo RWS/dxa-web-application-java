@@ -124,8 +124,8 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         return namespace.equals(ContentNamespace.Sites) ? com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites : com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Docs;
     }
 
-    private boolean isVersioned(@NotNull String path) {
-        return path.contains("/system/");
+    private boolean isVersioned(String path) {
+        return (path != null) && path.contains("/system/");
     }
 
     private StaticContentItem processBinaryComponent(BinaryComponent binaryComponent, StaticContentRequestDto requestDto, File file, String urlPath, ImageUtils.StaticContentPathInfo pathInfo) throws ContentProviderException {

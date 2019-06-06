@@ -144,6 +144,9 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     @NotNull
     MvcData createMvcData(MvcModelData modelData, DefaultsMvcData defaults) {
+        if (modelData == null) {
+            return MvcDataCreator.creator(MvcDataImpl.newBuilder()).defaults(defaults).create();
+        }
         return MvcDataCreator.creator(MvcDataImpl.newBuilder()
                 .actionName(modelData.getActionName())
                 .areaName(modelData.getAreaName())

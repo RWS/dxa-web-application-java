@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.model.region;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.sdl.dxa.caching.NeverCached;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
@@ -283,5 +284,14 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
         List<FeedItem> feedItems = collectFeedItems(regions);
         feedItems.addAll(collectFeedItems(from(entities).filter(FeedItemsProvider.class).toList()));
         return feedItems;
+    }
+
+    @Override
+    public boolean canBeCached() {
+        //If this Regionmodel, or any of the regions or entities cannot be cached; return false.
+
+        return !this.getClass().isAnnotationPresent(NeverCached.class)
+                && regions.stream().allMatch(regionModel -> regionModel.canBeCached())
+                && entities.stream().allMatch(entityModel -> entityModel.canBeCached());
     }
 }

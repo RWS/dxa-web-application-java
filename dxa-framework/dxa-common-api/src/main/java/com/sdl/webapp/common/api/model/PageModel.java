@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.api.model;
 
-import com.sdl.dxa.caching.VolatileModel;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 import com.sdl.webapp.common.exceptions.DxaException;
 
@@ -12,7 +11,7 @@ import java.util.Map;
  *
  * @dxa.publicApi
  */
-public interface PageModel extends ViewModel, FeedItemsProvider, CanFilterEntities, VolatileModel {
+public interface PageModel extends ViewModel, FeedItemsProvider, CanFilterEntities {
 
     String getId();
 

@@ -24,10 +24,12 @@ public abstract class AbstractContentProvider {
     private List<ConditionalEntityEvaluator> entityEvaluators = Collections.emptyList();
     protected WebRequestContext webRequestContext;
     private final Cache pagemodelCache;
+    private final Cache entitymodelCache;
 
     protected AbstractContentProvider(WebRequestContext webRequestContext, CacheManager cacheManager) {
         this.webRequestContext = webRequestContext;
         this.pagemodelCache = cacheManager.getCache("pageModels");
+        this.entitymodelCache = cacheManager.getCache("entityModels");
     }
 
     @Autowired(required = false)
@@ -59,7 +61,7 @@ public abstract class AbstractContentProvider {
         } else {
             //Not in cache, load from backend.
             pageModel = loadPage(path, localization);
-            if (pageModel.isPossibleToCache()) {
+            if (pageModel.canBeCached()) {
                 pagemodelCache.put(key, pageModel);
             }
         }
@@ -80,7 +82,7 @@ public abstract class AbstractContentProvider {
                     pageModel.getUrl(),
                     pageModel.getId(),
                     pageModel.getName(),
-                    pageModel.isPossibleToCache(),
+                    pageModel.canBeCached(),
                     (System.currentTimeMillis() - time));
         }
 
@@ -96,11 +98,30 @@ public abstract class AbstractContentProvider {
      */
     public EntityModel getEntityModel(@NotNull String id, Localization localization) throws ContentProviderException {
         Assert.notNull(id);
-        EntityModel entityModel = getEntityModel(id);
-        if (entityModel.getXpmMetadata() != null) {
-            entityModel.getXpmMetadata().put("IsQueryBased", true);
+
+        String key = id;
+        SimpleValueWrapper simpleValueWrapper = (SimpleValueWrapper) entitymodelCache.get(key);
+        EntityModel entityModel;
+        if (simpleValueWrapper != null) {
+            //EntityModel is in cache
+            entityModel = (EntityModel) simpleValueWrapper.get();
+        } else {
+            //Not in cache, load from backend.
+            entityModel = getEntityModel(id);
+            if (entityModel.getXpmMetadata() != null) {
+                entityModel.getXpmMetadata().put("IsQueryBased", true);
+            }
+            if (entityModel.canBeCached()) {
+                entitymodelCache.put(key, entityModel);
+            }
         }
-        return entityModel;
+
+        try {
+            //Return a deepcopy so controllers can dynamicly change the content without causing problems.
+            return entityModel.deepCopy();
+        } catch (DxaException e) {
+            throw new ContentProviderException(e);
+        }
     }
 
     protected abstract EntityModel getEntityModel(String componentId) throws ContentProviderException;

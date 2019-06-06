@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import com.sdl.dxa.caching.NeverCached;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
@@ -18,7 +19,6 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -141,5 +141,13 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
     @Override
     public List<FeedItem> extractFeedItems() {
         return collectFeedItems(regions);
+    }
+
+    @Override
+    public boolean canBeCached() {
+        //If this pagemodel, or any of the regions cannot be cached; return false.
+
+        return !this.getClass().isAnnotationPresent(NeverCached.class)
+                && regions.stream().allMatch(regionModel -> regionModel.canBeCached());
     }
 }

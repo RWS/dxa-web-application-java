@@ -2,7 +2,6 @@ package com.sdl.dxa.tridion.content;
 
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
-import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
@@ -33,15 +32,14 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
 
     private static final Object LOCK = new Object();
 
-    private ApiClient apiClient;
-
+    private ApiClientProvider apiClientProvider;
     private BinaryContentDownloader contentDownloader;
 
     @Autowired
     public GraphQLStaticContentResolver(WebApplicationContext webApplicationContext,
                                         ApiClientProvider apiClientProvider,
                                         BinaryContentDownloader contentDownloader) {
-        this.apiClient = apiClientProvider.getClient();
+        this.apiClientProvider = apiClientProvider;
         this.contentDownloader = contentDownloader;
         this.webApplicationContext = webApplicationContext;
     }
@@ -53,7 +51,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
                                                         int publicationId,
                                                         ImageUtils.StaticContentPathInfo pathInfo,
                                                         String urlPath) throws ContentProviderException {
-        BinaryComponent binaryComponent = apiClient.getBinaryComponent(ContentNamespace.Sites,
+        BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(ContentNamespace.Sites,
                     publicationId,
                     pathInfo.getFileName(),
                     "",
@@ -94,7 +92,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     protected String resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
         ContextData contextData = createContextData(requestDto.getClaims());
-        Publication publication = apiClient.getPublication(ContentNamespace.Sites,
+        Publication publication = apiClientProvider.getClient().getPublication(ContentNamespace.Sites,
                 publicationId,
                 "",
                 contextData);

@@ -64,7 +64,8 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
 
     private GraphQLBinaryProvider graphQLBinaryProvider;
     private GraphQLProvider graphQLProvider;
-    private ApiClient pcaClient;
+    private final WebRequestContext webRequestContext;
+    private ApiClientProvider pcaClientProvider;
 
     @Autowired
     public GraphQLContentProvider(WebApplicationContext webApplicationContext,
@@ -73,8 +74,9 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
                                   ModelBuilderPipeline builderPipeline, GraphQLProvider graphQLProvider,
                                   ApiClientProvider pcaClientProvider, @Qualifier("compositeCacheManager") CacheManager cacheManager) {
         super(webRequestContext, cacheManager);
-        this.pcaClient = pcaClientProvider.getClient();
-        this.graphQLBinaryProvider = new GraphQLBinaryProvider(pcaClientProvider.getClient(), webApplicationContext);
+        this.webRequestContext = webRequestContext;
+        this.pcaClientProvider = pcaClientProvider;
+        this.graphQLBinaryProvider = new GraphQLBinaryProvider(pcaClientProvider, webApplicationContext);
         this.staticContentResolver = staticContentResolver;
         this.builderPipeline = builderPipeline;
         this.graphQLProvider = graphQLProvider;
@@ -104,7 +106,7 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
         simpleBrokerQuery.setStartAt(start);
         dynamicList.setStart(cursors.getStart());
 
-        QueryProvider brokerQuery = new GraphQLQueryProvider(pcaClient);
+        QueryProvider brokerQuery = new GraphQLQueryProvider(pcaClientProvider);
 
         List<Item> components = brokerQuery.executeQueryItems(simpleBrokerQuery);
         log.debug("Broker query returned {} results. hasMore={}", components.size(), brokerQuery.hasMore());

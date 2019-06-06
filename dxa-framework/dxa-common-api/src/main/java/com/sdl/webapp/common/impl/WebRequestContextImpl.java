@@ -38,6 +38,9 @@ import java.util.Stack;
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class WebRequestContextImpl implements WebRequestContext {
 
+    private static final String X_PREVIEW_SESSION_TOKEN = "x-preview-session-token";
+    private static final String PREVIEW_SESSION_TOKEN = "preview-session-token";
+
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
     @Autowired
@@ -103,6 +106,32 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
 
     @Override
+    public String getPreviewToken() {
+        final Cookie[] cookies = servletRequest.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (PREVIEW_SESSION_TOKEN.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        String fromSession = servletRequest.getHeader(X_PREVIEW_SESSION_TOKEN);
+
+        return fromSession;
+    }
+
+    @Override
+    public boolean isSessionPreview() {
+        return getPreviewToken() != null;
+    }
+
+    /**
+     * Return if it is possible to use XPM on this site.
+     *
+     * @deprecated Use isSessionPreview or getLocalization().isStaging(), this method is ambiguous.
+     */
+    @Override
+    @Deprecated
     public boolean isPreview() {
         // Should return true if the request is from XPM (NOTE currently always true for staging as we cannot reliably
         // distinguish XPM requests)

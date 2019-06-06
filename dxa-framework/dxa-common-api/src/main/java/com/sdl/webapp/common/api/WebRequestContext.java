@@ -52,9 +52,21 @@ public interface WebRequestContext {
     Localization getLocalization();
 
     /**
+     * Get the session preview token, if it exists, null otherwise.
+     *
+     */
+    String getPreviewToken();
+
+    /**
+     * Checks if the web application is in preview mode.
+     *
+     */
+    boolean isSessionPreview();
+
+    /**
      * Checks if the web application is in preview mode (when XPM is enabled).
      *
-     * @return {@code true} when in preview mode, {@code false} otherwise.
+     * @deprecated Use isSessionPreview or getLocalization().isStaging(), this method is ambiguous.
      */
     boolean isPreview();
 

@@ -342,6 +342,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
     protected void mapSemanticProperties(AbstractEntityModel stronglyTypedTopic, Element rootElement) {
         // Map all the fields (including fields inherited from superclasses) of the entity
         ReflectionUtils.doWithFields(stronglyTypedTopic.getClass(), field -> {
+
             // Find the semantics for this field
             final Set<FieldSemantics> registrySemantics = semanticMappingRegistry.getFieldSemantics(field);
 
@@ -389,7 +390,8 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
             }
             LOG.warn("Setter '{}' that sets property '{}' should be void", setterName, field.getName());
         } catch (Exception ex) {
-            LOG.warn("Unable to map property {}.{} via setter {}", field.getDeclaringClass().getSimpleName(), field.getName(), setterName, ex);
+            LOG.warn("Unable to map property {}.{} via setter {}", field.getDeclaringClass().getSimpleName(), field.getName(), setterName);
+            LOG.debug("The reason is:", ex);
         }
         return false;
     }

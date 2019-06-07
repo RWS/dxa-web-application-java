@@ -1,7 +1,6 @@
 package com.sdl.dxa.caching.wrapper;
 
 import com.sdl.dxa.caching.CompositeOutputCacheKeyBase;
-import com.sdl.dxa.caching.LocalizationAwareCacheKey;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import org.springframework.stereotype.Component;
 

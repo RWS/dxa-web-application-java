@@ -94,7 +94,8 @@ public class AbstractMarkupTag extends TagSupport {
         if (outputCache.isCachingEnabled()) {
             Optional<CompositeOutputCacheKeyBase> optionalKey = getCacheKey(include, model);
             specificKey = (LocalizationAwareCacheKey) optionalKey.map(outputCache::getSpecificKey).orElse(null);
-            cacheAccessible = optionalKey.isPresent();
+
+            cacheAccessible = optionalKey.isPresent() && !getWebRequestContext().isSessionPreview();
 
             if (cacheAccessible) {
                 HtmlNode cachedNode = outputCache.get(specificKey);

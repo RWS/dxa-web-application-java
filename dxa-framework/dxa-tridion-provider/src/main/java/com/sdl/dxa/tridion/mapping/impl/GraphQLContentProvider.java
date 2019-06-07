@@ -153,55 +153,14 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
         return result;
     }
 
-    private static class CursorIndexer {
-        public static final String SESSION_KEY = "dxa_indexer";
-        private Map<Integer, String> cursors = new HashMap<>();
-        private int startIndex;
-
-        public CursorIndexer() {
+    private boolean isNoMediaCache(String path, String localizationPath) {
+        boolean noCache = false;
+        if (!FileUtils.isEssentialConfiguration(path, localizationPath)) {
+            //Note: webRequestContext.isPreview() eventually does a request to loadMainConfiguration, which calls getStaticContent (this method)
+            //Without the check for FileUtils.isEssentialConfiguration first, this will lead to a stack overflow error.
+            noCache = webRequestContext.isPreview();
         }
-
-        public static CursorIndexer getCursorIndexer(String id) {
-            HttpSession session = (HttpSession) RequestContextHolder.getRequestAttributes().getSessionMutex();
-            Map<String, CursorIndexer> indexer = (Map<String, CursorIndexer>) session.getAttribute(SESSION_KEY);
-            if (indexer == null) {
-                indexer = new HashMap<>();
-            }
-            if (!indexer.containsKey(id)) {
-                indexer.put(id, new CursorIndexer());
-            }
-            session.setAttribute(SESSION_KEY, indexer);
-            return indexer.get(id);
-        }
-
-        public String get(int index) {
-             if (index == 0) {
-                startIndex = 0;
-                return null;
-            }
-            if (cursors.size() == 0) {
-                startIndex = 0;
-                return null;
-            }
-            if (cursors.containsKey(index)) {
-                startIndex = index;
-                return cursors.get(index);
-            }
-            int min = 0;
-            for (Integer x : cursors.keySet()) {
-                if (x >= min && x < index) min = x;
-            }
-            startIndex = min;
-            return startIndex == 0 ? null : cursors.get(startIndex);
-        }
-
-        public void set(int index, String value) {
-            cursors.put(index, value);
-        }
-
-        public int getStart() {
-            return startIndex;
-        }
+        return noCache;
     }
 
     /**
@@ -210,22 +169,32 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
      * @dxa.publicApi
      */
     @Override
-    public @NotNull StaticContentItem getStaticContent(String path,
-                                                       String localizationId,
-                                                       String localizationPath) throws ContentProviderException {
-        boolean noCache = false;
-        if (!FileUtils.isEssentialConfiguration(path, localizationPath)) {
-            //Note: webRequestContext.isPreview() eventualy does a request to loadMainConfiguration, which calls getStaticContent (this method)
-            //Without the check for FileUtils.isEssentialConfiguration first, this will lead to a stackoverflow error.
-            noCache = webRequestContext.isPreview();
-        }
-
-        StaticContentRequestDto build = StaticContentRequestDto.builder(path, localizationId)
+    public @NotNull StaticContentItem getStaticContent(
+            ContentNamespace namespace,
+            String path,
+            String localizationId,
+            String localizationPath
+    ) throws ContentProviderException {
+        StaticContentRequestDto requestDto = StaticContentRequestDto.builder(path, localizationId)
                 .localizationPath(localizationPath)
                 .baseUrl(webRequestContext.getBaseUrl())
-                .noMediaCache(noCache)
+                .noMediaCache(isNoMediaCache(path, localizationPath))
                 .build();
-        return staticContentResolver.getStaticContent(build);
+        return staticContentResolver.getStaticContent(namespace, requestDto);
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @dxa.publicApi
+     */
+    @Override
+    public @NotNull StaticContentItem getStaticContent(
+            String path,
+            String localizationId,
+            String localizationPath
+    ) throws ContentProviderException {
+        return getStaticContent(ContentNamespace.Sites, path, localizationId, localizationPath);
     }
 
     protected PageModel loadPage(String path, Localization localization) throws ContentProviderException {
@@ -258,6 +227,63 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
      */
     @Override
     public StaticContentItem getStaticContent(ContentNamespace contentNamespace, int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
-        return graphQLBinaryProvider.getStaticContent(this, contentNamespace, binaryId, localizationId, localizationPath);
+        StaticContentRequestDto requestDto = StaticContentRequestDto.builder(binaryId, localizationId)
+                .localizationPath(localizationPath)
+                .baseUrl(webRequestContext.getBaseUrl())
+                .build();
+        return staticContentResolver.getStaticContent(contentNamespace, requestDto);
     }
+
+    private static class CursorIndexer {
+        public static final String SESSION_KEY = "dxa_indexer";
+        private Map<Integer, String> cursors = new HashMap<>();
+        private int startIndex;
+
+        public CursorIndexer() {
+        }
+
+        public static CursorIndexer getCursorIndexer(String id) {
+            HttpSession session = (HttpSession) RequestContextHolder.getRequestAttributes().getSessionMutex();
+            Map<String, CursorIndexer> indexer = (Map<String, CursorIndexer>) session.getAttribute(SESSION_KEY);
+            if (indexer == null) {
+                indexer = new HashMap<>();
+            }
+            if (!indexer.containsKey(id)) {
+                indexer.put(id, new CursorIndexer());
+            }
+            session.setAttribute(SESSION_KEY, indexer);
+            return indexer.get(id);
+        }
+
+        public String get(int index) {
+            if (index == 0) {
+                startIndex = 0;
+                return null;
+            }
+            if (cursors.size() == 0) {
+                startIndex = 0;
+                return null;
+            }
+            if (cursors.containsKey(index)) {
+                startIndex = index;
+                return cursors.get(index);
+            }
+            int min = 0;
+            for (Integer x : cursors.keySet()) {
+                if (x >= min && x < index) min = x;
+            }
+            startIndex = min;
+            return startIndex == 0 ? null : cursors.get(startIndex);
+        }
+
+        public void set(int index, String value) {
+            cursors.put(index, value);
+        }
+
+        public int getStart() {
+            return startIndex;
+        }
+    }
+
+
 }

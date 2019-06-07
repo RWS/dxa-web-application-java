@@ -365,7 +365,6 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
                         break;
                     }
                     LOG.debug("No XHTML elements found for DITA property '" + ditaPropertyName + "'.");
-                    LOG.debug("No XHTML elements found for DITA property '" + ditaPropertyName + "'.");
                 } catch (XPathExpressionException e) {
                     LOG.warn("Failed to evaluate Xpath", e);
                 }

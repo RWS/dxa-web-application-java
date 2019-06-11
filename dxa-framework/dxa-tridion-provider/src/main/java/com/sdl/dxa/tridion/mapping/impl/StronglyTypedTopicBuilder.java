@@ -360,9 +360,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
                     xPathResults = (NodeList) xpathToTry.evaluate(rootElement, XPathConstants.NODESET);
                     htmlElements = filterXPathResults(xPathResults, ditaPropertyName);
                     if (htmlElements != null && !htmlElements.isEmpty()) {
-                        if (!setFieldValueViaSetter(stronglyTypedTopic, field, htmlElements)) {
-                            setFieldValueViaFieldAccess(stronglyTypedTopic, field, htmlElements);
-                        }
+                        setFieldValueViaFieldAccess(stronglyTypedTopic, field, htmlElements);
                         break;
                     }
                     LOG.debug("No XHTML elements found for DITA property '" + ditaPropertyName + "'.");
@@ -376,24 +374,6 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
                 LOG.debug(htmlElements.size() + " XHTML elements found.");
             }
         });
-    }
-
-    private boolean setFieldValueViaSetter(AbstractEntityModel stronglyTypedTopic, Field field, List<Element> htmlElements) {
-        String setterName = "set" + StringUtils.capitalize(field.getName());
-        try {
-            Class genericType = (Class)field.getGenericType();
-            Method setterMethod = stronglyTypedTopic.getClass().getDeclaredMethod(setterName, genericType);
-            if (setterMethod != null && setterMethod.getReturnType().equals(Void.TYPE)) {
-                Object propertyValue = getPropertyValue(field, htmlElements);
-                setterMethod.invoke(stronglyTypedTopic, propertyValue);
-                return true;
-            }
-            LOG.warn("Setter '{}' that sets property '{}' should be void", setterName, field.getName());
-        } catch (Exception ex) {
-            LOG.warn("Unable to map property {}.{} via setter {}", field.getDeclaringClass().getSimpleName(), field.getName(), setterName);
-            LOG.debug("The reason is:", ex);
-        }
-        return false;
     }
 
     private void setFieldValueViaFieldAccess(AbstractEntityModel stronglyTypedTopic, Field field, List<Element> htmlElements) {

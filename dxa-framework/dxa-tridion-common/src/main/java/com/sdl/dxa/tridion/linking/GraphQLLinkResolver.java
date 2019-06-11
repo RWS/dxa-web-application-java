@@ -13,19 +13,19 @@ import org.springframework.stereotype.Component;
 @Profile("!cil.providers.active")
 public class GraphQLLinkResolver extends AbstractLinkResolver {
 
-    private ApiClient apiClient;
+    private ApiClientProvider apiClientProvider;
 
     public GraphQLLinkResolver() {
     }
 
     @Autowired
     public GraphQLLinkResolver(ApiClientProvider apiClientProvider) {
-        this.apiClient = apiClientProvider.getClient();
+        this.apiClientProvider = apiClientProvider;
     }
 
     @Override
     protected String resolveComponent(ResolvingData resolvingData) {
-        String componentLink = apiClient.resolveComponentLink(resolveNamespace(resolvingData.getUri()),
+        String componentLink = apiClientProvider.getClient().resolveComponentLink(resolveNamespace(resolvingData.getUri()),
                 resolvingData.getPublicationId(), resolvingData.getItemId(), resolvingData.getPageId(),
                 null, true);
         if ("null".equals(componentLink)) {
@@ -36,7 +36,7 @@ public class GraphQLLinkResolver extends AbstractLinkResolver {
 
     @Override
     protected String resolvePage(ResolvingData resolvingData) {
-        String pageLink = apiClient.resolvePageLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), true);
+        String pageLink = apiClientProvider.getClient().resolvePageLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), true);
         if ("null".equals(pageLink)) {
             return null;
         }
@@ -45,7 +45,7 @@ public class GraphQLLinkResolver extends AbstractLinkResolver {
 
     @Override
     protected String resolveBinary(ResolvingData resolvingData) {
-        String binaryLink = apiClient.resolveBinaryLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), null, true);
+        String binaryLink = apiClientProvider.getClient().resolveBinaryLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), null, true);
         if ("null".equals(binaryLink)) {
             return null;
         }

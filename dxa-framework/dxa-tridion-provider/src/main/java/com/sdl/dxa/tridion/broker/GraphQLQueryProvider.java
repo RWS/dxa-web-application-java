@@ -1,7 +1,7 @@
 package com.sdl.dxa.tridion.broker;
 
 import com.google.common.base.Strings;
-import com.sdl.web.pca.client.ApiClient;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.contentmodel.Pagination;
 import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
 import com.sdl.web.pca.client.contentmodel.generated.FilterItemType;
@@ -20,14 +20,14 @@ import java.util.stream.Collectors;
 
 public class GraphQLQueryProvider implements QueryProvider {
 
-    private ApiClient client;
+    private ApiClientProvider clientProvider;
 
     private boolean hasMore;
 
     private String cursor;
 
-    public GraphQLQueryProvider(ApiClient client) {
-        this.client = client;
+    public GraphQLQueryProvider(ApiClientProvider clientProvider) {
+        this.clientProvider = clientProvider;
     }
 
     @Override
@@ -48,7 +48,7 @@ public class GraphQLQueryProvider implements QueryProvider {
         Pagination pagination = new Pagination();
         pagination.setFirst(pageSize);
         pagination.setAfter(queryParams.getCursor());
-        ItemConnection results = client.executeItemQuery(filter, sort, pagination, null, ContentIncludeMode.EXCLUDE, false, null);
+        ItemConnection results = clientProvider.getClient().executeItemQuery(filter, sort, pagination, null, ContentIncludeMode.EXCLUDE, false, null);
         List<Item> resultList = results.getEdges().stream().map(edge -> edge.getNode()).collect(Collectors.toList());
 
         if (pageSize == -1) {

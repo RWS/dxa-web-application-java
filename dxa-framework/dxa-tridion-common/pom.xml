@@ -70,7 +70,7 @@
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
-            <artifactId>dxa-common-api</artifactId>
+            <artifactId>dxa-common</artifactId>
         </dependency>
 
     </dependencies>

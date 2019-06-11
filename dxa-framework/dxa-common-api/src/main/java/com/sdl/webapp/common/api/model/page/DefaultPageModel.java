@@ -4,15 +4,17 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.sdl.dxa.caching.VolatileModel;
+import com.sdl.dxa.caching.NeverCached;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.AbstractViewModel;
 import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.api.model.region.RegionModelSetImpl;
+import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -34,7 +36,7 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "id", "name", "title", "url", "meta", "regions" })
 @NoArgsConstructor
-public class DefaultPageModel extends AbstractViewModel implements PageModel, VolatileModel {
+public class DefaultPageModel extends AbstractViewModel implements PageModel {
 
     private static final String XPM_PAGE_SETTINGS_MARKUP = "<!-- Page Settings: {\"PageID\":\"%s\",\"PageModified\":\"%s\",\"PageTemplateID\":\"%s\",\"PageTemplateModified\":\"%s\"} -->";
 
@@ -61,7 +63,7 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel, Vo
     @JsonIgnore
     private boolean staticModel;
 
-    public DefaultPageModel(PageModel other) {
+    public DefaultPageModel(DefaultPageModel other) {
         super(other);
         this.id = other.getId();
         this.name = other.getName();
@@ -74,7 +76,7 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel, Vo
             this.regions = new RegionModelSetImpl();
             this.regions.addAll(other.getRegions());
         }
-        this.staticModel = other.isStaticModel();
+        this.staticModel = other.staticModel;
     }
 
     /**
@@ -86,8 +88,17 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel, Vo
     }
 
     @Override
-    public PageModel deepCopy() {
-        return new DefaultPageModel(this);
+    public PageModel deepCopy() throws DxaException {
+        DefaultPageModel clone = (DefaultPageModel) super.deepCopy();
+        clone.regions = new RegionModelSetImpl();
+        for (RegionModel regionModel : regions) {
+            clone.getRegions().add(regionModel.deepCopy());
+        }
+
+        if (meta != null) {
+            clone.meta = new HashMap<>(meta);
+        }
+        return clone;
     }
 
     @Override
@@ -130,5 +141,13 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel, Vo
     @Override
     public List<FeedItem> extractFeedItems() {
         return collectFeedItems(regions);
+    }
+
+    @Override
+    public boolean canBeCached() {
+        //If this pagemodel, or any of the regions cannot be cached; return false.
+
+        return !this.getClass().isAnnotationPresent(NeverCached.class)
+                && regions.stream().allMatch(regionModel -> regionModel.canBeCached());
     }
 }

@@ -19,6 +19,8 @@ public class StaticContentRequestDto {
 
     private String binaryPath;
 
+    private int binaryId;
+
     private String localizationId;
 
     private String localizationPath;
@@ -33,6 +35,9 @@ public class StaticContentRequestDto {
 
     public static StaticContentRequestDtoBuilder builder(String binaryPath, String localizationId) {
         return hiddenBuilder().localizationId(localizationId).binaryPath(binaryPath);
+    }
+    public static StaticContentRequestDtoBuilder builder(int binaryId, String localizationId) {
+        return hiddenBuilder().localizationId(localizationId).binaryId(binaryId);
     }
 
     private static StaticContentRequestDtoBuilder hiddenBuilder() {

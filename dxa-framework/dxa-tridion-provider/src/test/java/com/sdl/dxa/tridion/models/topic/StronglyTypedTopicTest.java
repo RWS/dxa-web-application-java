@@ -55,10 +55,7 @@ public class StronglyTypedTopicTest extends AbstractEntityModel {
 
     public void setTopicTitle(String topicTitle) {
         this.topicTitle = topicTitle;
-        this.setterWasUsed = true;
     }
-
-    public boolean getSetterWasUsed() { return setterWasUsed; }
 
     public String getTitle() {
         return title;

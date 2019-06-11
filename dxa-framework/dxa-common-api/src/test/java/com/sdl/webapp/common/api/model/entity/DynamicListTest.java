@@ -67,6 +67,11 @@ public class DynamicListTest {
             }
 
             @Override
+            public void setQueryResults(List<TestEntity> queryResults) {
+
+            }
+
+            @Override
             public Class<TestEntity> getEntityType() {
                 return null;
             }

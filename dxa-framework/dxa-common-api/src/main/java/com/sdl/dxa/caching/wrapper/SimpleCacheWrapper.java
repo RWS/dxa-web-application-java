@@ -4,7 +4,7 @@ import com.sdl.dxa.caching.ConditionalKey;
 import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.dxa.caching.NeverCached;
-import com.sdl.dxa.caching.VolatileModel;
+import com.sdl.webapp.common.api.model.ViewModel;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -85,7 +85,7 @@ public abstract class SimpleCacheWrapper<B, V> {
      * @return value put in cache
      */
     public V addAndGet(@NotNull ConditionalKey key, V value) {
-        if (key.isSkipCaching() || (value instanceof VolatileModel && !((VolatileModel) value).isPossibleToCache())) {
+        if (key.isSkipCaching() || (value instanceof ViewModel && !((ViewModel) value).canBeCached())) {
             log.trace("Value for key {} is not cached", key);
             return value;
         }

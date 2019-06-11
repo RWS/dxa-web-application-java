@@ -5,7 +5,6 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.MvcModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.RegionModelData;
-import com.sdl.dxa.caching.ConditionalKey;
 import com.sdl.webapp.common.api.mapping.semantic.SemanticMappingException;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.MvcData;
@@ -53,8 +52,6 @@ public class DefaultModelBuilderOnMocksTest {
     private MvcModelData mvcModelData;
     @Mock
     private MvcData mvcData;
-    @Mock
-    private ConditionalKey.ConditionalKeyBuilder keyBuilder;
     @Mock
     private RegionModel regionModel1;
     @Mock
@@ -113,23 +110,22 @@ public class DefaultModelBuilderOnMocksTest {
 
     @Test
     public void processRegionsNull() throws Exception {
-        ConditionalKey.ConditionalKeyBuilder keyBuilder = mock(ConditionalKey.ConditionalKeyBuilder.class);
         RegionModelSet regionsToAdd = mock(RegionModelSet.class);
 
-        modelBuilder.processRegions(null, keyBuilder, regionsToAdd);
+        modelBuilder.processRegions(null, regionsToAdd);
 
-        verify(modelBuilder).processRegions(null, keyBuilder, regionsToAdd);
-        verifyNoMoreInteractions(modelBuilder, regionsToAdd, keyBuilder);
+        verify(modelBuilder).processRegions(null, regionsToAdd);
+        verifyNoMoreInteractions(modelBuilder, regionsToAdd);
     }
 
     @Test(expected = SemanticMappingException.class)
     public void processRegionsExceptionOnSecondItem() throws Exception {
         List<RegionModelData> regions = prepareRegions();
-        doThrow(new SemanticMappingException()).when(modelBuilder).createRegionModel(regions.get(1), keyBuilder);
+        doThrow(new SemanticMappingException()).when(modelBuilder).createRegionModel(regions.get(1));
 
         RegionModelSet regionsToAdd = mock(RegionModelSet.class);
 
-        modelBuilder.processRegions(regions, keyBuilder, regionsToAdd);
+        modelBuilder.processRegions(regions, regionsToAdd);
     }
 
     @Test
@@ -137,7 +133,7 @@ public class DefaultModelBuilderOnMocksTest {
         List<RegionModelData> regions = prepareRegions();
         RegionModelSet regionsToAdd = mock(RegionModelSet.class);
 
-        modelBuilder.processRegions(regions, keyBuilder, regionsToAdd);
+        modelBuilder.processRegions(regions, regionsToAdd);
 
         verify(regionsToAdd).add(regionModel1);
         verify(regionsToAdd).add(regionModel2);
@@ -158,42 +154,42 @@ public class DefaultModelBuilderOnMocksTest {
         doNothing().when(modelBuilder).processOwnSchema(regionModelData, TestPageModel.class, regionModel1, REGION_SCHEMA_ID);
         RegionModelSet regionModelSet = mock(RegionModelSet.class);
         when(regionModel1.getRegions()).thenReturn(regionModelSet);
-        doNothing().when(modelBuilder).processRegions(regions, keyBuilder, regionModelSet);
-        doNothing().when(modelBuilder).addEntitiesToRegionModels(regionModelData, keyBuilder, regionModel1);
+        doNothing().when(modelBuilder).processRegions(regions, regionModelSet);
+        doNothing().when(modelBuilder).addEntitiesToRegionModels(regionModelData, regionModel1);
 
-        assertEquals(regionModel1, modelBuilder.createRegionModel(regionModelData, keyBuilder));
+        assertEquals(regionModel1, modelBuilder.createRegionModel(regionModelData));
 
         verify(regionModel1).setSchemaId(REGION_SCHEMA_ID);
         verify(modelBuilder).processOwnSchema(regionModelData, TestPageModel.class, regionModel1, REGION_SCHEMA_ID);
         verify(modelBuilder).fillViewModel(regionModel1, regionModelData);
         verify(regionModel1).setMvcData(mvcData);
-        verify(modelBuilder).processRegions(regions, keyBuilder, regionModelSet);
+        verify(modelBuilder).processRegions(regions, regionModelSet);
     }
 
     @Test
-    public void addEntitiesToRegionModelsNoEntities() throws Exception {
+    public void addEntitiesToRegionModelsNoEntities() {
         RegionModelData regionModelData = mock(RegionModelData.class);
         when(regionModelData.getEntities()).thenReturn(null);
 
-        modelBuilder.addEntitiesToRegionModels(regionModelData, keyBuilder, regionModel1);
+        modelBuilder.addEntitiesToRegionModels(regionModelData, regionModel1);
 
-        verify(modelBuilder).addEntitiesToRegionModels(regionModelData, keyBuilder, regionModel1);
-        verifyNoMoreInteractions(modelBuilder, keyBuilder);
+        verify(modelBuilder).addEntitiesToRegionModels(regionModelData, regionModel1);
+        verifyNoMoreInteractions(modelBuilder);
     }
 
     @Test
-    public void addEntitiesToRegionModels() throws Exception {
+    public void addEntitiesToRegionModels() {
         RegionModelData regionModelData = mock(RegionModelData.class);
         EntityModelData entityModelData = mock(EntityModelData.class);
         EntityModel entityModel = mock(EntityModel.class);
         when(regionModelData.getEntities()).thenReturn(Collections.singletonList(entityModelData));
-        doReturn(entityModel).when(modelBuilder).createEntityModel(entityModelData, keyBuilder);
+        doReturn(entityModel).when(modelBuilder).createEntityModel(entityModelData);
         when(entityModel.getMvcData()).thenReturn(mvcData);
         when(regionModelData.getName()).thenReturn("regionModelData name");
 
-        modelBuilder.addEntitiesToRegionModels(regionModelData, keyBuilder, regionModel1);
+        modelBuilder.addEntitiesToRegionModels(regionModelData, regionModel1);
 
-        verify(modelBuilder).addEntitiesToRegionModels(regionModelData, keyBuilder, regionModel1);
+        verify(modelBuilder).addEntitiesToRegionModels(regionModelData, regionModel1);
         verify(entityModel).setMvcData(any(MvcData.class));
         verify(regionModel1).addEntity(entityModel);
     }
@@ -204,9 +200,9 @@ public class DefaultModelBuilderOnMocksTest {
         RegionModelData regionModelData2 = mock(RegionModelData.class);
         RegionModelData regionModelData3 = mock(RegionModelData.class);
         List<RegionModelData> regions = Lists.newArrayList(regionModelData1, regionModelData2, regionModelData3);
-        doReturn(regionModel1).when(modelBuilder).createRegionModel(regionModelData1, keyBuilder);
-        doReturn(regionModel2).when(modelBuilder).createRegionModel(regionModelData2, keyBuilder);
-        doReturn(regionModel3).when(modelBuilder).createRegionModel(regionModelData3, keyBuilder);
+        doReturn(regionModel1).when(modelBuilder).createRegionModel(regionModelData1);
+        doReturn(regionModel2).when(modelBuilder).createRegionModel(regionModelData2);
+        doReturn(regionModel3).when(modelBuilder).createRegionModel(regionModelData3);
         return regions;
     }
 

@@ -78,6 +78,7 @@ public class GraphQLStaticContentResolverTest {
         BinaryVariantEdge binaryVariantEdge = new BinaryVariantEdge();
         binaryVariant = new BinaryVariant();
         binaryVariant.setDownloadUrl(DOWNLOAD_URL);
+        binaryVariant.setPath("/binary_path.png");
         binaryVariantEdge.setNode(binaryVariant);
         edges.add(binaryVariantEdge);
         binaryVariantConnection.setEdges(edges);

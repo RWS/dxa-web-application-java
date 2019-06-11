@@ -9,6 +9,7 @@ import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter;
 import com.sdl.webapp.common.api.serialization.json.annotation.JsonXpmAware;
+import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -84,5 +85,28 @@ public abstract class AbstractViewModel implements ViewModel {
             feedItems.addAll(provider.extractFeedItems());
         }
         return feedItems;
+    }
+
+    @Override
+    public ViewModel deepCopy() throws DxaException {
+        AbstractViewModel clone = null;
+        try {
+            // Start with a shallow copy
+            clone = (AbstractViewModel) this.clone();
+
+            if (mvcData != null) {
+                clone.mvcData = this.mvcData.deepCopy();
+            }
+            if (xpmMetadata != null) {
+                clone.xpmMetadata = new HashMap<>(xpmMetadata);
+            }
+            if (extensionData != null) {
+                clone.extensionData = new HashMap<>(extensionData);
+            }
+        } catch (CloneNotSupportedException e) {
+            throw new DxaException(e);
+        }
+
+        return clone;
     }
 }

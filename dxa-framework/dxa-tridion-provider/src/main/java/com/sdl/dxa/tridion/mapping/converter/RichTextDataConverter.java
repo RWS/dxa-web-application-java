@@ -5,6 +5,7 @@ import com.sdl.dxa.api.datamodel.model.RichTextData;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.mapping.impl.DefaultSemanticFieldDataProvider;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
+import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.RichTextFragment;
 import com.sdl.webapp.common.api.model.RichTextFragmentImpl;
@@ -33,15 +34,19 @@ public class RichTextDataConverter implements SemanticModelConverter<RichTextDat
                 fragments.add(new RichTextFragmentImpl((String) fragment));
             } else {
                 log.debug("Fragment {} is a not a string but perhaps EntityModelData, skipping link resolving");
-                MediaItem mediaItem;
+                EntityModel embeddedItem;
                 EntityModelData entityModelData = (EntityModelData) fragment;
                 try {
-                    mediaItem = pipeline.createEntityModel(entityModelData, MediaItem.class);
+                    if (entityModelData.getBinaryContent() != null) {
+                        embeddedItem = pipeline.createEntityModel(entityModelData, MediaItem.class);
+                    } else {
+                        embeddedItem = pipeline.createEntityModel(entityModelData);
+                    }
                 } catch (DxaException e) {
                     throw new FieldConverterException("Cannot create an instance of Media Item in RichText, model id " + entityModelData.getId(), e);
                 }
-                mediaItem.setEmbedded(true);
-                fragments.add(mediaItem);
+                embeddedItem.setEmbedded(true);
+                fragments.add(embeddedItem);
             }
         }
 

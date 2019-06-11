@@ -15,8 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheConfig;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -32,7 +30,6 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.getDefault
 @Component
 @Slf4j
 @ToString
-@CacheConfig(cacheNames = "defaultCache", keyGenerator = "localizationAwareKeyGenerator")
 public class ViewModelRegistryImpl implements ViewModelRegistry {
 
     private static final Logger LOG = LoggerFactory.getLogger(ViewModelRegistryImpl.class);
@@ -46,7 +43,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
      * {@inheritDoc}
      */
     @Override
-    @Cacheable
     public Class<? extends ViewModel> getViewEntityClass(final String viewName) throws DxaException {
 
         final String areaName;
@@ -70,7 +66,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
      * {@inheritDoc}
      */
     @Override
-    @Cacheable
     public Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames, @Nullable Class<? extends EntityModel> expectedClass) throws DxaException {
         Class<? extends ViewModel> viewModelType;
         List<Exception> exceptions = new ArrayList<>();
@@ -91,7 +86,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     }
 
     @Override
-    @Cacheable
     public Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames) {
         try {
             return getMappedModelTypes(semanticTypeNames, null);
@@ -105,7 +99,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
      * {@inheritDoc}
      */
     @Override
-    @Cacheable
     public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName, @Nullable Class<? extends EntityModel> expectedClass) throws DxaException {
         Class<? extends ViewModel> retval;
         try {
@@ -123,7 +116,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     }
 
     @Override
-    @Cacheable
     public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) {
         try {
             return getMappedModelTypes(semanticTypeName, null);
@@ -137,7 +129,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
      * {@inheritDoc}
      */
     @Override
-    @Cacheable
     public Class<? extends ViewModel> getViewModelType(final MvcData viewData) {
         //Entries with matching viewname
         Set<Map.Entry<MvcData, Class<? extends ViewModel>>> entries = new HashSet<>();

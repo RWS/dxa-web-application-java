@@ -342,6 +342,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
     protected void mapSemanticProperties(AbstractEntityModel stronglyTypedTopic, Element rootElement) {
         // Map all the fields (including fields inherited from superclasses) of the entity
         ReflectionUtils.doWithFields(stronglyTypedTopic.getClass(), field -> {
+
             // Find the semantics for this field
             final Set<FieldSemantics> registrySemantics = semanticMappingRegistry.getFieldSemantics(field);
 
@@ -359,10 +360,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
                     xPathResults = (NodeList) xpathToTry.evaluate(rootElement, XPathConstants.NODESET);
                     htmlElements = filterXPathResults(xPathResults, ditaPropertyName);
                     if (htmlElements != null && !htmlElements.isEmpty()) {
-                        if (!setFieldValueViaSetter(stronglyTypedTopic, field, htmlElements)) {
-                            setFieldValueViaFieldAccess(stronglyTypedTopic, field, htmlElements);
-                        }
-                        break;
+                        setFieldValueViaFieldAccess(stronglyTypedTopic, field, htmlElements);
                     }
                     LOG.debug("No XHTML elements found for DITA property '" + ditaPropertyName + "'.");
                 } catch (XPathExpressionException e) {
@@ -375,23 +373,6 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
                 LOG.debug(htmlElements.size() + " XHTML elements found.");
             }
         });
-    }
-
-    private boolean setFieldValueViaSetter(AbstractEntityModel stronglyTypedTopic, Field field, List<Element> htmlElements) {
-        String setterName = "set" + StringUtils.capitalize(field.getName());
-        try {
-            Class genericType = (Class)field.getGenericType();
-            Method setterMethod = stronglyTypedTopic.getClass().getDeclaredMethod(setterName, genericType);
-            if (setterMethod != null && setterMethod.getReturnType().equals(Void.TYPE)) {
-                Object propertyValue = getPropertyValue(field, htmlElements);
-                setterMethod.invoke(stronglyTypedTopic, propertyValue);
-                return true;
-            }
-            LOG.warn("Setter '{}' that sets property '{}' should be void", setterName, field.getName());
-        } catch (Exception ex) {
-            LOG.warn("Unable to map property {}.{} via setter {}", field.getDeclaringClass().getSimpleName(), field.getName(), setterName, ex);
-        }
-        return false;
     }
 
     private void setFieldValueViaFieldAccess(AbstractEntityModel stronglyTypedTopic, Field field, List<Element> htmlElements) {

@@ -361,7 +361,6 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
                     htmlElements = filterXPathResults(xPathResults, ditaPropertyName);
                     if (htmlElements != null && !htmlElements.isEmpty()) {
                         setFieldValueViaFieldAccess(stronglyTypedTopic, field, htmlElements);
-                        break;
                     }
                     LOG.debug("No XHTML elements found for DITA property '" + ditaPropertyName + "'.");
                 } catch (XPathExpressionException e) {

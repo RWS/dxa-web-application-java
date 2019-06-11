@@ -53,7 +53,11 @@ public abstract class AbstractContentProvider {
         String key = "pagemodel" + path + " " + localization.getId();
         long time = System.currentTimeMillis();
 
-        SimpleValueWrapper simpleValueWrapper = (SimpleValueWrapper) pagemodelCache.get(key);
+        SimpleValueWrapper simpleValueWrapper = null;
+        if (!webRequestContext.isSessionPreview()) {
+            simpleValueWrapper = (SimpleValueWrapper) pagemodelCache.get(key);
+        }
+
         PageModel pageModel;
         if (simpleValueWrapper != null) {
             //Pagemodel is in cache
@@ -61,7 +65,7 @@ public abstract class AbstractContentProvider {
         } else {
             //Not in cache, load from backend.
             pageModel = loadPage(path, localization);
-            if (pageModel.canBeCached()) {
+            if (pageModel.canBeCached() && !webRequestContext.isSessionPreview()) {
                 pagemodelCache.put(key, pageModel);
             }
         }
@@ -100,7 +104,10 @@ public abstract class AbstractContentProvider {
         Assert.notNull(id);
 
         String key = id;
-        SimpleValueWrapper simpleValueWrapper = (SimpleValueWrapper) entitymodelCache.get(key);
+        SimpleValueWrapper simpleValueWrapper = null;
+        if (!webRequestContext.isSessionPreview()) {
+            simpleValueWrapper = (SimpleValueWrapper) entitymodelCache.get(key);
+        }
         EntityModel entityModel;
         if (simpleValueWrapper != null) {
             //EntityModel is in cache
@@ -111,7 +118,7 @@ public abstract class AbstractContentProvider {
             if (entityModel.getXpmMetadata() != null) {
                 entityModel.getXpmMetadata().put("IsQueryBased", true);
             }
-            if (entityModel.canBeCached()) {
+            if (entityModel.canBeCached() && !webRequestContext.isSessionPreview()) {
                 entitymodelCache.put(key, entityModel);
             }
         }

@@ -27,18 +27,24 @@ import static com.sdl.dxa.common.util.PathUtils.normalizePathToDefaults;
 @Component
 @Profile("!cil.providers.active")
 public class GraphQLProvider {
-    private ApiClient pcaClient;
 
     private ObjectMapper objectMapper;
+    private ApiClientProvider pcaClientProvider;
 
     @Autowired
     public GraphQLProvider(ApiClientProvider pcaClientProvider, ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
-        this.pcaClient = pcaClientProvider.getClient();
+        this.pcaClientProvider = pcaClientProvider;
+    }
+
+    private ApiClient getPcaClient() {
+        ApiClient pcaClient = this.pcaClientProvider.getClient();
         pcaClient.setDefaultModelType(DataModelType.R2);
         pcaClient.setDefaultContentType(ContentType.MODEL);
         pcaClient.setModelSericeLinkRenderingType(ModelServiceLinkRendering.RELATIVE);
         pcaClient.setTcdlLinkRenderingType(TcdlLinkRendering.RELATIVE);
+
+        return pcaClient;
     }
 
     // DXA supports "extensionless URLs" and "index pages".
@@ -54,7 +60,7 @@ public class GraphQLProvider {
     // TODO: The above should be handled by GraphQL (See CRQ-11703)
     public <T> T loadPage(Class<T> type, PageRequestDto pageRequest, ContentType contentType) throws ContentProviderException {
         try {
-            JsonNode pageNode = pcaClient.getPageModelData(
+            JsonNode pageNode = getPcaClient().getPageModelData(
                     ContentNamespace.Sites,
                     pageRequest.getPublicationId(),
                     normalizePathToDefaults(pageRequest.getPath()),
@@ -74,7 +80,7 @@ public class GraphQLProvider {
             log.info("Page not found by " + pageRequest + ", trying to find it by path " + pathToDefaults);
             JsonNode node = null;
             try {
-                node = pcaClient.getPageModelData(ContentNamespace.Sites,
+                node = getPcaClient().getPageModelData(ContentNamespace.Sites,
                         pageRequest.getPublicationId(),
                         pathToDefaults,
                         contentType,
@@ -99,7 +105,7 @@ public class GraphQLProvider {
     public EntityModelData getEntityModelData(EntityRequestDto entityRequest) throws ContentProviderException {
         JsonNode node = null;
         try {
-            node = pcaClient.getEntityModelData(ContentNamespace.Sites,
+            node = getPcaClient().getEntityModelData(ContentNamespace.Sites,
                     entityRequest.getPublicationId(),
                     entityRequest.getComponentId(),
                     entityRequest.getTemplateId(),

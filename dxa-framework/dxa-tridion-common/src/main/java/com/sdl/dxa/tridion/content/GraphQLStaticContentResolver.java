@@ -3,7 +3,6 @@ package com.sdl.dxa.tridion.content;
 import com.google.common.primitives.Ints;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
-import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariant;
@@ -35,15 +34,14 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
 
     private static final Object LOCK = new Object();
 
-    private ApiClient apiClient;
-
+    private ApiClientProvider apiClientProvider;
     private BinaryContentDownloader contentDownloader;
 
     @Autowired
     public GraphQLStaticContentResolver(WebApplicationContext webApplicationContext,
                                         ApiClientProvider apiClientProvider,
                                         BinaryContentDownloader contentDownloader) {
-        this.apiClient = apiClientProvider.getClient();
+        this.apiClientProvider = apiClientProvider;
         this.contentDownloader = contentDownloader;
         this.webApplicationContext = webApplicationContext;
     }
@@ -65,7 +63,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
             int publicationId,
             ImageUtils.StaticContentPathInfo pathInfo,
             String urlPath) throws ContentProviderException {
-        BinaryComponent binaryComponent = apiClient.getBinaryComponent(
+        BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
                 convertNamespace(namespace),
                 publicationId,
                 pathInfo.getFileName(),
@@ -77,7 +75,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
 
     @Override
     protected @NotNull StaticContentItem getStaticContentItemById(ContentNamespace namespace, int binaryId, StaticContentRequestDto requestDto) throws ContentProviderException {
-        BinaryComponent binaryComponent = apiClient.getBinaryComponent(
+        BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
                 convertNamespace(namespace),
                 Ints.tryParse(requestDto.getLocalizationId()),
                 binaryId,
@@ -106,7 +104,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     public String resolveLocalizationPath(StaticContentRequestDto requestDto, ContentNamespace namespace) throws StaticContentNotLoadedException {
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
         ContextData contextData = createContextData(requestDto.getClaims());
-        Publication publication = apiClient.getPublication(
+        Publication publication = apiClientProvider.getClient().getPublication(
                 convertNamespace(namespace),
                 publicationId,
                 "",

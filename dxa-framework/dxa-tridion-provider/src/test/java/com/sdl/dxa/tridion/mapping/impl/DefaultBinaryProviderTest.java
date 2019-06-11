@@ -1,6 +1,7 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
 import com.google.common.primitives.Ints;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariant;
@@ -59,6 +60,8 @@ public class DefaultBinaryProviderTest {
     @Mock
     private ApiClient pcaClient;
     @Mock
+    private ApiClientProvider pcaClientProvider;
+    @Mock
     private WebApplicationContext webApplicationContext;
 
     private GraphQLBinaryProvider provider;
@@ -69,8 +72,9 @@ public class DefaultBinaryProviderTest {
 
     @Before
     public void setUp(){
-        provider = spy(new GraphQLBinaryProvider(pcaClient, webApplicationContext));
+        provider = spy(new GraphQLBinaryProvider(pcaClientProvider, webApplicationContext));
         doReturn(PATH_TO_FILES).when(provider).getBasePath();
+        when(pcaClientProvider.getClient()).thenReturn(pcaClient);
         when(pcaClient.getBinaryComponent(com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites, Ints.tryParse(PUB_ID), BINARY_ID, null, null)).thenReturn(binaryComponentForSites);
         when(pcaClient.getBinaryComponent(com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Docs, Ints.tryParse(PUB_ID), BINARY_ID, null, null)).thenReturn(binaryComponentForDocs);
     }

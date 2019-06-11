@@ -3,7 +3,7 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
 import com.rometools.utils.Lists;
-import com.sdl.web.pca.client.ApiClient;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariant;
 import com.sdl.webapp.common.api.content.ContentProvider;
@@ -29,14 +29,14 @@ import static com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites;
 public class GraphQLBinaryProvider {
     private static final String STATIC_FILES_DIR = "BinaryData";
 
+    private ApiClientProvider pcaClientProvider;
     private WebApplicationContext webApplicationContext;
 
-    private ApiClient pcaClient;
 
-    public GraphQLBinaryProvider(ApiClient pcaClient,
-                                 WebApplicationContext webApplicationContext) {
+    public GraphQLBinaryProvider(
+            ApiClientProvider pcaClientProvider, WebApplicationContext webApplicationContext) {
+        this.pcaClientProvider = pcaClientProvider;
         this.webApplicationContext = webApplicationContext;
-        this.pcaClient = pcaClient;
     }
 
     public StaticContentItem getStaticContent(
@@ -86,8 +86,7 @@ public class GraphQLBinaryProvider {
                                      String localizationId,
                                      String localizationPath) throws ContentProviderException {
         log.debug("There is no binary file with binaryId: {} for localizationId: {} on FS. Trying to download it in namespace: {}", binaryId, localizationId, contentNamespace);
-        BinaryComponent binaryComponent = pcaClient.getBinaryComponent(
-                getContentNamespace(contentNamespace),
+        BinaryComponent binaryComponent = pcaClientProvider.getClient().getBinaryComponent(getContentNamespace(contentNamespace),
                 Ints.tryParse(localizationId),
                 binaryId,
                 null,

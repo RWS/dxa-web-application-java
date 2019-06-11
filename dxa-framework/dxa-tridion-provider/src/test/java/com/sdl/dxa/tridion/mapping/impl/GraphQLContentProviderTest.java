@@ -64,7 +64,6 @@ public class GraphQLContentProviderTest {
     @Before
     public void setup() {
         when(cacheManager.getCache(anyString())).thenReturn(cache);
-        when(apiClientProvider.getClient()).thenReturn(pcaClient);
         contentProvider = spy(new GraphQLContentProvider(webApplicationContext,
                 webRequestContext,
                 staticContentResolver,

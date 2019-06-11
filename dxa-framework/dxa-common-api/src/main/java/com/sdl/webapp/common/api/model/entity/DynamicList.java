@@ -3,16 +3,18 @@ package com.sdl.webapp.common.api.model.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.collect.FluentIterable;
-import com.sdl.dxa.caching.NeverCached;
+import com.sdl.dxa.caching.NoOutputCache;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.query.AbstractQuery;
+import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Contract;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,7 +26,7 @@ import java.util.List;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-@NeverCached(qualifier = "DynamicList")
+@NoOutputCache
 public abstract class DynamicList<T extends EntityModel, Q extends AbstractQuery> extends AbstractEntityModel implements FeedItemsProvider {
 
     @JsonProperty("Start")
@@ -56,6 +58,13 @@ public abstract class DynamicList<T extends EntityModel, Q extends AbstractQuery
     public abstract void setQueryResults(List<T> queryResults, boolean hasMore);
 
     /**
+     * Sets query results, populating all data fields according to implementation logic.
+     *
+     * @param queryResults results of query
+     */
+    public abstract void setQueryResults(List<T> queryResults);
+
+    /**
      * Returns a class of {@link EntityModel} that the current implementation of {@link DynamicList} works with.
      *
      * @return a class object of T, should never return null
@@ -65,5 +74,14 @@ public abstract class DynamicList<T extends EntityModel, Q extends AbstractQuery
     @Override
     public List<FeedItem> extractFeedItems() {
         return collectFeedItems(FluentIterable.from(getQueryResults()).filter(FeedItemsProvider.class).toList());
+    }
+
+    @Override
+    public DynamicList deepCopy() throws DxaException {
+        DynamicList clone = (DynamicList) super.deepCopy();
+        if (getQueryResults() != null) {
+            clone.setQueryResults(new ArrayList<EntityModel>(getQueryResults()));
+        }
+        return clone;
     }
 }

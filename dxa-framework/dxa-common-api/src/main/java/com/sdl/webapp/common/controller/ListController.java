@@ -10,7 +10,6 @@ import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -71,7 +70,7 @@ public class ListController extends EntityController {
             final DynamicList dynamicList = enrichedEntity instanceof EntityModel ? (DynamicList) enrichedEntity : (DynamicList) model;
 
             if (!isEmpty(dynamicList.getQueryResults())) {
-                log.debug("Dynamic list {}is already populated with results, returning model {}", dynamicList, model);
+                log.debug("Dynamic list {} is already populated with results, returning model {}", dynamicList, model);
                 return model;
             }
 

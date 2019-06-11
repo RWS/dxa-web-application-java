@@ -21,6 +21,7 @@ import lombok.NoArgsConstructor;
 import lombok.SneakyThrows;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static org.springframework.util.CollectionUtils.isEmpty;
@@ -91,5 +92,16 @@ public abstract class AbstractEntityModel extends AbstractViewModel implements E
     @Nullable
     public MvcData getDefaultMvcData() {
         return null;
+    }
+
+    @Override
+    public AbstractEntityModel deepCopy() throws DxaException {
+        AbstractEntityModel clone = (AbstractEntityModel) super.deepCopy();
+
+        if (xpmPropertyMetadata != null) {
+            clone.xpmPropertyMetadata = new HashMap<>(xpmPropertyMetadata);
+        }
+
+        return clone;
     }
 }

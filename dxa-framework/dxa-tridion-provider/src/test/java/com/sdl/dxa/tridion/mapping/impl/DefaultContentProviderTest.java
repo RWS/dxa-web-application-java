@@ -15,9 +15,10 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.cache.Cache;
+import org.springframework.cache.CacheManager;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Collections;
@@ -47,13 +48,20 @@ public class DefaultContentProviderTest {
     @Mock
     private Localization localization;
 
-    @InjectMocks
+    @Mock
+    private CacheManager cacheManager;
+
+    @Mock
+    private Cache cache;
+
     private DefaultContentProvider contentProvider;
 
     @Before
     public void init() {
+        when(cacheManager.getCache(anyString())).thenReturn(cache);
         when(localization.getId()).thenReturn("42");
         when(webRequestContext.getLocalization()).thenReturn(localization);
+        contentProvider = new DefaultContentProvider(webRequestContext, null, null, modelBuilderPipeline, defaultModelService, cacheManager);
     }
 
     @Test
@@ -68,8 +76,9 @@ public class DefaultContentProviderTest {
     }
 
     @Test
-    public void shouldBuildCorrectEntityRequest() throws ContentProviderException {
+    public void shouldBuildCorrectEntityRequest() throws DxaException {
         //given
+        when(modelBuilderPipeline.createEntityModel(any())).thenReturn(mock(EntityModel.class));
 
         //when
         contentProvider.getEntityModel("1-2");
@@ -79,21 +88,18 @@ public class DefaultContentProviderTest {
     }
 
     @Test
-    public void shouldFilterConditionalEntities() throws ContentProviderException {
+    public void shouldFilterConditionalEntities() throws DxaException {
         //given
         PageModel pageModel = mock(PageModel.class);
         Localization localization = mock(Localization.class);
+        when(localization.getId()).thenReturn("123");
+        when(modelBuilderPipeline.createPageModel(any())).thenReturn(pageModel);
+        when(pageModel.deepCopy()).thenReturn(pageModel);
 
         List<ConditionalEntityEvaluator> evaluators = Collections.emptyList();
 
-        DefaultContentProvider provider = mock(DefaultContentProvider.class);
-        ReflectionTestUtils.setField(provider, "webRequestContext", mock(WebRequestContext.class));
-        ReflectionTestUtils.setField(provider, "entityEvaluators", evaluators);
-        when(provider.getPageModel(anyString(), any(Localization.class))).thenCallRealMethod();
-        when(provider.loadPage(anyString(), any(Localization.class))).thenReturn(pageModel);
-
         //when
-        PageModel model = provider.getPageModel("", localization);
+        PageModel model = contentProvider.getPageModel("", localization);
 
         //then
         assertEquals(pageModel, model);

@@ -1,6 +1,8 @@
 package com.sdl.webapp.common.api.model;
 
+import com.sdl.dxa.caching.NeverCached;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.exceptions.DxaException;
 
 import java.util.Map;
 
@@ -9,7 +11,7 @@ import java.util.Map;
  *
  * @dxa.publicApi
  */
-public interface ViewModel {
+public interface ViewModel extends Cloneable {
 
     /**
      * Returns the MVC information for this ViewModel, containing data of view name, view area, and other.
@@ -68,4 +70,17 @@ public interface ViewModel {
      * @param value value of the entry
      */
     void addExtensionData(String key, Object value);
+
+    ViewModel deepCopy() throws DxaException;
+
+    /**
+     * Returns whether the model is cacheable and may be cached.
+     *
+     * @return whether the model never may be cached
+     * @dxa.publicApi
+     */
+    default boolean canBeCached() {
+        return !this.getClass().isAnnotationPresent(NeverCached.class);
+    }
+
 }

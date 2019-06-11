@@ -3,6 +3,7 @@ package com.sdl.webapp.common.api.model.region;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.common.base.Joiner;
 import com.google.common.base.Strings;
+import com.sdl.dxa.caching.NeverCached;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
@@ -26,7 +27,11 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
 
 import static com.google.common.collect.FluentIterable.from;
@@ -179,8 +184,18 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
     }
 
     @Override
-    public RegionModel deepCopy() {
-        return new RegionModelImpl(this);
+    public RegionModel deepCopy() throws DxaException {
+        RegionModelImpl clone = (RegionModelImpl) super.deepCopy();
+        clone.entities = new ArrayList<>();
+        for (EntityModel entityModel : entities) {
+            clone.addEntity(entityModel.deepCopy());
+        }
+
+        clone.regions = new RegionModelSetImpl();
+        for (RegionModel regionModel : regions) {
+            clone.getRegions().add(regionModel.deepCopy());
+        }
+        return clone;
     }
 
     @Override
@@ -269,5 +284,14 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
         List<FeedItem> feedItems = collectFeedItems(regions);
         feedItems.addAll(collectFeedItems(from(entities).filter(FeedItemsProvider.class).toList()));
         return feedItems;
+    }
+
+    @Override
+    public boolean canBeCached() {
+        //If this Regionmodel, or any of the regions or entities cannot be cached; return false.
+
+        return !this.getClass().isAnnotationPresent(NeverCached.class)
+                && regions.stream().allMatch(regionModel -> regionModel.canBeCached())
+                && entities.stream().allMatch(entityModel -> entityModel.canBeCached());
     }
 }

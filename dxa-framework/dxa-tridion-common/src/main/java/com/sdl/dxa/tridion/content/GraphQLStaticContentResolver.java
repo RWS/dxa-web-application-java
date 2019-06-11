@@ -1,15 +1,17 @@
 package com.sdl.dxa.tridion.content;
 
+import com.google.common.primitives.Ints;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.contentmodel.ContextData;
-import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
+import com.sdl.web.pca.client.contentmodel.generated.BinaryVariant;
 import com.sdl.web.pca.client.contentmodel.generated.Publication;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.content.StaticContentNotLoadedException;
+import com.sdl.webapp.common.impl.model.ContentNamespace;
 import com.sdl.webapp.common.util.ImageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -45,21 +47,89 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     }
 
     @NotNull
-    @Override
-    protected StaticContentItem createStaticContentItem(StaticContentRequestDto requestDto,
-                                                        File file,
-                                                        int publicationId,
-                                                        ImageUtils.StaticContentPathInfo pathInfo,
-                                                        String urlPath) throws ContentProviderException {
-        BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(ContentNamespace.Sites,
-                    publicationId,
-                    pathInfo.getFileName(),
-                    "",
-                    createContextData(requestDto.getClaims()));
+    protected StaticContentItem createStaticContentItem(
+            StaticContentRequestDto requestDto,
+            File file,
+            int publicationId,
+            ImageUtils.StaticContentPathInfo pathInfo,
+            String urlPath) throws ContentProviderException {
+        return createStaticContentItem(ContentNamespace.Sites, requestDto, file, publicationId, pathInfo, urlPath);
+    }
 
+    protected StaticContentItem createStaticContentItem(
+            ContentNamespace namespace,
+            StaticContentRequestDto requestDto,
+            File file,
+            int publicationId,
+            ImageUtils.StaticContentPathInfo pathInfo,
+            String urlPath) throws ContentProviderException {
+        BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
+                convertNamespace(namespace),
+                publicationId,
+                pathInfo.getFileName(),
+                "",
+                createContextData(requestDto.getClaims()));
+
+        return this.processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);
+    }
+
+    @Override
+    protected @NotNull StaticContentItem getStaticContentItemById(ContentNamespace namespace, int binaryId, StaticContentRequestDto requestDto) throws ContentProviderException {
+        BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
+                convertNamespace(namespace),
+                Ints.tryParse(requestDto.getLocalizationId()),
+                binaryId,
+                null,
+                null);
+
+        String parentPath = getPublicationPath(requestDto.getLocalizationId());
+        String path = binaryComponent.getVariants().getEdges().get(0).getNode().getPath();
+
+        final File file = new File(parentPath, path);
+        final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
+
+        String urlPath = prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl());
+
+        return this.processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);
+    }
+
+    private void refreshBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, BinaryComponent binaryComponent) throws ContentProviderException {
+        String downloadUrl = binaryComponent.getVariants().getEdges().get(0).getNode().getDownloadUrl();
+
+        byte[] content = contentDownloader.downloadContent(file, downloadUrl);
+
+        refreshBinary(file, pathInfo, content);
+    }
+
+    public String resolveLocalizationPath(StaticContentRequestDto requestDto, ContentNamespace namespace) throws StaticContentNotLoadedException {
+        int publicationId = Integer.parseInt(requestDto.getLocalizationId());
+        ContextData contextData = createContextData(requestDto.getClaims());
+        Publication publication = apiClientProvider.getClient().getPublication(
+                convertNamespace(namespace),
+                publicationId,
+                "",
+                contextData);
+        return publication.getPublicationUrl();
+
+    };
+
+    @Override
+    protected String resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
+        return resolveLocalizationPath(requestDto, com.sdl.webapp.common.impl.model.ContentNamespace.Sites);
+    }
+
+    private com.sdl.web.pca.client.contentmodel.enums.ContentNamespace convertNamespace(ContentNamespace namespace) {
+        return namespace.equals(ContentNamespace.Sites) ? com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites : com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Docs;
+    }
+
+    private boolean isVersioned(String path) {
+        return (path != null) && path.contains("/system/");
+    }
+
+    private StaticContentItem processBinaryComponent(BinaryComponent binaryComponent, StaticContentRequestDto requestDto, File file, String urlPath, ImageUtils.StaticContentPathInfo pathInfo) throws ContentProviderException {
         if (binaryComponent == null) {
             throw new StaticContentNotFoundException("No binary found for pubId: [" +
-                    publicationId + "] and urlPath: " + urlPath);
+                    requestDto.getLocalizationId() + "] and urlPath: " + urlPath);
         }
 
         long componentTime = new DateTime(binaryComponent.getLastPublishDate()).getMillis();
@@ -74,28 +144,11 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         } else {
             log.debug("File does not need to be refreshed: {}", file.getAbsolutePath());
         }
-        String binaryComponentType = binaryComponent.getVariants().getEdges().get(0).getNode().getType();
+
+        BinaryVariant variant = binaryComponent.getVariants().getEdges().get(0).getNode();
+        String binaryComponentType = variant.getType();
         String contentType = StringUtils.isEmpty(binaryComponentType) ? DEFAULT_CONTENT_TYPE : binaryComponentType;
-        boolean versioned = requestDto.getBinaryPath().contains("/system/");
+        boolean versioned = isVersioned(variant.getPath());
         return new StaticContentItem(contentType, file, versioned);
-    }
-
-    private void refreshBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, BinaryComponent binaryComponent) throws ContentProviderException {
-        String downloadUrl = binaryComponent.getVariants().getEdges().get(0).getNode().getDownloadUrl();
-
-        byte[] content = contentDownloader.downloadContent(file, downloadUrl);
-
-        refreshBinary(file, pathInfo, content);
-    }
-
-    @Override
-    protected String resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
-        int publicationId = Integer.parseInt(requestDto.getLocalizationId());
-        ContextData contextData = createContextData(requestDto.getClaims());
-        Publication publication = apiClientProvider.getClient().getPublication(ContentNamespace.Sites,
-                publicationId,
-                "",
-                contextData);
-        return publication.getPublicationUrl();
     }
 }

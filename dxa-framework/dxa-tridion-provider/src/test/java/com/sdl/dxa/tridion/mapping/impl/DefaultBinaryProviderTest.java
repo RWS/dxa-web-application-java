@@ -1,6 +1,7 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
 import com.google.common.primitives.Ints;
+import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariant;
@@ -47,17 +48,19 @@ public class DefaultBinaryProviderTest {
     private static final String LOCALIZATION_PATH = "/";
     private static final String PUB_ID = "5";
     private static final int BINARY_ID = 286;
-    private final String[] files = {"ballon-burner_tcm5-297_w1024_h311_n.jpg",
-            "company-news-placeholder_tcm5-286_w1024_n.png",
-            "duplicate_tcm5-286_w1024_n.png",
+    private final String[] files = {"ballon-burner_ish5-297_w1024_h311_n.jpg",
+            "company-news-placeholder_ish5-286_w1024_n.png",
+            "duplicate_ish5-286_w1024_n.png",
             "invalid_name.png",
-            "wall_tcm5-308.jpg",
-            "wally_ish18-118119.png"};
+            "wall_ish5-308.jpg",
+            "wally_tcm18-118119.png"};
 
     @Mock
     private ContentProvider contentProvider;
     @Mock
     private ApiClient pcaClient;
+    @Mock
+    private ApiClientProvider pcaClientProvider;
     @Mock
     private WebApplicationContext webApplicationContext;
 
@@ -69,8 +72,9 @@ public class DefaultBinaryProviderTest {
 
     @Before
     public void setUp(){
-        provider = spy(new GraphQLBinaryProvider(pcaClient, webApplicationContext));
+        provider = spy(new GraphQLBinaryProvider(pcaClientProvider, webApplicationContext));
         doReturn(PATH_TO_FILES).when(provider).getBasePath();
+        when(pcaClientProvider.getClient()).thenReturn(pcaClient);
         when(pcaClient.getBinaryComponent(com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites, Ints.tryParse(PUB_ID), BINARY_ID, null, null)).thenReturn(binaryComponentForSites);
         when(pcaClient.getBinaryComponent(com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Docs, Ints.tryParse(PUB_ID), BINARY_ID, null, null)).thenReturn(binaryComponentForDocs);
     }
@@ -106,14 +110,14 @@ public class DefaultBinaryProviderTest {
         when(variants.getEdges()).thenReturn(Collections.singletonList(edge));
         BinaryVariant variant = mock(BinaryVariant.class);
         when(edge.getNode()).thenReturn(variant);
-        when(variant.getDownloadUrl()).thenReturn("ballon-burner_tcm5-297_w1024_h311_n.jpg");
+        when(variant.getDownloadUrl()).thenReturn("ballon-burner_ish5-297_w1024_h311_n.jpg");
         when(variant.getPath()).thenReturn("/binary/39137/6723");
         StaticContentItem expected = mock(StaticContentItem.class);
-        when(contentProvider.getStaticContent(variant.getPath(), PUB_ID, LOCALIZATION_PATH)).thenReturn(expected);
+        when(contentProvider.getStaticContent(ContentNamespace.Docs, variant.getPath(), PUB_ID, LOCALIZATION_PATH)).thenReturn(expected);
 
         StaticContentItem result = provider.downloadBinary(contentProvider, ContentNamespace.Docs, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
 
-        verify(contentProvider).getStaticContent(variant.getPath(), PUB_ID, LOCALIZATION_PATH);
+        verify(contentProvider).getStaticContent(ContentNamespace.Docs, variant.getPath(), PUB_ID, LOCALIZATION_PATH);
         assertSame(expected, result);
     }
 
@@ -125,9 +129,9 @@ public class DefaultBinaryProviderTest {
         when(variants.getEdges()).thenReturn(Collections.singletonList(edge));
         BinaryVariant variant = mock(BinaryVariant.class);
         when(edge.getNode()).thenReturn(variant);
-        when(variant.getDownloadUrl()).thenReturn("ballon-burner_ish5-297_w1024_h311_n.jpg");
+        when(variant.getDownloadUrl()).thenReturn("ballon-burner_tcm5-297_w1024_h311_n.jpg");
         when(variant.getPath()).thenReturn("/binary/39137/6723");
-        when(contentProvider.getStaticContent(variant.getPath(), PUB_ID, LOCALIZATION_PATH)).thenThrow(new RuntimeException());
+        when(contentProvider.getStaticContent(ContentNamespace.Sites, variant.getPath(), PUB_ID, LOCALIZATION_PATH)).thenThrow(new RuntimeException());
 
         provider.downloadBinary(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
     }
@@ -157,9 +161,9 @@ public class DefaultBinaryProviderTest {
     @Test
     public void processBinaryFile() throws Exception {
         StaticContentItem binaryContent = mock(StaticContentItem.class);
-        when(contentProvider.getStaticContent(files[0], PUB_ID, LOCALIZATION_PATH)).thenReturn(binaryContent);
+        when(contentProvider.getStaticContent(ContentNamespace.Sites, files[0], PUB_ID, LOCALIZATION_PATH)).thenReturn(binaryContent);
 
-        StaticContentItem result = provider.processBinaryFile(contentProvider, com.sdl.webapp.common.impl.model.ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH, files);
+        StaticContentItem result = provider.processBinaryFile(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH, files);
 
         assertEquals(binaryContent, result);
     }
@@ -188,9 +192,9 @@ public class DefaultBinaryProviderTest {
         doReturn(pathToBinaries).when(provider).getPathToBinaryFiles(PUB_ID);
         doReturn(files).when(provider).getFiles(ContentNamespace.Sites, BINARY_ID, PUB_ID, pathToBinaries);
         StaticContentItem binaryContent = mock(StaticContentItem.class);
-        doReturn(binaryContent).when(provider).processBinaryFile(contentProvider, com.sdl.webapp.common.impl.model.ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH, files);
+        doReturn(binaryContent).when(provider).processBinaryFile(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH, files);
 
-        StaticContentItem result = provider.getStaticContent(contentProvider, com.sdl.webapp.common.impl.model.ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
+        StaticContentItem result = provider.getStaticContent(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
 
         assertEquals(binaryContent, result);
     }

@@ -39,13 +39,16 @@ public class GraphQLBinaryProvider {
         this.webApplicationContext = webApplicationContext;
     }
 
-    public StaticContentItem getStaticContent(ContentProvider provider,
-                                              ContentNamespace contentNamespace,
-                                              int binaryId,
-                                              String localizationId,
-                                              String localizationPath) throws ContentProviderException {
+    public StaticContentItem getStaticContent(
+            ContentProvider provider,
+            ContentNamespace contentNamespace,
+            int binaryId,
+            String localizationId,
+            String localizationPath
+    ) throws ContentProviderException {
         Path pathToBinaries = getPathToBinaryFiles(localizationId);
         String[] files = getFiles(contentNamespace, binaryId, localizationId, pathToBinaries);
+
         return processBinaryFile(provider, contentNamespace, binaryId, localizationId, localizationPath, files);
     }
 
@@ -74,7 +77,7 @@ public class GraphQLBinaryProvider {
         if (files.length > 1) {
             log.warn("There are more than 1 file with binaryId: {} for localizationId: {} found, see {}. Taking 1st one...", binaryId, localizationId, Arrays.toString(files));
         }
-        return provider.getStaticContent(files[0], localizationId, localizationPath);
+        return provider.getStaticContent(contentNamespace, files[0], localizationId, localizationPath);
     }
 
     StaticContentItem downloadBinary(ContentProvider provider,
@@ -106,7 +109,7 @@ public class GraphQLBinaryProvider {
                 return null;
             }
             log.debug("Attempting to get binary content for {} from binary component with id: {} in namespace: {}", variant.getDownloadUrl(), binaryComponent.getId(), contentNamespace);
-            return provider.getStaticContent(variant.getPath(), localizationId, localizationPath);
+            return provider.getStaticContent(contentNamespace, variant.getPath(), localizationId, localizationPath);
         }
         catch(Exception ex) {
             String message = "Could not get binary file with binaryId: " + binaryId + " for localizationId: " + localizationId + " in namespace: " + contentNamespace;

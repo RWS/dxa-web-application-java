@@ -223,7 +223,6 @@ public class StronglyTypedTopicBuilderTest {
         Assert.assertNull("result.FirstChildLink.AlternateText", result.getFirstChildLink().getAlternateText());
         Assert.assertNotNull("result.ChildLinks", result.getChildLinks());
         Assert.assertEquals("result.ChildLinks.Count", 2, result.getChildLinks().size());
-        Assert.assertTrue(result.getSetterWasUsed());
     }
 
     @Test

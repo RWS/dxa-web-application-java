@@ -31,8 +31,6 @@
         <cd-xo.version>${cd-delivery-cil.version}</cd-xo.version>
         <udp-common-config-legacy.version>11.0.0-1028</udp-common-config-legacy.version>
         <udp-context-client.version>${cd-delivery-cil.version}</udp-context-client.version>
-        <udp-discovery-client-lightweight.version>11.0.0-1040</udp-discovery-client-lightweight.version>
-        <udp-cil-api.version>11.0.0-1032</udp-cil-api.version>
         <udp-ugc-cil-api.version>11.0.0-1032</udp-ugc-cil-api.version>
 
 
@@ -70,7 +68,6 @@
         <joda-time-version>2.10</joda-time-version>
 
         <jackson.version>2.9.6</jackson.version>
-        <woodstox-core.version>5.1.0</woodstox-core.version>
         <lombok.version>1.18.8</lombok.version>
 
         <!-- Logging -->
@@ -102,9 +99,6 @@
         <dozer.version>5.5.1</dozer.version>
         <device-detection.version>3.2.18.1</device-detection.version>
 
-        <aspectj.version>1.9.1</aspectj.version>
-        <findbugs.annotations.version>3.0.1</findbugs.annotations.version>
-
         <jb-annotations.version>17.0.0</jb-annotations.version>
         <jaxen.version>1.2.0</jaxen.version>
         <jdom2.version>2.0.6</jdom2.version>
@@ -115,22 +109,16 @@
 
         <!-- DD4T PROPERTIES -->
         <activation.version>1.1.1</activation.version>
-        <activemq.version>5.15.6</activemq.version>
 
         <commons-codec.version>1.12</commons-codec.version>
 
-        <el-impl.version>2.2</el-impl.version>
         <fast-classpath-scanner.version>3.1.15</fast-classpath-scanner.version>
         <gson.version>2.8.5</gson.version>
-        <guava.version>15.0</guava.version>
         <javax.jms.version>1.1-rev-1</javax.jms.version>
         <jetty-util.version>6.1.26</jetty-util.version>
         <javax.validation.version>2.0.1.Final</javax.validation.version>
         <javax.annotation.version>1.3.2</javax.annotation.version>
         <jaxws-api.version>2.3.1</jaxws-api.version>
-        <resteasy.version>3.0.8.Final</resteasy.version>
-        <scala.library.version>2.12.6</scala.library.version>
-        <urlrewritefilter.version>4.0.4</urlrewritefilter.version>
         <xml-apis.version>1.4.01</xml-apis.version>
         <jaxb.api.version>2.3.1</jaxb.api.version>
         <jaxb.core.version>2.3.0.1</jaxb.core.version>

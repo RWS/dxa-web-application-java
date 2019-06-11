@@ -14,6 +14,7 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.Configuration;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
+import com.sdl.webapp.common.impl.model.ContentNamespace;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -63,7 +64,6 @@ public class GraphQLContentProviderTest {
     @Before
     public void setup() {
         when(cacheManager.getCache(anyString())).thenReturn(cache);
-        when(apiClientProvider.getClient()).thenReturn(pcaClient);
         contentProvider = spy(new GraphQLContentProvider(webApplicationContext,
                 webRequestContext,
                 staticContentResolver,
@@ -103,7 +103,7 @@ public class GraphQLContentProviderTest {
     @Test
     public void getStaticContent() throws Exception {
         File contentFile = new File("path");
-        when(staticContentResolver.getStaticContent(any(StaticContentRequestDto.class))).thenReturn(new StaticContentItem("testType",
+        when(staticContentResolver.getStaticContent(any(ContentNamespace.class), any(StaticContentRequestDto.class))).thenReturn(new StaticContentItem("testType",
                 contentFile, false));
 
         StaticContentItem result = contentProvider.getStaticContent("/static", "localizationId", "localilzationPath");

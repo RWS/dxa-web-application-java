@@ -1,8 +1,8 @@
 package com.sdl.webapp.common.impl.model;
 
 public enum ContentNamespace {
-    Docs("tcm"),
-    Sites("ish");
+    Docs("ish"),
+    Sites("tcm");
 
     private String namespace;
 

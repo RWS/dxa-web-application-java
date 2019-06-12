@@ -40,7 +40,7 @@ public class RichTextDataConverter implements SemanticModelConverter<RichTextDat
                     if (entityModelData.getBinaryContent() != null) {
                         embeddedItem = pipeline.createEntityModel(entityModelData, MediaItem.class);
                     } else {
-                        embeddedItem = pipeline.createEntityModel(entityModelData);
+                        embeddedItem = pipeline.createEntityModel(entityModelData, EntityModel.class);
                     }
                 } catch (DxaException e) {
                     throw new FieldConverterException("Cannot create an instance of Media Item in RichText, model id " + entityModelData.getId(), e);

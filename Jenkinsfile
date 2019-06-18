@@ -34,7 +34,6 @@ pipeline {
             when { not { branch 'develop' } }
             // Not on the develop branch, so build it, but do not install it.
             steps {
-                //Sometime in the future these maven-settings should not be needed here (model service should build without acces to SDL repositories)
                 withCredentials([file(credentialsId: 'dxa-maven-settings', variable: 'MAVEN_SETTINGS_PATH')]) {
                     script {
                         //Build on JDK8
@@ -61,7 +60,7 @@ pipeline {
                             sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar deploy javadoc:aggregate@publicApi"
 
                             //Build the archetype:
-                            sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar deploy -f dxa-webapp/target/generated-sources/archetype/pom.xml "
+                            sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar install -f dxa-webapp/target/generated-sources/archetype/pom.xml "
 
                             //Move stuff around for archiving:
                             sh "mv target/site/publicApi/apidocs/ ./docs"

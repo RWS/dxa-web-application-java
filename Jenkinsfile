@@ -34,7 +34,6 @@ pipeline {
             when { not { branch 'develop' } }
             // Not on the develop branch, so build it, but do not install it.
             steps {
-                //Sometime in the future these maven-settings should not be needed here (model service should build without acces to SDL repositories)
                 withCredentials([file(credentialsId: 'dxa-maven-settings', variable: 'MAVEN_SETTINGS_PATH')]) {
                     script {
                         //Build on JDK8

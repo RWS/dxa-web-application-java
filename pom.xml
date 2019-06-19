@@ -58,16 +58,15 @@
         <commons-io-version>2.6</commons-io-version>
         <commons-lang3.version>3.9</commons-lang3.version>
         <commons-collections4.version>4.3</commons-collections4.version>
-        <commons-validator.version>1.6</commons-validator.version>
-        <httpcomponents-client-version>4.5.6</httpcomponents-client-version>
-        <httpcomponents.core.version>4.4.10</httpcomponents.core.version>
+        <httpcomponents-client-version>4.5.8</httpcomponents-client-version>
+        <httpcomponents.core.version>4.4.11</httpcomponents.core.version>
 
         <guava-version>27.1-jre</guava-version>
 
         <!-- Joda Time -->
         <joda-time-version>2.10</joda-time-version>
 
-        <jackson.version>2.9.6</jackson.version>
+        <jackson.version>2.9.9</jackson.version>
         <lombok.version>1.18.8</lombok.version>
 
         <!-- Logging -->
@@ -89,7 +88,7 @@
         <xmlunit.version>2.6.2</xmlunit.version>
 
         <!-- Spring -->
-        <spring.version>4.3.19.RELEASE</spring.version>
+        <spring.version>4.3.24.RELEASE</spring.version>
         <spring-security.version>4.2.12.RELEASE</spring-security.version>
 
         <jsoup.version>1.12.1</jsoup.version>
@@ -103,7 +102,6 @@
         <jaxen.version>1.2.0</jaxen.version>
         <jdom2.version>2.0.6</jdom2.version>
 
-        <ehcache.jcache.version>1.0.1</ehcache.jcache.version>
         <ehcache.version>3.7.1</ehcache.version>
         <cache-api.version>1.1.1</cache-api.version>
 
@@ -115,11 +113,8 @@
         <fast-classpath-scanner.version>3.1.15</fast-classpath-scanner.version>
         <gson.version>2.8.5</gson.version>
         <javax.jms.version>1.1-rev-1</javax.jms.version>
-        <jetty-util.version>6.1.26</jetty-util.version>
-        <javax.validation.version>2.0.1.Final</javax.validation.version>
         <javax.annotation.version>1.3.2</javax.annotation.version>
         <jaxws-api.version>2.3.1</jaxws-api.version>
-        <xml-apis.version>1.4.01</xml-apis.version>
         <jaxb.api.version>2.3.1</jaxb.api.version>
         <jaxb.core.version>2.3.0.1</jaxb.core.version>
         <jaxb.version>2.3.2</jaxb.version>
@@ -405,17 +400,6 @@
             </dependency>
 
             <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjrt</artifactId>
-                <version>${aspectj.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjweaver</artifactId>
-                <version>${aspectj.version}</version>
-            </dependency>
-
-            <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
@@ -625,11 +609,6 @@
                 <version>${commons-collections4.version}</version>
             </dependency>
             <dependency>
-                <groupId>commons-validator</groupId>
-                <artifactId>commons-validator</artifactId>
-                <version>${commons-validator.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>commons-codec</groupId>
                 <artifactId>commons-codec</artifactId>
                 <version>${commons-codec.version}</version>
@@ -663,11 +642,6 @@
                 <groupId>com.google.guava</groupId>
                 <artifactId>guava</artifactId>
                 <version>${guava-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.google.code.findbugs</groupId>
-                <artifactId>annotations</artifactId>
-                <version>${findbugs.annotations.version}</version>
             </dependency>
 
             <!-- Joda Time -->
@@ -774,12 +748,6 @@
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-afterburner</artifactId>
                 <version>${jackson.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>javax.jms</groupId>
-                <artifactId>jms-api</artifactId>
-                <version>${javax.jms.version}</version>
             </dependency>
 
             <!-- Only used for JMS cache invalidation -->

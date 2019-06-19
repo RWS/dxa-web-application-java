@@ -66,7 +66,7 @@
         <!-- Joda Time -->
         <joda-time-version>2.10</joda-time-version>
 
-        <jackson.version>2.9.6</jackson.version>
+        <jackson.version>2.9.9</jackson.version>
         <lombok.version>1.18.8</lombok.version>
 
         <!-- Logging -->
@@ -88,7 +88,7 @@
         <xmlunit.version>2.6.2</xmlunit.version>
 
         <!-- Spring -->
-        <spring.version>4.3.19.RELEASE</spring.version>
+        <spring.version>4.3.24.RELEASE</spring.version>
         <spring-security.version>4.2.12.RELEASE</spring-security.version>
 
         <jsoup.version>1.12.1</jsoup.version>
@@ -401,17 +401,6 @@
                 <groupId>net.sf.dozer</groupId>
                 <artifactId>dozer</artifactId>
                 <version>${dozer.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjrt</artifactId>
-                <version>${aspectj.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.aspectj</groupId>
-                <artifactId>aspectjweaver</artifactId>
-                <version>${aspectj.version}</version>
             </dependency>
 
             <dependency>

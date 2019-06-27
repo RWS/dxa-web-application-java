@@ -355,7 +355,7 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
-                <artifactId>dxa-module-dynamicdocumentation</artifactId>
+                <artifactId>dxa-module-dynamic-documentation</artifactId>
                 <version>${dxa-module-dd.version}</version>
             </dependency>
             <!--endregion-->

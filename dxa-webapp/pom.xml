@@ -200,7 +200,7 @@
             <dependencies>
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
-                    <artifactId>dxa-module-dynamicdocumentation</artifactId>
+                    <artifactId>dxa-module-dynamic-documentation</artifactId>
                 </dependency>
             </dependencies>
         </profile>

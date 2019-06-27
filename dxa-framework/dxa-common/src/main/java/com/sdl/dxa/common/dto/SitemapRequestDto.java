@@ -24,6 +24,11 @@ public class SitemapRequestDto {
 
     private int localizationId;
 
+    /**
+     * namespace {"tcm", "ish"}
+     */
+    private String uriType;
+
     private DepthCounter expandLevels;
 
     private NavigationFilter navigationFilter;
@@ -70,5 +75,8 @@ public class SitemapRequestDto {
         private DepthCounter expandLevels = DepthCounter.UNLIMITED_DEPTH;
 
         private NavigationFilter navigationFilter = NavigationFilter.DEFAULT;
+
+        private String uriType = "tcm";
+
     }
 }

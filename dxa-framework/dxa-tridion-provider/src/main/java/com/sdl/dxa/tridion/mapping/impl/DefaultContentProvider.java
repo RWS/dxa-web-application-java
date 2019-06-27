@@ -3,6 +3,7 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.common.dto.ClaimHolder;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
@@ -20,7 +21,6 @@ import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.common.impl.model.ContentNamespace;
 import com.sdl.webapp.common.util.FileUtils;
 import com.tridion.broker.StorageException;
 import com.tridion.broker.querying.MetadataType;
@@ -99,6 +99,18 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
     protected PageModel loadPage(String path, Localization localization) throws ContentProviderException {
         PageModelData modelData = modelService.loadPageModel(
                 PageRequestDto.builder(localization.getId(), path)
+                        .includePages(INCLUDE)
+                        .build());
+        return builderPipeline.createPageModel(modelData);
+    }
+
+    protected PageModel loadPage(int pageId, Localization localization, ClaimHolder claims) throws ContentProviderException {
+        if (claims != null) {
+            log.error("Context claims are not supported for DXA + Model service. Please use a setup with GraphQL.");
+        }
+
+        PageModelData modelData = modelService.loadPageModel(
+                PageRequestDto.builder(localization.getId(), pageId)
                         .includePages(INCLUDE)
                         .build());
         return builderPipeline.createPageModel(modelData);
@@ -340,12 +352,12 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
      * @dxa.publicApi
      */
     @Override
-    public StaticContentItem getStaticContent(ContentNamespace contentNamespace, int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
+    public StaticContentItem getStaticContent(String contentNamespace, int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
         throw new NotImplementedException("This is not implemented in CIL. Use GraphQL instead of CIL.");
     }
 
     @Override
-    public @NotNull StaticContentItem getStaticContent(ContentNamespace namespace, String path, String localizationId, String localizationPath) throws ContentProviderException {
+    public @NotNull StaticContentItem getStaticContent(String namespace, String path, String localizationId, String localizationPath) throws ContentProviderException {
         throw new NotImplementedException("This is not implemented in CIL. Use GraphQL instead of CIL.");
     }
 }

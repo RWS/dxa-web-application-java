@@ -3,6 +3,7 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.google.common.primitives.Ints;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.ApiClient;
+import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariant;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariantConnection;
@@ -11,7 +12,6 @@ import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
-import com.sdl.webapp.common.impl.model.ContentNamespace;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -75,8 +75,8 @@ public class DefaultBinaryProviderTest {
         provider = spy(new GraphQLBinaryProvider(pcaClientProvider, webApplicationContext));
         doReturn(PATH_TO_FILES).when(provider).getBasePath();
         when(pcaClientProvider.getClient()).thenReturn(pcaClient);
-        when(pcaClient.getBinaryComponent(com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites, Ints.tryParse(PUB_ID), BINARY_ID, null, null)).thenReturn(binaryComponentForSites);
-        when(pcaClient.getBinaryComponent(com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Docs, Ints.tryParse(PUB_ID), BINARY_ID, null, null)).thenReturn(binaryComponentForDocs);
+        when(pcaClient.getBinaryComponent(ContentNamespace.Sites, Ints.tryParse(PUB_ID), BINARY_ID, null, null)).thenReturn(binaryComponentForSites);
+        when(pcaClient.getBinaryComponent(ContentNamespace.Docs, Ints.tryParse(PUB_ID), BINARY_ID, null, null)).thenReturn(binaryComponentForDocs);
     }
 
     @Test
@@ -90,16 +90,16 @@ public class DefaultBinaryProviderTest {
     public void processBinaryFileNoFiles() throws Exception {
         when(pcaClient.getBinaryComponent(com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites, Ints.tryParse(PUB_ID), BINARY_ID, null, null)).thenReturn(null);
 
-        assertNull(provider.processBinaryFile(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH, null));
+        assertNull(provider.processBinaryFile(contentProvider, "tcm", BINARY_ID, PUB_ID, LOCALIZATION_PATH, null));
 
-        verify(provider).downloadBinary(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
+        verify(provider).downloadBinary(contentProvider, "tcm", BINARY_ID, PUB_ID, LOCALIZATION_PATH);
     }
 
     @Test
     public void processBinaryFileDownloadBinaryComponentWithoutVariants() throws Exception {
-        assertNull(provider.processBinaryFile(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH, null));
+        assertNull(provider.processBinaryFile(contentProvider, "tcm", BINARY_ID, PUB_ID, LOCALIZATION_PATH, null));
 
-        verify(provider).downloadBinary(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
+        verify(provider).downloadBinary(contentProvider, "tcm", BINARY_ID, PUB_ID, LOCALIZATION_PATH);
     }
 
     @Test
@@ -113,11 +113,11 @@ public class DefaultBinaryProviderTest {
         when(variant.getDownloadUrl()).thenReturn("ballon-burner_ish5-297_w1024_h311_n.jpg");
         when(variant.getPath()).thenReturn("/binary/39137/6723");
         StaticContentItem expected = mock(StaticContentItem.class);
-        when(contentProvider.getStaticContent(ContentNamespace.Docs, variant.getPath(), PUB_ID, LOCALIZATION_PATH)).thenReturn(expected);
+        when(contentProvider.getStaticContent("ish", variant.getPath(), PUB_ID, LOCALIZATION_PATH)).thenReturn(expected);
 
-        StaticContentItem result = provider.downloadBinary(contentProvider, ContentNamespace.Docs, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
+        StaticContentItem result = provider.downloadBinary(contentProvider, "ish", BINARY_ID, PUB_ID, LOCALIZATION_PATH);
 
-        verify(contentProvider).getStaticContent(ContentNamespace.Docs, variant.getPath(), PUB_ID, LOCALIZATION_PATH);
+        verify(contentProvider).getStaticContent("ish", variant.getPath(), PUB_ID, LOCALIZATION_PATH);
         assertSame(expected, result);
     }
 
@@ -131,9 +131,9 @@ public class DefaultBinaryProviderTest {
         when(edge.getNode()).thenReturn(variant);
         when(variant.getDownloadUrl()).thenReturn("ballon-burner_tcm5-297_w1024_h311_n.jpg");
         when(variant.getPath()).thenReturn("/binary/39137/6723");
-        when(contentProvider.getStaticContent(ContentNamespace.Sites, variant.getPath(), PUB_ID, LOCALIZATION_PATH)).thenThrow(new RuntimeException());
+        when(contentProvider.getStaticContent("tcm", variant.getPath(), PUB_ID, LOCALIZATION_PATH)).thenThrow(new RuntimeException());
 
-        provider.downloadBinary(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
+        provider.downloadBinary(contentProvider, "tcm", BINARY_ID, PUB_ID, LOCALIZATION_PATH);
     }
 
     @Test
@@ -146,7 +146,7 @@ public class DefaultBinaryProviderTest {
         when(edge.getNode()).thenReturn(variant);
         when(variant.getDownloadUrl()).thenReturn(null);
 
-        assertNull(provider.downloadBinary(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH));
+        assertNull(provider.downloadBinary(contentProvider, "tcm", BINARY_ID, PUB_ID, LOCALIZATION_PATH));
     }
 
     @Test
@@ -155,15 +155,15 @@ public class DefaultBinaryProviderTest {
         when(binaryComponentForSites.getVariants()).thenReturn(variants);
         when(variants.getEdges()).thenReturn(null);
 
-        assertNull(provider.downloadBinary(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH));
+        assertNull(provider.downloadBinary(contentProvider, "tcm", BINARY_ID, PUB_ID, LOCALIZATION_PATH));
     }
 
     @Test
     public void processBinaryFile() throws Exception {
         StaticContentItem binaryContent = mock(StaticContentItem.class);
-        when(contentProvider.getStaticContent(ContentNamespace.Sites, files[0], PUB_ID, LOCALIZATION_PATH)).thenReturn(binaryContent);
+        when(contentProvider.getStaticContent("tcm", files[0], PUB_ID, LOCALIZATION_PATH)).thenReturn(binaryContent);
 
-        StaticContentItem result = provider.processBinaryFile(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH, files);
+        StaticContentItem result = provider.processBinaryFile(contentProvider, "tcm", BINARY_ID, PUB_ID, LOCALIZATION_PATH, files);
 
         assertEquals(binaryContent, result);
     }
@@ -190,11 +190,11 @@ public class DefaultBinaryProviderTest {
     public void getStaticContent() throws Exception {
         Path pathToBinaries = mock(Path.class);
         doReturn(pathToBinaries).when(provider).getPathToBinaryFiles(PUB_ID);
-        doReturn(files).when(provider).getFiles(ContentNamespace.Sites, BINARY_ID, PUB_ID, pathToBinaries);
+        doReturn(files).when(provider).getFiles("tcm", BINARY_ID, PUB_ID, pathToBinaries);
         StaticContentItem binaryContent = mock(StaticContentItem.class);
-        doReturn(binaryContent).when(provider).processBinaryFile(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH, files);
+        doReturn(binaryContent).when(provider).processBinaryFile(contentProvider, "tcm", BINARY_ID, PUB_ID, LOCALIZATION_PATH, files);
 
-        StaticContentItem result = provider.getStaticContent(contentProvider, ContentNamespace.Sites, BINARY_ID, PUB_ID, LOCALIZATION_PATH);
+        StaticContentItem result = provider.getStaticContent(contentProvider, "tcm", BINARY_ID, PUB_ID, LOCALIZATION_PATH);
 
         assertEquals(binaryContent, result);
     }
@@ -203,12 +203,12 @@ public class DefaultBinaryProviderTest {
     public void getFilenameFilter() {
         File file = mock(File.class);
 
-        assertFalse(provider.getFilenameFilter(ContentNamespace.Docs, BINARY_ID, PUB_ID).accept(file, files[0]));
-        assertTrue(provider.getFilenameFilter(ContentNamespace.Docs, BINARY_ID, PUB_ID).accept(file, files[1]));
-        assertTrue(provider.getFilenameFilter(ContentNamespace.Docs, BINARY_ID, PUB_ID).accept(file, files[2]));
-        assertFalse(provider.getFilenameFilter(ContentNamespace.Docs, BINARY_ID, PUB_ID).accept(file, files[3]));
-        assertFalse(provider.getFilenameFilter(ContentNamespace.Docs, BINARY_ID, PUB_ID).accept(file, files[4]));
-        assertTrue(provider.getFilenameFilter(ContentNamespace.Sites, 118119, "18").accept(file, files[5]));
+        assertFalse(provider.getFilenameFilter("ish", BINARY_ID, PUB_ID).accept(file, files[0]));
+        assertTrue(provider.getFilenameFilter("ish", BINARY_ID, PUB_ID).accept(file, files[1]));
+        assertTrue(provider.getFilenameFilter("ish", BINARY_ID, PUB_ID).accept(file, files[2]));
+        assertFalse(provider.getFilenameFilter("ish", BINARY_ID, PUB_ID).accept(file, files[3]));
+        assertFalse(provider.getFilenameFilter("ish", BINARY_ID, PUB_ID).accept(file, files[4]));
+        assertTrue(provider.getFilenameFilter("tcm", 118119, "18").accept(file, files[5]));
     }
 
     @Test
@@ -218,14 +218,14 @@ public class DefaultBinaryProviderTest {
         when(pathToBinaries.toFile()).thenReturn(dirToBinaries);
         when(dirToBinaries.list(any(FilenameFilter.class))).thenReturn(files);
 
-        assertArrayEquals(files, provider.getFiles(ContentNamespace.Sites, BINARY_ID, PUB_ID, pathToBinaries));
+        assertArrayEquals(files, provider.getFiles("tcm", BINARY_ID, PUB_ID, pathToBinaries));
     }
 
     @Test
     public void getFilenameFilterForSites() {
         File dirToBinaries = mock(File.class);
-        FilenameFilter filter1 = provider.getFilenameFilter(ContentNamespace.Sites, BINARY_ID, PUB_ID);
-        FilenameFilter filter2 = provider.getFilenameFilter(ContentNamespace.Sites, 118119, "18");
+        FilenameFilter filter1 = provider.getFilenameFilter("tcm", BINARY_ID, PUB_ID);
+        FilenameFilter filter2 = provider.getFilenameFilter("tcm", 118119, "18");
 
         assertFalse(filter1.accept(dirToBinaries, files[0]));
         assertFalse(filter1.accept(dirToBinaries, files[1]));
@@ -239,8 +239,8 @@ public class DefaultBinaryProviderTest {
     @Test
     public void getFilenameFilterForDocs() {
         File dirToBinaries = mock(File.class);
-        FilenameFilter filter1 = provider.getFilenameFilter(ContentNamespace.Docs, BINARY_ID, PUB_ID);
-        FilenameFilter filter2 = provider.getFilenameFilter(ContentNamespace.Docs, 118119, "18");
+        FilenameFilter filter1 = provider.getFilenameFilter("ish", BINARY_ID, PUB_ID);
+        FilenameFilter filter2 = provider.getFilenameFilter("ish", 118119, "18");
 
         assertFalse(filter1.accept(dirToBinaries, files[0]));
         assertTrue(filter1.accept(dirToBinaries, files[1]));

@@ -29,7 +29,11 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.Assert;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -94,6 +98,8 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
             return staticNavigationProvider.getContextNavigationLinks(requestPath, localization);
         }
 
+        navigationModel.get().rebuildParentRelationships();
+
         SitemapItemModelData currentLevel = navigationModel.get().findWithUrl(PathUtils.stripDefaultExtension(requestPath));
 
         if (currentLevel != null && !(currentLevel instanceof TaxonomyNodeModelData)) {
@@ -108,9 +114,11 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
         Optional<SitemapItemModelData> navigationModel = getNavigationModelInternal(localization);
 
         if (!navigationModel.isPresent()) {
-            return staticNavigationProvider.getBreadcrumbNavigationLinks(requestPath, localization);
+            NavigationLinks breadcrumbNavigationLinks = staticNavigationProvider.getBreadcrumbNavigationLinks(requestPath, localization);
+            return breadcrumbNavigationLinks;
         }
 
+        navigationModel.get().rebuildParentRelationships();
         SitemapItemModelData currentLevel = navigationModel.get().findWithUrl(PathUtils.stripDefaultExtension(requestPath));
 
         return toNavigationLinksInternal(currentLevel == null ? Collections.emptySet() : collectBreadcrumbsToLevel(currentLevel, localization),
@@ -127,6 +135,7 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
                     .navigationFilter(navigationFilter)
                     .expandLevels(new DepthCounter(navigationFilter.getDescendantLevels()))
                     .sitemapId(sitemapItemId)
+                    .uriType(localization.getCmUriScheme())
                     .build();
 
             subtree = onDemandNavigationModelProvider.getNavigationSubtree(requestDto);

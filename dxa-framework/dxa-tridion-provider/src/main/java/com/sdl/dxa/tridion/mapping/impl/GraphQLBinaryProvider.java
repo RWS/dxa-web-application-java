@@ -4,13 +4,13 @@ import com.google.common.base.Strings;
 import com.google.common.primitives.Ints;
 import com.rometools.utils.Lists;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariant;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
-import com.sdl.webapp.common.impl.model.ContentNamespace;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -41,7 +41,7 @@ public class GraphQLBinaryProvider {
 
     public StaticContentItem getStaticContent(
             ContentProvider provider,
-            ContentNamespace contentNamespace,
+            String contentNamespace,
             int binaryId,
             String localizationId,
             String localizationPath
@@ -52,10 +52,7 @@ public class GraphQLBinaryProvider {
         return processBinaryFile(provider, contentNamespace, binaryId, localizationId, localizationPath, files);
     }
 
-    FilenameFilter getFilenameFilter(ContentNamespace contentNamespace, int binaryId, String localizationId) {
-        String nameSpace = contentNamespace == ContentNamespace.Sites
-                ? ContentNamespace.Sites.nameSpace()
-                : ContentNamespace.Docs.nameSpace();
+    FilenameFilter getFilenameFilter(String nameSpace, int binaryId, String localizationId) {
         return (path, name) -> name.matches(".*_" + nameSpace + localizationId + "-" + binaryId + "\\D.*");
     }
 
@@ -66,7 +63,7 @@ public class GraphQLBinaryProvider {
     }
 
     StaticContentItem processBinaryFile(ContentProvider provider,
-                                        ContentNamespace contentNamespace,
+                                        String contentNamespace,
                                         int binaryId,
                                         String localizationId,
                                         String localizationPath,
@@ -81,7 +78,7 @@ public class GraphQLBinaryProvider {
     }
 
     StaticContentItem downloadBinary(ContentProvider provider,
-                                     ContentNamespace contentNamespace,
+                                     String contentNamespace,
                                      int binaryId,
                                      String localizationId,
                                      String localizationPath) throws ContentProviderException {
@@ -118,8 +115,14 @@ public class GraphQLBinaryProvider {
     }
 
     @NotNull
-    private com.sdl.web.pca.client.contentmodel.enums.ContentNamespace getContentNamespace(ContentNamespace contentNamespace) {
-        return contentNamespace == ContentNamespace.Sites ? Sites : Docs;
+    private ContentNamespace getContentNamespace(String contentNamespace) {
+        switch (contentNamespace) {
+            case "ish":
+                return Docs;
+            case "tcm":
+                return Sites;
+        }
+        return null;
     }
 
     @NotNull
@@ -131,7 +134,7 @@ public class GraphQLBinaryProvider {
         return basePath;
     }
 
-    String[] getFiles(ContentNamespace contentNamespace, int binaryId, String localizationId, Path pathToBinaries) {
+    String[] getFiles(String contentNamespace, int binaryId, String localizationId, Path pathToBinaries) {
         return pathToBinaries.toFile().list(getFilenameFilter(contentNamespace, binaryId, localizationId));
     }
 

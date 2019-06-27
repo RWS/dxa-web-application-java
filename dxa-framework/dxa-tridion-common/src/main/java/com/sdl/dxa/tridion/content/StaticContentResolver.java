@@ -1,7 +1,6 @@
 package com.sdl.dxa.tridion.content;
 
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
-import com.sdl.webapp.common.impl.model.ContentNamespace;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
@@ -21,6 +20,4 @@ public interface StaticContentResolver {
      * @dxa.publicApi
      */
     @NotNull StaticContentItem getStaticContent(@NotNull StaticContentRequestDto requestDto) throws ContentProviderException;
-
-    @NotNull StaticContentItem getStaticContent(ContentNamespace namespace, @NotNull StaticContentRequestDto requestDto) throws ContentProviderException;
 }

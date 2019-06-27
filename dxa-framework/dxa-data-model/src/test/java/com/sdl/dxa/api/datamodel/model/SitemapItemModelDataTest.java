@@ -3,8 +3,9 @@ package com.sdl.dxa.api.datamodel.model;
 import com.google.common.collect.Lists;
 import org.junit.Test;
 
+import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.TreeSet;
+import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -27,9 +28,9 @@ public class SitemapItemModelDataTest {
         parent.setId("parent");
         parent.setUrl("parent");
         parent.setTitle("parent");
-        parent.setItems(new TreeSet<>(Lists.newArrayList(itemToFind)));
+        parent.setItems(Lists.newArrayList(itemToFind));
 
-        sitemapItemModelData.setItems(new TreeSet<>(Lists.newArrayList(parent)));
+        sitemapItemModelData.setItems(Lists.newArrayList(parent));
 
         //when
         SitemapItemModelData found = sitemapItemModelData.findWithUrl("path");
@@ -46,7 +47,7 @@ public class SitemapItemModelDataTest {
     public void shouldReturnNullIfNoSubItemFound() {
         //given
         SitemapItemModelData SitemapItemModelData = new SitemapItemModelData();
-        SitemapItemModelData.setItems(new TreeSet<>());
+        SitemapItemModelData.setItems(new ArrayList<>());
 
         //when
         SitemapItemModelData found = SitemapItemModelData.findWithUrl("path");
@@ -58,15 +59,15 @@ public class SitemapItemModelDataTest {
     @Test
     public void shouldSetParent_ToAllChildren_InRightOrder() {
         //given 
-        TreeSet<SitemapItemModelData> items = new TreeSet<>();
+        List<SitemapItemModelData> items = new ArrayList<>();
         SitemapItemModelData child4 = new SitemapItemModelData().setId("1");
         SitemapItemModelData child3 = new SitemapItemModelData().setId("666").setTitle("002 Title");
         SitemapItemModelData child2 = new SitemapItemModelData().setId("667").setTitle("001 Title");
         SitemapItemModelData child1 = new SitemapItemModelData().setId("1").setTitle("001 Title");
-        items.add(child4);
-        items.add(child3);
-        items.add(child2);
         items.add(child1);
+        items.add(child2);
+        items.add(child3);
+        items.add(child4);
 
         //when
         SitemapItemModelData parent = new SitemapItemModelData().setItems(items);

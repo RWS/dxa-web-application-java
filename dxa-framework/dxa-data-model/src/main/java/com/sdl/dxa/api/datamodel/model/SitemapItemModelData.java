@@ -14,8 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.SortedSet;
-import java.util.TreeSet;
 
 @Data
 @ToString(exclude = "parent")
@@ -45,10 +46,13 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
     private boolean visible;
 
     @JsonProperty("Items")
-    private SortedSet<SitemapItemModelData> items = new TreeSet<>();
+    private List<SitemapItemModelData> items = new ArrayList<>();
 
     @JsonProperty("PublishedDate")
     private DateTime publishedDate;
+
+    @JsonIgnore
+    private boolean parentsSet = false;
 
     @JsonIgnore
     private SitemapItemModelData parent;
@@ -62,14 +66,14 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
     @NotNull
     public SitemapItemModelData addItem(SitemapItemModelData item) {
         if (this.items == null) {
-            this.items = new TreeSet<>();
+            this.items = new ArrayList<>();
         }
         item.parent = this;
         this.items.add(item);
         return this;
     }
 
-    public SitemapItemModelData setItems(SortedSet<SitemapItemModelData> items) {
+    public SitemapItemModelData setItems(List<SitemapItemModelData> items) {
         if (items == null) {
             this.items = null;
         } else {
@@ -125,4 +129,18 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
         return null;
     }
 
+    public void rebuildParentRelationships() {
+        for (SitemapItemModelData child : getItems()) {
+            child.setParent(this);
+            child.rebuildParentRelationships();
+        }
+        parentsSet = true;
+    }
+
+    public SitemapItemModelData getParent() {
+        if (!parentsSet) {
+            throw new RuntimeException("The parents have not been computed; please call rebuildParentRelationships() on the root parent first.");
+        }
+        return parent;
+    }
 }

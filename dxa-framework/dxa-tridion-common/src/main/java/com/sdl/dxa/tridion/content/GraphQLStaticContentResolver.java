@@ -4,14 +4,15 @@ import com.google.common.primitives.Ints;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.contentmodel.ContextData;
+import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariant;
+import com.sdl.web.pca.client.contentmodel.generated.BinaryVariantEdge;
 import com.sdl.web.pca.client.contentmodel.generated.Publication;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
-import com.sdl.webapp.common.api.content.StaticContentNotLoadedException;
-import com.sdl.webapp.common.impl.model.ContentNamespace;
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.ImageUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
+import java.util.List;
 
 import static com.sdl.dxa.tridion.common.ContextDataCreator.createContextData;
 import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
@@ -53,18 +55,8 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
             int publicationId,
             ImageUtils.StaticContentPathInfo pathInfo,
             String urlPath) throws ContentProviderException {
-        return createStaticContentItem(ContentNamespace.Sites, requestDto, file, publicationId, pathInfo, urlPath);
-    }
-
-    protected StaticContentItem createStaticContentItem(
-            ContentNamespace namespace,
-            StaticContentRequestDto requestDto,
-            File file,
-            int publicationId,
-            ImageUtils.StaticContentPathInfo pathInfo,
-            String urlPath) throws ContentProviderException {
         BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
-                convertNamespace(namespace),
+                convertNamespace(requestDto.getUriType()),
                 publicationId,
                 pathInfo.getFileName(),
                 "",
@@ -74,16 +66,20 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     }
 
     @Override
-    protected @NotNull StaticContentItem getStaticContentItemById(ContentNamespace namespace, int binaryId, StaticContentRequestDto requestDto) throws ContentProviderException {
+    protected @NotNull StaticContentItem getStaticContentItemById(int binaryId, StaticContentRequestDto requestDto) throws ContentProviderException {
         BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
-                convertNamespace(namespace),
+                convertNamespace(requestDto.getUriType()),
                 Ints.tryParse(requestDto.getLocalizationId()),
                 binaryId,
                 null,
                 null);
 
+        if (binaryComponent == null) {
+            throw new DxaItemNotFoundException("Item not found");
+        }
         String parentPath = getPublicationPath(requestDto.getLocalizationId());
-        String path = binaryComponent.getVariants().getEdges().get(0).getNode().getPath();
+        List<BinaryVariantEdge> edges = binaryComponent.getVariants().getEdges();
+        String path = edges.get(0).getNode().getPath();
 
         final File file = new File(parentPath, path);
         final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
@@ -101,11 +97,11 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         refreshBinary(file, pathInfo, content);
     }
 
-    public String resolveLocalizationPath(StaticContentRequestDto requestDto, ContentNamespace namespace) throws StaticContentNotLoadedException {
+    public String resolveLocalizationPath(StaticContentRequestDto requestDto) {
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
         ContextData contextData = createContextData(requestDto.getClaims());
         Publication publication = apiClientProvider.getClient().getPublication(
-                convertNamespace(namespace),
+                convertNamespace(requestDto.getUriType()),
                 publicationId,
                 "",
                 contextData);
@@ -113,13 +109,15 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
 
     };
 
-    @Override
-    protected String resolveLocalizationPath(StaticContentRequestDto requestDto) throws StaticContentNotLoadedException {
-        return resolveLocalizationPath(requestDto, com.sdl.webapp.common.impl.model.ContentNamespace.Sites);
-    }
+    private ContentNamespace convertNamespace(String namespace) {
+        switch (namespace) {
+            case "ish":
+                return ContentNamespace.Docs;
+            case "tcm":
+                return ContentNamespace.Sites;
+        }
 
-    private com.sdl.web.pca.client.contentmodel.enums.ContentNamespace convertNamespace(ContentNamespace namespace) {
-        return namespace.equals(ContentNamespace.Sites) ? com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites : com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Docs;
+        return null;
     }
 
     private boolean isVersioned(String path) {

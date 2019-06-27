@@ -13,7 +13,7 @@ public class SitemapRequestDtoTest {
     @Test
     public void shouldReturnSiteMapRequestDto_WithLowerLevel() {
         //given 
-        SitemapRequestDto requestDto = new SitemapRequestDto("1", 2, new DepthCounter(42), null);
+        SitemapRequestDto requestDto = new SitemapRequestDto("1", 2, "tcm", new DepthCounter(42), null);
 
         //when
         SitemapRequestDto actual = requestDto.nextExpandLevel();

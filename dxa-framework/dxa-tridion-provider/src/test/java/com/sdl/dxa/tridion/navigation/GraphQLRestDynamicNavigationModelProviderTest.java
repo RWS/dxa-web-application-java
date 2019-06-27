@@ -95,12 +95,15 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
             assertTrue(target.isVisible());
         }
         if (verifyChildren) {
-            assertEquals(3, target.getItems().size());
-            assertEquals(ID + "_" + ID + "_1", target.getItems().first().getId());
-            assertEquals(0, target.getItems().first().getItems().size());
-            assertEquals(ID + "_" + ID + "_3", target.getItems().last().getId());
-            assertEquals(1, target.getItems().last().getItems().size());
-            assertEquals(ID + "_" + ID + "_" + ID + "_1", target.getItems().last().getItems().first().getId());
+            List<SitemapItemModelData> items = target.getItems();
+            SitemapItemModelData first = items.get(0);
+            SitemapItemModelData last = items.get(items.size() - 1);
+            assertEquals(3, items.size());
+            assertEquals(ID + "_" + ID + "_1", first.getId());
+            assertEquals(0, first.getItems().size());
+            assertEquals(ID + "_" + ID + "_3", last.getId());
+            assertEquals(1, last.getItems().size());
+            assertEquals(ID + "_" + ID + "_" + ID + "_1", last.getItems().get(0).getId());
         }
     }
 
@@ -288,13 +291,17 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
             assertTrue(target.isVisible());
         }
         if (verifyChildren) {
+            List<SitemapItemModelData> items = target.getItems();
+            SitemapItemModelData first = items.get(0);
+            SitemapItemModelData last = items.get(items.size() - 1);
+
             assertEquals(3, target.getItems().size());
-            assertEquals(ID + "_" + ID + "_" + ID + "_1", target.getItems().first().getId());
-            assertEquals(1, target.getItems().first().getItems().size());
-            assertEquals(ID + "_" + ID + "_" + ID + "_3", target.getItems().last().getId());
-            assertEquals(1, target.getItems().last().getItems().size());
+            assertEquals(ID + "_" + ID + "_" + ID + "_1", first.getId());
+            assertEquals(1, first.getItems().size());
+            assertEquals(ID + "_" + ID + "_" + ID + "_3", last.getId());
+            assertEquals(1, last.getItems().size());
             assertEquals(ID + "_" + ID + "_" + ID + "_" + ID + "_1",
-                    target.getItems().last().getItems().first().getId());
+                    last.getItems().get(0).getId());
         }
     }
 

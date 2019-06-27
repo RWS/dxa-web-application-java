@@ -3,16 +3,21 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.common.dto.ClaimHolder;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.broker.GraphQLQueryProvider;
 import com.sdl.dxa.tridion.broker.QueryProvider;
+import com.sdl.dxa.tridion.common.ContextDataCreator;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.graphql.GraphQLProvider;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
+import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
+import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
 import com.sdl.web.pca.client.contentmodel.generated.Component;
 import com.sdl.web.pca.client.contentmodel.generated.CustomMetaEdge;
 import com.sdl.web.pca.client.contentmodel.generated.Item;
@@ -27,7 +32,6 @@ import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaRuntimeException;
-import com.sdl.webapp.common.impl.model.ContentNamespace;
 import com.sdl.webapp.common.util.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -37,7 +41,6 @@ import org.springframework.cache.CacheManager;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpSession;
@@ -61,23 +64,21 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
 
     private StaticContentResolver staticContentResolver;
 
-    private GraphQLBinaryProvider graphQLBinaryProvider;
     private GraphQLProvider graphQLProvider;
     private final WebRequestContext webRequestContext;
     private ApiClientProvider pcaClientProvider;
     private CacheManager cacheManager;
 
     @Autowired
-    public GraphQLContentProvider(WebApplicationContext webApplicationContext,
-                                  WebRequestContext webRequestContext,
+    public GraphQLContentProvider(WebRequestContext webRequestContext,
                                   StaticContentResolver staticContentResolver,
                                   ModelBuilderPipeline builderPipeline, GraphQLProvider graphQLProvider,
-                                  ApiClientProvider pcaClientProvider, @Qualifier("compositeCacheManager") CacheManager cacheManager) {
+                                  ApiClientProvider pcaClientProvider,
+                                  @Qualifier("compositeCacheManager") CacheManager cacheManager) {
         super(webRequestContext, cacheManager);
         this.webRequestContext = webRequestContext;
         this.pcaClientProvider = pcaClientProvider;
         this.cacheManager = cacheManager;
-        this.graphQLBinaryProvider = new GraphQLBinaryProvider(pcaClientProvider, webApplicationContext);
         this.staticContentResolver = staticContentResolver;
         this.builderPipeline = builderPipeline;
         this.graphQLProvider = graphQLProvider;
@@ -173,7 +174,7 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
      */
     @Override
     public @NotNull StaticContentItem getStaticContent(
-            ContentNamespace namespace,
+            String namespace,
             String path,
             String localizationId,
             String localizationPath
@@ -182,8 +183,9 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
                 .localizationPath(localizationPath)
                 .baseUrl(webRequestContext.getBaseUrl())
                 .noMediaCache(isNoMediaCache(path, localizationPath))
+                .uriType(namespace)
                 .build();
-        return staticContentResolver.getStaticContent(namespace, requestDto);
+        return staticContentResolver.getStaticContent(requestDto);
     }
 
     /**
@@ -197,14 +199,30 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
             String localizationId,
             String localizationPath
     ) throws ContentProviderException {
-        return getStaticContent(ContentNamespace.Sites, path, localizationId, localizationPath);
+        return getStaticContent("tcm", path, localizationId, localizationPath);
     }
 
     protected PageModel loadPage(String path, Localization localization) throws ContentProviderException {
         PageRequestDto pageRequest = PageRequestDto.builder(localization.getId(), path)
                 .includePages(PageRequestDto.PageInclusion.INCLUDE)
+                .uriType(localization.getCmUriScheme())
                 .build();
         PageModelData pageModelData = graphQLProvider.loadPage(PageModelData.class, pageRequest, ContentType.MODEL);
+
+        return builderPipeline.createPageModel(pageModelData);
+    }
+
+    @Override
+    PageModel loadPage(int pageId, Localization localization, ClaimHolder claims) throws ContentProviderException {
+
+        ContextData pcaContextData = null;
+        if (claims != null) {
+            pcaContextData = ContextDataCreator.createContextData(claims);
+        }
+
+        PageModelData pageModelData = graphQLProvider.loadPage(PageModelData.class,
+                localization.getCmUriScheme(), Integer.parseInt(localization.getId()), pageId,
+                ContentType.MODEL, DataModelType.R2, PageInclusion.INCLUDE, pcaContextData);
 
         return builderPipeline.createPageModel(pageModelData);
     }
@@ -229,12 +247,13 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
      * @dxa.publicApi
      */
     @Override
-    public StaticContentItem getStaticContent(ContentNamespace contentNamespace, int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
+    public StaticContentItem getStaticContent(String contentNamespace, int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
         StaticContentRequestDto requestDto = StaticContentRequestDto.builder(binaryId, localizationId)
                 .localizationPath(localizationPath)
                 .baseUrl(webRequestContext.getBaseUrl())
+                .uriType(contentNamespace)
                 .build();
-        return staticContentResolver.getStaticContent(contentNamespace, requestDto);
+        return staticContentResolver.getStaticContent(requestDto);
     }
 
     private static class CursorIndexer {
@@ -287,6 +306,4 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
             return startIndex;
         }
     }
-
-
 }

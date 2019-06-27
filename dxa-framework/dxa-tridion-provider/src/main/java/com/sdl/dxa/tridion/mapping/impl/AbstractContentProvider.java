@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
+import com.sdl.dxa.common.dto.ClaimHolder;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -17,6 +18,7 @@ import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public abstract class AbstractContentProvider {
@@ -93,7 +95,67 @@ public abstract class AbstractContentProvider {
         return pageModel;
     }
 
+    /**
+     * This default implementation handles caching and cloning the pagemodel.
+     * Actually getting the pagemodel from the backend is done in loadPage.
+     *
+     * @param pageId
+     * @param localization
+     * @param claims any contextclaims there might be. Can be null for no claims
+     * @return
+     * @throws ContentProviderException
+     */
+    public PageModel getPageModel(int pageId, Localization localization, ClaimHolder claims) throws ContentProviderException {
+        Assert.notNull(localization);
+
+        String key = "pagemodelId" + pageId + " " + localization.getId();
+        if (claims != null) {
+            key += " " + claims.toString();
+        }
+        long time = System.currentTimeMillis();
+
+        SimpleValueWrapper simpleValueWrapper = null;
+        if (!webRequestContext.isSessionPreview()) {
+            simpleValueWrapper = (SimpleValueWrapper) pagemodelCache.get(key);
+        }
+
+        PageModel pageModel;
+        if (simpleValueWrapper != null) {
+            //Pagemodel is in cache
+            pageModel = (PageModel) simpleValueWrapper.get();
+        } else {
+            //Not in cache, load from backend.
+            pageModel = loadPage(pageId, localization, claims);
+            if (pageModel.canBeCached() && !webRequestContext.isSessionPreview()) {
+                pagemodelCache.put(key, pageModel);
+            }
+        }
+        try {
+            // Make a deep copy
+            pageModel = pageModel.deepCopy();
+        } catch (DxaException e) {
+            throw new ContentProviderException(e);
+        }
+
+        //filterConditionalEntities modifies the pagemodel, that is why the deep copy is done.
+        pageModel.filterConditionalEntities(entityEvaluators);
+
+        webRequestContext.setPage(pageModel);
+
+        if (log.isDebugEnabled()) {
+            log.debug("Page model {}{} [{}] loaded. (Cachable: {}), loading took {} ms. ",
+                    pageModel.getUrl(),
+                    pageModel.getId(),
+                    pageModel.getName(),
+                    pageModel.canBeCached(),
+                    (System.currentTimeMillis() - time));
+        }
+
+        return pageModel;
+    }
+
     abstract PageModel loadPage(String path, Localization localization) throws ContentProviderException;
+    abstract PageModel loadPage(int pageId, Localization localization, ClaimHolder claims) throws ContentProviderException;
 
     /**
      * {@inheritDoc}

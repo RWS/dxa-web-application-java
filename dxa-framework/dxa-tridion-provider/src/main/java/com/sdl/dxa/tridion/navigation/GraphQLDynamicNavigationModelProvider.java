@@ -42,7 +42,7 @@ import static java.util.Collections.emptyList;
 @Service
 @Profile("!cil.providers.active")
 @Primary
-public class GraphQLRestDynamicNavigationModelProvider implements NavigationModelProvider,
+public class GraphQLDynamicNavigationModelProvider implements NavigationModelProvider,
         OnDemandNavigationModelProvider {
 
     private final ApiClient apiClient;
@@ -50,7 +50,7 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
     private final int defaultDescendantDepth;
 
     @Autowired
-    public GraphQLRestDynamicNavigationModelProvider(
+    public GraphQLDynamicNavigationModelProvider(
             ApiClientProvider provider,
             @Value("${dxa.pca.dynamic.navigation.sitemap.descendant.depth:10}") int defaultDescendantDepth) {
         this.apiClient = provider.getClient();

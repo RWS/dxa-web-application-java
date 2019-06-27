@@ -29,17 +29,6 @@ public interface ContentProvider {
     PageModel getPageModel(String path, Localization localization) throws ContentProviderException;
 
     /**
-     * Gets a {@link PageModel} by id for a specific localization.
-     *
-     * @param pageId         the id of the page requested
-     * @param localization the current localization
-     * @return the {@link PageModel} instance or null if page not found
-     * @throws ContentProviderException if an error occurred so that the content of the page could be retrieved
-     */
-    @Nullable
-    PageModel getPageModel(int pageId, Localization localization, ClaimHolder claims) throws ContentProviderException;
-
-    /**
      * Gets an {@link EntityModel} model by TCM URI for a specific localization.
      *
      * @param tcmUri       the TCM URI of entity model
@@ -76,19 +65,5 @@ public interface ContentProvider {
      * @throws ContentProviderException If an error occurred so that the static content item could not be retrieved.
      */
     @NotNull StaticContentItem getStaticContent(String path, String localizationId, String localizationPath) throws ContentProviderException;
-
-    @NotNull StaticContentItem getStaticContent(String namespace, String path, String localizationId, String localizationPath) throws ContentProviderException;
-
-    /**
-     * Gets a static content binary item by its id for a specific localization.
-     *
-     * @param contentNamespace The namespace (ish for Docs, tcm for Sites)
-     * @param binaryId         The id of the static content item.
-     * @param localizationId   The localization ID.
-     * @param localizationPath The localization path.
-     * @return The {@link StaticContentItem}.
-     * @throws ContentProviderException If an error occurred so that the static content item could not be retrieved.
-     */
-    StaticContentItem getStaticContent(String contentNamespace, int binaryId, String localizationId, String localizationPath) throws ContentProviderException;
 
 }

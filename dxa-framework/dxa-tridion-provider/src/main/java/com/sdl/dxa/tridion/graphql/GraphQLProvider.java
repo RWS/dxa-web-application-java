@@ -167,10 +167,7 @@ public class GraphQLProvider {
     }
 
     /**
-     * Convert from
-     * com.sdl.webapp.common.impl.model.ContentNamespace
-     * to
-     * com.sdl.web.pca.client.contentmodel.enums.ContentNamespace
+     * Convert strings to PCA client ContentNamespace enums
      * @param contentNamespace
      */
     private ContentNamespace getNamespace(String contentNamespace) {

@@ -43,7 +43,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-public class GraphQLRestDynamicNavigationModelProviderTest {
+public class GraphQLDynamicNavigationModelProviderTest {
     private static final TaxonomyNodeModelData[] EMPTY = new TaxonomyNodeModelData[0];
     private static final int CLASSIFIED_ITEMS_COUNT = 5;
     private static final String DESCRIPTION = "Description";
@@ -68,14 +68,14 @@ public class GraphQLRestDynamicNavigationModelProviderTest {
     @Mock
     private ApiClient pcaClient;
 
-    private GraphQLRestDynamicNavigationModelProvider provider;
+    private GraphQLDynamicNavigationModelProvider provider;
 
     private SitemapRequestDto requestDto;
 
     @Before
     public void setUp() {
         when(clientProvider.getClient()).thenReturn(pcaClient);
-        provider = spy(new GraphQLRestDynamicNavigationModelProvider(clientProvider, DEPTH_COUNTER_TEST_BOUND));
+        provider = spy(new GraphQLDynamicNavigationModelProvider(clientProvider, DEPTH_COUNTER_TEST_BOUND));
         requestDto = createSitemapRequestDto(DEPTH_COUNTER);
     }
 

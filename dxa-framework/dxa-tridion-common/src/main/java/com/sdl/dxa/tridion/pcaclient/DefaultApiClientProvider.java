@@ -7,6 +7,7 @@ import com.sdl.web.pca.client.DefaultApiClient;
 import com.sdl.web.pca.client.DefaultGraphQLClient;
 import com.sdl.web.pca.client.GraphQLClient;
 import com.sdl.web.pca.client.auth.Authentication;
+import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
 import com.sdl.web.pca.client.contentmodel.generated.ClaimValue;
 import com.sdl.web.pca.client.contentmodel.generated.ClaimValueType;
@@ -82,6 +83,7 @@ public class DefaultApiClientProvider implements ApiClientProvider {
         if (claimStore == null) {
             log.debug("No claimstore found (is the ADF module configured in the Web.Config?) so unable to populate claims for PCA.");
         } else {
+            client.setGlobalContextData(new ContextData());
             for (Map.Entry<URI, Object> hh : claimStore.getClaimValues().entrySet()) {
                 ClaimValue claimValue = new ClaimValue();
                 claimValue.setValue((String) hh.getValue());

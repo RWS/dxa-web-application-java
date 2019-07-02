@@ -88,7 +88,7 @@ public class TaxonomyNodeModelDataJsonTest {
     @Test
     public void shouldSuppressValueInJSON_IfItemsSetToNull() throws IOException, ParseException {
         //given
-        SitemapItemModelData data = new TaxonomyNodeModelData().setItems(null);
+        SitemapItemModelData data = new TaxonomyNodeModelData().setItems((List<SitemapItemModelData>) null);
 
         //when
         String content = objectMapper.writeValueAsString(data);

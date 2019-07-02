@@ -14,9 +14,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.TreeSet;
 
 @Data
 @ToString(exclude = "parent")
@@ -46,7 +46,7 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
     private boolean visible;
 
     @JsonProperty("Items")
-    private List<SitemapItemModelData> items = new ArrayList<>();
+    private SortedSet<SitemapItemModelData> items = new TreeSet<>();
 
     @JsonProperty("PublishedDate")
     private DateTime publishedDate;
@@ -66,10 +66,19 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
     @NotNull
     public SitemapItemModelData addItem(SitemapItemModelData item) {
         if (this.items == null) {
-            this.items = new ArrayList<>();
+            this.items = new TreeSet<>();
         }
         item.parent = this;
         this.items.add(item);
+        return this;
+    }
+
+    public SitemapItemModelData setItems(SortedSet<SitemapItemModelData> items) {
+        if (items == null) {
+            this.items = null;
+        } else {
+            items.forEach(this::addItem);
+        }
         return this;
     }
 

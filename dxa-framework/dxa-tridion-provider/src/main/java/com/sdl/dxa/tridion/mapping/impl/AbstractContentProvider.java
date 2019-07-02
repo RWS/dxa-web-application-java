@@ -1,6 +1,5 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
-import com.sdl.dxa.common.dto.ClaimHolder;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -8,6 +7,8 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.tridion.ambientdata.claimstore.ClaimStore;
+import com.tridion.ambientdata.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,7 @@ import org.springframework.util.Assert;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 @Slf4j
 public abstract class AbstractContentProvider {
@@ -52,7 +53,7 @@ public abstract class AbstractContentProvider {
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
         Assert.notNull(localization);
 
-        String key = "pagemodel" + path + " " + localization.getId();
+        String key = "pagemodel" + path + " " + localization.getId() + getClaimCacheKey();
         long time = System.currentTimeMillis();
 
         SimpleValueWrapper simpleValueWrapper = null;
@@ -107,7 +108,7 @@ public abstract class AbstractContentProvider {
     public PageModel getPageModel(int pageId, Localization localization) throws ContentProviderException {
         Assert.notNull(localization);
 
-        String key = "pagemodelId" + pageId + " " + localization.getId();
+        String key = "pagemodelId" + pageId + " " + localization.getId() + getClaimCacheKey();
         long time = System.currentTimeMillis();
 
         SimpleValueWrapper simpleValueWrapper = null;
@@ -148,6 +149,18 @@ public abstract class AbstractContentProvider {
         }
 
         return pageModel;
+    }
+
+    /**
+     * Create a cache key for the current claims.
+     * @return
+     */
+    private String getClaimCacheKey() {
+        ClaimStore currentClaimStore = WebContext.getCurrentClaimStore();
+        if (currentClaimStore == null || currentClaimStore.getClaimValues() == null) {
+            return "noclaims";
+        }
+        return " claims:" + currentClaimStore.getClaimValues().entrySet().stream().map(Object::toString).collect(Collectors.joining(","));
     }
 
     abstract PageModel loadPage(String path, Localization localization) throws ContentProviderException;

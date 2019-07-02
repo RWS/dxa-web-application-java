@@ -7,10 +7,10 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.dxa.tridion.pcaclient.GraphQLUtils;
 import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
-import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
 import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
 import com.sdl.web.pca.client.contentmodel.enums.DcpType;
@@ -27,7 +27,6 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 import static com.sdl.dxa.common.util.PathUtils.normalizePathToDefaults;
-import static com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Docs;
 import static com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites;
 
 /**
@@ -71,7 +70,7 @@ public class GraphQLProvider {
     public <T> T loadPage(Class<T> type, PageRequestDto pageRequest, ContentType contentType) throws ContentProviderException {
         try {
             JsonNode pageNode = getPcaClient().getPageModelData(
-                    getNamespace(pageRequest.getUriType()),
+                    GraphQLUtils.convertUriToGraphQLContentNamespace(pageRequest.getUriType()),
                     pageRequest.getPublicationId(),
                     normalizePathToDefaults(pageRequest.getPath()),
                     contentType,
@@ -91,7 +90,7 @@ public class GraphQLProvider {
             JsonNode node = null;
             try {
                 node = getPcaClient().getPageModelData(
-                        getNamespace(pageRequest.getUriType()),
+                        GraphQLUtils.convertUriToGraphQLContentNamespace(pageRequest.getUriType()),
                         pageRequest.getPublicationId(),
                         pathToDefaults,
                         contentType,
@@ -115,7 +114,7 @@ public class GraphQLProvider {
 
     public <T> T loadPage(Class<T> type, String namespace, int publicationId, int pageId, ContentType contentType, DataModelType modelType, PageInclusion pageInclusion, ContextData contextData) throws ContentProviderException {
         JsonNode pageNode = getPcaClient().getPageModelData(
-                getNamespace(namespace),
+                GraphQLUtils.convertUriToGraphQLContentNamespace(namespace),
                 publicationId,
                 pageId,
                 contentType,
@@ -164,20 +163,6 @@ public class GraphQLProvider {
             return (T) result.toString();
         }
         return objectMapper.treeToValue(result, type);
-    }
-
-    /**
-     * Convert strings to PCA client ContentNamespace enums
-     * @param contentNamespace
-     */
-    private ContentNamespace getNamespace(String contentNamespace) {
-        switch (contentNamespace) {
-            case "ish":
-                return Docs;
-            case "tcm":
-                return Sites;
-        };
-        return null;
     }
 
 

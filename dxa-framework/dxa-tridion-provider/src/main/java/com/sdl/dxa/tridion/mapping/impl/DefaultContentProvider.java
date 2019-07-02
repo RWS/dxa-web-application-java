@@ -3,7 +3,6 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
-import com.sdl.dxa.common.dto.ClaimHolder;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
@@ -105,11 +104,7 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
         return builderPipeline.createPageModel(modelData);
     }
 
-    protected PageModel loadPage(int pageId, Localization localization, ClaimHolder claims) throws ContentProviderException {
-        if (claims != null) {
-            log.error("Context claims are not supported for DXA + Model service. Please use a setup with GraphQL.");
-        }
-
+    protected PageModel loadPage(int pageId, Localization localization) throws ContentProviderException {
         PageModelData modelData = modelService.loadPageModel(
                 PageRequestDto.builder(localization.getId(), pageId)
                         .includePages(INCLUDE)

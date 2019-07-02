@@ -3,18 +3,15 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
-import com.sdl.dxa.common.dto.ClaimHolder;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.broker.GraphQLQueryProvider;
 import com.sdl.dxa.tridion.broker.QueryProvider;
-import com.sdl.dxa.tridion.common.ContextDataCreator;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.graphql.GraphQLProvider;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
-import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
 import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
 import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
@@ -198,16 +195,11 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     }
 
     @Override
-    PageModel loadPage(int pageId, Localization localization, ClaimHolder claims) throws ContentProviderException {
-
-        ContextData pcaContextData = null;
-        if (claims != null) {
-            pcaContextData = ContextDataCreator.createContextData(claims);
-        }
+    PageModel loadPage(int pageId, Localization localization) throws ContentProviderException {
 
         PageModelData pageModelData = graphQLProvider.loadPage(PageModelData.class,
                 localization.getCmUriScheme(), Integer.parseInt(localization.getId()), pageId,
-                ContentType.MODEL, DataModelType.R2, PageInclusion.INCLUDE, pcaContextData);
+                ContentType.MODEL, DataModelType.R2, PageInclusion.INCLUDE, null);
 
         return builderPipeline.createPageModel(pageModelData);
     }

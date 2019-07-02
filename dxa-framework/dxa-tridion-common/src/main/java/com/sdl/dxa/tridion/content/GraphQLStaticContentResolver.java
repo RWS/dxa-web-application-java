@@ -3,8 +3,8 @@ package com.sdl.dxa.tridion.content;
 import com.google.common.primitives.Ints;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.dxa.tridion.pcaclient.GraphQLUtils;
 import com.sdl.web.pca.client.contentmodel.ContextData;
-import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariant;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariantEdge;
@@ -56,7 +56,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
             ImageUtils.StaticContentPathInfo pathInfo,
             String urlPath) throws ContentProviderException {
         BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
-                convertNamespace(requestDto.getUriType()),
+                GraphQLUtils.convertUriToGraphQLContentNamespace(requestDto.getUriType()),
                 publicationId,
                 pathInfo.getFileName(),
                 "",
@@ -68,7 +68,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     @Override
     protected @NotNull StaticContentItem getStaticContentItemById(int binaryId, StaticContentRequestDto requestDto) throws ContentProviderException {
         BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
-                convertNamespace(requestDto.getUriType()),
+                GraphQLUtils.convertUriToGraphQLContentNamespace(requestDto.getUriType()),
                 Ints.tryParse(requestDto.getLocalizationId()),
                 binaryId,
                 null,
@@ -101,24 +101,13 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
         ContextData contextData = createContextData(requestDto.getClaims());
         Publication publication = apiClientProvider.getClient().getPublication(
-                convertNamespace(requestDto.getUriType()),
+                GraphQLUtils.convertUriToGraphQLContentNamespace(requestDto.getUriType()),
                 publicationId,
                 "",
                 contextData);
         return publication.getPublicationUrl();
 
     };
-
-    private ContentNamespace convertNamespace(String namespace) {
-        switch (namespace) {
-            case "ish":
-                return ContentNamespace.Docs;
-            case "tcm":
-                return ContentNamespace.Sites;
-        }
-
-        return null;
-    }
 
     private boolean isVersioned(String path) {
         return (path != null) && path.contains("/system/");

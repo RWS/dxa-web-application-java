@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.api.content;
 
-import com.sdl.dxa.common.dto.ClaimHolder;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.PageModel;
 import org.jetbrains.annotations.NotNull;
@@ -26,7 +25,7 @@ public interface ContentProvider_22 extends ContentProvider {
      * @throws ContentProviderException if an error occurred so that the content of the page could be retrieved
      */
     @Nullable
-    PageModel getPageModel(int pageId, Localization localization, ClaimHolder claims) throws ContentProviderException;
+    PageModel getPageModel(int pageId, Localization localization) throws ContentProviderException;
 
     /**
      * Gets a static content item by path for a specific localization.

@@ -101,17 +101,13 @@ public abstract class AbstractContentProvider {
      *
      * @param pageId
      * @param localization
-     * @param claims any contextclaims there might be. Can be null for no claims
      * @return
      * @throws ContentProviderException
      */
-    public PageModel getPageModel(int pageId, Localization localization, ClaimHolder claims) throws ContentProviderException {
+    public PageModel getPageModel(int pageId, Localization localization) throws ContentProviderException {
         Assert.notNull(localization);
 
         String key = "pagemodelId" + pageId + " " + localization.getId();
-        if (claims != null) {
-            key += " " + claims.toString();
-        }
         long time = System.currentTimeMillis();
 
         SimpleValueWrapper simpleValueWrapper = null;
@@ -125,7 +121,7 @@ public abstract class AbstractContentProvider {
             pageModel = (PageModel) simpleValueWrapper.get();
         } else {
             //Not in cache, load from backend.
-            pageModel = loadPage(pageId, localization, claims);
+            pageModel = loadPage(pageId, localization);
             if (pageModel.canBeCached() && !webRequestContext.isSessionPreview()) {
                 pagemodelCache.put(key, pageModel);
             }
@@ -155,7 +151,7 @@ public abstract class AbstractContentProvider {
     }
 
     abstract PageModel loadPage(String path, Localization localization) throws ContentProviderException;
-    abstract PageModel loadPage(int pageId, Localization localization, ClaimHolder claims) throws ContentProviderException;
+    abstract PageModel loadPage(int pageId, Localization localization) throws ContentProviderException;
 
     /**
      * {@inheritDoc}

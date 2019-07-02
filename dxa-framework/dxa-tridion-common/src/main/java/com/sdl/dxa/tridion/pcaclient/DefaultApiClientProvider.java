@@ -81,6 +81,14 @@ public class DefaultApiClientProvider implements ApiClientProvider {
         ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
         if (claimStore == null) {
             log.debug("No claimstore found (is the ADF module configured in the Web.Config?) so unable to populate claims for PCA.");
+        } else {
+            for (Map.Entry<URI, Object> hh : claimStore.getClaimValues().entrySet()) {
+                ClaimValue claimValue = new ClaimValue();
+                claimValue.setValue((String) hh.getValue());
+                claimValue.setUri(hh.getKey().toString());
+                claimValue.setType(ClaimValueType.STRING);
+                client.getGlobalContextData().addClaimValule(claimValue);
+            }
         }
 
         String previewToken = getClaimValue(WebClaims.REQUEST_HEADERS, X_PREVIEW_SESSION_TOKEN,
@@ -103,7 +111,6 @@ public class DefaultApiClientProvider implements ApiClientProvider {
             return client;
 
         }
-
 
         if (claimStore == null) {
             log.debug("The claimstore is not available so no claim forwarding from claimstore will be performed. Make sure the ADF module is configured in the Web.Config to enable this option.");

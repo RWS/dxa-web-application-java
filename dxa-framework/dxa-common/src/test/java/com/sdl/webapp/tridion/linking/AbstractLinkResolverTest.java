@@ -79,7 +79,7 @@ public class AbstractLinkResolverTest {
     }
 
     @Test
-    public void shouldNotRemoveIndexOrExtension_IfDisabled() {
+    public void shouldNotRemoveIndexOrExtension_IfDisabled() throws Exception {
         //given
         TestLinkResolver linkResolver = new TestLinkResolver(false, false);
 
@@ -94,7 +94,6 @@ public class AbstractLinkResolverTest {
     private static class TestLinkResolver extends AbstractLinkResolver {
 
         public TestLinkResolver() {
-            super();
             ReflectionTestUtils.setField(this, "shouldRemoveExtension", true);
             ReflectionTestUtils.setField(this, "shouldStripIndexPath", true);
         }

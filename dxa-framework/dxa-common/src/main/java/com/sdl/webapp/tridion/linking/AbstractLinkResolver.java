@@ -2,6 +2,7 @@ package com.sdl.webapp.tridion.linking;
 
 import com.google.common.base.Strings;
 import com.sdl.dxa.common.util.PathUtils;
+import com.sdl.dxa.tridion.annotations.impl.ValueAnnotationLogger;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.util.TcmUtils;
 import lombok.AllArgsConstructor;
@@ -10,11 +11,17 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.math.NumberUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Component;
 
 @Slf4j
-public abstract class AbstractLinkResolver implements LinkResolver {
+@Component
+public abstract class AbstractLinkResolver implements LinkResolver, InitializingBean {
+    private static final Logger LOG = LoggerFactory.getLogger(AbstractLinkResolver.class);
 
     @Value("${dxa.web.link-resolver.remove-extension:#{true}}")
     private boolean shouldRemoveExtension;
@@ -91,5 +98,10 @@ public abstract class AbstractLinkResolver implements LinkResolver {
         private String uri;
 
         private int pageId;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        LOG.debug(new ValueAnnotationLogger().fetchAllValues(this));
     }
 }

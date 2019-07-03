@@ -91,7 +91,7 @@ public class DefaultApiClientProvider implements ApiClientProvider {
                     claimValue.setValue((String) value);
                     claimValue.setUri(entry.getKey().toString());
                     claimValue.setType(ClaimValueType.STRING);
-                    client.getGlobalContextData().addClaimValule(claimValue);
+                    client.getGlobalContextData().addClaimValue(claimValue);
                 }
             }
         }
@@ -108,7 +108,7 @@ public class DefaultApiClientProvider implements ApiClientProvider {
 
         for (ClaimValue claim : globalClaims.values()) {
             log.debug("Forwarding on global claim {} with value {}", claim.getUri(), claim.getValue());
-            client.getGlobalContextData().addClaimValule(claim);
+            client.getGlobalContextData().addClaimValue(claim);
         }
 
         if (!configurationLoader.claimForwarding()) {
@@ -164,7 +164,7 @@ public class DefaultApiClientProvider implements ApiClientProvider {
             } catch (JsonProcessingException e) {
                 throw new ApiClientConfigurationException("Unable to serialize claim " + claim.getKey().toString(), e);
             }
-            client.getGlobalContextData().addClaimValule(value);
+            client.getGlobalContextData().addClaimValue(value);
         }
 
         return client;

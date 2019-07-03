@@ -31,7 +31,7 @@ public class ContextDataCreator {
             return contextData;
         }
         for (ClaimHolder holder : claims.values()) {
-            contextData.addClaimValule(convertClaimHolderToClaimValue(holder));
+            contextData.addClaimValue(convertClaimHolderToClaimValue(holder));
         }
         return contextData;
     }

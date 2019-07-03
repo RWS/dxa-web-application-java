@@ -82,18 +82,6 @@ public class DefaultApiClientProvider implements ApiClientProvider {
         ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
         if (claimStore == null) {
             log.debug("No claimstore found (is the ADF module configured in the Web.Config?) so unable to populate claims for PCA.");
-        } else {
-            client.setGlobalContextData(new ContextData());
-            for (Map.Entry<URI, Object> entry : claimStore.getClaimValues().entrySet()) {
-                Object value = entry.getValue();
-                if (value instanceof String) {
-                    ClaimValue claimValue = new ClaimValue();
-                    claimValue.setValue((String) value);
-                    claimValue.setUri(entry.getKey().toString());
-                    claimValue.setType(ClaimValueType.STRING);
-                    client.getGlobalContextData().addClaimValue(claimValue);
-                }
-            }
         }
 
         String previewToken = getClaimValue(WebClaims.REQUEST_HEADERS, X_PREVIEW_SESSION_TOKEN,

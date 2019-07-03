@@ -21,7 +21,7 @@ import com.sdl.web.pca.client.contentmodel.generated.Item;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
-import com.sdl.webapp.common.api.content.ContentProvider_22;
+import com.sdl.webapp.common.api.content.Dxa22ContentProvider;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
@@ -56,7 +56,7 @@ import java.util.stream.Collectors;
 @Profile("!cil.providers.active")
 @Primary
 @Slf4j
-public class GraphQLContentProvider extends AbstractContentProvider implements ContentProvider, ContentProvider_22 {
+public class GraphQLContentProvider extends AbstractContentProvider implements ContentProvider, Dxa22ContentProvider {
 
     private ModelBuilderPipeline builderPipeline;
 

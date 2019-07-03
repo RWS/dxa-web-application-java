@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.api.content;
 
+import com.sdl.dxa.common.dto.ClaimHolder;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.PageModel;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,7 @@ import org.jetbrains.annotations.Nullable;
  * @since DXA 2.2
  * @dxa.publicApi
  */
-public interface ContentProvider_22 extends ContentProvider {
+public interface Dxa22ContentProvider extends ContentProvider {
 
     /**
      * Gets a {@link PageModel} by id for a specific localization.

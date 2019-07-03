@@ -11,6 +11,7 @@ import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
+import com.sdl.webapp.common.api.content.Dxa22ContentProvider;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -20,7 +21,6 @@ import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.query.ComponentMetadata;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.common.impl.model.ContentNamespace;
 import com.sdl.webapp.common.util.FileUtils;
 import com.tridion.broker.StorageException;
 import com.tridion.broker.querying.MetadataType;
@@ -73,7 +73,7 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 @Profile("cil.providers.active")
 @Slf4j
 @Deprecated
-public class DefaultContentProvider extends AbstractContentProvider implements ContentProvider {
+public class DefaultContentProvider extends AbstractContentProvider implements ContentProvider, Dxa22ContentProvider {
 
     private final ModelBuilderPipeline builderPipeline;
 
@@ -99,6 +99,14 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
     protected PageModel loadPage(String path, Localization localization) throws ContentProviderException {
         PageModelData modelData = modelService.loadPageModel(
                 PageRequestDto.builder(localization.getId(), path)
+                        .includePages(INCLUDE)
+                        .build());
+        return builderPipeline.createPageModel(modelData);
+    }
+
+    protected PageModel loadPage(int pageId, Localization localization) throws ContentProviderException {
+        PageModelData modelData = modelService.loadPageModel(
+                PageRequestDto.builder(localization.getId(), pageId)
                         .includePages(INCLUDE)
                         .build());
         return builderPipeline.createPageModel(modelData);
@@ -334,18 +342,13 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
         }
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @dxa.publicApi
-     */
     @Override
-    public StaticContentItem getStaticContent(ContentNamespace contentNamespace, int binaryId, String localizationId, String localizationPath) throws ContentProviderException {
+    public StaticContentItem getStaticContent(int binaryId, Localization localization) throws ContentProviderException {
         throw new NotImplementedException("This is not implemented in CIL. Use GraphQL instead of CIL.");
     }
 
     @Override
-    public @NotNull StaticContentItem getStaticContent(ContentNamespace namespace, String path, String localizationId, String localizationPath) throws ContentProviderException {
+    public @NotNull StaticContentItem getStaticContent(String path, Localization localization) throws ContentProviderException {
         throw new NotImplementedException("This is not implemented in CIL. Use GraphQL instead of CIL.");
     }
 }

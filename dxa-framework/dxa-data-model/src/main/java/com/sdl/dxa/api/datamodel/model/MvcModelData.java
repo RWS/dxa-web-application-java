@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.Map;
 @ToString
 @NoArgsConstructor
 @Getter
+@Setter
 @EqualsAndHashCode
 public class MvcModelData {
 

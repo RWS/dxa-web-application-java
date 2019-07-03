@@ -7,6 +7,7 @@ import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.dxa.tridion.pcaclient.GraphQLUtils;
 import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.generated.Ancestor;
@@ -23,11 +24,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.sdl.dxa.tridion.common.ContextDataCreator.createContextData;
-import static com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites;
 import static com.sdl.web.pca.client.contentmodel.generated.Ancestor.NONE;
 import static java.util.Arrays.asList;
 import static java.util.Collections.emptyList;
@@ -36,18 +40,17 @@ import static java.util.Collections.emptyList;
 @Service
 @Profile("!cil.providers.active")
 @Primary
-public class GraphQLRestDynamicNavigationModelProvider implements NavigationModelProvider,
+public class GraphQLDynamicNavigationModelProvider implements NavigationModelProvider,
         OnDemandNavigationModelProvider {
 
-    private final ApiClient apiClient;
-
     private final int defaultDescendantDepth;
+    private final ApiClientProvider provider;
 
     @Autowired
-    public GraphQLRestDynamicNavigationModelProvider(
+    public GraphQLDynamicNavigationModelProvider(
             ApiClientProvider provider,
             @Value("${dxa.pca.dynamic.navigation.sitemap.descendant.depth:10}") int defaultDescendantDepth) {
-        this.apiClient = provider.getClient();
+        this.provider = provider;
         this.defaultDescendantDepth = defaultDescendantDepth;
     }
 
@@ -66,8 +69,9 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
         int depth = getDepth(request);
         ContextData contextData = createContextData(request.getClaims());
 
-        TaxonomySitemapItem taxonomySitemapItem = apiClient
-                .getSitemap(Sites, request.getLocalizationId(), depth, contextData);
+        TaxonomySitemapItem taxonomySitemapItem = provider.getClient()
+                .getSitemap(GraphQLUtils.convertUriToGraphQLContentNamespace(request.getUriType()),
+                        request.getLocalizationId(), depth, contextData);
         if (taxonomySitemapItem == null) {
             return Optional.empty();
         }
@@ -76,8 +80,9 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
         while (leafNodes.size() > 0) {
             TaxonomySitemapItem node = leafNodes.remove(0);
             if (node.getHasChildNodes()) {
-                TaxonomySitemapItem[] subtree = apiClient
-                        .getSitemapSubtree(Sites, request.getLocalizationId(), node.getId(), depth, NONE, null);
+                TaxonomySitemapItem[] subtree = provider.getClient()
+                        .getSitemapSubtree(GraphQLUtils.convertUriToGraphQLContentNamespace(request.getUriType()),
+                                request.getLocalizationId(), node.getId(), depth, NONE, contextData);
                 if (node.getItems() == null) {
                     node.setItems(new ArrayList<>());
                 }
@@ -132,8 +137,9 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
                     // Requesting from root so just return descendants from root
                     depth--;
                 }
-                siteMapsItems = asList(apiClient
-                        .getSitemapSubtree(Sites, requestDto.getLocalizationId(), sitemapId, depth, NONE, null));
+                siteMapsItems = asList(provider.getClient()
+                        .getSitemapSubtree(GraphQLUtils.convertUriToGraphQLContentNamespace(requestDto.getUriType()),
+                                requestDto.getLocalizationId(), sitemapId, depth, NONE, null));
             }
         }
 
@@ -156,8 +162,9 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
     private List<SitemapItem> getEntireNavigationSubtreeInternal(@NotNull SitemapRequestDto request) {
         int depth = defaultDescendantDepth;
 
-        List<SitemapItem> rootItems = asList(apiClient
-                .getSitemapSubtree(Sites,
+        List<SitemapItem> rootItems = asList(provider.getClient()
+                .getSitemapSubtree(
+                        GraphQLUtils.convertUriToGraphQLContentNamespace(request.getUriType()),
                         request.getLocalizationId(),
                         request.getSitemapId(),
                         depth,
@@ -175,8 +182,10 @@ public class GraphQLRestDynamicNavigationModelProvider implements NavigationMode
             TaxonomySitemapItem root = (TaxonomySitemapItem) tempRoots.get(index);
             List<TaxonomySitemapItem> leafNodes = getLeafNodes(root);
             for (TaxonomySitemapItem item : leafNodes) {
-                TaxonomySitemapItem[] subtree = apiClient
-                        .getSitemapSubtree(Sites, request.getLocalizationId(), item.getId(), depth, NONE, null);
+                TaxonomySitemapItem[] subtree = provider.getClient()
+                        .getSitemapSubtree(GraphQLUtils.convertUriToGraphQLContentNamespace(request.getUriType()),
+                                request.getLocalizationId(), item.getId(), depth, NONE, null);
+
                 if (subtree.length > 0) {
                     item.setItems(subtree[0].getItems());
                     tempRoots.addAll(getLeafNodes(item));

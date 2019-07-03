@@ -175,6 +175,11 @@ public class LocalizationImpl implements Localization {
         return Arrays.asList(formats);
     }
 
+    @Override
+    public String getCmUriScheme() {
+        return "tcm";
+    }
+
     public static final class Builder {
         private final ImmutableList.Builder<SiteLocalization> siteLocalizationsBuilder = ImmutableList.builder();
         private final ImmutableMap.Builder<String, String> configurationBuilder = ImmutableMap.builder();

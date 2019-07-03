@@ -29,6 +29,11 @@ public class StaticContentRequestDto {
 
     private boolean noMediaCache;
 
+    /**
+     * namespace {"tcm", "ish"}
+     */
+    private String uriType;
+
     @Getter(AccessLevel.NONE)
     @Setter(AccessLevel.NONE)
     private Map<String, ClaimHolder> claims = new HashMap<>();
@@ -56,6 +61,7 @@ public class StaticContentRequestDto {
     public static class StaticContentRequestDtoBuilder {
 
         private String baseUrl = "http://localhost/";
+        private String uriType = "tcm";
     }
 
     public void addClaim(ClaimHolder holder) {

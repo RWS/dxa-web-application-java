@@ -195,6 +195,15 @@
                 </dependency>
             </dependencies>
         </profile>
+        <profile>
+            <id>dd-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-dynamic-documentation</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
     </profiles>
 
     <!-- Needed here because archetype comes without parent tag -->

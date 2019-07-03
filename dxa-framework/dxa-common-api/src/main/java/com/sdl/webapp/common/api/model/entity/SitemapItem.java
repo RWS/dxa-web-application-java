@@ -56,6 +56,9 @@ public class SitemapItem extends AbstractEntityModel {
     @JsonIgnore
     private String originalTitle;
 
+    @JsonIgnore
+    private boolean parentsSet = false;
+
     public SitemapItem(SitemapItem other) {
         super(other);
         this.title = other.title;
@@ -97,17 +100,7 @@ public class SitemapItem extends AbstractEntityModel {
      */
     public void setItems(@Nullable Set<SitemapItem> items) {
         this.items = wrapItems(items);
-        ensureParentsSet(items);
-    }
-
-    private void ensureParentsSet(@Nullable Collection<SitemapItem> items) {
-        if (items != null) {
-            for (SitemapItem item : items) {
-                if (item != null) {
-                    item.parent = this;
-                }
-            }
-        }
+        rebuildParentRelationships();
     }
 
     /**
@@ -121,8 +114,8 @@ public class SitemapItem extends AbstractEntityModel {
         if (this.items == null) {
             this.items = wrapItems(new LinkedHashSet<>());
         }
-        item.setParent(this);
         this.items.add(item);
+        rebuildParentRelationships();
         return this;
     }
 
@@ -171,5 +164,22 @@ public class SitemapItem extends AbstractEntityModel {
         link.setUrl(isEmpty(getUrl()) ? getUrl() : linkResolver.resolveLink(getUrl(), localization.getId()));
         link.setLinkText(getTitle());
         return link;
+    }
+
+    public void rebuildParentRelationships() {
+        for (SitemapItem child : getItems()) {
+            if (child != null) {
+                child.setParent(this);
+                child.rebuildParentRelationships();
+            }
+        }
+        parentsSet = true;
+    }
+
+    public SitemapItem getParent() {
+        if (!parentsSet) {
+            throw new RuntimeException("The parents have not been computed; please call rebuildParentRelationships() on the root parent first.");
+        }
+        return parent;
     }
 }

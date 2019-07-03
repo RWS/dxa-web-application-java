@@ -70,13 +70,6 @@ public abstract class BaseController {
         return entity;
     }
 
-    @RequestMapping(value = ControllerUtils.INCLUDE_PATH_PREFIX + ControllerUtils.SECTION_ERROR_VIEW)
-    public String handleJspIncludesErrors() {
-        log.error("Unhandled exception from JSP include action");
-
-        return ControllerUtils.SECTION_ERROR_VIEW;
-    }
-
     @ExceptionHandler(Exception.class)
     public String handleException(HttpServletRequest request, Exception exception) {
         log.error("Exception while processing request for: {}", request.getRequestURL(), exception);

@@ -11,7 +11,9 @@ import org.junit.Test;
 import java.io.IOException;
 import java.io.Serializable;
 import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
@@ -27,7 +29,7 @@ public class TaxonomyNodeModelDataJsonTest {
     public void shouldNameFieldCorrectly() throws IOException, ParseException {
         //given
         DateTime publishedDate = new DateTime();
-        TreeSet<SitemapItemModelData> items = new TreeSet<>();
+        List<SitemapItemModelData> items = new ArrayList<>();
 
         SitemapItemModelData data = new TaxonomyNodeModelData()
                 .setKey("Key")
@@ -86,7 +88,7 @@ public class TaxonomyNodeModelDataJsonTest {
     @Test
     public void shouldSuppressValueInJSON_IfItemsSetToNull() throws IOException, ParseException {
         //given
-        SitemapItemModelData data = new TaxonomyNodeModelData().setItems(null);
+        SitemapItemModelData data = new TaxonomyNodeModelData().setItems((List<SitemapItemModelData>) null);
 
         //when
         String content = objectMapper.writeValueAsString(data);

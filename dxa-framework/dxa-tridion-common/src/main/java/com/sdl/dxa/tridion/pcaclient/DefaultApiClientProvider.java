@@ -84,12 +84,15 @@ public class DefaultApiClientProvider implements ApiClientProvider {
             log.debug("No claimstore found (is the ADF module configured in the Web.Config?) so unable to populate claims for PCA.");
         } else {
             client.setGlobalContextData(new ContextData());
-            for (Map.Entry<URI, Object> hh : claimStore.getClaimValues().entrySet()) {
-                ClaimValue claimValue = new ClaimValue();
-                claimValue.setValue((String) hh.getValue());
-                claimValue.setUri(hh.getKey().toString());
-                claimValue.setType(ClaimValueType.STRING);
-                client.getGlobalContextData().addClaimValule(claimValue);
+            for (Map.Entry<URI, Object> entry : claimStore.getClaimValues().entrySet()) {
+                Object value = entry.getValue();
+                if (value instanceof String) {
+                    ClaimValue claimValue = new ClaimValue();
+                    claimValue.setValue((String) value);
+                    claimValue.setUri(entry.getKey().toString());
+                    claimValue.setType(ClaimValueType.STRING);
+                    client.getGlobalContextData().addClaimValule(claimValue);
+                }
             }
         }
 

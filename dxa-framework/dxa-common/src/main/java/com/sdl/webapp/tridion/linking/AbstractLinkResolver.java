@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -102,6 +101,6 @@ public abstract class AbstractLinkResolver implements LinkResolver, Initializing
 
     @Override
     public void afterPropertiesSet() throws Exception {
-        LOG.debug(new ValueAnnotationLogger().fetchAllValues(this));
+        LOG.info(new ValueAnnotationLogger().fetchAllValues(this));
     }
 }

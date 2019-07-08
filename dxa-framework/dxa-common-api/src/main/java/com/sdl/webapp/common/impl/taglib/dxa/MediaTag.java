@@ -1,5 +1,6 @@
 package com.sdl.webapp.common.impl.taglib.dxa;
 
+import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.model.entity.MediaItem;
 import com.sdl.webapp.common.exceptions.DxaException;
@@ -14,11 +15,13 @@ public class MediaTag extends HtmlElementTag {
 
     private String widthFactor;
 
-    private double aspect;
+    private Double aspect;
 
     private String cssClass;
 
     private int containerSize;
+
+    private MediaHelper mediaHelper;
 
     /**
      * {@inheritDoc}
@@ -29,7 +32,20 @@ public class MediaTag extends HtmlElementTag {
             return null;
         }
 
+        if (aspect == null) {
+            return media.toHtmlElement(this.widthFactor, getMediaHelper().getDefaultMediaAspect(),
+                    this.cssClass, this.containerSize, this.getContextPath());
+        }
+
         return media.toHtmlElement(this.widthFactor, this.aspect, this.cssClass, this.containerSize, this.getContextPath());
+    }
+
+    private MediaHelper getMediaHelper() {
+        if (mediaHelper == null) {
+            mediaHelper = WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
+                    .getBean(MediaHelper.class);
+        }
+        return mediaHelper;
     }
 
     private String getContextPath() {

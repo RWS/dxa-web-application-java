@@ -7,6 +7,7 @@ import com.sdl.web.pca.client.DefaultApiClient;
 import com.sdl.web.pca.client.DefaultGraphQLClient;
 import com.sdl.web.pca.client.GraphQLClient;
 import com.sdl.web.pca.client.auth.Authentication;
+import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
 import com.sdl.web.pca.client.contentmodel.generated.ClaimValue;
 import com.sdl.web.pca.client.contentmodel.generated.ClaimValueType;
@@ -95,7 +96,7 @@ public class DefaultApiClientProvider implements ApiClientProvider {
 
         for (ClaimValue claim : globalClaims.values()) {
             log.debug("Forwarding on global claim {} with value {}", claim.getUri(), claim.getValue());
-            client.getGlobalContextData().addClaimValule(claim);
+            client.getGlobalContextData().addClaimValue(claim);
         }
 
         if (!configurationLoader.claimForwarding()) {
@@ -103,7 +104,6 @@ public class DefaultApiClientProvider implements ApiClientProvider {
             return client;
 
         }
-
 
         if (claimStore == null) {
             log.debug("The claimstore is not available so no claim forwarding from claimstore will be performed. Make sure the ADF module is configured in the Web.Config to enable this option.");
@@ -152,7 +152,7 @@ public class DefaultApiClientProvider implements ApiClientProvider {
             } catch (JsonProcessingException e) {
                 throw new ApiClientConfigurationException("Unable to serialize claim " + claim.getKey().toString(), e);
             }
-            client.getGlobalContextData().addClaimValule(value);
+            client.getGlobalContextData().addClaimValue(value);
         }
 
         return client;

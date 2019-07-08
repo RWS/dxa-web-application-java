@@ -1,0 +1,54 @@
+[
+  {
+    "Id": 1,
+    "RootElement": "Topic",
+    "Fields": [
+      {
+        "Name": "topicBody",
+        "Path": "/Topic/topicBody",
+        "IsMultiValue": false,
+        "Semantics": [
+          {
+            "Prefix": "tri",
+            "Entity": "Topic",
+            "Property": "topicBody"
+          },
+          {
+            "Prefix": "s",
+            "Entity": "Topic",
+            "Property": "topicBody"
+          }
+        ],
+        "Fields": []
+      },
+      {
+        "Name": "topicTitle",
+        "Path": "/Topic/topicTitle",
+        "IsMultiValue": false,
+        "Semantics": [
+          {
+            "Prefix": "tri",
+            "Entity": "Topic",
+            "Property": "topicTitle"
+          },
+          {
+            "Prefix": "s",
+            "Entity": "Topic",
+            "Property": "topicTitle"
+          }
+        ],
+        "Fields": []
+      }
+    ],
+    "Semantics": [
+      {
+        "Prefix": "tri",
+        "Entity": "Topic"
+      },
+      {
+        "Prefix": "s",
+        "Entity": "Topic"
+      }
+    ]
+  }
+]

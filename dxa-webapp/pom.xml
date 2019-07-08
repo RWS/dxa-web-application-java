@@ -131,15 +131,6 @@
             </dependencies>
         </profile>
         <profile>
-            <id>tridion-docs-module</id>
-            <dependencies>
-                <dependency>
-                    <groupId>com.sdl.dxa.modules</groupId>
-                    <artifactId>dxa-module-tridion-docs</artifactId>
-                </dependency>
-            </dependencies>
-        </profile>
-        <profile>
             <id>tridion-docs-search-module</id>
             <dependencies>
                 <dependency>
@@ -192,6 +183,15 @@
                 <dependency>
                     <groupId>com.sdl.dxa.modules</groupId>
                     <artifactId>dxa-module-ugc</artifactId>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>dd-module</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.sdl.dxa.modules</groupId>
+                    <artifactId>dxa-module-dynamic-documentation</artifactId>
                 </dependency>
             </dependencies>
         </profile>

@@ -268,6 +268,13 @@ public class PageController extends BaseController {
         return isIncludeRequest(request) ? SECTION_ERROR_VIEW : SERVER_ERROR_VIEW;
     }
 
+    @RequestMapping(value = ControllerUtils.INCLUDE_PATH_PREFIX + ControllerUtils.SECTION_ERROR_VIEW)
+    public String handleJspIncludesErrors() {
+        log.error("Unhandled exception from JSP include action");
+
+        return ControllerUtils.SECTION_ERROR_VIEW;
+    }
+
     private PageModel getPageModel(String path, Localization localization) {
         try {
             return contentProvider.getPageModel(path, localization);

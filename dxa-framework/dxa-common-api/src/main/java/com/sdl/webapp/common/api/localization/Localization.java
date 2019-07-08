@@ -131,4 +131,13 @@ public interface Localization {
      */
     List<String> getDataFormats();
 
+    /**
+     * Gets the Content Namespace.
+     *
+     * This is called CmUriScheme to keep the Java implementation as much aligned with the .net version as possible.
+     *
+     * @return the Content Namespace.
+     */
+    String getCmUriScheme();
+
 }

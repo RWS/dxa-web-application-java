@@ -49,9 +49,8 @@
         <dxa-module-ugc.version>${dxa.version}</dxa-module-ugc.version>
         <dxa-module-test.version>${dxa.version}</dxa-module-test.version>
         <dxa-module-tridion-docs-mashup.version>${dxa.version}</dxa-module-tridion-docs-mashup.version>
-        <dxa-module-tridion-docs.version>${dxa.version}</dxa-module-tridion-docs.version>
-        <dxa-module-tridion-docs-common.version>${dxa.version}</dxa-module-tridion-docs-common.version>
         <dxa-module-tridion-docs-search.version>${dxa.version}</dxa-module-tridion-docs-search.version>
+        <dxa-module-dd.version>${dxa.version}</dxa-module-dd.version>
         <!-- /DXA Versions -->
 
         <!-- Apache -->
@@ -321,11 +320,6 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
-                <artifactId>dxa-module-tridion-docs</artifactId>
-                <version>${dxa-module-tridion-docs.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-ugc</artifactId>
                 <version>${dxa-module-ugc.version}</version>
                 <scope>runtime</scope>
@@ -344,13 +338,13 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
-                <artifactId>dxa-module-tridion-docs-common</artifactId>
-                <version>${dxa-module-tridion-docs-common.version}</version>
+                <artifactId>dxa-module-tridion-docs-search</artifactId>
+                <version>${dxa-module-tridion-docs-search.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
-                <artifactId>dxa-module-tridion-docs-search</artifactId>
-                <version>${dxa-module-tridion-docs-search.version}</version>
+                <artifactId>dxa-module-dynamic-documentation</artifactId>
+                <version>${dxa-module-dd.version}</version>
             </dependency>
             <!--endregion-->
 

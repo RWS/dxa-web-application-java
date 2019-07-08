@@ -1,12 +1,10 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
-import com.sdl.dxa.modelservice.service.ModelServiceProvider;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.graphql.GraphQLProvider;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
-import com.sdl.web.pca.client.ApiClient;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -14,7 +12,6 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.Configuration;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
-import com.sdl.webapp.common.impl.model.ContentNamespace;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -24,7 +21,6 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.cache.Cache;
 import org.springframework.cache.CacheManager;
-import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
 
@@ -46,13 +42,9 @@ public class GraphQLContentProviderTest {
     @Mock
     private StaticContentResolver staticContentResolver;
     @Mock
-    private WebApplicationContext webApplicationContext;
-    @Mock
     private ApiClientProvider apiClientProvider;
     @Mock
     private GraphQLProvider graphQLProvider;
-    @Mock
-    private ApiClient pcaClient;
     @Mock
     private CacheManager cacheManager;
     @Mock
@@ -64,7 +56,7 @@ public class GraphQLContentProviderTest {
     @Before
     public void setup() {
         when(cacheManager.getCache(anyString())).thenReturn(cache);
-        contentProvider = spy(new GraphQLContentProvider(webApplicationContext,
+        contentProvider = spy(new GraphQLContentProvider(
                 webRequestContext,
                 staticContentResolver,
                 builderPipeline,
@@ -103,7 +95,7 @@ public class GraphQLContentProviderTest {
     @Test
     public void getStaticContent() throws Exception {
         File contentFile = new File("path");
-        when(staticContentResolver.getStaticContent(any(ContentNamespace.class), any(StaticContentRequestDto.class))).thenReturn(new StaticContentItem("testType",
+        when(staticContentResolver.getStaticContent(any(StaticContentRequestDto.class))).thenReturn(new StaticContentItem("testType",
                 contentFile, false));
 
         StaticContentItem result = contentProvider.getStaticContent("/static", "localizationId", "localilzationPath");

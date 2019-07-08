@@ -1,12 +1,12 @@
 package com.sdl.webapp.common.api.content;
 
+import com.sdl.dxa.common.dto.ClaimHolder;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
-import com.sdl.webapp.common.impl.model.ContentNamespace;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -65,19 +65,5 @@ public interface ContentProvider {
      * @throws ContentProviderException If an error occurred so that the static content item could not be retrieved.
      */
     @NotNull StaticContentItem getStaticContent(String path, String localizationId, String localizationPath) throws ContentProviderException;
-
-    @NotNull StaticContentItem getStaticContent(ContentNamespace namespace, String path, String localizationId, String localizationPath) throws ContentProviderException;
-
-    /**
-     * Gets a static content binary item by its id for a specific localization.
-     *
-     * @param contentNamespace The namespace to distingish Docs and Sites
-     * @param binaryId         The id of the static content item.
-     * @param localizationId   The localization ID.
-     * @param localizationPath The localization path.
-     * @return The {@link StaticContentItem}.
-     * @throws ContentProviderException If an error occurred so that the static content item could not be retrieved.
-     */
-    StaticContentItem getStaticContent(ContentNamespace contentNamespace, int binaryId, String localizationId, String localizationPath) throws ContentProviderException;
 
 }

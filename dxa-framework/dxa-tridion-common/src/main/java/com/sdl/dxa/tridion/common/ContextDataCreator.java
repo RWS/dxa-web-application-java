@@ -8,6 +8,7 @@ import com.sdl.web.pca.client.contentmodel.generated.ClaimValueType;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.BeanUtils;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import static java.lang.String.format;
@@ -18,18 +19,24 @@ public class ContextDataCreator {
             ", expected one of " + Joiner.on(";").join(ClaimValueType.values());
 
     @NotNull
+    public static ContextData createContextData(ClaimHolder claims) {
+        HashMap<String, ClaimHolder> claimsMap = new HashMap<>();
+        claimsMap.put("-", claims);
+        return createContextData(claimsMap);
+    }
+
     public static ContextData createContextData(Map<String, ClaimHolder> claims) {
         ContextData contextData = new ContextData();
         if (claims.isEmpty()) {
             return contextData;
         }
         for (ClaimHolder holder : claims.values()) {
-            contextData.addClaimValule(convertClaimHolderToClaimValue(holder));
+            contextData.addClaimValue(convertClaimHolderToClaimValue(holder));
         }
         return contextData;
     }
 
-    static ClaimValue convertClaimHolderToClaimValue(ClaimHolder holder) {
+    public static ClaimValue convertClaimHolderToClaimValue(ClaimHolder holder) {
         ClaimValue claimValue = new ClaimValue();
         BeanUtils.copyProperties(holder, claimValue);
         for (ClaimValueType type : ClaimValueType.values()) {

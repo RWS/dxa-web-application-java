@@ -7,8 +7,16 @@ import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.dxa.tridion.pcaclient.GraphQLUtils;
 import com.sdl.web.pca.client.ApiClient;
-import com.sdl.web.pca.client.contentmodel.enums.*;
+import com.sdl.web.pca.client.contentmodel.ContextData;
+import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
+import com.sdl.web.pca.client.contentmodel.enums.ContentType;
+import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
+import com.sdl.web.pca.client.contentmodel.enums.DcpType;
+import com.sdl.web.pca.client.contentmodel.enums.ModelServiceLinkRendering;
+import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
+import com.sdl.web.pca.client.contentmodel.enums.TcdlLinkRendering;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import lombok.extern.slf4j.Slf4j;
@@ -19,6 +27,7 @@ import org.springframework.stereotype.Component;
 import java.io.IOException;
 
 import static com.sdl.dxa.common.util.PathUtils.normalizePathToDefaults;
+import static com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites;
 
 /**
  * Common class for interaction with GraphQL backend.
@@ -61,7 +70,7 @@ public class GraphQLProvider {
     public <T> T loadPage(Class<T> type, PageRequestDto pageRequest, ContentType contentType) throws ContentProviderException {
         try {
             JsonNode pageNode = getPcaClient().getPageModelData(
-                    ContentNamespace.Sites,
+                    GraphQLUtils.convertUriToGraphQLContentNamespace(pageRequest.getUriType()),
                     pageRequest.getPublicationId(),
                     normalizePathToDefaults(pageRequest.getPath()),
                     contentType,
@@ -80,7 +89,8 @@ public class GraphQLProvider {
             log.info("Page not found by " + pageRequest + ", trying to find it by path " + pathToDefaults);
             JsonNode node = null;
             try {
-                node = getPcaClient().getPageModelData(ContentNamespace.Sites,
+                node = getPcaClient().getPageModelData(
+                        GraphQLUtils.convertUriToGraphQLContentNamespace(pageRequest.getUriType()),
                         pageRequest.getPublicationId(),
                         pathToDefaults,
                         contentType,
@@ -102,10 +112,30 @@ public class GraphQLProvider {
         }
     }
 
+    public <T> T loadPage(Class<T> type, String namespace, int publicationId, int pageId, ContentType contentType, DataModelType modelType, PageInclusion pageInclusion, ContextData contextData) throws ContentProviderException {
+        JsonNode pageNode = getPcaClient().getPageModelData(
+                GraphQLUtils.convertUriToGraphQLContentNamespace(namespace),
+                publicationId,
+                pageId,
+                contentType,
+                modelType,
+                pageInclusion,
+                ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
+                contextData
+        );
+        T result = null;
+        try {
+            result = mapToType(type, pageNode);
+        } catch (IOException ex) {
+            throw new PageNotFoundException(String.format("Page not found: [%d] %d/index.html", publicationId, pageId), ex);
+        }
+        return result;
+    }
+
     public EntityModelData getEntityModelData(EntityRequestDto entityRequest) throws ContentProviderException {
         JsonNode node = null;
         try {
-            node = getPcaClient().getEntityModelData(ContentNamespace.Sites,
+            node = getPcaClient().getEntityModelData(Sites,
                     entityRequest.getPublicationId(),
                     entityRequest.getComponentId(),
                     entityRequest.getTemplateId(),
@@ -134,5 +164,6 @@ public class GraphQLProvider {
         }
         return objectMapper.treeToValue(result, type);
     }
+
 
 }

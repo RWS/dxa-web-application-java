@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -51,6 +52,9 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
     private DateTime publishedDate;
 
     @JsonIgnore
+    private boolean parentsSet = false;
+
+    @JsonIgnore
     private SitemapItemModelData parent;
 
     /**
@@ -70,6 +74,15 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
     }
 
     public SitemapItemModelData setItems(SortedSet<SitemapItemModelData> items) {
+        if (items == null) {
+            this.items = null;
+        } else {
+            items.forEach(this::addItem);
+        }
+        return this;
+    }
+
+    public SitemapItemModelData setItems(List<SitemapItemModelData> items) {
         if (items == null) {
             this.items = null;
         } else {
@@ -125,4 +138,18 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
         return null;
     }
 
+    public void rebuildParentRelationships() {
+        for (SitemapItemModelData child : getItems()) {
+            child.setParent(this);
+            child.rebuildParentRelationships();
+        }
+        parentsSet = true;
+    }
+
+    public SitemapItemModelData getParent() {
+        if (!parentsSet) {
+            throw new RuntimeException("The parents have not been computed; please call rebuildParentRelationships() on the root parent first.");
+        }
+        return parent;
+    }
 }

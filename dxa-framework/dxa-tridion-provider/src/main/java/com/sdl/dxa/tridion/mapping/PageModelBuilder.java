@@ -21,6 +21,7 @@ public interface PageModelBuilder extends ModelBuilder {
      *                          Is {@code null} for the first {@linkplain PageModelBuilder Page Model Builder} in the {@link ModelBuilderPipelineImpl}
      * @param modelData         the DXA R2 Data Model
      * @return the strongly typed Page Model, or {@code null} if cannot build a page
+     * @throws SemanticMappingException in case of issue during semantic mapping
      */
     @Nullable
     PageModel buildPageModel(@Nullable PageModel originalPageModel, PageModelData modelData) throws SemanticMappingException;

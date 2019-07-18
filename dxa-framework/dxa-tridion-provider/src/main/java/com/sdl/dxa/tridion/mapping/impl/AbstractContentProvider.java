@@ -43,12 +43,12 @@ public abstract class AbstractContentProvider {
 
     /**
      * This default implementation handles caching and cloning the pagemodel.
-     * Actually getting the pagemodel from the backend is done in loadPage.
+     * Actually getting the page model from the backend is done in loadPage.
      *
-     * @param path
-     * @param localization
-     * @return
-     * @throws ContentProviderException
+     * @param path path
+     * @param localization Localization object
+     * @return page model
+     * @throws ContentProviderException in case of bad request
      */
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
         Assert.notNull(localization);
@@ -100,10 +100,10 @@ public abstract class AbstractContentProvider {
      * This default implementation handles caching and cloning the pagemodel.
      * Actually getting the pagemodel from the backend is done in loadPage.
      *
-     * @param pageId
-     * @param localization
-     * @return
-     * @throws ContentProviderException
+     * @param pageId page ID
+     * @param localization Localization object
+     * @return page model
+     * @throws ContentProviderException in case of bad request
      */
     public PageModel getPageModel(int pageId, Localization localization) throws ContentProviderException {
         Assert.notNull(localization);
@@ -153,7 +153,7 @@ public abstract class AbstractContentProvider {
 
     /**
      * Create a cache key for the current claims.
-     * @return
+     * @return cache key
      */
     private String getClaimCacheKey() {
         ClaimStore currentClaimStore = WebContext.getCurrentClaimStore();

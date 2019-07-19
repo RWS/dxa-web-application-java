@@ -19,11 +19,13 @@ public interface EntityModelBuilder extends ModelBuilder {
     /**
      * Builds a strongly typed Entity Model based on a given DXA R2 Data Model. Never returns {@code null}.
      *
+     * @param <T> The expected class of the value.
      * @param originalEntityModel the strongly typed {@linkplain EntityModel Entity Model} to build.
      *                            Is {@code null} for the first {@linkplain EntityModelBuilder Entity Model Builder} in the {@link ModelBuilderPipelineImpl}
      * @param modelData           the DXA R2 Data Model
      * @param expectedClass       required class of entity model, gets the priority if {@code modelData} contains {@linkplain MvcModelData MVC} data
      * @return the strongly typed Entity Model
+     * @throws DxaException Thrown when building of model fails
      */
     @Contract("_, _, _ -> !null")
     <T extends EntityModel> T buildEntityModel(@Nullable T originalEntityModel, EntityModelData modelData,

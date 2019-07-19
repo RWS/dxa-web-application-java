@@ -18,6 +18,7 @@ public interface ModelBuilderPipeline {
     /**
      * See {@link PageModelBuilder#buildPageModel(PageModel, PageModelData)}.
      *
+     * @param modelData model data
      * @return Page Model or {@code null} if no builders are registered
      */
     @NotNull
@@ -27,7 +28,9 @@ public interface ModelBuilderPipeline {
      * See {@link EntityModelBuilder#buildEntityModel(EntityModel, EntityModelData, Class)}.
      * {@code expectedClass} defaults to data from {@code MvcData}
      *
+     * @param modelData model data
      * @return Entity Model or {@code null} if no builders are registered
+     * @throws DxaException in case
      */
     @NotNull
     <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData) throws DxaException;
@@ -35,8 +38,11 @@ public interface ModelBuilderPipeline {
     /**
      * See {@link EntityModelBuilder#buildEntityModel(EntityModel, EntityModelData, Class)}.
      *
+     * @param <T> type that extends EntityModel
+     * @param modelData model data
+     * @param expectedClass expected class
      * @return Entity Model
-     * @throws IllegalArgumentException in case
+     * @throws DxaException in case
      */
     @NotNull
     <T extends EntityModel> T createEntityModel(@NotNull EntityModelData modelData, @Nullable Class<T> expectedClass) throws DxaException;

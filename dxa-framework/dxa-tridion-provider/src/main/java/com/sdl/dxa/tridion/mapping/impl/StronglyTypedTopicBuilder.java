@@ -100,9 +100,11 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
     /**
      * Tries to convert a given generic Topic to a Strongly Typed Topic Model.
      *
+     * @param <T> entity model type
      * @param genericTopic The generic Topic to convert.
      * @param ofType The type of the Strongly Typed Topic Model to convert to. If not specified (or null), the type will be determined from the XHTML.
-     * @returns The Strongly Typed Topic Model or null if the generic Topic cannot be converted.
+     * @return The Strongly Typed Topic Model or null if the generic Topic cannot be converted.
+     * @throws DxaException in case of error during conversion
      */
     public <T extends EntityModel> T tryConvertToStronglyTypedTopic(GenericTopic genericTopic, Class<T> ofType) throws DxaException {
         LOG.debug("Trying to convert {} to Strongly Typed Topic Model...", genericTopic);
@@ -235,10 +237,14 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
     }
 
     /**
-    * Filters the XHTML elements found by the XPath query.
+     * Filters the XHTML elements found by the XPath query.
      *
-    * Because we use "contains" in the XPath, it may match on part of a class name.
-    * We filter out any partial matches here.
+     * Because we use "contains" in the XPath, it may match on part of a class name.
+     * We filter out any partial matches here.
+     *
+     * @param htmlNodes list of html nodes
+     * @param ditaPropertyName property name
+     * @return List of filtered elements
      */
     protected List<Element> filterXPathResults(NodeList htmlNodes, String ditaPropertyName) {
         if (htmlNodes == null || htmlNodes.getLength() == 0)
@@ -472,8 +478,12 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
     /**
      * Builds a strongly typed Entity Model based on a given DXA R2 Data Model.
      *
+     * @param <T> entity model type
      * @param entityModel The strongly typed Entity Model to build. Is null for the first Entity Model Builder in the pipeline.
      * @param entityModelData The DXA R2 Data Model.
+     * @param expectedClass expected class.
+     * @return entity model
+     * @throws DxaException in case of error during conversion
      */
     @Override
     public <T extends EntityModel> T buildEntityModel(@Nullable T entityModel, EntityModelData entityModelData, @Nullable Class<T> expectedClass) throws DxaException {

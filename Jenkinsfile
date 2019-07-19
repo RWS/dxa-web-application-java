@@ -38,9 +38,26 @@ pipeline {
                     script {
                         //Build on JDK8
                         jdk8BuilderImage.inside {
-                            sh "mvn -s $MAVEN_SETTINGS_PATH -B clean verify"
+                            //Cleanup:
+                            sh "rm -fr docs dxa-webapp.war"
+
+                            //Main build:
+                            sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar install javadoc:aggregate@publicApi"
+
+                            //Build the archetype:
+                            sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar install -f dxa-webapp/target/generated-sources/archetype/pom.xml"
+
+                            //Move stuff around for archiving:
+                            sh "mv target/site/publicApi/apidocs/ ./docs"
+                            sh "mv dxa-webapp/target/dxa-webapp.war ."
                         }
                     }
+                }
+            }
+            post {
+                always {
+                    junit '**/target/surefire-reports/*.xml'
+                    archiveArtifacts artifacts: "local-project-repo/**,dxa-webapp.war,docs/**"
                 }
             }
         }

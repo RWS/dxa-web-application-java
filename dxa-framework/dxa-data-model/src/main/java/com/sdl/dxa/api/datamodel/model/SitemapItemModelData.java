@@ -6,14 +6,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.google.common.collect.ComparisonChain;
 import com.sdl.dxa.api.datamodel.json.Polymorphic;
+import lombok.AccessLevel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.Accessors;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -33,6 +38,7 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
     private String type;
 
     @JsonProperty("Title")
+    @Setter(AccessLevel.NONE)
     private String title;
 
     @JsonProperty("OriginalTitle")
@@ -46,6 +52,7 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
     private boolean visible;
 
     @JsonProperty("Items")
+    @Setter(AccessLevel.NONE)
     private SortedSet<SitemapItemModelData> items = new TreeSet<>();
 
     @JsonProperty("PublishedDate")
@@ -55,6 +62,7 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
     private boolean parentsSet = false;
 
     @JsonIgnore
+    @Getter(AccessLevel.NONE)
     private SitemapItemModelData parent;
 
     /**
@@ -73,16 +81,7 @@ public class SitemapItemModelData implements Comparable<SitemapItemModelData> {
         return this;
     }
 
-    public SitemapItemModelData setItems(SortedSet<SitemapItemModelData> items) {
-        if (items == null) {
-            this.items = null;
-        } else {
-            items.forEach(this::addItem);
-        }
-        return this;
-    }
-
-    public SitemapItemModelData setItems(List<SitemapItemModelData> items) {
+    public SitemapItemModelData setItems(Collection<SitemapItemModelData> items) {
         if (items == null) {
             this.items = null;
         } else {

@@ -50,7 +50,7 @@
         <dxa-module-test.version>${dxa.version}</dxa-module-test.version>
         <dxa-module-tridion-docs-mashup.version>${dxa.version}</dxa-module-tridion-docs-mashup.version>
         <dxa-module-tridion-docs-search.version>${dxa.version}</dxa-module-tridion-docs-search.version>
-        <dxa-module-dd.version>${dxa.version}</dxa-module-dd.version>
+        <dxa-module-dd.version>2.2.0-SNAPSHOT</dxa-module-dd.version>
         <!-- /DXA Versions -->
 
         <!-- Apache -->

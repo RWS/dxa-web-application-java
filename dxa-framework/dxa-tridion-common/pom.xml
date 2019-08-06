@@ -6,8 +6,7 @@
     <parent>
         <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>2.2.0</version>
-        <relativePath>../pom.xml</relativePath>
+        <version>2.2.1-SNAPSHOT</version>
     </parent>
 
     <artifactId>dxa-tridion-common</artifactId>
@@ -42,12 +41,10 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context-support</artifactId>
-            <version>4.3.3.RELEASE</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>4.3.3.RELEASE</version>
         </dependency>
 
         <dependency>

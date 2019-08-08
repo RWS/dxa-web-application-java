@@ -27,7 +27,6 @@
             <groupId>com.sdl.delivery</groupId>
             <artifactId>cil</artifactId>
             <type>pom</type>
-
         </dependency>
         <!-- pca Model -->
         <dependency>
@@ -65,11 +64,6 @@
             <artifactId>javax.servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.sdl.dxa</groupId>
-            <artifactId>dxa-common</artifactId>
-        </dependency>
-
     </dependencies>
 
 </project>

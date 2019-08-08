@@ -16,6 +16,9 @@ pipeline {
                             //sh "mvn -B dependency:purge-local-repository -DreResolve=false"
 
                             sh "mvn -s $MAVEN_SETTINGS_PATH -B clean verify"
+
+                            //Build the webapp:
+                            sh "mvn -B -s $MAVEN_SETTINGS_PATH clean source:jar verify -f dxa-webapp/pom.xml"
                         }
                     }
                 }
@@ -43,6 +46,9 @@ pipeline {
 
                             //Main build:
                             sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar install javadoc:aggregate@publicApi"
+
+                            //Build the webapp:
+                            sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar install -f dxa-webapp/pom.xml"
 
                             //Build the archetype:
                             sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar install -f dxa-webapp/target/generated-sources/archetype/pom.xml"
@@ -75,6 +81,9 @@ pipeline {
 
                             //Main build:
                             sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar deploy javadoc:aggregate@publicApi"
+
+                            //Build the webapp:
+                            sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar install -f dxa-webapp/pom.xml"
 
                             //Build the archetype:
                             sh "mvn -B -s $MAVEN_SETTINGS_PATH -Dmaven.repo.local=local-project-repo -Plocal-repository clean source:jar install -f dxa-webapp/target/generated-sources/archetype/pom.xml "

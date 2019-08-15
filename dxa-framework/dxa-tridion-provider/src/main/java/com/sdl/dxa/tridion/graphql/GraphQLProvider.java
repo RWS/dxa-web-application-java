@@ -127,7 +127,7 @@ public class GraphQLProvider {
         try {
             result = mapToType(type, pageNode);
         } catch (IOException ex) {
-            throw new PageNotFoundException(String.format("Item '%d' not found for Localization '%d'", publicationId, pageId), ex);
+            throw new PageNotFoundException(String.format("Item '%d' not found for Localization '%d'", pageId, publicationId), ex);
         }
         return result;
     }

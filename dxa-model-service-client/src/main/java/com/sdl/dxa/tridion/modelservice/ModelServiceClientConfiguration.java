@@ -14,7 +14,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
-import javax.ws.rs.Produces;
 import java.util.Objects;
 import java.util.Optional;
 

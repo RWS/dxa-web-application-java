@@ -9,6 +9,7 @@ import com.tridion.ambientdata.claimstore.ClaimStore;
 import com.tridion.ambientdata.web.WebClaims;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -29,6 +30,7 @@ import java.util.function.Function;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Service
+@Profile("cil.providers.active")
 public class ModelServiceClient {
 
     private static final Logger log = getLogger(ModelServiceClient.class);

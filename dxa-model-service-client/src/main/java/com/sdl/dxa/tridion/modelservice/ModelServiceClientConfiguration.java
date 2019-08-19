@@ -10,6 +10,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.util.Assert;
 
@@ -19,6 +20,7 @@ import java.util.Optional;
 import static org.slf4j.LoggerFactory.getLogger;
 
 @Component
+@Profile("cil.providers.active")
 public class ModelServiceClientConfiguration extends BaseClientConfigurationLoader {
 
     private static final Logger log = getLogger(ModelServiceClientConfiguration.class);

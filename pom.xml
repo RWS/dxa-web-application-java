@@ -28,11 +28,10 @@
 
         <cd-cil.version>11.0.0-1032</cd-cil.version>
         <cd-delivery-cil.version>11.0.0-1042</cd-delivery-cil.version>
-        <cd-xo.version>${cd-delivery-cil.version}</cd-xo.version>
-        <udp-common-config-legacy.version>11.0.0-1028</udp-common-config-legacy.version>
+        <cd-xo.version>11.0.0-1050</cd-xo.version>
+        <udp-common-config-legacy.version>11.0.0-1037</udp-common-config-legacy.version>
         <udp-context-client.version>${cd-delivery-cil.version}</udp-context-client.version>
-        <udp-ugc-cil-api.version>11.0.0-1032</udp-ugc-cil-api.version>
-
+        <udp-ugc-cil-api.version>11.0.0-1048</udp-ugc-cil-api.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>
@@ -124,7 +123,7 @@
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
         <dd4t-latest.version>2.1.5</dd4t-latest.version>
 
-        <pca-client.version>2.2.0</pca-client.version>
+        <pca-client.version>2.2.1-SNAPSHOT</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>
     </properties>
 
@@ -195,7 +194,6 @@
         <module>dxa-model-service-client</module>
         <module>dxa-dd4t-ms-provider</module>
         <module>dxa-framework</module>
-        <module>dxa-webapp</module>
     </modules>
 
     <profiles>

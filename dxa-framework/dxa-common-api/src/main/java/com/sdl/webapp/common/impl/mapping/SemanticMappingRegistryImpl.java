@@ -10,7 +10,7 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.util.PackageUtils;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.ClassMetadata;
@@ -18,7 +18,6 @@ import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
-import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.lang.reflect.Field;

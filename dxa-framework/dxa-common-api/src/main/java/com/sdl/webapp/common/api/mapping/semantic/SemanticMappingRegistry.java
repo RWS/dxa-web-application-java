@@ -5,8 +5,8 @@ import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticPropertyIn
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.views.AbstractModuleInitializer;
 import com.sdl.webapp.common.api.model.EntityModel;
+import org.jetbrains.annotations.Nullable;
 
-import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;

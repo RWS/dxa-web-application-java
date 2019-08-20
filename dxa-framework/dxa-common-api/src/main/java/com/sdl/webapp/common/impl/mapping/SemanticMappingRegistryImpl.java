@@ -10,6 +10,7 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.util.PackageUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.ClassMetadata;
@@ -17,6 +18,7 @@ import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ClassUtils;
 
+import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.lang.reflect.Field;
@@ -276,6 +278,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
      * {@inheritDoc}
      */
     @Override
+    @Nullable
     public Class<? extends EntityModel> getEntityClass(String entityName) {
         for (Class<? extends EntityModel> entityClass : semanticEntityInfo.keys()) {
             Set<SemanticEntityInfo> entityInfoList = semanticEntityInfo.get(entityClass);
@@ -292,6 +295,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
      * {@inheritDoc}
      */
     @Override
+    @Nullable
     public Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String fullyQualifiedName, Class<? extends EntityModel> expectedClass) throws SemanticMappingException {
 
         String shortName = fullyQualifiedName.substring(fullyQualifiedName.lastIndexOf(':') + 1);
@@ -307,7 +311,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
         }
 
         if (possibleValues.isEmpty()) {
-            log.trace("Cannot find any view model type for {}", fullyQualifiedName);
+            log.debug("Cannot find any view model type for {}", fullyQualifiedName);
             return null;
         }
 
@@ -339,6 +343,7 @@ public class SemanticMappingRegistryImpl implements SemanticMappingRegistry {
     }
 
     private boolean isPossibleMappedClass(Class<? extends EntityModel> expectedClass, String fullyQualifiedName, Map.Entry<Class<? extends EntityModel>, SemanticEntityInfo> entry) {
+        if (entry == null) return false;
         SemanticEntityInfo entityInfo = entry.getValue();
 
         return String.format("%s:%s", entityInfo.getVocabulary(), entityInfo.getEntityName()).equals(fullyQualifiedName) &&

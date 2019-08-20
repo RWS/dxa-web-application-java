@@ -11,6 +11,7 @@ import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +44,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
      * {@inheritDoc}
      */
     @Override
+    @NotNull
     public Class<? extends ViewModel> getViewEntityClass(final String viewName) throws DxaException {
 
         final String areaName;
@@ -66,31 +68,30 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
      * {@inheritDoc}
      */
     @Override
+    @NotNull
     public Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames, @Nullable Class<? extends EntityModel> expectedClass) throws DxaException {
-        Class<? extends ViewModel> viewModelType;
         List<Exception> exceptions = new ArrayList<>();
         for (String fullyQualifiedName : semanticTypeNames) {
             try {
-                viewModelType = getMappedModelTypes(fullyQualifiedName, expectedClass);
-            } catch (IllegalStateException ex) {
+                return getMappedModelTypes(fullyQualifiedName, expectedClass);
+            } catch (DxaException | IllegalStateException ex) {
                 //means mapping not found
                 exceptions.add(ex);
-                continue;
-            }
-            if (viewModelType != null) {
-                return viewModelType;
             }
         }
-        throw new DxaException("Cannot determine view model type for semantic schema names: '" + semanticTypeNames + "'. Please make sure " +
-                "that an entry is registered for this view name in the ViewModelRegistry. Collected exceptions: " + exceptions);
+        throw new DxaException("Cannot determine view model type for semantic schema names: '" +
+                semanticTypeNames + "'. Please make sure " +
+                "that an entry is registered for this view name in the ViewModelRegistry. " +
+                "Collected exceptions: " + exceptions);
     }
 
     @Override
+    @Nullable
     public Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames) {
         try {
             return getMappedModelTypes(semanticTypeNames, null);
         } catch (DxaException e) {
-            log.warn("Cannot get entity model type for {}" + semanticTypeNames, e);
+            log.warn("Cannot get entity model type for " + semanticTypeNames, e);
             return null;
         }
     }
@@ -99,12 +100,13 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
      * {@inheritDoc}
      */
     @Override
+    @NotNull
     public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName, @Nullable Class<? extends EntityModel> expectedClass) throws DxaException {
         Class<? extends ViewModel> retval;
         try {
             retval = this.semanticMappingRegistry.getEntityClassByFullyQualifiedName(semanticTypeName, expectedClass);
         } catch (SemanticMappingException e) {
-            throw new DxaException("Cannot get a view model tpe because of semantic mapping exception", e);
+            throw new DxaException("Cannot get a view model type for  " + semanticTypeName, e);
         }
 
         if (retval != null) {
@@ -116,6 +118,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
     }
 
     @Override
+    @Nullable
     public Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName) {
         try {
             return getMappedModelTypes(semanticTypeName, null);
@@ -129,7 +132,8 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
      * {@inheritDoc}
      */
     @Override
-    public Class<? extends ViewModel> getViewModelType(final MvcData viewData) {
+    @NotNull
+    public Class<? extends ViewModel> getViewModelType(final MvcData viewData) throws DxaException {
         //Entries with matching viewname
         Set<Map.Entry<MvcData, Class<? extends ViewModel>>> entries = new HashSet<>();
         entries.addAll(viewEntityClassMap.entrySet().stream().filter(mvcData -> {
@@ -165,7 +169,7 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
         if (probablyClassForModelData != null) {
             return probablyClassForModelData;
         }
-        throw new IllegalStateException("Cannot detect ViewModel for ViewData " + viewData);
+        throw new DxaException("Cannot detect ViewModel for ViewData " + viewData);
     }
 
     /**

@@ -254,13 +254,10 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
      * @dxa.publicApi
      */
     @Override
+    @NotNull
     public PageModel buildPageModel(@Nullable PageModel originalPageModel, @NotNull PageModelData modelData) throws SemanticMappingException {
         PageModel pageModel = instantiatePageModel(originalPageModel, modelData);
 
-        if (pageModel == null) {
-            log.info("Page Model is null, for model data id = {}", modelData.getId());
-            return null;
-        }
         webRequestContext.setPageContextId(modelData.getId());
 
         fillViewModel(pageModel, modelData);
@@ -284,7 +281,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         }
     }
 
-    @Nullable
+    @NotNull
     PageModel instantiatePageModel(@Nullable PageModel originalPageModel, @NotNull PageModelData pageModelData) throws SemanticMappingException {
         if (originalPageModel != null) {
             log.warn("Original page model is expected to be null but it's '{}'", originalPageModel);
@@ -295,13 +292,15 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         PageModel pageModel = null;
         try {
             Class<? extends ViewModel> viewModelType = viewModelRegistry.getViewModelType(mvcData);
+            if (viewModelType == null) {
+                throw new IllegalStateException("Cannot find a view model type for " + mvcData);
+            }
 
             log.debug("Instantiating a PageModel without a SchemaID = null, modelData = {}, view model type = '{}'", pageModelData, viewModelType);
             // semantic mapping is possible, let's do it
-            if (pageModelData.getSchemaId() == null) {
-                pageModel = viewModelType == null ? createDefaultPageModel() : null;
-            }
-            if (pageModel == null) {
+            if (pageModelData.getSchemaId() != null) {
+                pageModel = createDefaultPageModel();
+            } else {
                 pageModel = (PageModel) createViewModel(viewModelType, pageModelData);
             }
             pageModel.setMvcData(mvcData);
@@ -332,7 +331,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         try {
             Class<? extends ViewModel> viewModelType = viewModelRegistry.getViewModelType(mvcData);
             if (viewModelType == null) {
-                throw new SemanticMappingException("Cannot find a view model type for " + mvcData);
+                throw new IllegalStateException("Cannot find a view model type for " + mvcData);
             }
 
             RegionModel regionModel = (RegionModel) createRegionModel(regionModelData, viewModelType);
@@ -397,10 +396,10 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         return constructorExists.newInstance(regionModelData.getName());
     }
 
+    @NotNull
     EntityModel createEntityModel(EntityModelData entityModelData) {
         try {
-            EntityModel entityModel = modelBuilderPipeline.createEntityModel(entityModelData);
-            return entityModel;
+            return modelBuilderPipeline.createEntityModel(entityModelData);
         } catch (Exception e) {
             String message = "Cannot create an entity model for model data " + entityModelData;
             log.error(message, e);

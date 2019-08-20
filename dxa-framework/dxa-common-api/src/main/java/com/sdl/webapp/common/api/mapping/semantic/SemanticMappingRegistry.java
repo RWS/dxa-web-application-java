@@ -6,6 +6,7 @@ import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.views.AbstractModuleInitializer;
 import com.sdl.webapp.common.api.model.EntityModel;
 
+import javax.annotation.Nullable;
 import java.lang.reflect.Field;
 import java.util.Map;
 import java.util.Set;
@@ -68,6 +69,7 @@ public interface SemanticMappingRegistry {
      * @return entity class
      * @param entityName an entity name
      */
+    @Nullable
     Class<? extends EntityModel> getEntityClass(String entityName);
 
 
@@ -78,6 +80,7 @@ public interface SemanticMappingRegistry {
      * @param entityName an entity name
      * @param expectedClass an expected class or null if none
      */
+    @Nullable
     Class<? extends EntityModel> getEntityClassByFullyQualifiedName(String entityName, Class<? extends EntityModel> expectedClass) throws SemanticMappingException;
 
     /**

@@ -5,6 +5,7 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.markup.Markup;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 
 import static com.sdl.webapp.common.controller.ControllerUtils.SERVER_ERROR_VIEW;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.MARKUP;
@@ -45,13 +48,17 @@ public class SiteMapXmlController {
         this.markup = markup;
     }
 
+    static String getFormattedDateTime(DateTime moment) {
+        return new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX").format(moment.toDate());
+    }
+
     private static void writeSitemapItemsXml(Collection<SitemapItem> items, StringBuilder builder, String baseUrl) {
         for (SitemapItem item : items) {
             if ("Page".equals(item.getType()) && item.getUrl().startsWith("/")) {
                 builder.append("<url>");
                 builder.append("<loc>").append(baseUrl).append(item.getUrl()).append("</loc>");
                 if (item.getPublishedDate() != null) {
-                    builder.append("<lastmod>").append(item.getPublishedDate()).append("</lastmod>");
+                    builder.append("<lastmod>").append(getFormattedDateTime(item.getPublishedDate())).append("</lastmod>");
                 }
                 builder.append("</url>");
             } else {

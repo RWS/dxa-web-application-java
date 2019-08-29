@@ -1,5 +1,15 @@
 package com.sdl.dxa.tridion.navigation;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.PropertyNamingStrategy;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.util.StdDateFormat;
+import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.sdl.delivery.ugc.client.odata.edm.impl.CommentEdm;
 import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.DepthCounter;
@@ -20,6 +30,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -59,7 +70,7 @@ public class GraphQLDynamicNavigationModelProviderTest {
     private static final boolean VISIBLE = true;
     private static final int LOCALIZATION_ID = 1234;
     private static final int DEPTH_COUNTER = 9;
-    private static final int DEPTH_COUNTER_TEST_BOUND = 2;
+    private static final int DEPTH_COUNTER_TEST_BOUND = 1;
     private static final String SITEMAP_ID = "sitemap Id";
 
     @Mock
@@ -228,16 +239,18 @@ public class GraphQLDynamicNavigationModelProviderTest {
     @Test
     public void getNavigationSubtree() {
         TaxonomySitemapItem[] result = new TaxonomySitemapItem[]{createTaxonomySitemapItem(ID, true)};
-        doReturn(result).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID),
-                eq(DEPTH_COUNTER_TEST_BOUND), eq(INCLUDE), any());
-        doReturn(new TaxonomySitemapItem[0]).when(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID),
-                anyString(), eq(DEPTH_COUNTER_TEST_BOUND), eq(NONE), any());
+        doReturn(result)
+                .when(pcaClient)
+                .getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER_TEST_BOUND), eq(INCLUDE), any());
+        doReturn(new TaxonomySitemapItem[0])
+                .when(pcaClient)
+                .getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), anyString(), eq(DEPTH_COUNTER_TEST_BOUND), eq(NONE), any());
 
         Collection<SitemapItemModelData> sitemapItemModelData = provider.getNavigationSubtree(requestDto).get();
 
         verifyCreatedObject(sitemapItemModelData.toArray(EMPTY)[0], true, true);
-        verify(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER_TEST_BOUND),
-                eq(INCLUDE), any());
+        verify(pcaClient)
+                .getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER_TEST_BOUND), eq(INCLUDE), any());
         verify(provider, times(5)).convert(any(TaxonomySitemapItem.class));
     }
 
@@ -307,5 +320,26 @@ public class GraphQLDynamicNavigationModelProviderTest {
 
         verify(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER_TEST_BOUND),
                 eq(INCLUDE), any());
+    }
+
+    @Test
+    public void serializeToJson() throws JsonProcessingException {
+        ObjectMapper mapper = new ObjectMapper();
+
+        mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.UpperCamelCaseStrategy());
+        mapper.registerModule(new JodaModule());
+        mapper.setDateFormat(new StdDateFormat());
+        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
+
+        CommentEdm commentEdm = new CommentEdm();
+        commentEdm.setCreationDate(ZonedDateTime.now());
+
+        ObjectWriter ow = mapper.writer();
+
+        String logStr = ow.writeValueAsString(commentEdm);
+        System.err.println(""+logStr);
+
     }
 }

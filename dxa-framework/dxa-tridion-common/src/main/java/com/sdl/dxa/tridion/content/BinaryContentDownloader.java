@@ -33,7 +33,7 @@ public class BinaryContentDownloader {
         try (CloseableHttpResponse response = httpclient.execute(httpget)) {
             return IOUtils.toByteArray(response.getEntity().getContent());
         } catch (IOException e) {
-            throw new StaticContentNotLoadedException("Cannot content for file " + file, e);
+            throw new StaticContentNotLoadedException("Cannot download content for file " + file, e);
         }
     }
 }

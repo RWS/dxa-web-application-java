@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -245,7 +246,6 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
                 .build();
         return staticContentResolver.getStaticContent(requestDto);
     }
-
 
     private static class CursorIndexer {
         public static final String SESSION_KEY = "dxa_indexer";

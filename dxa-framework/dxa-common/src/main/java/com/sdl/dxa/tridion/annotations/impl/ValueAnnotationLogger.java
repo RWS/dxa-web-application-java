@@ -13,8 +13,10 @@ public class ValueAnnotationLogger implements AnnotationFetcherForValue {
     @Override
     public String fetchAllValues(InitializingBean bean) throws Exception {
         if (bean == null) return "";
+        Field[] declaredFields = bean.getClass().getDeclaredFields();
         StringBuilder result = new StringBuilder(bean.getClass().getCanonicalName() + " has ");
-        for (Field field : bean.getClass().getDeclaredFields()){
+        if (declaredFields.length == 0) result.append(" no @Value annotations");
+        for (Field field : declaredFields){
             Value valueAnnotation = field.getAnnotation(Value.class);
             if (valueAnnotation != null) {
                 field.setAccessible(true);

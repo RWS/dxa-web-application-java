@@ -36,6 +36,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -219,6 +220,7 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     }
 
     @Override
+    @Cacheable(condition = "#binaryId != null && #localization != null && #localization.id != null", cacheNames = "staticContentItems", key = "{#binaryId, #localization.id}")
     public StaticContentItem getStaticContent(int binaryId, Localization localization) throws ContentProviderException {
         String localizationId = localization.getId();
         String localizationPath = localization.getPath();

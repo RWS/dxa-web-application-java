@@ -65,7 +65,7 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
     @Getter
     private CacheManager cacheManager;
 
-    private Set<String> ownCachesNames = new ConcurrentSkipListSet<>();
+    private ConcurrentSkipListSet<String> ownCachesNames = new ConcurrentSkipListSet<>();
 
     private Map<Triple<String, Class, Class>, Cache> ownCaches = new ConcurrentSkipListMap<>();
 
@@ -101,23 +101,21 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
 
     @Override
     public <K, V> Cache<K, V> getCache(String cacheName, Class<K> keyType, Class<V> valueType) {
-        log.debug("Trying to get cache name {} for key {} and value {}", cacheName, keyType, valueType);
-        Cache<K, V> cache = cacheManager.getCache(cacheName, keyType, valueType);
-        if (cache == null) {
+        log.debug("Trying to get newCache name {} for key {} and value {}", cacheName, keyType, valueType);
+        Cache<K, V> newCache = cacheManager.getCache(cacheName, keyType, valueType);
+        if (newCache == null) {
             log.debug("Cache name {} for key {} and value {} does not exist, auto-creating", cacheName, keyType, valueType);
-            cache = cacheManager.createCache(cacheName, buildDefaultCacheConfiguration(keyType, valueType));
+            newCache = cacheManager.createCache(cacheName, buildDefaultCacheConfiguration(keyType, valueType));
         }
 
-        if (!ownCachesNames.contains(cacheName)) {
+        if (ownCachesNames.add(cacheName)) {
             Triple<String, Class, Class> triple = Triple.of(cacheName, keyType, valueType);
-            if (!ownCaches.containsKey(triple)) {
-                ownCaches.put(triple, cache);
-                ownCachesNames.add(cacheName);
-                log.debug("Added cache {} to own caches of DXA", cacheName);
+            Cache<K, V> oldCache = ownCaches.put(triple, newCache);
+            if (oldCache == null) {
+                if (log.isDebugEnabled()) log.debug("Added cache {} to own caches of DXA", cacheName);
             }
         }
-
-        return cache;
+        return newCache;
     }
 
     @Override

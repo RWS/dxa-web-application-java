@@ -30,14 +30,17 @@ public class SpringJCacheManagerAdapter implements CacheManager {
 
     @Override
     public Cache getCache(String name) {
-        log.debug("Requested cache name = {}, we know these caches: {}", caches);
         if (!caches.containsKey(name)) {
-            Cache cache = cacheProvider.isCacheEnabled(name) ?
-                    new JCacheCache(cacheProvider.getCache(name)) : noOpCacheManager.getCache(name);
-            log.debug("Created a cache {} and now know all these: {}", name, caches);
+            boolean cacheEnabled = cacheProvider.isCacheEnabled(name);
+            log.info("Cache [{}] is {}", name, cacheEnabled ? "enabled" : "disabled");
+            Cache cache = cacheEnabled
+                    ? new JCacheCache(cacheProvider.getCache(name))
+                    : noOpCacheManager.getCache(name);
             caches.putIfAbsent(name, cache);
         }
-        return caches.get(name);
+        Cache cache = caches.get(name);
+        if (log.isDebugEnabled()) log.debug("Got cache {} -> {}", name, cache.getClass().getCanonicalName());
+        return cache;
     }
 
     @Override

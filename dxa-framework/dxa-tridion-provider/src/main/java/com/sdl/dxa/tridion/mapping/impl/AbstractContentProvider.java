@@ -53,7 +53,7 @@ public abstract class AbstractContentProvider {
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
         Assert.notNull(localization);
 
-        String key = "pagemodel" + path + " " + localization.getId() + getClaimCacheKey();
+        String key = createKeyForCacheByPath(path, localization, "pagemodel");
         long time = System.currentTimeMillis();
 
         SimpleValueWrapper simpleValueWrapper = null;
@@ -70,13 +70,14 @@ public abstract class AbstractContentProvider {
             pageModel = loadPage(path, localization);
             if (pageModel.canBeCached() && !webRequestContext.isSessionPreview()) {
                 pagemodelCache.put(key, pageModel);
+                pagemodelCache.put(createKeyForCacheByPath(pageModel.getId(), localization, "pagemodel"), pageModel);
             }
         }
         try {
             // Make a deep copy
             pageModel = pageModel.deepCopy();
         } catch (DxaException e) {
-            throw new ContentProviderException(e);
+            throw new ContentProviderException("PageModel for " + key + " cannot be copied", e);
         }
 
         //filterConditionalEntities modifies the pagemodel, that is why the deep copy is done.
@@ -85,7 +86,7 @@ public abstract class AbstractContentProvider {
         webRequestContext.setPage(pageModel);
 
         if (log.isDebugEnabled()) {
-            log.debug("Page model {}{} [{}] loaded. (Cachable: {}), loading took {} ms. ",
+            log.debug("Page model {}{} [{}] loaded. (Cacheable: {}), loading took {} ms. ",
                     pageModel.getUrl(),
                     pageModel.getId(),
                     pageModel.getName(),
@@ -94,6 +95,16 @@ public abstract class AbstractContentProvider {
         }
 
         return pageModel;
+    }
+
+    @NotNull
+    private String createKeyForCacheByPath(String path, Localization localization, String type) {
+        return type + " [" + path + "] " + localization.getId();
+    }
+
+    @NotNull
+    private String createKeyForCacheById(String id, Localization localization, String type) {
+        return createKeyForCacheByPath("[" + id + "]", localization, type);
     }
 
     /**
@@ -108,7 +119,7 @@ public abstract class AbstractContentProvider {
     public PageModel getPageModel(int pageId, Localization localization) throws ContentProviderException {
         Assert.notNull(localization);
 
-        String key = "pagemodelId" + pageId + " " + localization.getId() + getClaimCacheKey();
+        String key = createKeyForCacheById("" + pageId, localization, "pagemodel");;
         long time = System.currentTimeMillis();
 
         SimpleValueWrapper simpleValueWrapper = null;
@@ -125,13 +136,14 @@ public abstract class AbstractContentProvider {
             pageModel = loadPage(pageId, localization);
             if (pageModel.canBeCached() && !webRequestContext.isSessionPreview()) {
                 pagemodelCache.put(key, pageModel);
+                pagemodelCache.put(createKeyForCacheByPath(pageModel.getUrl(), localization, "pagemodel"), pageModel);
             }
         }
         try {
             // Make a deep copy
             pageModel = pageModel.deepCopy();
         } catch (DxaException e) {
-            throw new ContentProviderException(e);
+            throw new ContentProviderException("PageModel for " + key + " cannot be copied", e);
         }
 
         //filterConditionalEntities modifies the pagemodel, that is why the deep copy is done.
@@ -140,7 +152,7 @@ public abstract class AbstractContentProvider {
         webRequestContext.setPage(pageModel);
 
         if (log.isDebugEnabled()) {
-            log.debug("Page model {}{} [{}] loaded. (Cachable: {}), loading took {} ms. ",
+            log.debug("Page model {}{} [{}] loaded. (Cacheable: {}), loading took {} ms. ",
                     pageModel.getUrl(),
                     pageModel.getId(),
                     pageModel.getName(),
@@ -173,13 +185,13 @@ public abstract class AbstractContentProvider {
      */
     public EntityModel getEntityModel(@NotNull String id, Localization localization) throws ContentProviderException {
         Assert.notNull(id);
-
-        String key = id;
+        long time = System.currentTimeMillis();
+        String key = createKeyForCacheById(id, localization, "entitymodel");
         SimpleValueWrapper simpleValueWrapper = null;
         if (!webRequestContext.isSessionPreview()) {
             simpleValueWrapper = (SimpleValueWrapper) entitymodelCache.get(key);
         }
-        EntityModel entityModel;
+        EntityModel entityModel = null;
         if (simpleValueWrapper != null) {
             //EntityModel is in cache
             entityModel = (EntityModel) simpleValueWrapper.get();
@@ -196,10 +208,17 @@ public abstract class AbstractContentProvider {
 
         try {
             //Return a deepcopy so controllers can dynamicly change the content without causing problems.
-            return entityModel.deepCopy();
+            entityModel = entityModel.deepCopy();
         } catch (DxaException e) {
-            throw new ContentProviderException(e);
+            throw new ContentProviderException("EntityModel for " + key + " cannot be copied", e);
         }
+        if (log.isDebugEnabled()) {
+            log.debug("Entity model {} loaded. (Cacheable: {}), loading took {} ms. ",
+                    entityModel.getId(),
+                    entityModel.canBeCached(),
+                    (System.currentTimeMillis() - time));
+        }
+        return entityModel;
     }
 
     protected abstract EntityModel getEntityModel(String componentId) throws ContentProviderException;

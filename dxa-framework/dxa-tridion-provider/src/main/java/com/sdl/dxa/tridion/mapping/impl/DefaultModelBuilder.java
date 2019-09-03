@@ -322,7 +322,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         String separator = localization.getResource("core.pageTitleSeparator");
         String postfix = localization.getResource("core.pageTitlePostfix");
         log.trace("Model page title '{}', pageTitleSeparator '{}', postfix '{}'", title, separator, postfix);
-        return title + separator + postfix;
+        return title + (separator == null ? "" : separator) + (postfix == null ? "" :postfix);
     }
 
     RegionModel createRegionModel(RegionModelData regionModelData) throws SemanticMappingException {

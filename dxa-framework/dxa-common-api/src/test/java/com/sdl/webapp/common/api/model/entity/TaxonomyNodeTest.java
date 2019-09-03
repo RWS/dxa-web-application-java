@@ -94,7 +94,7 @@ public class TaxonomyNodeTest extends SitemapItemTest {
     @Test
     public void shouldWrapItemsInSortedSet() {
         //when
-        Set<SitemapItem> set = new TaxonomyNode().wrapItems(Collections.<SitemapItem>emptySet());
+        Set<SitemapItem> set = new TaxonomyNode().wrapItems(new LinkedHashSet<>());
         Set<SitemapItem> set2 = new TaxonomyNode().wrapItems(null);
         Set<SitemapItem> set3 = new TaxonomyNode().wrapItems(new LinkedHashSet<>(Lists.newArrayList(new SitemapItem())));
 

@@ -4,19 +4,21 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.collect.ComparisonChain;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
+import org.springframework.util.comparator.NullSafeComparator;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -29,6 +31,14 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 @Slf4j
 @NoArgsConstructor
 public class SitemapItem extends AbstractEntityModel {
+    private static final Pattern TAXONOMY_ID_PATTERN = Pattern.compile("^\\w?(\\d+)(-\\w)?(\\d+)?");
+
+    public static final Comparator<SitemapItem> SITE_MAP_SORT_BY_TITLE_AND_ID = new NullSafeComparator<>((o1, o2) -> ComparisonChain.start()
+            .compare(o1.getOriginalTitle(), o2.getOriginalTitle())
+            .compare(o1.getId(), o2.getId())
+            .result(), true);
+
+    public static final Comparator<SortableSiteMap> SITE_MAP_SORT_BY_TAXONOMY_AND_KEYWORD = Comparator.comparing(SortableSiteMap::getOne).thenComparing(SortableSiteMap::getTwo);
 
     @JsonProperty("Title")
     private String title;
@@ -42,7 +52,7 @@ public class SitemapItem extends AbstractEntityModel {
 
     @JsonProperty("Items")
     @JsonDeserialize(as = LinkedHashSet.class)
-    private Set<SitemapItem> items;
+    private LinkedHashSet<SitemapItem> items;
 
     @JsonProperty("PublishedDate")
     private DateTime publishedDate;
@@ -98,8 +108,8 @@ public class SitemapItem extends AbstractEntityModel {
      *
      * @param items items to set
      */
-    public void setItems(@Nullable Set<SitemapItem> items) {
-        this.items = wrapItems(items);
+    public void setItems(@Nullable Collection<SitemapItem> items) {
+        this.items = new LinkedHashSet<>(items);
         rebuildParentRelationships();
     }
 
@@ -130,7 +140,7 @@ public class SitemapItem extends AbstractEntityModel {
     }
 
     @Contract("null -> !null; !null -> !null")
-    protected Set<SitemapItem> wrapItems(@Nullable Set<SitemapItem> items) {
+    protected LinkedHashSet<SitemapItem> wrapItems(@Nullable LinkedHashSet<SitemapItem> items) {
         return items == null ? new LinkedHashSet<>() : items;
     }
 
@@ -182,4 +192,41 @@ public class SitemapItem extends AbstractEntityModel {
         }
         return parent;
     }
+
+    /**
+     * A private class that contains the results of the regex so they only have to be done once for a whole sorting.
+     */
+    public static class SortableSiteMap {
+        private Integer one;
+        private Integer two;
+        private SitemapItem sitemapItem;
+
+        public SortableSiteMap(SitemapItem sitemapItem) {
+            this.sitemapItem = sitemapItem;
+            Matcher matcher = TAXONOMY_ID_PATTERN.matcher(sitemapItem.getId());
+            if (matcher.matches()) {
+                String group1 = matcher.group(1);
+                String group3 = matcher.group(3);
+                if (StringUtils.isNotEmpty(group1)) {
+                    this.one = Integer.parseInt(group1);
+                }
+                if (StringUtils.isNotEmpty(group3)) {
+                    this.two = Integer.parseInt(group3);
+                }
+            }
+        }
+
+        public Integer getOne() {
+            return one;
+        }
+
+        public Integer getTwo() {
+            return two;
+        }
+
+        public SitemapItem getSitemapItem() {
+            return sitemapItem;
+        }
+    }
+
 }

@@ -172,11 +172,8 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
      * @dxa.publicApi
      */
     @Override
-    public @NotNull StaticContentItem getStaticContent(
-            String path,
-            String localizationId,
-            String localizationPath
-    ) throws ContentProviderException {
+    public @NotNull StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
+            throws ContentProviderException {
         StaticContentRequestDto requestDto = StaticContentRequestDto.builder(path, localizationId)
                 .localizationPath(localizationPath)
                 .baseUrl(webRequestContext.getBaseUrl())
@@ -209,9 +206,7 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     protected EntityModel getEntityModel(String componentId) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
         EntityRequestDto entityRequest = EntityRequestDto.builder(localization.getId(), componentId).build();
-
         EntityModelData entityModelData = graphQLProvider.getEntityModelData(entityRequest);
-
         try {
             return builderPipeline.createEntityModel(entityModelData);
         } catch (DxaException ex) {

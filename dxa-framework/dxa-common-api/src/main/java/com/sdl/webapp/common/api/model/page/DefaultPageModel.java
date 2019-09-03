@@ -36,6 +36,7 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "id", "name", "title", "url", "meta", "regions" })
 @NoArgsConstructor
+@lombok.ToString
 public class DefaultPageModel extends AbstractViewModel implements PageModel {
 
     private static final String XPM_PAGE_SETTINGS_MARKUP = "<!-- Page Settings: {\"PageID\":\"%s\",\"PageModified\":\"%s\",\"PageTemplateID\":\"%s\",\"PageTemplateModified\":\"%s\"} -->";
@@ -108,7 +109,7 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
             try {
                 regionModel.filterConditionalEntities(evaluators);
             } catch (ContentProviderException ex) {
-                exception.set(ex);
+                if (exception.get() == null) exception.set(ex);
             }
         });
         if (exception.get() != null) throw exception.get();

@@ -12,9 +12,11 @@ import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.graphql.GraphQLProvider;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
+import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
 import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
 import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
+import com.sdl.web.pca.client.contentmodel.generated.ClaimValue;
 import com.sdl.web.pca.client.contentmodel.generated.Component;
 import com.sdl.web.pca.client.contentmodel.generated.CustomMetaEdge;
 import com.sdl.web.pca.client.contentmodel.generated.Item;
@@ -31,6 +33,8 @@ import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaRuntimeException;
 import com.sdl.webapp.common.util.FileUtils;
+import com.tridion.ambientdata.AmbientDataContext;
+import com.tridion.ambientdata.claimstore.ClaimStore;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -43,6 +47,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpSession;
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +63,7 @@ import java.util.stream.Collectors;
 @Primary
 @Slf4j
 public class GraphQLContentProvider extends AbstractContentProvider implements ContentProvider, Dxa22ContentProvider {
+    private static final URI USER_CONDITIONS_URI = URI.create("taf:ish:userconditions:merged");
 
     private ModelBuilderPipeline builderPipeline;
 
@@ -194,10 +200,18 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
 
     @Override
     PageModel loadPage(int pageId, Localization localization) throws ContentProviderException {
-
+        ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
+        ContextData contextData = null;
+        if (claimStore != null) {
+            ClaimValue value = claimStore.get(USER_CONDITIONS_URI, ClaimValue.class);
+            if (value != null) {
+                contextData = new ContextData();
+                contextData.addClaimValue(value);
+            }
+        }
         PageModelData pageModelData = graphQLProvider.loadPage(PageModelData.class,
                 localization.getCmUriScheme(), Integer.parseInt(localization.getId()), pageId,
-                ContentType.MODEL, DataModelType.R2, PageInclusion.INCLUDE, null);
+                ContentType.MODEL, DataModelType.R2, PageInclusion.INCLUDE, contextData);
 
         return builderPipeline.createPageModel(pageModelData);
     }

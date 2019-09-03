@@ -30,7 +30,6 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
     protected WebApplicationContext webApplicationContext;
 
     @Override
-    @Cacheable(condition = "#requestDto != null && #requestDto.localizationPath != null", cacheNames = "staticContentItems", unless = "#requestDto.noMediaCache", key = "'staticcontent' + #requestDto.toString()")
     public @NotNull StaticContentItem getStaticContent(@NotNull StaticContentRequestDto requestDto) throws ContentProviderException {
         log.trace("getStaticContent: {}", requestDto);
 

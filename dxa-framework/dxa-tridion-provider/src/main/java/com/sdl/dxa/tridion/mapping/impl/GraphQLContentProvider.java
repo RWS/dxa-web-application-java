@@ -248,7 +248,6 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
         return staticContentResolver.getStaticContent(requestDto);
     }
 
-
     private static class CursorIndexer {
         public static final String SESSION_KEY = "dxa_indexer";
         private Map<Integer, String> cursors = new HashMap<>();

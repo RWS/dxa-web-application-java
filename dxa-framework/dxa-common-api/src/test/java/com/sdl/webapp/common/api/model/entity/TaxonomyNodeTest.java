@@ -1,15 +1,13 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.google.common.collect.Lists;
+import com.sdl.webapp.common.api.model.sorting.SortableSiteMap;
+import org.jetbrains.annotations.NotNull;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.Set;
-import java.util.SortedSet;
+import java.util.*;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -36,37 +34,60 @@ public class TaxonomyNodeTest extends SitemapItemTest {
     }
 
     @Test
-    public void shouldSortElementsAccordinglyWithOriginalTitles() {
+    public void shouldSortElementsAccordingToTitles() {
         //given
-        SitemapItem item = new TaxonomyNode();
+        ArrayList<SitemapItem> entries = createSitemapItems(true);
 
+        //when
+        Collection<SitemapItem> sorted = SortableSiteMap.sort(entries, SortableSiteMap.SORT_BY_TITLE_AND_ID);
+
+        //then
+        Iterator<SitemapItem> iterator = sorted.iterator();
+        assertEquals(entries.get(1), iterator.next());
+        assertEquals(entries.get(0), iterator.next());
+        assertEquals(entries.get(3), iterator.next());
+        assertEquals(entries.get(2), iterator.next());
+        assertFalse(iterator.hasNext());
+    }
+
+    @Test
+    public void shouldSortElementsAccordingTaxonomy() {
+        //given
+        ArrayList<SitemapItem> entries = createSitemapItems(false);
+
+        //when
+        Collection<SitemapItem> sorted = SortableSiteMap.sort(entries, SortableSiteMap.SORT_BY_TAXONOMY_AND_KEYWORD);
+
+        //then
+        Iterator<SitemapItem> iterator = sorted.iterator();
+        assertEquals(entries.get(3), iterator.next());
+        assertEquals(entries.get(2), iterator.next());
+        assertEquals(entries.get(1), iterator.next());
+        assertEquals(entries.get(0), iterator.next());
+        assertFalse(iterator.hasNext());
+    }
+
+    @NotNull
+    private ArrayList<SitemapItem> createSitemapItems(boolean titleOrId) {
         SitemapItem first = new SitemapItem();
         SitemapItem second = new SitemapItem();
         SitemapItem third = new SitemapItem();
         SitemapItem fourth = new SitemapItem();
-
-        first.setTitle("bbb");
-        second.setTitle("ccc");
-        //title is changed but it already should not influence on sorting
-        second.setTitle("aaa");
-        third.setTitle("zzz");
-        third.setId("1");
-        //if titles are the same, sort by id
-        fourth.setTitle("zzz");
-        fourth.setId("2");
-
-        item.setItems(new LinkedHashSet<>(Lists.newArrayList(fourth, third, second, first)));
-
-        //when
-        Set<SitemapItem> items = item.getItems();
-
-        //then
-        Iterator<SitemapItem> iterator = items.iterator();
-        assertEquals(first, iterator.next());
-        assertEquals(second, iterator.next());
-        assertEquals(third, iterator.next());
-        assertEquals(fourth, iterator.next());
-        assertFalse(iterator.hasNext());
+        if (titleOrId) {
+            first.setTitle("bbb");
+            second.setTitle("aaa");
+            third.setTitle("zzz");
+            third.setId("2");
+            //if titles are the same, sort by id
+            fourth.setTitle("zzz");
+            fourth.setId("1");
+        } else {
+            first.setId("t3-k11");
+            second.setId("t3-k9");
+            third.setId("t2-k7");
+            fourth.setId("t1-k5");
+        }
+        return Lists.newArrayList(first, second, third, fourth);
     }
 
     @Test
@@ -99,8 +120,8 @@ public class TaxonomyNodeTest extends SitemapItemTest {
         Set<SitemapItem> set3 = new TaxonomyNode().wrapItems(new LinkedHashSet<>(Lists.newArrayList(new SitemapItem())));
 
         //then
-        assertTrue(SortedSet.class.isAssignableFrom(set.getClass()) && set.isEmpty());
-        assertTrue(SortedSet.class.isAssignableFrom(set2.getClass()) && set2.isEmpty());
-        assertTrue(SortedSet.class.isAssignableFrom(set2.getClass()) && !set3.isEmpty());
+        assertTrue(LinkedHashSet.class.isAssignableFrom(set.getClass()) && set.isEmpty());
+        assertTrue(LinkedHashSet.class.isAssignableFrom(set2.getClass()) && set2.isEmpty());
+        assertTrue(LinkedHashSet.class.isAssignableFrom(set2.getClass()) && !set3.isEmpty());
     }
 }

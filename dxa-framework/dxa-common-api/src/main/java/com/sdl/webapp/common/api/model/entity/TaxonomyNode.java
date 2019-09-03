@@ -4,13 +4,13 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
+import com.sdl.webapp.common.api.model.sorting.SortableSiteMap;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.LinkedHashSet;
-import java.util.TreeSet;
 
 /**
  * Represents a special kind of {@link SitemapItem} which is used for Taxonomy Nodes.
@@ -38,11 +38,7 @@ public class TaxonomyNode extends SitemapItem {
 
     @Override
     protected LinkedHashSet<SitemapItem> wrapItems(@Nullable LinkedHashSet<SitemapItem> items) {
-        TreeSet<SitemapItem> treeSet = new TreeSet<>(SITE_MAP_SORT_BY_TITLE_AND_ID);
-        if (items != null) {
-            treeSet.addAll(items);
-        }
-        return new LinkedHashSet<>(treeSet);
+        return new LinkedHashSet<>(SortableSiteMap.sort(items, SortableSiteMap.SORT_BY_TITLE_AND_ID));
     }
 
     @Override

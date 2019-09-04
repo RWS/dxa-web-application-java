@@ -8,7 +8,6 @@ import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.dxa.tridion.pcaclient.GraphQLUtils;
-import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.generated.Ancestor;
 import com.sdl.web.pca.client.contentmodel.generated.PageSitemapItem;
@@ -69,18 +68,19 @@ public class GraphQLDynamicNavigationModelProvider implements NavigationModelPro
         int depth = getDepth(request);
         ContextData contextData = createContextData(request.getClaims());
 
-        TaxonomySitemapItem taxonomySitemapItem = provider.getClient()
-                .getSitemap(GraphQLUtils.convertUriToGraphQLContentNamespace(request.getUriType()),
-                        request.getLocalizationId(), depth, contextData);
+        com.sdl.web.pca.client.ApiClient client = provider.getClient();
+        TaxonomySitemapItem taxonomySitemapItem = client.getSitemap(GraphQLUtils.convertUriToGraphQLContentNamespace(request.getUriType()),
+                                                                    request.getLocalizationId(),
+                                                                    depth,
+                                                                    contextData);
         if (taxonomySitemapItem == null) {
             return Optional.empty();
         }
-
         List<TaxonomySitemapItem> leafNodes = getLeafNodes(taxonomySitemapItem);
         while (leafNodes.size() > 0) {
             TaxonomySitemapItem node = leafNodes.remove(0);
             if (node.getHasChildNodes()) {
-                TaxonomySitemapItem[] subtree = provider.getClient()
+                TaxonomySitemapItem[] subtree = client
                         .getSitemapSubtree(GraphQLUtils.convertUriToGraphQLContentNamespace(request.getUriType()),
                                 request.getLocalizationId(), node.getId(), depth, NONE, contextData);
                 if (node.getItems() == null) {
@@ -162,8 +162,8 @@ public class GraphQLDynamicNavigationModelProvider implements NavigationModelPro
     private List<SitemapItem> getEntireNavigationSubtreeInternal(@NotNull SitemapRequestDto request) {
         int depth = defaultDescendantDepth;
 
-        List<SitemapItem> rootItems = asList(provider.getClient()
-                .getSitemapSubtree(
+        com.sdl.web.pca.client.ApiClient client = provider.getClient();
+        List<SitemapItem> rootItems = asList(client.getSitemapSubtree(
                         GraphQLUtils.convertUriToGraphQLContentNamespace(request.getUriType()),
                         request.getLocalizationId(),
                         request.getSitemapId(),
@@ -182,10 +182,13 @@ public class GraphQLDynamicNavigationModelProvider implements NavigationModelPro
             TaxonomySitemapItem root = (TaxonomySitemapItem) tempRoots.get(index);
             List<TaxonomySitemapItem> leafNodes = getLeafNodes(root);
             for (TaxonomySitemapItem item : leafNodes) {
-                TaxonomySitemapItem[] subtree = provider.getClient()
-                        .getSitemapSubtree(GraphQLUtils.convertUriToGraphQLContentNamespace(request.getUriType()),
-                                request.getLocalizationId(), item.getId(), depth, NONE, null);
-
+                TaxonomySitemapItem[] subtree = client.getSitemapSubtree(GraphQLUtils
+                                .convertUriToGraphQLContentNamespace(request.getUriType()),
+                                                                    request.getLocalizationId(),
+                                                                    item.getId(),
+                                                                    depth,
+                                                                    NONE,
+                                                         null);
                 if (subtree.length > 0) {
                     item.setItems(subtree[0].getItems());
                     tempRoots.addAll(getLeafNodes(item));

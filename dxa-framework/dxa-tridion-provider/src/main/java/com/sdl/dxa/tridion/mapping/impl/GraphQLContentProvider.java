@@ -58,11 +58,8 @@ import java.util.stream.Collectors;
 @Primary
 @Slf4j
 public class GraphQLContentProvider extends AbstractContentProvider implements ContentProvider, Dxa22ContentProvider {
-
     private ModelBuilderPipeline builderPipeline;
-
     private StaticContentResolver staticContentResolver;
-
     private GraphQLProvider graphQLProvider;
     private final WebRequestContext webRequestContext;
     private ApiClientProvider pcaClientProvider;
@@ -172,11 +169,8 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
      * @dxa.publicApi
      */
     @Override
-    public @NotNull StaticContentItem getStaticContent(
-            String path,
-            String localizationId,
-            String localizationPath
-    ) throws ContentProviderException {
+    public @NotNull StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
+            throws ContentProviderException {
         StaticContentRequestDto requestDto = StaticContentRequestDto.builder(path, localizationId)
                 .localizationPath(localizationPath)
                 .baseUrl(webRequestContext.getBaseUrl())
@@ -197,7 +191,6 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
 
     @Override
     PageModel loadPage(int pageId, Localization localization) throws ContentProviderException {
-
         PageModelData pageModelData = graphQLProvider.loadPage(PageModelData.class,
                 localization.getCmUriScheme(), Integer.parseInt(localization.getId()), pageId,
                 ContentType.MODEL, DataModelType.R2, PageInclusion.INCLUDE, null);
@@ -209,9 +202,7 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     protected EntityModel getEntityModel(String componentId) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
         EntityRequestDto entityRequest = EntityRequestDto.builder(localization.getId(), componentId).build();
-
         EntityModelData entityModelData = graphQLProvider.getEntityModelData(entityRequest);
-
         try {
             return builderPipeline.createEntityModel(entityModelData);
         } catch (DxaException ex) {
@@ -234,8 +225,8 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     }
 
     @Override
-    public @NotNull StaticContentItem getStaticContent(String path, Localization localization)
-            throws ContentProviderException {
+    @NotNull
+    public StaticContentItem getStaticContent(String path, Localization localization) throws ContentProviderException {
         String localizationId = localization.getId();
         String localizationPath = localization.getPath();
         String namespace = localization.getCmUriScheme();
@@ -274,7 +265,7 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
                 startIndex = 0;
                 return null;
             }
-            if (cursors.size() == 0) {
+            if (cursors.isEmpty()) {
                 startIndex = 0;
                 return null;
             }

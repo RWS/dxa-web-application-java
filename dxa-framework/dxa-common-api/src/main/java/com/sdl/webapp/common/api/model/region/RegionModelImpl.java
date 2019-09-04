@@ -205,7 +205,7 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
             try {
                 regionModel.filterConditionalEntities(evaluators);
             } catch (ContentProviderException ex) {
-                exception.set(ex);
+                if (exception.get() == null) exception.set(ex);
             }
         });
         if (exception.get() != null) throw exception.get();
@@ -213,7 +213,7 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
             try {
                 return evaluator.includeEntity(entityModel);
             } catch (ContentProviderException ex) {
-                exception.set(ex);
+                if (exception.get() == null) exception.set(ex);
                 return true;
             }
         }));

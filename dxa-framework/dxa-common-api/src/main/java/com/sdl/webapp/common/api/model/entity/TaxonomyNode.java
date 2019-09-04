@@ -38,7 +38,7 @@ public class TaxonomyNode extends SitemapItem {
 
     @Override
     protected LinkedHashSet<SitemapItem> wrapItems(@Nullable LinkedHashSet<SitemapItem> items) {
-        return new LinkedHashSet<>(SortableSiteMap.sort(items, SortableSiteMap.SORT_BY_TITLE_AND_ID));
+        return new LinkedHashSet<>(SortableSiteMap.sortItem(items, SortableSiteMap.SORT_BY_TITLE_AND_ID));
     }
 
     @Override

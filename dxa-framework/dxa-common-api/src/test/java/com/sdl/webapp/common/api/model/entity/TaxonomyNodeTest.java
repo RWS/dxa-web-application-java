@@ -39,7 +39,7 @@ public class TaxonomyNodeTest extends SitemapItemTest {
         ArrayList<SitemapItem> entries = createSitemapItems(true);
 
         //when
-        Collection<SitemapItem> sorted = SortableSiteMap.sort(entries, SortableSiteMap.SORT_BY_TITLE_AND_ID);
+        Collection<SitemapItem> sorted = SortableSiteMap.sortItem(entries, SortableSiteMap.SORT_BY_TITLE_AND_ID);
 
         //then
         Iterator<SitemapItem> iterator = sorted.iterator();
@@ -56,7 +56,7 @@ public class TaxonomyNodeTest extends SitemapItemTest {
         ArrayList<SitemapItem> entries = createSitemapItems(false);
 
         //when
-        Collection<SitemapItem> sorted = SortableSiteMap.sort(entries, SortableSiteMap.SORT_BY_TAXONOMY_AND_KEYWORD);
+        Collection<SitemapItem> sorted = SortableSiteMap.sortItem(entries, SortableSiteMap.SORT_BY_TAXONOMY_AND_KEYWORD);
 
         //then
         Iterator<SitemapItem> iterator = sorted.iterator();

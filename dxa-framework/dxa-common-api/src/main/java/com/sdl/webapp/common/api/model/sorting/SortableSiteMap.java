@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model.sorting;
 
 import com.google.common.collect.ComparisonChain;
+import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.util.comparator.NullSafeComparator;
@@ -36,7 +37,23 @@ public class SortableSiteMap {
     private String secondChar = "";
     private String originalTitle = "";
     private String id = "";
-    private final SitemapItem sitemapItem;
+    private SitemapItem sitemapItem;
+    private SitemapItemModelData sitemapItemModelData;
+
+    public SortableSiteMap(SitemapItemModelData sitemapItemModelData) {
+        this.sitemapItemModelData = sitemapItemModelData;
+        if (sitemapItemModelData == null) {
+            return;
+        }
+        originalTitle = sitemapItemModelData.getOriginalTitle() == null ? "" : sitemapItemModelData.getOriginalTitle();
+        id = sitemapItemModelData.getId() == null ? "" : sitemapItemModelData.getId();
+        if (sitemapItemModelData.getId() == null) return;
+        Matcher matcher = TAXONOMY_ID_PATTERN.matcher(sitemapItemModelData.getId());
+        if (!matcher.matches()) {
+            return;
+        }
+        fillFromMatcher(matcher);
+    }
 
     public SortableSiteMap(SitemapItem sitemapItem) {
         this.sitemapItem = sitemapItem;
@@ -50,6 +67,10 @@ public class SortableSiteMap {
         if (!matcher.matches()) {
             return;
         }
+        fillFromMatcher(matcher);
+    }
+
+    private void fillFromMatcher(Matcher matcher) {
         String group2 = matcher.group(2);
         String group4 = matcher.group(4);
         if (StringUtils.isNotEmpty(group2)) {
@@ -82,6 +103,10 @@ public class SortableSiteMap {
         return sitemapItem;
     }
 
+    public SitemapItemModelData getSitemapItemModelData() {
+        return sitemapItemModelData;
+    }
+
     public String getOriginalTitle() {
         return originalTitle;
     }
@@ -90,13 +115,22 @@ public class SortableSiteMap {
         return id;
     }
 
-    public static Collection<SitemapItem> sort(Collection<SitemapItem> entries, Comparator<SortableSiteMap> comparator) {
+    public static Collection<SitemapItem> sortItem(Collection<SitemapItem> entries, Comparator<SortableSiteMap> comparator) {
         if (entries == null) return Collections.emptyList();
         return entries
                 .stream()
                 .map(SortableSiteMap::new)
                 .sorted(comparator)
                 .map(SortableSiteMap::getSitemapItem).collect(Collectors.toList());
+    }
+
+    public static Collection<SitemapItemModelData> sortModelData(Collection<SitemapItemModelData> entries, Comparator<SortableSiteMap> comparator) {
+        if (entries == null) return Collections.emptyList();
+        return entries
+                .stream()
+                .map(SortableSiteMap::new)
+                .sorted(comparator)
+                .map(SortableSiteMap::getSitemapItemModelData).collect(Collectors.toList());
     }
 
 }

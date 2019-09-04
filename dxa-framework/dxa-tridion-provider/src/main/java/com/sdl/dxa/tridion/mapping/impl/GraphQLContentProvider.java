@@ -12,7 +12,6 @@ import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.graphql.GraphQLProvider;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
-import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
 import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
 import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
@@ -44,7 +43,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpSession;
-import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -60,12 +58,8 @@ import java.util.stream.Collectors;
 @Primary
 @Slf4j
 public class GraphQLContentProvider extends AbstractContentProvider implements ContentProvider, Dxa22ContentProvider {
-    private static final URI USER_CONDITIONS_URI = URI.create("taf:ish:userconditions:merged");
-
     private ModelBuilderPipeline builderPipeline;
-
     private StaticContentResolver staticContentResolver;
-
     private GraphQLProvider graphQLProvider;
     private final WebRequestContext webRequestContext;
     private ApiClientProvider pcaClientProvider;
@@ -197,18 +191,9 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
 
     @Override
     PageModel loadPage(int pageId, Localization localization) throws ContentProviderException {
-//        ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
-        ContextData contextData = null;
-//        if (claimStore != null) {
-//            Map value = claimStore.get(USER_CONDITIONS_URI, Map.class);
-//            if (value != null) {
-//                contextData = new ContextData();
-//                contextData.addClaimValue(new ClaimValue()value);
-//            }
-//        }
         PageModelData pageModelData = graphQLProvider.loadPage(PageModelData.class,
                 localization.getCmUriScheme(), Integer.parseInt(localization.getId()), pageId,
-                ContentType.MODEL, DataModelType.R2, PageInclusion.INCLUDE, contextData);
+                ContentType.MODEL, DataModelType.R2, PageInclusion.INCLUDE, null);
 
         return builderPipeline.createPageModel(pageModelData);
     }
@@ -240,8 +225,8 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     }
 
     @Override
-    public @NotNull StaticContentItem getStaticContent(String path, Localization localization)
-            throws ContentProviderException {
+    @NotNull
+    public StaticContentItem getStaticContent(String path, Localization localization) throws ContentProviderException {
         String localizationId = localization.getId();
         String localizationPath = localization.getPath();
         String namespace = localization.getCmUriScheme();
@@ -280,7 +265,7 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
                 startIndex = 0;
                 return null;
             }
-            if (cursors.size() == 0) {
+            if (cursors.isEmpty()) {
                 startIndex = 0;
                 return null;
             }

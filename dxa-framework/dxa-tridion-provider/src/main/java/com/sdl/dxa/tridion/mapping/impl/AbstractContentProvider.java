@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
+import com.sdl.dxa.common.ClaimValues;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -171,7 +172,7 @@ public abstract class AbstractContentProvider {
                 .entrySet()
                 .stream()
                 .map(Object::toString)
-                .filter(obj -> obj.startsWith("taf:ish:userconditions"))
+                .filter(obj -> obj.startsWith(ClaimValues.ISH_CONDITIONS))
                 .collect(java.util.stream.Collectors.joining(","));
         return com.google.common.base.Strings.isNullOrEmpty(conditions) ? " noclaims" : " claims:" + conditions;
     }

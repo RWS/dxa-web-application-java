@@ -16,7 +16,6 @@ import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.ContentType;
 import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
 import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
-import com.sdl.web.pca.client.contentmodel.generated.ClaimValue;
 import com.sdl.web.pca.client.contentmodel.generated.Component;
 import com.sdl.web.pca.client.contentmodel.generated.CustomMetaEdge;
 import com.sdl.web.pca.client.contentmodel.generated.Item;
@@ -33,8 +32,6 @@ import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.exceptions.DxaRuntimeException;
 import com.sdl.webapp.common.util.FileUtils;
-import com.tridion.ambientdata.AmbientDataContext;
-import com.tridion.ambientdata.claimstore.ClaimStore;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,15 +197,15 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
 
     @Override
     PageModel loadPage(int pageId, Localization localization) throws ContentProviderException {
-        ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
+//        ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
         ContextData contextData = null;
-        if (claimStore != null) {
-            ClaimValue value = claimStore.get(USER_CONDITIONS_URI, ClaimValue.class);
-            if (value != null) {
-                contextData = new ContextData();
-                contextData.addClaimValue(value);
-            }
-        }
+//        if (claimStore != null) {
+//            Map value = claimStore.get(USER_CONDITIONS_URI, Map.class);
+//            if (value != null) {
+//                contextData = new ContextData();
+//                contextData.addClaimValue(new ClaimValue()value);
+//            }
+//        }
         PageModelData pageModelData = graphQLProvider.loadPage(PageModelData.class,
                 localization.getCmUriScheme(), Integer.parseInt(localization.getId()), pageId,
                 ContentType.MODEL, DataModelType.R2, PageInclusion.INCLUDE, contextData);

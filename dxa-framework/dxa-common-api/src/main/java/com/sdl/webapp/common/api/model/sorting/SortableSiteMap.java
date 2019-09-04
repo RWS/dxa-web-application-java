@@ -19,17 +19,29 @@ import java.util.stream.Collectors;
 public class SortableSiteMap {
     private static final Pattern TAXONOMY_ID_PATTERN = Pattern.compile("^(\\w?)(\\d+)-(\\w?)(\\d+)$");
 
-    public static final Comparator<SortableSiteMap> SORT_BY_TITLE_AND_ID = new NullSafeComparator<>((o1, o2) -> ComparisonChain.start()
-            .compare(o1.getOriginalTitle(), o2.getOriginalTitle())
-            .compare(o1.getId(), o2.getId())
-            .result(), true);
+    public static final Comparator<SortableSiteMap> SORT_BY_TITLE_AND_ID = new NullSafeComparator<>(new Comparator<SortableSiteMap>() {
+        @Override
+        public int compare(SortableSiteMap o1, SortableSiteMap o2) {
+            return ComparisonChain.start()
+                    .compareTrueFirst(o1 != null, o2 != null)
+                    .compare(o1.getOriginalTitle(), o2.getOriginalTitle())
+                    .compare(o1.getId(), o2.getId())
+                    .result();
+        }
+    }, true);
 
-    public static final Comparator<SortableSiteMap> SORT_BY_TAXONOMY_AND_KEYWORD = new NullSafeComparator<>((o1, o2) -> ComparisonChain.start()
-            .compare(o1.getFirstChar(), o2.getFirstChar())
-            .compare(o1.getFirstNumber(), o2.getFirstNumber())
-            .compare(o1.getSecondChar(), o2.getSecondChar())
-            .compare(o1.getSecondNumber(), o2.getSecondNumber())
-            .result(), true);
+    public static final Comparator<SortableSiteMap> SORT_BY_TAXONOMY_AND_KEYWORD = new NullSafeComparator<>(new Comparator<SortableSiteMap>() {
+        @Override
+        public int compare(SortableSiteMap o1, SortableSiteMap o2) {
+            return ComparisonChain.start()
+                    .compareTrueFirst(o1 != null, o2 != null)
+                    .compare(o1.getFirstChar(), o2.getFirstChar())
+                    .compare(o1.getFirstNumber(), o2.getFirstNumber())
+                    .compare(o1.getSecondChar(), o2.getSecondChar())
+                    .compare(o1.getSecondNumber(), o2.getSecondNumber())
+                    .result();
+        }
+    }, true);
 
     private Integer firstNumber = Integer.MIN_VALUE;
     private String firstChar = "";

@@ -119,7 +119,7 @@ public abstract class AbstractContentProvider {
         try {
             Assert.notNull(localization);
             String key = createKeyForCacheById("" + pageId, localization, "pagemodel");
-            ;
+
             SimpleValueWrapper simpleValueWrapper = null;
             if (!webRequestContext.isSessionPreview()) {
                 simpleValueWrapper = (SimpleValueWrapper) pagemodelCache.get(key);
@@ -148,9 +148,8 @@ public abstract class AbstractContentProvider {
             return pageModel;
         } finally {
             if (pageModel != null && log.isDebugEnabled()) {
-                log.debug("Page model {}{} [{}] loaded. (Cacheable: {}), loading took {} ms. ",
+                log.debug("Page model {} [{}] loaded. (Cacheable: {}), loading took {} ms. ",
                         pageModel.getUrl(),
-                        pageModel.getId(),
                         pageModel.getName(),
                         pageModel.canBeCached(),
                         (System.currentTimeMillis() - time));
@@ -174,6 +173,12 @@ public abstract class AbstractContentProvider {
                 .map(Object::toString)
                 .filter(obj -> obj.startsWith(ClaimValues.ISH_CONDITIONS))
                 .collect(java.util.stream.Collectors.joining(","));
+        //remove all <prop>=null properties
+        conditions = conditions
+                .replaceAll("([ ,{])([_0-9-]|\\pL)++=null", "$1<-n->")
+                .replaceAll("(,\\s<-n->)++", ",<-n->")
+                .replaceAll(",<-n->,","\n\n")
+                .replaceAll("\\{<-n->\\n", "{");
         return com.google.common.base.Strings.isNullOrEmpty(conditions) ? " noclaims" : " claims:" + conditions;
     }
 

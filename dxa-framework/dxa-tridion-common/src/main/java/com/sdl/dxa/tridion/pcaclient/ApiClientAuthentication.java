@@ -26,7 +26,18 @@ public class ApiClientAuthentication implements Authentication {
     @Autowired
     public ApiClientAuthentication(GraphQlServiceConfigurationLoader configurationLoader) {
         try {
-            tokenProvider = new OAuthTokenProvider(configurationLoader.getOauthTokenProviderConfiguration());
+            tokenProvider = new OAuthTokenProvider(configurationLoader.getOauthTokenProviderConfiguration()) {
+                public synchronized boolean isTokenExpired() {
+                    boolean tokenExpired = super.isTokenExpired();
+                    if (tokenExpired) {
+                        LOG.info("OAuth token expired! Taking another one...");
+                    }
+                    return tokenExpired;
+                }
+                public synchronized String getToken() {
+                            return super.getToken();
+                        }
+            };
         } catch (ConfigurationException e) {
             LOG.warn("Unable to read configuration for token provider.", e);
         } catch (ODataClientRuntimeException e) {

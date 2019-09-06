@@ -211,7 +211,10 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     }
 
     @Override
-    @Cacheable(condition = "#binaryId != null && #localization != null && #localization.id != null", cacheNames = "staticContentItems", key = "{#binaryId, #localization.id}")
+    @Cacheable(condition = "#binaryId != null && #localization != null && #localization.id != null",
+            cacheNames = "staticContentItems",
+            key = "{#binaryId, #localization.id}",
+            sync = true)
     public StaticContentItem getStaticContent(int binaryId, Localization localization) throws ContentProviderException {
         String localizationId = localization.getId();
         String localizationPath = localization.getPath();

@@ -9,7 +9,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriUtils;
 
@@ -91,8 +90,8 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
             if (!parentFolderExists(file, true)) {
                 throw new ContentProviderException("Failed to create parent directory for file: " + file);
             }
-            if (log.isWarnEnabled() && !file.canWrite()) {
-                log.warn("File {} cannot be written: ", file);
+            if (log.isWarnEnabled() && file.exists() && !file.canWrite()) {
+                log.warn("File {} exists and cannot be written", file);
             }
             ImageUtils.writeToFile(file, pathInfo, binaryContent);
         } catch (IOException e) {

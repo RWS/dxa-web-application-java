@@ -38,7 +38,7 @@ public interface LinkResolver {
      * @return The translated URL.
      */
     @Contract("null, _ -> null; !null, _ -> !null")
-    @Cacheable(value = "resolvedLinks", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary, #contextId }")
+    @Cacheable(value = "resolvedLinks", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary, #contextId }", sync = true)
     default String resolveLink(@Nullable String url, @Nullable String localizationId) {
         return resolveLink(url, localizationId, false, null);
     }

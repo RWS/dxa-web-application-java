@@ -15,7 +15,6 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import java.util.Properties;
-import java.util.Random;
 
 import static com.sdl.dxa.tridion.common.ConfigurationConstants.AUTHORIZATION_HEADER;
 import static com.sdl.odata.client.property.PropertyUtils.getStringProperty;
@@ -51,13 +50,7 @@ public class ApiClientAuthentication implements Authentication {
         }
 
         public synchronized boolean isTokenExpired() {
-            boolean randomExpired = new Random().nextBoolean();
-            if (randomExpired) {
-                LOG.info("OAuth token randomly expired! Taking another one..." + (oAuthToken == null ? " was null":""));
-            }
-            boolean tokenExpired = oAuthToken == null ||
-                    now().toEpochMilli() > oAuthToken.getExpiresOn() ||
-                    randomExpired;
+            boolean tokenExpired = oAuthToken == null || now().toEpochMilli() > oAuthToken.getExpiresOn();
             if (tokenExpired) {
                 LOG.info("OAuth token expired! Taking another one..." + (oAuthToken == null ? " was null":""));
             }
@@ -90,6 +83,13 @@ public class ApiClientAuthentication implements Authentication {
                 } else {
                     LOG.info("Attempt #"+attempt+" to get new token!");
                 }
+                try {
+                    Thread.sleep(200);
+                } catch (InterruptedException ex) {
+                    LOG.error("Interrupted");
+                    Thread.currentThread().interrupt();
+                    throw new IllegalStateException("Interrupted is fired");
+                }
                 return getTokenInternal(attempt--);
             }
         }
@@ -113,7 +113,7 @@ public class ApiClientAuthentication implements Authentication {
     @Override
     public void applyManualAuthentication(HttpRequest request) {
         if (tokenProvider != null) {
-            LOG.info("Request is secured, adding security token, expired: " + tokenProvider.isTokenExpired());
+            LOG.debug("Request is secured, adding security token");
             request.addHeader(AUTHORIZATION_HEADER, "Bearer " + tokenProvider.getToken());
         } else {
             LOG.trace("Request is not secured. Token provider is not available.");

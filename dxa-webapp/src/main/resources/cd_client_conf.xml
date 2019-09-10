@@ -1,13 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<ServiceConfig CacheEnabled="${CIL_CACHE_ENABLED:-true}"
-               ConnectionTimeout="${CONNECTION_TIMEOUT:-10000}"
+<ServiceConfig CacheEnabled="${CIL_CACHE_ENABLED:-true}" ConnectionTimeout="100000"
                CacheUri="ehcache.xml"
-               CacheExpirationDuration="60" ServiceAvailabilityCheck="true"
+               CacheExpirationDuration="60"
+               ServiceAvailabilityCheck="true"
                CacheProviderClass="com.sdl.web.client.cache.GeneralCacheProvider"
-               CacheConnectionTimeout="${CACHE_CONNECTION_TIMEOUT:-10000">
+               CacheConnectionTimeout="100">
     <!-- Specify your CIS Environment's Discovery Service URL below -->
-    <DiscoveryService ServiceUri="${DISCOVERY_URL:-http://localhost:8082/discovery.svc}"/>
+    <!--<DiscoveryService ServiceUri="http://dxadevweb85.ams.dev:8082/discovery.svc"/> &lt;!&ndash; 8880 staging autotest-parent &ndash;&gt;-->
+    <!--<DiscoveryService ServiceUri="https://docs-udp11.sdldev.net/discovery.svc"/>-->
+    <!--<DiscoveryService ServiceUri="http://10.100.93.148:8082/discovery.svc"/> &lt;!&ndash; 8880 staging autotest-parent &ndash;&gt;-->
 
-    <TokenService ClientId="cduser" ClientSecret="${cduserpassword:-encrypted:o/cgCBwmULeOyUZghFaKJA==}"/>
+    <!--<DiscoveryService ServiceUri="http://staging.udp.dev.dxa.sdldev.net:8082/discovery.svc"/> &lt;!&ndash; Active staging autotest-parent: CM is: http://cm.dev.dxa.sdldev.net:7086/ &ndash;&gt;-->
+    <!--<DiscoveryService ServiceUri="https://contentmashup-test-discoverystaging.tridion.sdlproducts.com/discovery.svc"/> &lt;!&ndash; Active staging autotest-parent &ndash;&gt;-->
+    <!--<DiscoveryService ServiceUri="https://udp-staging-5c6587-dev-us-west-2-blztestgrid-usw2.tridion.sdlproducts.com/discovery.svc"/> &lt;!&ndash; DDWebApp no search &ndash;&gt;-->
+    <DiscoveryService ServiceUri="https://udp-staging-17db30-dev-us-west-2-blztestgrid-usw2.tridion.sdlproducts.com/discovery.svc"/> <!-- DDWebApp search-->
+
+    <!--<DiscoveryService ServiceUri="https://contentmashup-test-discoverystaging.tridion.sdlproducts.com/discovery.svc"/> &lt;!&ndash; 8880 staging autotest-parent &ndash;&gt;-->
+    <!--<DiscoveryService ServiceUri="http://10.100.93.174:8082/discovery.svc"/> &lt;!&ndash; GREEN LIVE &ndash;&gt;-->
+    <!--<DiscoveryService ServiceUri="http://10.100.93.173:8082/discovery.svc"/> &lt;!&ndash; GREEN STAGING &ndash;&gt;-->
+    <!--<DiscoveryService ServiceUri="http://10.100.93.35:8082/discovery.svc"/> &lt;!&ndash; BLUE LIVE &ndash;&gt;-->
+    <!--<DiscoveryService ServiceUri="http://10.100.93.148:8082/discovery.svc"/> &lt;!&ndash; BLUE STAGING &ndash;&gt;-->
+    <!--<DiscoveryService ServiceUri="http://10.100.93.173:8082/discovery.svc"/> &lt;!&ndash; 8880 staging autotest-parent &ndash;&gt;-->
+
+    <!--<TokenService ClientId="cduser" ClientSecret="${TOKEN_CDUSER_SECRET:-encrypted:o/cgCBwmULeOyUZghFaKJA==}"/>-->
+    <TokenService ClientId="cduser" ClientSecret="CloudCDUserP@ssw0rd"/>
+    <QueryClient Class="com.sdl.delivery.iq.query.client.rest.RestQueryClient">
+        <QueryProvider Type="elasticsearch">
+        </QueryProvider>
+    </QueryClient>
+    <DefaultIndex IndexName="stagingudp-index"/>
 </ServiceConfig>
 

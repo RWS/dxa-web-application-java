@@ -40,8 +40,7 @@ public final class IgnoreByNameInRequestFilter implements DxaViewModelJsonProper
      */
     public static void ignoreByName(ServletRequest request, String... properties) {
         if (properties != null && properties.length != 0) {
-            String value = on(DELIMITER).skipNulls().join(
-                    on(DELIMITER).join(properties), request.getAttribute(REQUEST_ATTRIBUTE));
+            String value = on(DELIMITER).skipNulls().join(on(DELIMITER).join(properties), request.getAttribute(REQUEST_ATTRIBUTE));
 
             request.setAttribute(REQUEST_ATTRIBUTE, value);
             log.trace("Set ignore properties in current request: {}", value);

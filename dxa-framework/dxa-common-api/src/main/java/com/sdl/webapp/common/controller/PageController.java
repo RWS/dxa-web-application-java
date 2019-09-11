@@ -29,7 +29,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -66,7 +65,6 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
  * @dxa.publicApi
  */
 @Controller
-@Profile("!dxa.docs.enabled")
 @Slf4j
 //todo dxa2 create error controller for error handling
 public class PageController extends BaseController {

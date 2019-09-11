@@ -57,18 +57,7 @@ public class ModelServiceClientConfiguration extends BaseClientConfigurationLoad
             @Value("${dxa.model.service.key:#{null}}") String modelServiceKey,
             @Value("${dxa.model.service.url:#{null}}") String modelServiceUrl) throws ConfigurationException {
         if (isTokenConfigurationAvailable()) {
-            this.oAuthTokenProvider =  new OAuthTokenProvider(getOauthTokenProviderConfiguration()) {
-                public synchronized boolean isTokenExpired() {
-                    boolean tokenExpired = super.isTokenExpired();
-                    if (tokenExpired) {
-                        log.info("OAuth token expired! Taking another one...");
-                    }
-                    return tokenExpired;
-                }
-                public synchronized String getToken() {
-                    return super.getToken();
-                }
-            };
+            this.oAuthTokenProvider =  new OAuthTokenProvider(getOauthTokenProviderConfiguration());
 
             // try to get token to validate credentials
             this.oAuthTokenProvider.getToken();

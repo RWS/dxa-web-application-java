@@ -10,7 +10,11 @@ import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.formats.DataFormatter;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationNotResolvedException;
-import com.sdl.webapp.common.api.model.*;
+import com.sdl.webapp.common.api.model.EntityModel;
+import com.sdl.webapp.common.api.model.MvcData;
+import com.sdl.webapp.common.api.model.PageModel;
+import com.sdl.webapp.common.api.model.RegionModel;
+import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
@@ -18,6 +22,7 @@ import com.sdl.webapp.common.controller.exception.BadRequestException;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
 import com.sdl.webapp.common.controller.exception.NotFoundException;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.markup.Markup;
 import com.sdl.webapp.common.util.TcmUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -26,7 +31,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
@@ -37,8 +47,17 @@ import javax.xml.ws.http.HTTPException;
 import java.io.IOException;
 
 import static com.sdl.webapp.common.api.serialization.json.filter.IgnoreByNameInRequestFilter.ignoreByName;
-import static com.sdl.webapp.common.controller.ControllerUtils.*;
-import static com.sdl.webapp.common.controller.RequestAttributeNames.*;
+import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_PATH_PREFIX;
+import static com.sdl.webapp.common.controller.ControllerUtils.SECTION_ERROR_VIEW;
+import static com.sdl.webapp.common.controller.ControllerUtils.SERVER_ERROR_VIEW;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.CONTEXTENGINE;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.LOCALIZATION;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.MARKUP;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.MEDIAHELPER;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_ID;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.SCREEN_WIDTH;
+import static com.sdl.webapp.common.controller.RequestAttributeNames.SOCIALSHARE_URL;
 import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
@@ -135,7 +154,9 @@ public class PageController extends BaseController {
      * @param request current request data object
      * @return {@link ModelAndView} data object with information about the current view
      */
-    @RequestMapping(value = "/**", params = {"format"},
+    @RequestMapping(value = "/**",
+            params = {"format"},
+            method = {RequestMethod.GET, RequestMethod.HEAD},
             produces = {"application/rss+xml", MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_ATOM_XML_VALUE})
     public ModelAndView handleGetPageFormatted(final HttpServletRequest request) {
 
@@ -199,7 +220,7 @@ public class PageController extends BaseController {
         throw new BadRequestException("Request to unknown action: " + urlPathHelper.getRequestUri(request));
     }
 
-    @ExceptionHandler(NotFoundException.class)
+    @ExceptionHandler({NotFoundException.class, DxaItemNotFoundException.class})
     public String handleNotFoundException(HttpServletRequest request, HttpServletResponse response) throws Exception {
         // TODO TSI-775: No need to prefix with WebRequestContext.Localization.Path here (?)
         String path = webRequestContext.getLocalization().getPath();

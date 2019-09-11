@@ -113,7 +113,7 @@ public class ModelServiceClient {
     private void processAccessToken(HttpHeaders headers, boolean isRetry) {
         OAuthTokenProvider authTokenProvider = configuration.getOAuthTokenProvider();
         if (authTokenProvider != null) {
-            log.trace("Request is secured, adding security token, it is retry: {}", isRetry);
+            log.debug("Request is secured, adding security token, it is retry: {}", isRetry);
             headers.add("Authorization", "Bearer" + authTokenProvider.getToken());
         }
     }

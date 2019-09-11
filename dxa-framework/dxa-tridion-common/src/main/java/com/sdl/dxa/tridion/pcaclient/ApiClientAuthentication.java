@@ -26,18 +26,7 @@ public class ApiClientAuthentication implements Authentication {
     @Autowired
     public ApiClientAuthentication(GraphQlServiceConfigurationLoader configurationLoader) {
         try {
-            tokenProvider = new OAuthTokenProvider(configurationLoader.getOauthTokenProviderConfiguration()) {
-                public synchronized boolean isTokenExpired() {
-                    boolean tokenExpired = super.isTokenExpired();
-                    if (tokenExpired) {
-                        LOG.info("OAuth token expired! Taking another one...");
-                    }
-                    return tokenExpired;
-                }
-                public synchronized String getToken() {
-                            return super.getToken();
-                        }
-            };
+            tokenProvider = new OAuthTokenProvider(configurationLoader.getOauthTokenProviderConfiguration());
         } catch (ConfigurationException e) {
             LOG.warn("Unable to read configuration for token provider.", e);
         } catch (ODataClientRuntimeException e) {
@@ -48,7 +37,7 @@ public class ApiClientAuthentication implements Authentication {
     @Override
     public void applyManualAuthentication(HttpRequest request) {
         if (tokenProvider != null) {
-            LOG.trace("Request is secured, adding security token.");
+            LOG.debug("Request is secured, adding security token");
             request.addHeader(AUTHORIZATION_HEADER, "Bearer " + tokenProvider.getToken());
         } else {
             LOG.trace("Request is not secured. Token provider is not available.");

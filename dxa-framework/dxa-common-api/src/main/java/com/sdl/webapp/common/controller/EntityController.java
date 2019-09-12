@@ -7,6 +7,7 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.RedirectEntity;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,6 +24,7 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODE
  * @dxa.publicApi
  */
 @Controller
+@Profile("!dxa.docs.enabled")
 @RequestMapping(INCLUDE_MAPPING + "/Entity")
 public class EntityController extends BaseController {
 

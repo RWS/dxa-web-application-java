@@ -226,9 +226,12 @@ public final class InitializationUtils {
                                                             @NonNull Class<? extends Filter> clazz, @NonNull String... urlMappings) {
 
         FilterRegistration.Dynamic registration = servletContext.addFilter(clazz.getName(), clazz);
-        registration.addMappingForUrlPatterns(null, false, urlMappings);
-        log.info(REGISTERED_FOR_MAPPING_LOG_MESSAGE, clazz.getName(), urlMappings);
-        return registration;
+        if (registration != null) {
+            registration.addMappingForUrlPatterns(null, false, urlMappings);
+            log.info(REGISTERED_FOR_MAPPING_LOG_MESSAGE, clazz.getName(), urlMappings);
+            return registration;
+        }
+        return null;
     }
 
     /**

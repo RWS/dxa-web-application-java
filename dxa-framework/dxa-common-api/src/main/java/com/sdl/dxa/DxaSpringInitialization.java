@@ -91,6 +91,7 @@ public class DxaSpringInitialization {
     }
 
     @Bean
+    @Profile("!dxa.docs.enabled")
     public ViewResolver overrideDeviceContextualViewResolver() {
         UrlBasedViewResolver viewResolver = new ContextualDeviceUrlBasedViewResolver();
         viewResolver.setViewClass(OptionalJstlView.class);
@@ -101,6 +102,7 @@ public class DxaSpringInitialization {
     }
 
     @Bean
+    @Profile("!dxa.docs.enabled")
     public ViewResolver deviceContextualViewResolver() {
         UrlBasedViewResolver viewResolver = new ContextualDeviceUrlBasedViewResolver();
         viewResolver.setViewClass(OptionalJstlView.class);

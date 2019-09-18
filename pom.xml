@@ -28,10 +28,8 @@
 
         <cd-cil.version>11.0.0-1057</cd-cil.version>
         <cd-delivery-cil.version>11.0.0-1057</cd-delivery-cil.version>
-        <cd-xo.version>11.0.0-1050</cd-xo.version>
-        <udp-common-config-legacy.version>11.0.0-1037</udp-common-config-legacy.version>
-        <udp-context-client.version>11.0.0-1052</udp-context-client.version>
-        <udp-ugc-cil-api.version>11.0.0-1048</udp-ugc-cil-api.version>
+        <cd-xo.version>11.0.0-1057</cd-xo.version>
+        <udp-common-config-legacy.version>11.0.0-1045</udp-common-config-legacy.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>

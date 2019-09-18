@@ -376,11 +376,6 @@
                 <artifactId>udp-common-config-legacy</artifactId>
                 <version>${udp-common-config-legacy.version}</version>
             </dependency>
-<!--            <dependency>-->
-<!--                <groupId>com.sdl.delivery</groupId>-->
-<!--                <artifactId>udp-discovery-client-lightweight</artifactId>-->
-<!--                <version>${udp-discovery-client-lightweight.version}</version>-->
-<!--            </dependency>-->
 
             <dependency>
                 <groupId>com.51degrees</groupId>

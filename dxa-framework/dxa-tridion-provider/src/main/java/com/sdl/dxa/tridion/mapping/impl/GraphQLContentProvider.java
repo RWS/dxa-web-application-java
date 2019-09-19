@@ -43,6 +43,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpSession;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -242,7 +243,7 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
         return staticContentResolver.getStaticContent(requestDto);
     }
 
-    private static class CursorIndexer {
+    private static class CursorIndexer implements Serializable {
         public static final String SESSION_KEY = "dxa_indexer";
         private Map<Integer, String> cursors = new HashMap<>();
         private int startIndex;

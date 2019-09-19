@@ -12,7 +12,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-parent</artifactId>
-    <version>2.2.1-SNAPSHOT</version>
+    <version>2.2.1</version>
     <packaging>pom</packaging>
 
     <name>DXA - Parent</name>
@@ -47,7 +47,7 @@
         <dxa-module-test.version>${dxa.version}</dxa-module-test.version>
         <dxa-module-tridion-docs-mashup.version>${dxa.version}</dxa-module-tridion-docs-mashup.version>
         <dxa-module-tridion-docs-search.version>${dxa.version}</dxa-module-tridion-docs-search.version>
-        <dxa-module-dd.version>2.2.1-SNAPSHOT</dxa-module-dd.version>
+        <dxa-module-dd.version>${dxa.version}</dxa-module-dd.version>
         <!-- /DXA Versions -->
 
         <!-- Apache -->
@@ -121,7 +121,7 @@
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
         <dd4t-latest.version>2.1.5</dd4t-latest.version>
 
-        <pca-client.version>2.2.1-SNAPSHOT</pca-client.version>
+        <pca-client.version>2.2.1</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>
     </properties>
 

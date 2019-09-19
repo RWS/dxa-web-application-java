@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.google.common.base.MoreObjects;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import lombok.*;
@@ -13,10 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.joda.time.DateTime;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.*;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
@@ -24,7 +22,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
  * @dxa.publicApi
  */
 @Data
-@ToString(exclude = {"parent"})
 @EqualsAndHashCode(callSuper = true, of = {"title", "originalTitle", "type", "publishedDate"})
 @Slf4j
 @NoArgsConstructor
@@ -42,7 +39,7 @@ public class SitemapItem extends AbstractEntityModel {
 
     @JsonProperty("Items")
     @JsonDeserialize(as = LinkedHashSet.class)
-    private Set<SitemapItem> items;
+    private LinkedHashSet<SitemapItem> items;
 
     @JsonProperty("PublishedDate")
     private DateTime publishedDate;
@@ -98,8 +95,12 @@ public class SitemapItem extends AbstractEntityModel {
      *
      * @param items items to set
      */
-    public void setItems(@Nullable Set<SitemapItem> items) {
-        this.items = wrapItems(items);
+    public void setItems(@Nullable Collection<SitemapItem> items) {
+        if (LinkedHashSet.class.isAssignableFrom(items.getClass())){
+            this.items = (LinkedHashSet) items;
+        } else {
+            this.items = new LinkedHashSet<>(items);
+        }
         rebuildParentRelationships();
     }
 
@@ -130,7 +131,7 @@ public class SitemapItem extends AbstractEntityModel {
     }
 
     @Contract("null -> !null; !null -> !null")
-    protected Set<SitemapItem> wrapItems(@Nullable Set<SitemapItem> items) {
+    protected LinkedHashSet<SitemapItem> wrapItems(@Nullable LinkedHashSet<SitemapItem> items) {
         return items == null ? new LinkedHashSet<>() : items;
     }
 
@@ -181,5 +182,19 @@ public class SitemapItem extends AbstractEntityModel {
             throw new RuntimeException("The parents have not been computed; please call rebuildParentRelationships() on the root parent first.");
         }
         return parent;
+    }
+
+    @Override
+    public String toString() {
+        return MoreObjects.toStringHelper(this).omitNullValues()
+                .add("id", getId())
+                .add("title", title)
+                .add("url", url)
+                .add("type", type)
+                .add("items", items)
+                .add("publishedDate", publishedDate)
+                .add("visible", visible)
+                .add("originalTitle", originalTitle)
+                .toString();
     }
 }

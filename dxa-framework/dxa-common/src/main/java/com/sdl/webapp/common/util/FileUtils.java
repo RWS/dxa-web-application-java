@@ -1,18 +1,21 @@
 package com.sdl.webapp.common.util;
 
 import com.sdl.webapp.common.api.content.ContentProviderException;
+import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 /**
  * Utilities to work with files.
  * @dxa.publicApi
  */
+@Slf4j
 public final class FileUtils {
 
-    protected static final Pattern SYSTEM_FOLDER_PATTERN = Pattern.compile("/system(/v\\d+\\.\\d+)?/[^\\\\]+/.*");
+    protected static final Pattern SYSTEM_FOLDER_PATTERN = Pattern.compile("/system(/v\\d++\\.\\d++)?/[^\\\\]+/.*");
 
     protected static final String VERSION_JSON = "/version.json";
 
@@ -30,7 +33,13 @@ public final class FileUtils {
      * @return whether file creation date is older than given timestamp
      */
     public static boolean isFileOlderThan(@NotNull File file, long compareTime) {
-        return !file.exists() || file.lastModified() < compareTime;
+        if (log.isTraceEnabled() && !file.exists()) {
+            log.trace("File {} does not exist", file.getAbsoluteFile());
+        }
+        if (log.isDebugEnabled() && !file.canRead()) {
+            log.debug("File {} exists, but cannot be read", file.getAbsoluteFile());
+        }
+        return !file.exists() || !file.canRead() || file.lastModified() < compareTime;
     }
 
     /**
@@ -40,11 +49,23 @@ public final class FileUtils {
      * @param file        file to check
      * @param createIfNot whether to create folder if they are missing
      * @return whether the folder structure does exist <strong>after</strong> method execution
+     * may return false if:
+     * - parentFile is null - if file is a folder itself
      */
-    public static boolean parentFolderExists(@NotNull File file, boolean createIfNot) {
+    public static boolean parentFolderExists(@NotNull File file, boolean createIfNot) throws IOException {
         File parentFile = file.getParentFile();
-
-        return parentFile != null && (parentFile.exists() || createIfNot && parentFile.mkdirs());
+        if (parentFile == null) {
+            throw new IOException("Cannot create a file in root folder: " + file.getAbsolutePath());
+        }
+        boolean alreadyExists = parentFile.exists();
+        if (!alreadyExists && createIfNot) {
+            boolean createdPath = parentFile.mkdirs();
+            if (!createdPath) {
+                throw new IOException("Cannot create a path to file: " + file.getAbsolutePath());
+            }
+            alreadyExists = true;
+        }
+        return alreadyExists;
     }
 
     /**
@@ -57,13 +78,18 @@ public final class FileUtils {
      * @throws ContentProviderException if case folders cannot be created
      */
     public static boolean isToBeRefreshed(File file, long time) throws ContentProviderException {
-        if (isFileOlderThan(file, time)) {
+        if (!isFileOlderThan(file, time)) {
+            return false;
+        }
+        try {
             if (!parentFolderExists(file, true)) {
                 throw new ContentProviderException("Failed to create parent directory for file: " + file);
             }
-            return true;
+        } catch (IOException ex) {
+            throw new ContentProviderException(ex);
         }
-        return false;
+        //folder exists, file needs to be refreshed
+        return true;
     }
 
     /**

@@ -89,12 +89,9 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         return this.processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);
     }
 
-    private void refreshBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, BinaryComponent binaryComponent) throws ContentProviderException {
+    private byte[] downloadBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, BinaryComponent binaryComponent) throws ContentProviderException {
         String downloadUrl = binaryComponent.getVariants().getEdges().get(0).getNode().getDownloadUrl();
-
-        byte[] content = contentDownloader.downloadContent(file, downloadUrl);
-
-        refreshBinary(file, pathInfo, content);
+        return contentDownloader.downloadContent(file, downloadUrl);
     }
 
     public String resolveLocalizationPath(StaticContentRequestDto requestDto) {
@@ -118,24 +115,34 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
             throw new StaticContentNotFoundException("No binary found for pubId: [" +
                     requestDto.getLocalizationId() + "] and urlPath: " + urlPath);
         }
-
-        long componentTime = new DateTime(binaryComponent.getLastPublishDate()).getMillis();
-
-        boolean shouldRefreshed = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
-
-        if (shouldRefreshed) {
-            log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
-            synchronized (LOCK) {
-                refreshBinary(file, pathInfo, binaryComponent);
-            }
+        if (!requestDto.isNoMediaCache()) {
+            downloadBinaryWhenNeeded(binaryComponent, file, pathInfo);
         } else {
-            log.debug("File does not need to be refreshed: {}", file.getAbsolutePath());
+            log.debug("File cannot be cached: {}", file.getAbsolutePath());
         }
-
         BinaryVariant variant = binaryComponent.getVariants().getEdges().get(0).getNode();
         String binaryComponentType = variant.getType();
         String contentType = StringUtils.isEmpty(binaryComponentType) ? DEFAULT_CONTENT_TYPE : binaryComponentType;
         boolean versioned = isVersioned(variant.getPath());
         return new StaticContentItem(contentType, file, versioned);
+    }
+
+    private void downloadBinaryWhenNeeded(BinaryComponent binaryComponent, File file, ImageUtils.StaticContentPathInfo pathInfo) throws ContentProviderException {
+        long componentTime = new DateTime(binaryComponent.getLastPublishDate()).getMillis();
+        boolean toBeRefreshed = false;
+        synchronized (LOCK) {
+            toBeRefreshed = isToBeRefreshed(file, componentTime);
+        }
+        if (!toBeRefreshed) {
+            log.debug("File does not need to be refreshed: {}", file.getAbsolutePath());
+            return;
+        }
+        log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
+        byte[] content = downloadBinary(file, pathInfo, binaryComponent);
+        synchronized (LOCK) {
+            if (content != null) {
+                refreshBinary(file, pathInfo, content);
+            }
+        }
     }
 }

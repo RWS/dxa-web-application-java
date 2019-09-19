@@ -4,6 +4,7 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import org.junit.Test;
 
 import java.io.File;
+import java.io.IOException;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -20,6 +21,7 @@ public class FileUtilsTest {
         //given
         File file = mock(File.class);
         when(file.exists()).thenReturn(true);
+        when(file.canRead()).thenReturn(true);
         when(file.lastModified()).thenReturn(1000L);
 
         //when
@@ -45,13 +47,13 @@ public class FileUtilsTest {
     }
 
     @Test
-    public void shouldReturnTrueIfFileDoesntExistAndCreateFolders() {
+    public void shouldReturnTrueIfFileDoesntExistAndCreateFolders() throws Exception {
         //given
         File file = mock(File.class);
         when(file.exists()).thenReturn(false);
         File parent = mock(File.class);
         when(file.getParentFile()).thenReturn(parent);
-        when(parent.exists()).thenReturn(false);
+        when(parent.exists()).thenReturn(false, true, true);
         when(parent.mkdirs()).thenReturn(true);
 
         //when
@@ -62,9 +64,11 @@ public class FileUtilsTest {
     }
 
     @Test
-    public void shouldReturnFalseIfFileDoesntExistAndCreateFoldersIsNotRequested() {
+    public void shouldReturnFalseIfFileDoesntExistAndCreateFoldersIsNotRequested() throws Exception {
         //given
         File file = mock(File.class);
+        File parent = mock(File.class);
+        when(file.getParentFile()).thenReturn(parent);
         when(file.exists()).thenReturn(false);
 
         //when
@@ -74,27 +78,24 @@ public class FileUtilsTest {
         assertFalse(shouldBeFalse);
     }
 
-    @Test
-    public void shouldReturnFalseIfParentFileIsNull() {
+    @Test(expected = IOException.class)
+    public void shouldReturnFalseIfParentFileIsNull() throws Exception {
         //given
         File file = mock(File.class);
         when(file.exists()).thenReturn(true);
         when(file.getParentFile()).thenReturn(null);
 
         //when
-        boolean shouldBeFalse = FileUtils.parentFolderExists(file, true);
-
-        //then
-        assertFalse(shouldBeFalse);
+        FileUtils.parentFolderExists(file, true);
     }
 
     @Test
-    public void shouldFindParentFolderIfExists() {
+    public void shouldFindParentFolderIfExists() throws Exception {
         //given
         File file = mock(File.class);
         File parent = mock(File.class);
-        when(file.exists()).thenReturn(true);
         when(file.getParentFile()).thenReturn(parent);
+        when(file.exists()).thenReturn(true);
         when(parent.exists()).thenReturn(true);
 
         //when
@@ -107,7 +108,7 @@ public class FileUtilsTest {
     }
 
     @Test
-    public void shouldCreateParentFolderIfNotExists() {
+    public void shouldCreateParentFolderIfNotExists() throws Exception {
         //given
         File file = mock(File.class);
         File parent = mock(File.class);
@@ -135,7 +136,7 @@ public class FileUtilsTest {
     }
 
     @Test
-    public void shouldCreateAllFoldersForNonExisting() throws ContentProviderException {
+    public void shouldCreateAllFoldersForNonExisting() throws Exception {
         //given
         File file = mock(File.class);
         when(file.exists()).thenReturn(false);
@@ -157,6 +158,7 @@ public class FileUtilsTest {
         //given
         File file = mock(File.class);
         when(file.exists()).thenReturn(true);
+        when(file.canRead()).thenReturn(true);
         when(file.lastModified()).thenReturn(1000L);
         File parent = mock(File.class);
         when(file.getParentFile()).thenReturn(parent);

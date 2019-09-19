@@ -6,7 +6,7 @@
     <parent>
         <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>2.2.1-SNAPSHOT</version>
+        <version>2.2.1</version>
     </parent>
 
     <artifactId>dxa-tridion-provider</artifactId>
@@ -23,11 +23,6 @@
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-tridion-common</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.sdl.delivery</groupId>
-            <artifactId>udp-context-client</artifactId>
-            <version>${udp-context-client.version}</version>
         </dependency>
         <dependency>
             <groupId>com.sdl.dxa</groupId>

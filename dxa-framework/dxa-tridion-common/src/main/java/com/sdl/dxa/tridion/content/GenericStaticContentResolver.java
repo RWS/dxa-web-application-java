@@ -9,7 +9,6 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriUtils;
 
@@ -17,6 +16,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.regex.Pattern;
+
+import static com.sdl.webapp.common.util.FileUtils.parentFolderExists;
 
 @Slf4j
 public abstract class GenericStaticContentResolver implements StaticContentResolver {
@@ -28,7 +29,6 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
     protected WebApplicationContext webApplicationContext;
 
     @Override
-    @Cacheable(condition = "#requestDto != null && #requestDto.localizationPath != null", cacheNames = "staticContentItems", unless = "#requestDto.noMediaCache", key = "'staticcontent' + #requestDto.toString()")
     public @NotNull StaticContentItem getStaticContent(@NotNull StaticContentRequestDto requestDto) throws ContentProviderException {
         log.trace("getStaticContent: {}", requestDto);
 
@@ -87,9 +87,15 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
     protected void refreshBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, byte[] binaryContent) throws ContentProviderException {
         log.debug("Writing binary content to file: {}", file);
         try {
+            if (!parentFolderExists(file, true)) {
+                throw new ContentProviderException("Failed to create parent directory for file: " + file);
+            }
+            if (log.isWarnEnabled() && file.exists() && !file.canWrite()) {
+                log.warn("File {} exists and cannot be written", file);
+            }
             ImageUtils.writeToFile(file, pathInfo, binaryContent);
         } catch (IOException e) {
-            throw new StaticContentNotLoadedException("Cannot write new loaded content to a file " + file.getAbsolutePath(), e);
+            throw new StaticContentNotLoadedException("Cannot write new loaded content to a file: " + file.getAbsolutePath(), e);
         }
     }
 

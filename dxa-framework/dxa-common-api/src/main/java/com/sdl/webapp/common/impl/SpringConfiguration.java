@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.webapp.common.impl.interceptor.StaticContentInterceptor;
 import com.sdl.webapp.common.impl.interceptor.ThreadLocalInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.converter.ByteArrayHttpMessageConverter;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.ResourceHttpMessageConverter;
@@ -21,12 +23,12 @@ import org.springframework.http.converter.support.AllEncompassingFormHttpMessage
 import org.springframework.http.converter.xml.Jaxb2RootElementHttpMessageConverter;
 import org.springframework.http.converter.xml.SourceHttpMessageConverter;
 import org.springframework.util.ClassUtils;
-import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 
@@ -35,8 +37,15 @@ import java.util.List;
 @ComponentScan("com.sdl.webapp.common.impl")
 public class SpringConfiguration extends WebMvcConfigurerAdapter {
 
+
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Autowired(required = false)
+    private StaticContentInterceptor staticContentInterceptor = null;
+
+    @Autowired
+    private ThreadLocalInterceptor threadLocalInterceptor = null;
 
     @Override
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
@@ -48,8 +57,10 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(staticContentInterceptor());
-        registry.addInterceptor(threadLocalInterceptor());
+        if(staticContentInterceptor != null) {
+            registry.addInterceptor(staticContentInterceptor);
+        }
+        registry.addInterceptor(threadLocalInterceptor);
     }
 
     @Override
@@ -87,12 +98,13 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
     }
 
     @Bean
-    public HandlerInterceptor staticContentInterceptor() {
+    @Profile("!dxa.docs.enabled")
+    public StaticContentInterceptor createStaticContentInterceptor() {
         return new StaticContentInterceptor();
     }
 
     @Bean
-    public HandlerInterceptor threadLocalInterceptor() {
+    public ThreadLocalInterceptor createThreadLocalInterceptor() {
         return new ThreadLocalInterceptor();
     }
 

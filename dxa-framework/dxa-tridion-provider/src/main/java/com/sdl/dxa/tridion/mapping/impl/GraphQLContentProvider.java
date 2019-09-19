@@ -36,12 +36,14 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
 import javax.servlet.http.HttpSession;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,11 +59,8 @@ import java.util.stream.Collectors;
 @Primary
 @Slf4j
 public class GraphQLContentProvider extends AbstractContentProvider implements ContentProvider, Dxa22ContentProvider {
-
     private ModelBuilderPipeline builderPipeline;
-
     private StaticContentResolver staticContentResolver;
-
     private GraphQLProvider graphQLProvider;
     private final WebRequestContext webRequestContext;
     private ApiClientProvider pcaClientProvider;
@@ -171,11 +170,8 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
      * @dxa.publicApi
      */
     @Override
-    public @NotNull StaticContentItem getStaticContent(
-            String path,
-            String localizationId,
-            String localizationPath
-    ) throws ContentProviderException {
+    public @NotNull StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)
+            throws ContentProviderException {
         StaticContentRequestDto requestDto = StaticContentRequestDto.builder(path, localizationId)
                 .localizationPath(localizationPath)
                 .baseUrl(webRequestContext.getBaseUrl())
@@ -196,7 +192,6 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
 
     @Override
     PageModel loadPage(int pageId, Localization localization) throws ContentProviderException {
-
         PageModelData pageModelData = graphQLProvider.loadPage(PageModelData.class,
                 localization.getCmUriScheme(), Integer.parseInt(localization.getId()), pageId,
                 ContentType.MODEL, DataModelType.R2, PageInclusion.INCLUDE, null);
@@ -208,9 +203,7 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     protected EntityModel getEntityModel(String componentId) throws ContentProviderException {
         Localization localization = webRequestContext.getLocalization();
         EntityRequestDto entityRequest = EntityRequestDto.builder(localization.getId(), componentId).build();
-
         EntityModelData entityModelData = graphQLProvider.getEntityModelData(entityRequest);
-
         try {
             return builderPipeline.createEntityModel(entityModelData);
         } catch (DxaException ex) {
@@ -219,6 +212,10 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     }
 
     @Override
+    @Cacheable(condition = "#binaryId != null && #localization != null && #localization.id != null",
+            cacheNames = "staticContentItems",
+            key = "{#binaryId, #localization.id}",
+            sync = true)
     public StaticContentItem getStaticContent(int binaryId, Localization localization) throws ContentProviderException {
         String localizationId = localization.getId();
         String localizationPath = localization.getPath();
@@ -232,8 +229,8 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     }
 
     @Override
-    public @NotNull StaticContentItem getStaticContent(String path, Localization localization)
-            throws ContentProviderException {
+    @NotNull
+    public StaticContentItem getStaticContent(String path, Localization localization) throws ContentProviderException {
         String localizationId = localization.getId();
         String localizationPath = localization.getPath();
         String namespace = localization.getCmUriScheme();
@@ -246,8 +243,7 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
         return staticContentResolver.getStaticContent(requestDto);
     }
 
-
-    private static class CursorIndexer {
+    private static class CursorIndexer implements Serializable {
         public static final String SESSION_KEY = "dxa_indexer";
         private Map<Integer, String> cursors = new HashMap<>();
         private int startIndex;
@@ -273,7 +269,7 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
                 startIndex = 0;
                 return null;
             }
-            if (cursors.size() == 0) {
+            if (cursors.isEmpty()) {
                 startIndex = 0;
                 return null;
             }

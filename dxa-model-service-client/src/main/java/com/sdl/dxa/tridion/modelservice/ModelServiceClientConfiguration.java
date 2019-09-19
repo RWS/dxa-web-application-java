@@ -57,7 +57,8 @@ public class ModelServiceClientConfiguration extends BaseClientConfigurationLoad
             @Value("${dxa.model.service.key:#{null}}") String modelServiceKey,
             @Value("${dxa.model.service.url:#{null}}") String modelServiceUrl) throws ConfigurationException {
         if (isTokenConfigurationAvailable()) {
-            this.oAuthTokenProvider = new OAuthTokenProvider(getOauthTokenProviderConfiguration());
+            this.oAuthTokenProvider =  new OAuthTokenProvider(getOauthTokenProviderConfiguration());
+
             // try to get token to validate credentials
             this.oAuthTokenProvider.getToken();
         }

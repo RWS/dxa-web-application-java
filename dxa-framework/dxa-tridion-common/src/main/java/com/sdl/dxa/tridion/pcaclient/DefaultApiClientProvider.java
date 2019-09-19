@@ -7,7 +7,6 @@ import com.sdl.web.pca.client.DefaultApiClient;
 import com.sdl.web.pca.client.DefaultGraphQLClient;
 import com.sdl.web.pca.client.GraphQLClient;
 import com.sdl.web.pca.client.auth.Authentication;
-import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
 import com.sdl.web.pca.client.contentmodel.generated.ClaimValue;
 import com.sdl.web.pca.client.contentmodel.generated.ClaimValueType;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -72,13 +72,6 @@ public class DefaultApiClientProvider implements ApiClientProvider {
 
     @Override
     public ApiClient getClient() {
-        GraphQLClient graphQLClient = new DefaultGraphQLClient(configurationLoader.getServiceUrl(), null, auth);
-        ApiClient client = new DefaultApiClient(graphQLClient,
-                Integer.valueOf(configurationLoader.getConfiguration()
-                        .getOrDefault(CONNECTION_TIMEOUT, 0).toString()));
-        client.setDefaultModelType(DataModelType.R2);
-
-        // Add context data to client
         ClaimStore claimStore = AmbientDataContext.getCurrentClaimStore();
         if (claimStore == null) {
             log.debug("No claimstore found (is the ADF module configured in the Web.Config?) so unable to populate claims for PCA.");
@@ -88,11 +81,17 @@ public class DefaultApiClientProvider implements ApiClientProvider {
                 claim -> Optional.of(((List<String>) claim).get(0)))
                 .orElseGet(() -> getClaimValue(WebClaims.REQUEST_COOKIES, PREVIEW_SESSION_TOKEN,
                         claim -> Optional.of(claim.toString()))
-                        .orElse(null));
+                .orElse(null));
 
+        // Add context data to client
+        Map<String, String> defaultHeaders = new HashMap<>();
         if (previewToken != null) {
-            client.addDefaultHeader(HttpHeaders.COOKIE, String.format("%s=%s", PREVIEW_SESSION_TOKEN, previewToken));
+            defaultHeaders.put(HttpHeaders.COOKIE, String.format("%s=%s", PREVIEW_SESSION_TOKEN, previewToken));
         }
+        GraphQLClient graphQLClient = new DefaultGraphQLClient(configurationLoader.getServiceUrl(), defaultHeaders, auth);
+        Integer requestTimeout = Integer.valueOf(configurationLoader.getConfiguration().getOrDefault(CONNECTION_TIMEOUT, 0).toString());
+        ApiClient client = new DefaultApiClient(graphQLClient, requestTimeout);
+        client.setDefaultModelType(DataModelType.R2);
 
         for (ClaimValue claim : globalClaims.values()) {
             log.debug("Forwarding on global claim {} with value {}", claim.getUri(), claim.getValue());
@@ -102,7 +101,6 @@ public class DefaultApiClientProvider implements ApiClientProvider {
         if (!configurationLoader.claimForwarding()) {
             log.debug("The claimstore is not available so no claim forwarding from claimstore will be performed. Make sure the ADF module is configured in the Web.Config to enable this option.");
             return client;
-
         }
 
         if (claimStore == null) {

@@ -6,6 +6,7 @@ import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.DepthCounter;
 import com.sdl.dxa.common.dto.SitemapRequestDto;
 import com.sdl.dxa.common.util.PathUtils;
+import com.sdl.dxa.performance.Performance;
 import com.sdl.dxa.tridion.navigation.dynamic.NavigationModelProvider;
 import com.sdl.dxa.tridion.navigation.dynamic.OnDemandNavigationModelProvider;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -70,65 +71,71 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
 
     @Override
     public SitemapItem getNavigationModel(Localization localization) throws NavigationProviderException {
-        Optional<SitemapItemModelData> navigationModel = getNavigationModelInternal(localization);
+        try(Performance perf = new Performance(1_000L, "getNavigationModel")) {
+            Optional<SitemapItemModelData> navigationModel = getNavigationModelInternal(localization);
 
-        if (!navigationModel.isPresent()) {
-            return staticNavigationProvider.getNavigationModel(localization);
+            if (!navigationModel.isPresent()) {
+                return staticNavigationProvider.getNavigationModel(localization);
+            }
+
+            return convert(navigationModel.get());
         }
-
-        return convert(navigationModel.get());
     }
 
     @Override
     public NavigationLinks getTopNavigationLinks(String requestPath, Localization localization) throws NavigationProviderException {
-        Optional<SitemapItemModelData> navigationModel = getNavigationModelInternal(localization);
+        try(Performance perf = new Performance(1_000L, "getTopNavigationLinks")) {
+            Optional<SitemapItemModelData> navigationModel = getNavigationModelInternal(localization);
 
-        if (!navigationModel.isPresent()) {
-            return staticNavigationProvider.getTopNavigationLinks(requestPath, localization);
+            if (!navigationModel.isPresent()) {
+                return staticNavigationProvider.getTopNavigationLinks(requestPath, localization);
+            }
+
+            return toNavigationLinksInternal(navigationModel.get().getItems(), true, localization);
         }
-
-        return toNavigationLinksInternal(navigationModel.get().getItems(), true, localization);
     }
 
     @Override
     public NavigationLinks getContextNavigationLinks(String requestPath, Localization localization) throws NavigationProviderException {
-        Optional<SitemapItemModelData> navigationModel = getNavigationModelInternal(localization);
+        try(Performance perf = new Performance(1_000L, "getContextNavigationLinks")) {
+            Optional<SitemapItemModelData> navigationModel = getNavigationModelInternal(localization);
 
-        if (!navigationModel.isPresent()) {
-            return staticNavigationProvider.getContextNavigationLinks(requestPath, localization);
+            if (!navigationModel.isPresent()) {
+                return staticNavigationProvider.getContextNavigationLinks(requestPath, localization);
+            }
+
+            navigationModel.get().rebuildParentRelationships();
+
+            SitemapItemModelData currentLevel = navigationModel.get().findWithUrl(PathUtils.stripDefaultExtension(requestPath));
+
+            if (currentLevel != null && !(currentLevel instanceof TaxonomyNodeModelData)) {
+                currentLevel = currentLevel.getParent();
+            }
+
+            return toNavigationLinksInternal(currentLevel == null ? Collections.emptySet() : currentLevel.getItems(), true, localization);
         }
-
-        navigationModel.get().rebuildParentRelationships();
-
-        SitemapItemModelData currentLevel = navigationModel.get().findWithUrl(PathUtils.stripDefaultExtension(requestPath));
-
-        if (currentLevel != null && !(currentLevel instanceof TaxonomyNodeModelData)) {
-            currentLevel = currentLevel.getParent();
-        }
-
-        return toNavigationLinksInternal(currentLevel == null ? Collections.emptySet() : currentLevel.getItems(), true, localization);
     }
 
     @Override
     public NavigationLinks getBreadcrumbNavigationLinks(String requestPath, Localization localization) throws NavigationProviderException {
-        Optional<SitemapItemModelData> navigationModel = getNavigationModelInternal(localization);
+        try(Performance perf = new Performance(1_000L, "getBreadcrumbNavigationLinks")) {
+            Optional<SitemapItemModelData> navigationModel = getNavigationModelInternal(localization);
 
-        if (!navigationModel.isPresent()) {
-            NavigationLinks breadcrumbNavigationLinks = staticNavigationProvider.getBreadcrumbNavigationLinks(requestPath, localization);
-            return breadcrumbNavigationLinks;
+            if (!navigationModel.isPresent()) {
+                return staticNavigationProvider.getBreadcrumbNavigationLinks(requestPath, localization);
+            }
+
+            navigationModel.get().rebuildParentRelationships();
+            SitemapItemModelData currentLevel = navigationModel.get().findWithUrl(PathUtils.stripDefaultExtension(requestPath));
+
+            Collection<SitemapItemModelData> items = currentLevel == null ? Collections.emptySet() : collectBreadcrumbsToLevel(currentLevel, localization);
+            return toNavigationLinksInternal(items,false, localization);
         }
-
-        navigationModel.get().rebuildParentRelationships();
-        SitemapItemModelData currentLevel = navigationModel.get().findWithUrl(PathUtils.stripDefaultExtension(requestPath));
-
-        return toNavigationLinksInternal(currentLevel == null ? Collections.emptySet() : collectBreadcrumbsToLevel(currentLevel, localization),
-                false, localization);
     }
 
     @Override
     public Collection<SitemapItem> getNavigationSubtree(@Nullable String sitemapItemId, @NonNull NavigationFilter navigationFilter, @NonNull Localization localization) throws DxaItemNotFoundException {
-        long time = System.currentTimeMillis();
-        try {
+        try(Performance perf = new Performance(1_000L, "getNavigationSubtree")) {
             Optional<Collection<SitemapItemModelData>> subtree;
             SitemapRequestDto requestDto = SitemapRequestDto
                     .builder(Integer.parseInt(localization.getId()))
@@ -147,8 +154,6 @@ public class DynamicNavigationProvider implements NavigationProvider, OnDemandNa
             return subtree.get().stream()
                     .map(this::convert)
                     .collect(Collectors.toList());
-        } finally {
-            log.debug("getNavigationSubtree for localizationId: {} and sitemapId: {} took {} ms", localization.getId(), sitemapItemId, (System.currentTimeMillis() - time));
         }
     }
 

@@ -50,12 +50,7 @@ public class ModelDataTypeResolver extends StdTypeResolverBuilder {
         Class<?> mixin = mixInResolver.findMixInClassFor(t.getRawClass());
         return mixin != null && PolymorphicObjectMixin.class.isAssignableFrom(mixin);
     }
-// MapperConfig<?> config,
-// JavaType baseType,
-// PolymorphicTypeValidator subtypeValidator,
-// Collection<NamedType> subtypes,
-// boolean forSer,
-// boolean forDeser
+
     @NotNull
     private TypeDeserializer buildModelDataTypeDeserializer(DeserializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
         TypeIdResolver idRes = idResolver(config, baseType, getTypeValidator(), subtypes, false, true);

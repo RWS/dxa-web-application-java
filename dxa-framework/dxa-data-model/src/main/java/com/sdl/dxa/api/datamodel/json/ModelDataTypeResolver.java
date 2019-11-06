@@ -50,16 +50,21 @@ public class ModelDataTypeResolver extends StdTypeResolverBuilder {
         Class<?> mixin = mixInResolver.findMixInClassFor(t.getRawClass());
         return mixin != null && PolymorphicObjectMixin.class.isAssignableFrom(mixin);
     }
-
+// MapperConfig<?> config,
+// JavaType baseType,
+// PolymorphicTypeValidator subtypeValidator,
+// Collection<NamedType> subtypes,
+// boolean forSer,
+// boolean forDeser
     @NotNull
     private TypeDeserializer buildModelDataTypeDeserializer(DeserializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
-        TypeIdResolver idRes = idResolver(config, baseType, subtypes, false, true);
+        TypeIdResolver idRes = idResolver(config, baseType, getTypeValidator(), subtypes, false, true);
         return new AsPropertyTypeDeserializer(baseType, idRes, _typeProperty, _typeIdVisible,
                 TypeFactory.defaultInstance().constructSpecializedType(unknownType(), UnknownModelData.class));
     }
 
     private TypeSerializer buildModelDataTypeSerializer(SerializationConfig config, JavaType baseType, Collection<NamedType> subtypes) {
-        TypeIdResolver idRes = idResolver(config, baseType, subtypes, true, false);
+        TypeIdResolver idRes = idResolver(config, baseType, getTypeValidator(), subtypes, true, false);
         return new DxaAsPropertyTypeSerializer(idRes);
     }
 
@@ -93,5 +98,11 @@ public class ModelDataTypeResolver extends StdTypeResolverBuilder {
         public WritableTypeId writeTypeSuffix(JsonGenerator g, WritableTypeId idMetadata) throws IOException {
             return isWrapperType(idMetadata.forValue.getClass()) ? idMetadata : super.writeTypeSuffix(g, idMetadata);
         }
+    }
+
+    private PolymorphicTypeValidator getTypeValidator() {
+        return BasicPolymorphicTypeValidator.builder()
+                        .allowIfSubType("com.sdl.dxa")
+                        .build();
     }
 }

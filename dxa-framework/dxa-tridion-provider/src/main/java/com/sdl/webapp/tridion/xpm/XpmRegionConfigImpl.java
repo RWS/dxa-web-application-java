@@ -96,7 +96,7 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
             module.addAbstractTypeMapping(ComponentType.class, ComponentTypeImpl.class);
             module.addAbstractTypeMapping(OccurrenceConstraint.class, OccurrenceConstraintImpl.class);
             objectMapper.registerModule(module); // important, otherwise won't have any effect on mapper's configuration
-            return objectMapper.readValue(in, new TypeReference<List<XpmRegionImpl>>() {});
+            return objectMapper.readValue(in, new TypeReference<List<XpmRegion>>() {});
         } catch (IOException e) {
             LOG.error(message, e);
             throw new DxaRuntimeException(message, e);

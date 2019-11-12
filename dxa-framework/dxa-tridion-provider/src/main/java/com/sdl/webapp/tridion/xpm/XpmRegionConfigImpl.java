@@ -13,17 +13,13 @@ import com.sdl.webapp.common.api.xpm.OccurrenceConstraint;
 import com.sdl.webapp.common.api.xpm.XpmRegion;
 import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
 import com.sdl.webapp.common.exceptions.DxaRuntimeException;
-import lombok.Synchronized;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
-import scala.collection.mutable.SynchronizedMap;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -96,7 +92,7 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
             module.addAbstractTypeMapping(ComponentType.class, ComponentTypeImpl.class);
             module.addAbstractTypeMapping(OccurrenceConstraint.class, OccurrenceConstraintImpl.class);
             objectMapper.registerModule(module); // important, otherwise won't have any effect on mapper's configuration
-            return objectMapper.readValue(in, new TypeReference<List<XpmRegionImpl>>() {});
+            return objectMapper.readValue(in, new TypeReference<List<XpmRegion>>() {});
         } catch (IOException e) {
             LOG.error(message, e);
             throw new DxaRuntimeException(message, e);

@@ -89,7 +89,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         return this.processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);
     }
 
-    private byte[] downloadBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, BinaryComponent binaryComponent) throws ContentProviderException {
+    private byte[] downloadBinary(File file, BinaryComponent binaryComponent) throws ContentProviderException {
         String downloadUrl = binaryComponent.getVariants().getEdges().get(0).getNode().getDownloadUrl();
         return contentDownloader.downloadContent(file, downloadUrl);
     }
@@ -116,10 +116,10 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
                     requestDto.getLocalizationId() + "] and urlPath: " + urlPath);
         }
         if (!requestDto.isNoMediaCache()) {
-            downloadBinaryWhenNeeded(binaryComponent, file, pathInfo);
-        } else {
             log.debug("File cannot be cached: {}", file.getAbsolutePath());
+            binaryComponent.setLastPublishDate(new DateTime().toString());
         }
+        downloadBinaryWhenNeeded(binaryComponent, file, pathInfo);
         BinaryVariant variant = binaryComponent.getVariants().getEdges().get(0).getNode();
         String binaryComponentType = variant.getType();
         String contentType = StringUtils.isEmpty(binaryComponentType) ? DEFAULT_CONTENT_TYPE : binaryComponentType;
@@ -138,7 +138,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
             return;
         }
         log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
-        byte[] content = downloadBinary(file, pathInfo, binaryComponent);
+        byte[] content = downloadBinary(file, binaryComponent);
         synchronized (LOCK) {
             if (content != null) {
                 refreshBinary(file, pathInfo, content);

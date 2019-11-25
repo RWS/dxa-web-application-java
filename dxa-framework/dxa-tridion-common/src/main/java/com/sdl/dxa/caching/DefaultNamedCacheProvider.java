@@ -231,4 +231,6 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
         log.warn("Cannot find EhCache config {}", cacheManagerUri);
         return null;
     }
+
+
 }

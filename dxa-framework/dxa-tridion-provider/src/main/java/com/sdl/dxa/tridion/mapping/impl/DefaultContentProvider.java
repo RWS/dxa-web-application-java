@@ -3,6 +3,7 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.caching.wrapper.CopyingCache;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.modelservice.service.ModelServiceProvider;
@@ -48,8 +49,10 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cache.CacheManager;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -166,6 +169,24 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
 
         outer.put("standardMeta", standardMetaContents);
         return outer;
+    }
+
+    /**
+     * @deprecated
+     * @dxa.publicApi
+     */
+    @Override
+    public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
+        return super.getPageModel(path, localization);
+    }
+
+    /**
+     * @deprecated
+     * @dxa.publicApi
+     */
+    @Override
+    public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
+        return super.getEntityModel(id, _localization);
     }
 
     /**

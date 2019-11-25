@@ -11,8 +11,8 @@
     </parent>
 
     <groupId>com.sdl.dxa</groupId>
-    <artifactId>dxa-parent</artifactId>
-    <version>2.2.2-SNAPSHOT</version>
+    <artifactId>dxa-oss-parent</artifactId>
+    <version>2.2.3-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>DXA - Parent</name>
@@ -121,7 +121,7 @@
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
         <dd4t-latest.version>2.1.5</dd4t-latest.version>
 
-        <pca-client.version>2.2.2-SNAPSHOT</pca-client.version>
+        <pca-client.version>2.2.3-SNAPSHOT</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>
     </properties>
 
@@ -919,5 +919,7 @@
     </build>
 
 </project>
+
+
 
 

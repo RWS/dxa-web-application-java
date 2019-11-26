@@ -85,7 +85,7 @@
 
         <!-- Spring -->
         <spring.version>4.3.24.RELEASE</spring.version>
-        <spring-security.version>4.2.12.RELEASE</spring-security.version>
+        <spring-security.version>5.2.1.RELEASE</spring-security.version>
 
         <jsoup.version>1.12.1</jsoup.version>
         <rome.version>1.12.0</rome.version>

@@ -95,7 +95,7 @@ public abstract class AbstractEntityModel extends AbstractViewModel implements E
     }
 
     @Override
-    public AbstractEntityModel deepCopy() throws DxaException {
+    public AbstractEntityModel deepCopy() {
         AbstractEntityModel clone = (AbstractEntityModel) super.deepCopy();
 
         if (xpmPropertyMetadata != null) {

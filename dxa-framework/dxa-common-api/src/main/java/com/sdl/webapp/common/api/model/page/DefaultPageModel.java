@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.sdl.dxa.caching.NeverCached;
+import com.sdl.dxa.caching.VolatileModel;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
@@ -37,7 +38,7 @@ import static org.apache.commons.collections4.CollectionUtils.isEmpty;
 @JsonPropertyOrder({ "id", "name", "title", "url", "meta", "regions" })
 @NoArgsConstructor
 @lombok.ToString
-public class DefaultPageModel extends AbstractViewModel implements PageModel {
+public class DefaultPageModel extends AbstractViewModel implements PageModel, VolatileModel {
 
     private static final String XPM_PAGE_SETTINGS_MARKUP = "<!-- Page Settings: {\"PageID\":\"%s\",\"PageModified\":\"%s\",\"PageTemplateID\":\"%s\",\"PageTemplateModified\":\"%s\"} -->";
 
@@ -89,7 +90,7 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
     }
 
     @Override
-    public PageModel deepCopy() throws DxaException {
+    public PageModel deepCopy() {
         DefaultPageModel clone = (DefaultPageModel) super.deepCopy();
         clone.regions = new RegionModelSetImpl();
         for (RegionModel regionModel : regions) {

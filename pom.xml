@@ -62,7 +62,7 @@
         <!-- Joda Time -->
         <joda-time-version>2.10</joda-time-version>
 
-        <jackson.version>2.10.0</jackson.version>
+        <jackson.version>2.10.1</jackson.version>
         <lombok.version>1.18.8</lombok.version>
 
         <!-- Logging -->

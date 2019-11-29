@@ -23,6 +23,9 @@ public class XpmRegionImpl implements XpmRegion {
     @JsonProperty(value = "OccurrenceConstraint", required = false)
     private OccurrenceConstraint occurrenceConstraint;
 
+    public XpmRegionImpl() {
+    };
+
     /**
      * {@inheritDoc}
      */

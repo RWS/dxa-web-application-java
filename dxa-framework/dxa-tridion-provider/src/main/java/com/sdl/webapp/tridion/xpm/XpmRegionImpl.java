@@ -24,7 +24,7 @@ public class XpmRegionImpl implements XpmRegion {
     private OccurrenceConstraint occurrenceConstraint;
 
     public XpmRegionImpl() {
-    };
+    }
 
     /**
      * {@inheritDoc}

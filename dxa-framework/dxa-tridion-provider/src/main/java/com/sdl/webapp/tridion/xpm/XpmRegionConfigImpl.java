@@ -63,7 +63,7 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
             return regions.get(regionName);
         }
         final Map<String, XpmRegion> newRegionsByName = new HashMap<>();
-        List<XpmRegion> xpmRegions = loadXpmRegions(localization);
+        List<XpmRegionImpl> xpmRegions = loadXpmRegions(localization);
         for (XpmRegion region : xpmRegions) {
             newRegionsByName.put(region.getRegionName(), region);
         }
@@ -77,7 +77,7 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
         return oldRegionsByName.get(regionName);
     }
 
-    private List<XpmRegion> loadXpmRegions(Localization localization) {
+    private List<XpmRegionImpl> loadXpmRegions(Localization localization) {
         StaticContentItem item = null;
         String message = "Could not read XPM regions configuration for pubId: " + localization.getId();
         try {
@@ -92,7 +92,7 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
             module.addAbstractTypeMapping(ComponentType.class, ComponentTypeImpl.class);
             module.addAbstractTypeMapping(OccurrenceConstraint.class, OccurrenceConstraintImpl.class);
             objectMapper.registerModule(module); // important, otherwise won't have any effect on mapper's configuration
-            return objectMapper.readValue(in, new TypeReference<List<XpmRegion>>() {});
+            return objectMapper.readValue(in, new TypeReference<List<XpmRegionImpl>>() {});
         } catch (IOException e) {
             LOG.error(message, e);
             throw new DxaRuntimeException(message, e);

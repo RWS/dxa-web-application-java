@@ -326,14 +326,14 @@
                         <groupId>com.vs.ezlicrun</groupId>
                         <artifactId>easylicense</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>cd_broker</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sdl.web</groupId>
-                        <artifactId>web-ambient-engine</artifactId>
-                    </exclusion>
+<!--                    <exclusion>-->
+<!--                        <groupId>com.tridion</groupId>-->
+<!--                        <artifactId>cd_broker</artifactId>-->
+<!--                    </exclusion>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>com.sdl.web</groupId>-->
+<!--                        <artifactId>web-ambient-engine</artifactId>-->
+<!--                    </exclusion>-->
                 </exclusions>
             </dependency>
 

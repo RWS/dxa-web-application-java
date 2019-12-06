@@ -5,6 +5,7 @@ import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.dxa.tridion.pcaclient.GraphQLUtils;
 import com.sdl.web.pca.client.contentmodel.ContextData;
+import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryComponent;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariant;
 import com.sdl.web.pca.client.contentmodel.generated.BinaryVariantEdge;
@@ -25,6 +26,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
 import java.util.List;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static com.sdl.dxa.tridion.common.ContextDataCreator.createContextData;
 import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
@@ -33,11 +36,14 @@ import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
 @Service("graphQLStaticContentResolver")
 @Profile("!cil.providers.active")
 public class GraphQLStaticContentResolver extends GenericStaticContentResolver implements StaticContentResolver {
-
-    private static final Object LOCK = new Object();
-
     private ApiClientProvider apiClientProvider;
     private BinaryContentDownloader contentDownloader;
+    private ConcurrentMap<String, Holder> runningTasks = new ConcurrentHashMap<>();
+
+    private static class Holder {
+        private String url;
+        private StaticContentItem previousState;
+    }
 
     @Autowired
     public GraphQLStaticContentResolver(WebApplicationContext webApplicationContext,
@@ -49,20 +55,36 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
     }
 
     @NotNull
-    protected StaticContentItem createStaticContentItem(
-            StaticContentRequestDto requestDto,
-            File file,
-            int publicationId,
-            ImageUtils.StaticContentPathInfo pathInfo,
-            String urlPath) throws ContentProviderException {
-        BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
-                GraphQLUtils.convertUriToGraphQLContentNamespace(requestDto.getUriType()),
-                publicationId,
-                pathInfo.getFileName(),
-                "",
-                createContextData(requestDto.getClaims()));
-
-        return this.processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);
+    protected StaticContentItem createStaticContentItem(StaticContentRequestDto requestDto,
+                                                        File file,
+                                                        int publicationId,
+                                                        ImageUtils.StaticContentPathInfo pathInfo,
+                                                        String urlPath) throws ContentProviderException {
+        Holder newHolder = new Holder();
+        Holder oldHolder = runningTasks.putIfAbsent(urlPath, newHolder);
+        if (oldHolder != null && oldHolder.previousState != null) {
+            return oldHolder.previousState;
+        }
+        if (oldHolder != null) {
+            newHolder = oldHolder;
+        }
+        newHolder.url = urlPath.intern();
+        synchronized (urlPath.intern()) {
+            if (newHolder.previousState != null) {
+                return newHolder.previousState;
+            }
+            ContentNamespace ns = GraphQLUtils.convertUriToGraphQLContentNamespace(requestDto.getUriType());
+            ContextData contextData = createContextData(requestDto.getClaims());
+            BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
+                    ns,
+                    publicationId,
+                    pathInfo.getFileName(),
+                    "",
+                    contextData);
+            StaticContentItem result = processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);
+            newHolder.previousState = result;
+        }
+        return newHolder.previousState;
     }
 
     @Override
@@ -103,14 +125,18 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
                 "",
                 contextData);
         return publication.getPublicationUrl();
-
-    };
+    }
 
     private boolean isVersioned(String path) {
         return (path != null) && path.contains("/system/");
     }
 
-    private StaticContentItem processBinaryComponent(BinaryComponent binaryComponent, StaticContentRequestDto requestDto, File file, String urlPath, ImageUtils.StaticContentPathInfo pathInfo) throws ContentProviderException {
+    private StaticContentItem processBinaryComponent(BinaryComponent binaryComponent,
+                                                     StaticContentRequestDto requestDto,
+                                                     File file,
+                                                     String urlPath,
+                                                     ImageUtils.StaticContentPathInfo pathInfo)
+            throws ContentProviderException {
         if (binaryComponent == null) {
             throw new StaticContentNotFoundException("No binary found for pubId: [" +
                     requestDto.getLocalizationId() + "] and urlPath: " + urlPath);
@@ -129,20 +155,15 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
 
     private void downloadBinaryWhenNeeded(BinaryComponent binaryComponent, File file, ImageUtils.StaticContentPathInfo pathInfo) throws ContentProviderException {
         long componentTime = new DateTime(binaryComponent.getLastPublishDate()).getMillis();
-        boolean toBeRefreshed = false;
-        synchronized (LOCK) {
-            toBeRefreshed = isToBeRefreshed(file, componentTime);
-        }
+        boolean toBeRefreshed = isToBeRefreshed(file, componentTime);
         if (!toBeRefreshed) {
             log.debug("File does not need to be refreshed: {}", file.getAbsolutePath());
             return;
         }
         log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
         byte[] content = downloadBinary(file, binaryComponent);
-        synchronized (LOCK) {
-            if (content != null) {
-                refreshBinary(file, pathInfo, content);
-            }
+        if (content != null) {
+            refreshBinary(file, pathInfo, content);
         }
     }
 }

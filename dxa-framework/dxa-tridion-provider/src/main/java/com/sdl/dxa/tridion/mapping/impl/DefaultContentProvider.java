@@ -221,7 +221,7 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
                 .builder(path, localizationId)
                 .localizationPath(localizationPath)
                 .baseUrl(webRequestContext.getBaseUrl())
-                .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isPreview())
+                .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isSessionPreview())
                 .build();
         StaticContentItem staticContent = staticContentResolver.getStaticContent(requestDto);
         return staticContent;

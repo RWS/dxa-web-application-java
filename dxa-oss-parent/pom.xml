@@ -26,7 +26,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <cd-cil.version>10.1.0-1012</cd-cil.version>
+        <cd-cil.version>10.1.1-1012</cd-cil.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>
@@ -326,14 +326,14 @@
                         <groupId>com.vs.ezlicrun</groupId>
                         <artifactId>easylicense</artifactId>
                     </exclusion>
-                    <exclusion>
-                        <groupId>com.tridion</groupId>
-                        <artifactId>cd_broker</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>com.sdl.web</groupId>
-                        <artifactId>web-ambient-engine</artifactId>
-                    </exclusion>
+<!--                    <exclusion>-->
+<!--                        <groupId>com.tridion</groupId>-->
+<!--                        <artifactId>cd_broker</artifactId>-->
+<!--                    </exclusion>-->
+<!--                    <exclusion>-->
+<!--                        <groupId>com.sdl.web</groupId>-->
+<!--                        <artifactId>web-ambient-engine</artifactId>-->
+<!--                    </exclusion>-->
                 </exclusions>
             </dependency>
 

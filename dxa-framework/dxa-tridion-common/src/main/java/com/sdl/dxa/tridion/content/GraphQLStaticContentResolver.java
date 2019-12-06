@@ -28,6 +28,7 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 
 import static com.sdl.dxa.tridion.common.ContextDataCreator.createContextData;
 import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
@@ -36,11 +37,13 @@ import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
 @Service("graphQLStaticContentResolver")
 @Profile("!cil.providers.active")
 public class GraphQLStaticContentResolver extends GenericStaticContentResolver implements StaticContentResolver {
+    private static final long BINARY_CACHE_TIME = TimeUnit.SECONDS.toMillis(60);
     private ApiClientProvider apiClientProvider;
     private BinaryContentDownloader contentDownloader;
     private ConcurrentMap<String, Holder> runningTasks = new ConcurrentHashMap<>();
 
     private static class Holder {
+        private long cachedMoment = System.currentTimeMillis();
         private String url;
         private StaticContentItem previousState;
     }
@@ -62,15 +65,20 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
                                                         String urlPath) throws ContentProviderException {
         Holder newHolder = new Holder();
         Holder oldHolder = runningTasks.putIfAbsent(urlPath, newHolder);
-        if (oldHolder != null && oldHolder.previousState != null) {
+        if (oldHolder != null &&
+            oldHolder.previousState != null &&
+            oldHolder.cachedMoment + BINARY_CACHE_TIME < System.currentTimeMillis()) {
+            log.debug("Returned cached file: {}", newHolder.url);
             return oldHolder.previousState;
         }
         if (oldHolder != null) {
             newHolder = oldHolder;
         }
         newHolder.url = urlPath.intern();
-        synchronized (urlPath.intern()) {
-            if (newHolder.previousState != null) {
+        synchronized (newHolder.url) {
+            boolean isValid = newHolder.cachedMoment + BINARY_CACHE_TIME < System.currentTimeMillis();
+            if (newHolder.previousState != null && isValid) {
+                log.debug("Returned cached file: {}", newHolder.url);
                 return newHolder.previousState;
             }
             ContentNamespace ns = GraphQLUtils.convertUriToGraphQLContentNamespace(requestDto.getUriType());
@@ -83,6 +91,11 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
                     contextData);
             StaticContentItem result = processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);
             newHolder.previousState = result;
+            log.debug("Returned file: {} cached", newHolder.url);
+            if (!isValid) {
+                log.debug("Cached file: {} invalidated", newHolder.url);
+                runningTasks.remove(newHolder.url);
+            }
         }
         return newHolder.previousState;
     }

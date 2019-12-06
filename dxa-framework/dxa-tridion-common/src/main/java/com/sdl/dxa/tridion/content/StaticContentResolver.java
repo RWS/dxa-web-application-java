@@ -33,6 +33,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
@@ -53,6 +54,8 @@ public class StaticContentResolver {
 
     private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
+    private static final long CACHE_BINARY_MILLIS = TimeUnit.SECONDS.toMillis(60);
+
     private final WebApplicationContext webApplicationContext;
 
     private final DynamicMetaRetriever dynamicMetaRetriever = new DynamicMetaRetriever();
@@ -64,6 +67,7 @@ public class StaticContentResolver {
     private ConcurrentMap<String, Holder> runningTasks = new ConcurrentHashMap<>();
 
     private static class Holder {
+        private long loaded = System.currentTimeMillis();
         private String url;
         private StaticContentItem previousState;
     }
@@ -126,18 +130,25 @@ public class StaticContentResolver {
                                                         StaticContentRequestDto requestDto) throws ContentProviderException {
         Holder newHolder = new Holder();
         Holder oldHolder = runningTasks.putIfAbsent(path, newHolder);
-        if (oldHolder != null && oldHolder.previousState != null) {
+        if (oldHolder != null &&
+            oldHolder.previousState != null &&
+            oldHolder.loaded + CACHE_BINARY_MILLIS < System.currentTimeMillis()) {
             return oldHolder.previousState;
         }
         if (oldHolder != null) {
             newHolder = oldHolder;
         }
         newHolder.url = path.intern();
-        synchronized (path.intern()) {
-            if (newHolder.previousState != null) {
+        boolean isValid = false;
+        synchronized (newHolder.url) {
+            isValid = newHolder.loaded + CACHE_BINARY_MILLIS < System.currentTimeMillis();
+            if (newHolder.previousState != null && isValid) {
                 return newHolder.previousState;
             }
             newHolder.previousState = _getStaticContentFile(path, requestDto);
+        }
+        if (!isValid) {
+            runningTasks.remove(newHolder.url);
         }
         return newHolder.previousState;
     }

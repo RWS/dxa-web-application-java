@@ -145,8 +145,9 @@ public class StaticContentResolver {
     private StaticContentItem _getStaticContentFile(String path,
                                                     StaticContentRequestDto requestDto)
             throws ContentProviderException {
+        javax.servlet.ServletContext servletContext = webApplicationContext.getServletContext();
         String parentPath = StringUtils.join(new String[]{
-                webApplicationContext.getServletContext().getRealPath("/"), STATIC_FILES_DIR, requestDto.getLocalizationId()
+                ((javax.servlet.ServletContext) servletContext).getRealPath("/"), STATIC_FILES_DIR, requestDto.getLocalizationId()
         }, File.separator);
 
         final File file = new File(parentPath, path);

@@ -38,6 +38,7 @@ import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
 @Profile("!cil.providers.active")
 public class GraphQLStaticContentResolver extends GenericStaticContentResolver implements StaticContentResolver {
     private static final long BINARY_CACHE_TIME = TimeUnit.SECONDS.toMillis(60);
+    private static final boolean USE_CACHE_FOR_BINARIES = false;
     private ApiClientProvider apiClientProvider;
     private BinaryContentDownloader contentDownloader;
     private ConcurrentMap<String, Holder> runningTasks = new ConcurrentHashMap<>();
@@ -67,7 +68,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         Holder oldHolder = runningTasks.putIfAbsent(urlPath, newHolder);
         if (oldHolder != null &&
             oldHolder.previousState != null &&
-            oldHolder.cachedMoment + BINARY_CACHE_TIME < System.currentTimeMillis()) {
+            isBinaryCached(oldHolder)) {
             log.debug("Returned cached file: {}", newHolder.url);
             return oldHolder.previousState;
         }
@@ -76,7 +77,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         }
         newHolder.url = urlPath.intern();
         synchronized (newHolder.url) {
-            boolean isValid = newHolder.cachedMoment + BINARY_CACHE_TIME < System.currentTimeMillis();
+            boolean isValid = isBinaryCached(newHolder);
             if (newHolder.previousState != null && isValid) {
                 log.debug("Returned cached file: {}", newHolder.url);
                 return newHolder.previousState;
@@ -91,13 +92,19 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
                     contextData);
             StaticContentItem result = processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);
             newHolder.previousState = result;
-            log.debug("Returned file: {} cached", newHolder.url);
-            if (!isValid) {
-                log.debug("Cached file: {} invalidated", newHolder.url);
-                runningTasks.remove(newHolder.url);
+            log.debug("Returned file: {}" + (isBinaryCached(newHolder) ? "now cached" : ""), newHolder.url);
+            if (isValid) {
+                log.debug("Returned file: {} (now cached)", newHolder.url);
+                return newHolder.previousState;
             }
+            log.debug("Returned file: {}", newHolder.url);
+            runningTasks.remove(newHolder.url);
         }
         return newHolder.previousState;
+    }
+
+    private boolean isBinaryCached(Holder oldHolder) {
+        return USE_CACHE_FOR_BINARIES && oldHolder.cachedMoment + BINARY_CACHE_TIME < System.currentTimeMillis();
     }
 
     @Override

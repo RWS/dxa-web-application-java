@@ -55,6 +55,7 @@ public class StaticContentResolver {
     private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
     private static final long CACHE_BINARY_MILLIS = TimeUnit.SECONDS.toMillis(60);
+    private static final boolean USE_CACHE_FOR_BINARIES = false;
 
     private final WebApplicationContext webApplicationContext;
 
@@ -132,25 +133,31 @@ public class StaticContentResolver {
         Holder oldHolder = runningTasks.putIfAbsent(path, newHolder);
         if (oldHolder != null &&
             oldHolder.previousState != null &&
-            oldHolder.loaded + CACHE_BINARY_MILLIS < System.currentTimeMillis()) {
+            isValid(oldHolder)) {
             return oldHolder.previousState;
         }
         if (oldHolder != null) {
             newHolder = oldHolder;
         }
         newHolder.url = path.intern();
-        boolean isValid = false;
+        boolean isValid = USE_CACHE_FOR_BINARIES;
         synchronized (newHolder.url) {
-            isValid = newHolder.loaded + CACHE_BINARY_MILLIS < System.currentTimeMillis();
+            isValid = isValid(newHolder);
             if (newHolder.previousState != null && isValid) {
+                log.debug("Returned cached file {}", newHolder.url);
                 return newHolder.previousState;
             }
             newHolder.previousState = _getStaticContentFile(path, requestDto);
+            log.debug("Returned file {}", newHolder.url);
         }
         if (!isValid) {
             runningTasks.remove(newHolder.url);
         }
         return newHolder.previousState;
+    }
+
+    private boolean isValid(Holder oldHolder) {
+        return USE_CACHE_FOR_BINARIES && oldHolder.loaded + CACHE_BINARY_MILLIS < System.currentTimeMillis();
     }
 
     private StaticContentItem _getStaticContentFile(String path,

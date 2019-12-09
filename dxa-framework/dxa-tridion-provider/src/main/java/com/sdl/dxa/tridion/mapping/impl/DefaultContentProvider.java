@@ -232,7 +232,7 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
         try {
             return Arrays.asList(query.executeQuery());
         } catch (StorageException e) {
-            log.warn("Exception while execution of broker query " + simpleBrokerQuery, e);
+            log.error("Exception while execution of broker query " + simpleBrokerQuery, e);
             return Collections.emptyList();
         }
     }

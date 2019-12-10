@@ -37,6 +37,8 @@ import java.util.Stack;
 @Component
 @Scope(value = "request", proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class WebRequestContextImpl implements WebRequestContext {
+    private static final String X_PREVIEW_SESSION_TOKEN = "x-preview-session-token";
+    private static final String PREVIEW_SESSION_TOKEN = "preview-session-token";
 
     private final UrlPathHelper urlPathHelper = new UrlPathHelper();
 
@@ -99,10 +101,31 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
 
     @Override
+    public boolean isSessionPreview() {
+        return getPreviewToken() != null;
+    }
+
+    @Override
+    @Deprecated
     public boolean isPreview() {
         // Should return true if the request is from XPM (NOTE currently always true for staging as we cannot reliably
         // distinguish XPM requests)
         return getLocalization().isStaging();
+    }
+
+    @Override
+    public String getPreviewToken() {
+        final Cookie[] cookies = servletRequest.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (PREVIEW_SESSION_TOKEN.equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
+        }
+        String fromSession = servletRequest.getHeader(X_PREVIEW_SESSION_TOKEN);
+
+        return fromSession;
     }
 
     @Override

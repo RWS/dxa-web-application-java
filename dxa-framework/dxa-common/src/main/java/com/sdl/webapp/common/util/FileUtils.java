@@ -86,7 +86,8 @@ public final class FileUtils {
                 throw new ContentProviderException("Failed to create parent directory for file: " + file);
             }
         } catch (IOException ex) {
-            throw new ContentProviderException(ex);
+            throw new ContentProviderException("Cannot verify if file " + file.getAbsolutePath() +
+                    " is older than " + time, ex);
         }
         //folder exists, file needs to be refreshed
         return true;

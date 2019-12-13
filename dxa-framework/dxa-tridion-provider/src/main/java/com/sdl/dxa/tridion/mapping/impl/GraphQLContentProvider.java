@@ -157,7 +157,7 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     private boolean isNoMediaCache(String path, String localizationPath) {
         //Note: webRequestContext.isPreview() eventually does a request to loadMainConfiguration, which calls getStaticContent (this method)
         //Without the check for FileUtils.isEssentialConfiguration first, this will lead to a stack overflow error.
-        return !FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isPreview();
+        return !FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isSessionPreview();
     }
 
     /**

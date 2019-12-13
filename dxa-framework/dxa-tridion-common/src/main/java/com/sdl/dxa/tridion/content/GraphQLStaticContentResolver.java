@@ -37,13 +37,11 @@ import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
 @Service("graphQLStaticContentResolver")
 @Profile("!cil.providers.active")
 public class GraphQLStaticContentResolver extends GenericStaticContentResolver implements StaticContentResolver {
-    private static final long BINARY_CACHE_TIME = TimeUnit.SECONDS.toMillis(60);
     private ApiClientProvider apiClientProvider;
     private BinaryContentDownloader contentDownloader;
     private ConcurrentMap<String, Holder> runningTasks = new ConcurrentHashMap<>();
 
     private static class Holder {
-        private long cachedMoment = System.currentTimeMillis();
         private String url;
         private StaticContentItem previousState;
     }

@@ -79,7 +79,7 @@ public final class ImageUtils {
                 // No resize required
                 return original;
             }
-
+            log.debug("Resizing image {} ({}x{} => {}x{})", pathInfo.getFileName(), sourceW, sourceH, targetW, targetH);
             final BufferedImage target = new BufferedImage(targetW, targetH, BufferedImage.TYPE_INT_RGB);
 
             final Graphics2D graphics = target.createGraphics();
@@ -99,12 +99,13 @@ public final class ImageUtils {
             ImageIO.write(target, pathInfo.getImageFormatName(), out);
             return out.toByteArray();
         } catch (IOException e) {
-            throw new ContentProviderException("Exception while processing image data", e);
+            throw new ContentProviderException("Exception while processing image file " + pathInfo.getFileName(), e);
         }
     }
 
     public static void writeToFile(File file, ImageUtils.StaticContentPathInfo pathInfo, byte[] content) throws ContentProviderException, IOException {
         if (pathInfo.isImage() && pathInfo.isResized()) {
+            log.debug("Refreshing: Image is being resized in file: {}", file.getAbsolutePath());
             content = ImageUtils.resizeImage(content, pathInfo);
         }
 

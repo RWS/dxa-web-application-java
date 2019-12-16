@@ -33,7 +33,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
@@ -54,9 +53,6 @@ public class StaticContentResolver {
 
     private static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
-    private static final long CACHE_BINARY_MILLIS = TimeUnit.SECONDS.toMillis(60);
-    private static final boolean USE_CACHE_FOR_BINARIES = false;
-
     private final WebApplicationContext webApplicationContext;
 
     private final DynamicMetaRetriever dynamicMetaRetriever = new DynamicMetaRetriever();
@@ -68,7 +64,6 @@ public class StaticContentResolver {
     private ConcurrentMap<String, Holder> runningTasks = new ConcurrentHashMap<>();
 
     private static class Holder {
-        private long loaded = System.currentTimeMillis();
         private String url;
         private StaticContentItem previousState;
     }
@@ -131,33 +126,19 @@ public class StaticContentResolver {
                                                         StaticContentRequestDto requestDto) throws ContentProviderException {
         Holder newHolder = new Holder();
         Holder oldHolder = runningTasks.putIfAbsent(path, newHolder);
-        if (oldHolder != null &&
-            oldHolder.previousState != null &&
-            isValid(oldHolder)) {
-            return oldHolder.previousState;
-        }
         if (oldHolder != null) {
             newHolder = oldHolder;
         }
         newHolder.url = path.intern();
-        boolean isValid = USE_CACHE_FOR_BINARIES;
-        synchronized (newHolder.url) {
-            isValid = isValid(newHolder);
-            if (newHolder.previousState != null && isValid) {
-                log.debug("Returned cached file {}", newHolder.url);
-                return newHolder.previousState;
+        try {
+            synchronized (newHolder.url) {
+                newHolder.previousState = _getStaticContentFile(path, requestDto);
+                log.debug("Returned file {}", newHolder.url);
             }
-            newHolder.previousState = _getStaticContentFile(path, requestDto);
-            log.debug("Returned file {}", newHolder.url);
-        }
-        if (!isValid) {
+            return newHolder.previousState;
+        } finally {
             runningTasks.remove(newHolder.url);
         }
-        return newHolder.previousState;
-    }
-
-    private boolean isValid(Holder oldHolder) {
-        return USE_CACHE_FOR_BINARIES && oldHolder.loaded + CACHE_BINARY_MILLIS < System.currentTimeMillis();
     }
 
     private StaticContentItem _getStaticContentFile(String path,
@@ -169,33 +150,33 @@ public class StaticContentResolver {
         }, File.separator);
 
         final File file = new File(parentPath, path);
-        log.trace("getStaticContentFile: {}", file.getAbsolutePath());
-
         final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
-
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
         ComponentMetaFactory factory = new ComponentMetaFactory(publicationId);
 
         BinaryMeta binaryMeta = dynamicMetaRetriever.getBinaryMetaByURL(_prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl()));
         if (binaryMeta == null) {
-            throw new StaticContentNotFoundException("No binary meta found for: [" + publicationId + "] " +
-                    pathInfo.getFileName());
+            String message = "No binary meta found for: [" + publicationId + "] " +
+                    pathInfo.getFileName();
+            log.debug(message);
+            throw new StaticContentNotFoundException(message);
         }
+        log.debug("Binary meta loaded for: [" + publicationId + "] " +
+                pathInfo.getFileName());
         int itemId = (int) binaryMeta.getURI().getItemId();
         ComponentMeta componentMeta = factory.getMeta(itemId);
         if (componentMeta == null) {
-            throw new StaticContentNotFoundException("No meta meta found for: [" + publicationId + "] " +
-                    pathInfo.getFileName());
+            throw new StaticContentNotFoundException("No component meta found by id: " +
+                    itemId + " for: [" + publicationId + "] " + pathInfo.getFileName());
         }
-
+        log.debug("Component meta loaded by id: " + itemId + " for: [" +
+                publicationId + "] " + pathInfo.getFileName());
         long componentTime = componentMeta.getLastPublicationDate().getTime();
-
         boolean shouldRefresh = isToBeRefreshed(file, componentTime) || requestDto.isNoMediaCache();
 
         if (shouldRefresh) {
             BinaryData binaryData = binaryContentRetriever.getBinary(publicationId, itemId, binaryMeta.getVariantId());
-
-            log.debug("Writing binary content to file: {}", file.getAbsolutePath());
+            log.debug("Refreshing: Binary content is being written to file: {}", file.getAbsolutePath());
             try {
                 ImageUtils.writeToFile(file, pathInfo, binaryData.getBytes());
             } catch (IOException e) {

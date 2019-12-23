@@ -128,6 +128,9 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
         try {
             synchronized (key.toString().intern()) {
                 BinaryData binaryData = binaryFactory.getBinary(publicationId, itemId, binaryMeta.getVariantId());
+                if (binaryData == null) {
+                    throw new IOException("Cannot find binary for " + publicationId + ":" + itemId);
+                }
                 refreshBinary(file, pathInfo, binaryData.getBytes());
             }
         } catch (IOException e) {

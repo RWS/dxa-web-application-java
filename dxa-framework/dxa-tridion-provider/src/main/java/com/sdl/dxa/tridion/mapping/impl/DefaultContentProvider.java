@@ -221,7 +221,7 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
                 .builder(path, localizationId)
                 .localizationPath(localizationPath)
                 .baseUrl(webRequestContext.getBaseUrl())
-                .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isPreview())
+                .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isSessionPreview())
                 .build();
         StaticContentItem staticContent = staticContentResolver.getStaticContent(requestDto);
         return staticContent;
@@ -232,7 +232,7 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
         try {
             return Arrays.asList(query.executeQuery());
         } catch (StorageException e) {
-            log.warn("Exception while execution of broker query " + simpleBrokerQuery, e);
+            log.error("Exception while execution of broker query " + simpleBrokerQuery, e);
             return Collections.emptyList();
         }
     }

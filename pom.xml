@@ -12,7 +12,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-parent</artifactId>
-    <version>2.2.2</version>
+    <version>2.2.4</version>
     <packaging>pom</packaging>
 
     <name>DXA - Parent</name>
@@ -53,16 +53,16 @@
         <!-- Apache -->
         <commons-io-version>2.6</commons-io-version>
         <commons-lang3.version>3.9</commons-lang3.version>
-        <commons-collections4.version>4.3</commons-collections4.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
         <httpcomponents-client-version>4.5.8</httpcomponents-client-version>
         <httpcomponents.core.version>4.4.11</httpcomponents.core.version>
 
-        <guava-version>27.1-jre</guava-version>
+        <guava-version>28.2-jre</guava-version>
 
         <!-- Joda Time -->
-        <joda-time-version>2.10</joda-time-version>
+        <joda-time-version>2.10.5</joda-time-version>
 
-        <jackson.version>2.10.0</jackson.version>
+        <jackson.version>2.10.1</jackson.version>
         <lombok.version>1.18.8</lombok.version>
 
         <!-- Logging -->
@@ -121,7 +121,7 @@
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
         <dd4t-latest.version>2.1.5</dd4t-latest.version>
 
-        <pca-client.version>2.2.2</pca-client.version>
+        <pca-client.version>2.2.4</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>
     </properties>
 

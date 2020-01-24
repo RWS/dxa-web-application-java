@@ -46,9 +46,7 @@ import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
 public class CilStaticContentResolver extends GenericStaticContentResolver implements StaticContentResolver {
 
     private final DynamicMetaRetriever dynamicMetaRetriever;
-
     private final BinaryFactory binaryFactory;
-
     private final PublicationMetaFactory webPublicationMetaFactory;
 
     @Autowired

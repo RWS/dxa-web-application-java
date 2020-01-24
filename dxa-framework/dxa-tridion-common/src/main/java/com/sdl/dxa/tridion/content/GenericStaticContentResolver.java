@@ -15,6 +15,8 @@ import org.springframework.web.util.UriUtils;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.regex.Pattern;
 
 import static com.sdl.webapp.common.util.FileUtils.parentFolderExists;
@@ -28,6 +30,33 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
 
     protected WebApplicationContext webApplicationContext;
 
+    private ConcurrentMap<String, Holder> runningTasksByPaths = new ConcurrentHashMap<>();
+
+    private static class Holder {
+        private String url;
+        private StaticContentItem previousState;
+    }
+
+    @NotNull
+    protected StaticContentItem createStaticContentItem(String path,
+                                                        StaticContentRequestDto requestDto) throws ContentProviderException {
+        Holder newHolder = new Holder();
+        Holder oldHolder = runningTasksByPaths.putIfAbsent(path, newHolder);
+        if (oldHolder != null) {
+            newHolder = oldHolder;
+        }
+        newHolder.url = path.intern();
+        try {
+            synchronized (newHolder.url) {
+                newHolder.previousState = getStaticContentFileByPath(path, requestDto);
+                log.debug("Returned file {}", newHolder.url);
+            }
+            return newHolder.previousState;
+        } finally {
+            runningTasksByPaths.remove(newHolder.url);
+        }
+    }
+
     @Override
     public @NotNull StaticContentItem getStaticContent(@NotNull StaticContentRequestDto requestDto) throws ContentProviderException {
         log.trace("getStaticContent: {}", requestDto);
@@ -36,13 +65,11 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
                 ? requestDto
                 : requestDto.toBuilder().localizationPath(resolveLocalizationPath(requestDto)).build();
 
-        if(requestDto.getBinaryPath() != null) {
+        if (requestDto.getBinaryPath() != null) {
             final String contentPath = getContentPath(adaptedRequest.getBinaryPath(), adaptedRequest.getLocalizationPath());
-
-            return getStaticContentFileByPath(contentPath, adaptedRequest);
-        } else {
-            return getStaticContentItemById(requestDto.getBinaryId(), adaptedRequest);
+            return createStaticContentItem(contentPath, adaptedRequest);
         }
+        return getStaticContentItemById(requestDto.getBinaryId(), adaptedRequest);
     }
 
     private String getContentPath(@NotNull String binaryPath, @NotNull String localizationPath) {
@@ -66,13 +93,9 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
 
         final File file = new File(parentPath, path);
         log.trace("getStaticContentFileByPath: {}", file.getAbsolutePath());
-
         final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
-
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
-
         String urlPath = prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl());
-
         return createStaticContentItem(requestDto, file, publicationId, pathInfo, urlPath);
     }
 

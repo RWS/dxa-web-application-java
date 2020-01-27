@@ -84,7 +84,11 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
     }
 
     protected @NotNull String getPublicationPath(String publicationId) {
-        return StringUtils.join(new String[]{ webApplicationContext.getServletContext().getRealPath("/"), STATIC_FILES_DIR, publicationId }, File.separator);
+        return StringUtils.join(new String[]{
+                webApplicationContext.getServletContext().getRealPath("/"),
+                STATIC_FILES_DIR,
+                publicationId
+        }, File.separator);
     }
 
     private @NotNull StaticContentItem getStaticContentFileByPath(String path, StaticContentRequestDto requestDto) throws ContentProviderException {

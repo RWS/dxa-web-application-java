@@ -52,7 +52,7 @@ public interface WebRequestContext {
     Localization getLocalization();
 
     /**
-     * Get the session preview token, if it exists, null otherwise.
+     * Gets the session preview token, if it exists, null otherwise.
      *
      */
     String getPreviewToken();

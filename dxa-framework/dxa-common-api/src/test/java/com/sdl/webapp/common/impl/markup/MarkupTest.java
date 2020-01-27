@@ -77,7 +77,7 @@ public class MarkupTest {
 
             when(webRequestContext.getLocalization()).thenReturn(localization);
 
-            when(webRequestContext.isPreview()).thenReturn(true);
+            when(webRequestContext.isSessionPreview()).thenReturn(true);
 
             return webRequestContext;
         }

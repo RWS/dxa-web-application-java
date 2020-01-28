@@ -17,6 +17,7 @@
         <dependency>
             <groupId>com.sdl.web</groupId>
             <artifactId>cil</artifactId>
+            <version>${cd-cil.version}</version>
             <type>pom</type>
         </dependency>
 

@@ -76,6 +76,7 @@ public class GenericStaticContentResolverTest {
         String path = "C:\\Users\\anonym\\dxa-webapp\\BinaryData\\309\\group\\system\\config\\_all.json";
         doReturn(path).when(resolver).getRealPath();
 
-        assertEquals(path + "\\BinaryData\\309", resolver.getPublicationPath("309"));
+        assertEquals(path + File.separator + "BinaryData" + File.separator + "309",
+                resolver.getPublicationPath("309"));
     }
 }

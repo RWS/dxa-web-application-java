@@ -49,6 +49,7 @@ public class GenericStaticContentResolverTest {
     @Test
     public void getContentPathAny() {
         assertEquals("/group/version.json", resolver.getContentPath("/version.json", "/group"));
+        assertEquals("/group/version.json", resolver.getContentPath("/group/version.json", "/group"));
     }
 
     @Test

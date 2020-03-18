@@ -26,10 +26,10 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <cd-cil.version>11.0.0-1066</cd-cil.version>
-        <cd-delivery-cil.version>11.0.0-1066</cd-delivery-cil.version>
-        <cd-xo.version>11.0.0-1066</cd-xo.version>
-        <udp-common-config-legacy.version>11.0.0-1052</udp-common-config-legacy.version>
+        <cd-cil.version>11.0.0-1068</cd-cil.version>
+        <cd-delivery-cil.version>11.0.0-1068</cd-delivery-cil.version>
+        <cd-xo.version>11.0.0-1068</cd-xo.version>
+        <udp-common-config-legacy.version>11.0.0-1055</udp-common-config-legacy.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>

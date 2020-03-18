@@ -77,7 +77,7 @@ public abstract class DynamicList<T extends EntityModel, Q extends AbstractQuery
     }
 
     @Override
-    public DynamicList deepCopy() throws DxaException {
+    public DynamicList deepCopy() {
         DynamicList clone = (DynamicList) super.deepCopy();
         if (getQueryResults() != null) {
             clone.setQueryResults(new ArrayList<EntityModel>(getQueryResults()));

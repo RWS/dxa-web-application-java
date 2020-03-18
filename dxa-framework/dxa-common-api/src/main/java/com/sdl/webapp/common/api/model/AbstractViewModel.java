@@ -10,6 +10,7 @@ import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter;
 import com.sdl.webapp.common.api.serialization.json.annotation.JsonXpmAware;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.exceptions.DxaRuntimeException;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
@@ -88,7 +89,7 @@ public abstract class AbstractViewModel implements ViewModel {
     }
 
     @Override
-    public ViewModel deepCopy() throws DxaException {
+    public ViewModel deepCopy() {
         AbstractViewModel clone = null;
         try {
             // Start with a shallow copy
@@ -104,7 +105,7 @@ public abstract class AbstractViewModel implements ViewModel {
                 clone.extensionData = new HashMap<>(extensionData);
             }
         } catch (CloneNotSupportedException e) {
-            throw new DxaException(e);
+            throw new DxaRuntimeException(e);
         }
 
         return clone;

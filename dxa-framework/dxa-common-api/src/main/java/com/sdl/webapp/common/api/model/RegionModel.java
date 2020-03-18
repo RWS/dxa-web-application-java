@@ -56,5 +56,5 @@ public interface RegionModel extends ViewModel, FeedItemsProvider, CanFilterEnti
      */
     void addEntity(EntityModel entity);
 
-    RegionModel deepCopy() throws DxaException;
+    RegionModel deepCopy();
 }

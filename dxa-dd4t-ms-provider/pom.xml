@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>dxa-parent</artifactId>
+        <artifactId>dxa-oss-parent</artifactId>
         <groupId>com.sdl.dxa</groupId>
         <version>2.2.5</version>
         <relativePath>../pom.xml</relativePath>

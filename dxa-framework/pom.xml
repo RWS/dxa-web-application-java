@@ -6,7 +6,7 @@
 
     <parent>
         <groupId>com.sdl.dxa</groupId>
-        <artifactId>dxa-parent</artifactId>
+        <artifactId>dxa-oss-parent</artifactId>
         <version>2.2.5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>

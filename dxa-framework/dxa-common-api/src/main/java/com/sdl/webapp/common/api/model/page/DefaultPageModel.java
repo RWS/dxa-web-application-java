@@ -89,7 +89,7 @@ public class DefaultPageModel extends AbstractViewModel implements PageModel {
     }
 
     @Override
-    public PageModel deepCopy() throws DxaException {
+    public PageModel deepCopy() {
         DefaultPageModel clone = (DefaultPageModel) super.deepCopy();
         clone.regions = new RegionModelSetImpl();
         for (RegionModel regionModel : regions) {

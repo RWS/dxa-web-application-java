@@ -169,6 +169,25 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
     }
 
     /**
+     * @deprecated
+     * @dxa.publicApi
+     */
+    @Override
+    public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
+        return super.getPageModel(path, localization);
+    }
+
+    /**
+     * @deprecated
+     * @dxa.publicApi
+     */
+    @Override
+    public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
+        return super.getEntityModel(id, _localization);
+    }
+
+
+    /**
      * {@inheritDoc}
      *
      * @dxa.publicApi

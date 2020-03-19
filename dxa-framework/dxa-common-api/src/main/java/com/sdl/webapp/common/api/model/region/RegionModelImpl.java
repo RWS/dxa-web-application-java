@@ -184,7 +184,7 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
     }
 
     @Override
-    public RegionModel deepCopy() throws DxaException {
+    public RegionModel deepCopy() {
         RegionModelImpl clone = (RegionModelImpl) super.deepCopy();
         clone.entities = new ArrayList<>();
         for (EntityModel entityModel : entities) {

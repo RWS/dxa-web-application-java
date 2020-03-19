@@ -23,7 +23,7 @@ public interface EntityModel extends ViewModel, RichTextFragment {
 
     Map<String, String> getXpmPropertyMetadata();
 
-    EntityModel deepCopy() throws DxaException;
+    EntityModel deepCopy();
 
     void setEmbedded(boolean b);
 

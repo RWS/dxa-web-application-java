@@ -8,6 +8,7 @@ import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.exceptions.DxaException;
+import com.sdl.webapp.common.exceptions.DxaRuntimeException;
 import com.tridion.ambientdata.claimstore.ClaimStore;
 import com.tridion.ambientdata.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +75,7 @@ public abstract class AbstractContentProvider {
             try {
                 // Make a deep copy
                 pageModel = pageModel.deepCopy();
-            } catch (DxaException e) {
+            } catch (Exception e) {
                 throw new ContentProviderException("PageModel for " + key + " cannot be copied", e);
             }
             //filterConditionalEntities modifies the pagemodel, that is why the deep copy is done.
@@ -138,7 +139,7 @@ public abstract class AbstractContentProvider {
             try {
                 // Make a deep copy
                 pageModel = pageModel.deepCopy();
-            } catch (DxaException e) {
+            } catch (Exception e) {
                 throw new ContentProviderException("PageModel for " + key + " cannot be copied", e);
             }
             //filterConditionalEntities modifies the pagemodel, that is why the deep copy is done.
@@ -216,7 +217,7 @@ public abstract class AbstractContentProvider {
         try {
             //Return a deep copy so controllers can dynamically change the content without causing problems.
             entityModel = entityModel.deepCopy();
-        } catch (DxaException e) {
+        } catch (Exception e) {
             throw new ContentProviderException("EntityModel for " + key + " cannot be copied", e);
         }
 

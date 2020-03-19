@@ -6,8 +6,9 @@
 
     <parent>
         <groupId>com.sdl.dxa</groupId>
-        <artifactId>dxa-parent</artifactId>
-        <version>2.2.4</version>
+        <artifactId>dxa-oss-parent</artifactId>
+        <version>2.2.5</version>
+<!--        <relativePath>../pom.xml</relativePath>-->
     </parent>
 
     <artifactId>dxa-framework</artifactId>
@@ -88,6 +89,11 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-javadoc-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <version>3.1.2</version>
             </plugin>
         </plugins>
     </build>

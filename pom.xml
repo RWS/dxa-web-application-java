@@ -12,7 +12,9 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-oss-parent</artifactId>
-    <version>2.2.5-SNAPSHOT</version>
+
+    <version>2.2.5</version>
+
     <packaging>pom</packaging>
 
     <name>DXA - Parent</name>
@@ -26,10 +28,12 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-        <cd-cil.version>11.0.0-1064</cd-cil.version>
-        <cd-delivery-cil.version>11.0.0-1064</cd-delivery-cil.version>
-        <cd-xo.version>11.0.0-1064</cd-xo.version>
-        <udp-common-config-legacy.version>11.0.0-1050</udp-common-config-legacy.version>
+
+        <cd-cil.version>11.0.0-1068</cd-cil.version>
+        <cd-delivery-cil.version>11.0.0-1068</cd-delivery-cil.version>
+        <cd-xo.version>11.0.0-1068</cd-xo.version>
+        <udp-common-config-legacy.version>11.0.0-1055</udp-common-config-legacy.version>
+
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>
@@ -121,7 +125,7 @@
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
         <dd4t-latest.version>2.1.5</dd4t-latest.version>
 
-        <pca-client.version>2.2.4</pca-client.version>
+        <pca-client.version>2.2.5</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>
     </properties>
 

@@ -8,7 +8,6 @@
         <groupId>com.sdl.dxa</groupId>
         <artifactId>dxa-oss-parent</artifactId>
         <version>2.2.5</version>
-<!--        <relativePath>../pom.xml</relativePath>-->
     </parent>
 
     <artifactId>dxa-webapp</artifactId>
@@ -203,7 +202,7 @@
         <dependencies>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
-                <artifactId>dxa-oss-parent</artifactId>
+                <artifactId>dxa-parent</artifactId>
                 <version>${project.version}</version>
                 <type>pom</type>
                 <scope>import</scope>

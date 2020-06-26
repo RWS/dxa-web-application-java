@@ -9,6 +9,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.Accessors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -19,8 +21,8 @@ import java.util.Map;
 @Data
 @AllArgsConstructor
 @Accessors(chain = true)
-@ToString(callSuper = true)
 public class PageModelData extends ViewModelData {
+    private static final Logger LOG = LoggerFactory.getLogger(PageModelData.class);
 
     private String id;
 
@@ -55,5 +57,26 @@ public class PageModelData extends ViewModelData {
                 return PageModelData.this;
             }
         };
+    }
+
+    @Override
+    public String toString() {
+        if (LOG.isTraceEnabled()) {
+            return "PageModelData{" +
+                    "id='" + id + '\'' +
+                    ", namespace='" + namespace + '\'' +
+                    ", structureGroupId='" + structureGroupId + '\'' +
+                    ", meta=" + meta +
+                    ", pageTemplate=" + pageTemplate +
+                    ", title='" + title + '\'' +
+                    ", regions=" + regions +
+                    ", urlPath='" + urlPath + '\'' +
+                    '}';
+        }
+        return "PageModelData{" +
+                "id='" + id + '\'' +
+                ", namespace='" + namespace + '\'' +
+                ", structureGroupId='" + structureGroupId + '\'' +
+                "}";
     }
 }

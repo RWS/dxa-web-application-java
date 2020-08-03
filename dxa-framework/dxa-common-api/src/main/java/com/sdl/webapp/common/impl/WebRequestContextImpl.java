@@ -236,7 +236,7 @@ public class WebRequestContextImpl implements WebRequestContext {
         Localization resolveLocalization = null;
         String fullUrl = getFullUrl();
         try {
-            resolveLocalization = localizationResolver.getLocalization(getFullUrl());
+            resolveLocalization = localizationResolver.getLocalization(fullUrl);
         } catch (LocalizationResolverException e) {
             if (unknownLocalizationHandler != null) {
                 log.warn("Localization is not resolved for " + fullUrl + ", Localization handler is set, trying to resolve using it ", e);

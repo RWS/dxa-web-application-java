@@ -40,15 +40,14 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 public final class InitializationUtils {
 
     private static final String REGISTERED_FOR_MAPPING_LOG_MESSAGE = "Registered {} for mapping {}";
-
     private static final String REGISTERED_LOG_MESSAGE = "Registered {}";
-
     private static final String SPRING_PROFILES_INCLUDE = "spring.profiles.include";
 
     // keep the order for internal usage
-    private static List<Resource> resources;
+    private static volatile List<Resource> resources;
+    private static volatile Properties properties;
 
-    private volatile static Properties properties;
+    private static final Object SYNC = new Object();
 
     private InitializationUtils() {
     }
@@ -68,25 +67,30 @@ public final class InitializationUtils {
     @SneakyThrows(IOException.class)
     public static Properties loadDxaProperties() {
         if (properties == null) {
-            Properties dxaProperties = new Properties();
-            for (Resource resource : getAllResources()) {
-                Properties current = new Properties();
-                // order is guaranteed by #getAllResources() and internal usage of List
-                current.load(new BOMInputStream(resource.getInputStream()));
-                log.debug("Properties from {} are loaded", resource);
+            synchronized (SYNC) {
+                if (properties != null) {
+                    return properties;
+                }
+                Properties dxaProperties = new Properties();
+                for (Resource resource : getAllResources()) {
+                    Properties current = new Properties();
+                    // order is guaranteed by #getAllResources() and internal usage of List
+                    current.load(new BOMInputStream(resource.getInputStream()));
+                    log.debug("Properties from {} are loaded", resource);
 
-                if (current.containsKey(SPRING_PROFILES_INCLUDE) &&
-                    dxaProperties.containsKey(SPRING_PROFILES_INCLUDE)) {
-                    current.setProperty(SPRING_PROFILES_INCLUDE,
-                            Joiner.on(',')
-                                    .join(dxaProperties.getProperty(SPRING_PROFILES_INCLUDE),
-                                          current.getProperty(SPRING_PROFILES_INCLUDE)));
+                    if (current.containsKey(SPRING_PROFILES_INCLUDE) &&
+                            dxaProperties.containsKey(SPRING_PROFILES_INCLUDE)) {
+                        current.setProperty(SPRING_PROFILES_INCLUDE,
+                                Joiner.on(',')
+                                        .join(dxaProperties.getProperty(SPRING_PROFILES_INCLUDE),
+                                                current.getProperty(SPRING_PROFILES_INCLUDE)));
+                    }
+
+                    dxaProperties.putAll(current);
                 }
 
-                dxaProperties.putAll(current);
+                properties = dxaProperties;
             }
-
-            properties = dxaProperties;
         }
 
         log.trace("Properties {} returned", properties);
@@ -104,23 +108,28 @@ public final class InitializationUtils {
      * @return a collection of DXA properties files
      */
     @SneakyThrows(IOException.class)
-    public static Collection<Resource> getAllResources() {
+    static Collection<Resource> getAllResources() {
         if (resources == null) {
-            PathMatchingResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
-            patternResolver.setPathMatcher(new AntPathMatcher());
+            synchronized (SYNC) {
+                if (resources != null) {
+                    return resources;
+                }
+                PathMatchingResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
+                patternResolver.setPathMatcher(new AntPathMatcher());
 
-            List<Resource> availableResources = new ArrayList<>();
-            //note that the order of properties is important because of overriding of properties
-            availableResources.add(new ClassPathResource("dxa.defaults.properties"));
-            availableResources.addAll(Arrays.asList(patternResolver.getResources("classpath*:/dxa.modules.**.properties")));
-            ClassPathResource dxaProperties = new ClassPathResource("dxa.properties");
-            if (dxaProperties.exists()) {
-                availableResources.add(dxaProperties);
+                List<Resource> availableResources = new ArrayList<>();
+                //note that the order of properties is important because of overriding of properties
+                availableResources.add(new ClassPathResource("dxa.defaults.properties"));
+                availableResources.addAll(Arrays.asList(patternResolver.getResources("classpath*:/dxa.modules.**.properties")));
+                ClassPathResource dxaProperties = new ClassPathResource("dxa.properties");
+                if (dxaProperties.exists()) {
+                    availableResources.add(dxaProperties);
+                }
+                availableResources.addAll(Arrays.asList(patternResolver.getResources("classpath*:/dxa.addons.*.properties")));
+
+                log.debug("Loaded resources {}", availableResources);
+                resources = availableResources;
             }
-            availableResources.addAll(Arrays.asList(patternResolver.getResources("classpath*:/dxa.addons.*.properties")));
-
-            log.debug("Loaded resources {}", availableResources);
-            resources = availableResources;
         }
 
         log.trace("Returned list of resources {}", resources);

@@ -69,7 +69,7 @@ public abstract class AbstractContentProvider {
                 pageModel = loadPage(path, localization);
                 if (pageModel.canBeCached() && !webRequestContext.isSessionPreview()) {
                     pagemodelCache.put(key, pageModel);
-                    pagemodelCache.put(createKeyForCacheByPath(pageModel.getId(), localization, "pagemodel"), pageModel);
+                    pagemodelCache.put(createKeyForCacheById(pageModel.getId(), localization, "pagemodel"), pageModel);
                 }
             }
             try {

@@ -109,7 +109,7 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
      */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException {
-        return preHandle(request, response, webRequestContext.isPreview());
+        return preHandle(request, response, webRequestContext.isSessionPreview());
     }
 
 

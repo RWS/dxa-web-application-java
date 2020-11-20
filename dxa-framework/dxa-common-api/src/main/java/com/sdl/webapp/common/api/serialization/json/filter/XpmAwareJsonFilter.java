@@ -32,7 +32,7 @@ public final class XpmAwareJsonFilter implements DxaViewModelJsonPropertyFilter 
 
     @Override
     public boolean include(PropertyWriter writer) {
-        if (!enabled || webRequestContext == null || webRequestContext.isPreview()) {
+        if (!enabled || webRequestContext == null || webRequestContext.isSessionPreview()) {
             return true;
         }
         boolean isXpmAware;

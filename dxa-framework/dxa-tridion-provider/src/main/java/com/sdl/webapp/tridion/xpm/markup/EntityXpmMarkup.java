@@ -65,11 +65,9 @@ public class EntityXpmMarkup implements MarkupDecorator {
             }
             index++;
         }
-        if (node != null && node instanceof Comment) {
+        if (node instanceof Comment) {
             Comment comment = (Comment) node;
-            if (comment.getData().contains("Start Component Field:")) {
-                return true;
-            }
+            return comment.getData().contains("Start Component Field:");
         }
         return false;
     }
@@ -84,35 +82,36 @@ public class EntityXpmMarkup implements MarkupDecorator {
     @Override
     public HtmlNode process(HtmlNode markup, ViewModel model, WebRequestContext webRequestContext) {
 
-        if (webRequestContext.isPreview()) {
-            EntityModel entity = (EntityModel) model;
+        if (!webRequestContext.isSessionPreview()) {
+            return markup;
+        }
+        EntityModel entity = (EntityModel) model;
 
-            boolean markupInjected = false;
+        boolean markupInjected = false;
 
-            if (markup instanceof ParsableHtmlNode) {
+        if (markup instanceof ParsableHtmlNode) {
 
-                // Inject the XPM markup inside the entity markup
-                //
-                ParsableHtmlNode entityMarkup = (ParsableHtmlNode) markup;
-                Element html = entityMarkup.getHtmlElement();
-                if (html != null) {   // If an HTML element (not a comment etc)
-                    html.prepend(buildXpmMarkup(entity, webRequestContext.getLocalization()).toHtml());
-                    Elements properties = html.select("[data-entity-property-xpath]");
-                    for (Element property : properties) {
-                        processProperty(property);
-                    }
-
-                    markupInjected = true;
+            // Inject the XPM markup inside the entity markup
+            //
+            ParsableHtmlNode entityMarkup = (ParsableHtmlNode) markup;
+            Element html = entityMarkup.getHtmlElement();
+            if (html != null) {   // If an HTML element (not a comment etc)
+                html.prepend(buildXpmMarkup(entity, webRequestContext.getLocalization()).toHtml());
+                Elements properties = html.select("[data-entity-property-xpath]");
+                for (Element property : properties) {
+                    processProperty(property);
                 }
-            }
 
-            if (!markupInjected) {
-                // Surround the entity markup with the XPM markup
-                //
-                markup = HtmlBuilders.span()
-                        .withNode(buildXpmMarkup(entity, webRequestContext.getLocalization()))
-                        .withNode(markup).build();
+                markupInjected = true;
             }
+        }
+
+        if (!markupInjected) {
+            // Surround the entity markup with the XPM markup
+            //
+            markup = HtmlBuilders.span()
+                    .withNode(buildXpmMarkup(entity, webRequestContext.getLocalization()))
+                    .withNode(markup).build();
         }
 
         return markup;

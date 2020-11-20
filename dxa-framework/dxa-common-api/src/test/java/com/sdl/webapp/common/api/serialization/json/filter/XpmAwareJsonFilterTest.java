@@ -38,21 +38,7 @@ public class XpmAwareJsonFilterTest {
         ReflectionTestUtils.setField(xpmAwareJsonFilter, "enabled", true);
     }
 
-    @Test
-    public void shouldIncludeIfXpmAndAnnotated() {
-        //given
-        AnnotatedMember member = getAnnotatedMember(JsonXpmAware.class);
-        PropertyWriter writer = propertyWriter(BeanPropertyWriter.class, "Test", member);
-
-        when(webRequestContext.isPreview()).thenReturn(true);
-
-        //when
-        boolean include = xpmAwareJsonFilter.include(writer);
-
-        //then
-        assertTrue(include);
-    }
-
+    
     @Test
     public void shouldIncludeIfNoWebRequestContext() {
         //given

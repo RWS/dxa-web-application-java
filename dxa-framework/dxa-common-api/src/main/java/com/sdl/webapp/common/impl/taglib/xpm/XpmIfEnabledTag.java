@@ -20,6 +20,6 @@ public class XpmIfEnabledTag extends TagSupport {
      */
     protected boolean isPreview() {
         return WebApplicationContextUtils.getRequiredWebApplicationContext(pageContext.getServletContext())
-                .getBean(WebRequestContext.class).isPreview();
+                .getBean(WebRequestContext.class).isSessionPreview();
     }
 }

@@ -4,13 +4,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <artifactId>dxa-framework</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>2.2.3</version>
+
+        <artifactId>dxa-framework</artifactId>
+        <version>2.2.5</version>
+
     </parent>
 
     <artifactId>dxa-tridion-provider</artifactId>
-
     <name>DXA - Tridion provider</name>
     <description>DXA Providers for SDL Web8</description>
 

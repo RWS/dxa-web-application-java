@@ -2,13 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
     <parent>
         <artifactId>dxa-oss-parent</artifactId>
         <groupId>com.sdl.dxa</groupId>
-        <version>2.2.3</version>
-        <relativePath>../pom.xml</relativePath>
+
+        <version>2.2.5</version>
+
     </parent>
-    <modelVersion>4.0.0</modelVersion>
 
     <artifactId>dxa-dd4t-ms-provider</artifactId>
 
@@ -36,6 +38,7 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.hamcrest</groupId>
@@ -44,6 +47,7 @@
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
 

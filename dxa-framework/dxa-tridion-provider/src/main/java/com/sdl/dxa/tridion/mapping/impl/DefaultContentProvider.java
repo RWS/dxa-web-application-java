@@ -189,6 +189,7 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
         return super.getEntityModel(id, _localization);
     }
 
+
     /**
      * {@inheritDoc}
      *

@@ -371,7 +371,6 @@
             <dependency>
                 <groupId>com.sdl.delivery</groupId>
                 <artifactId>udp-common-config-legacy</artifactId>
-                <version>${udp-common-config-legacy.version}</version>
             </dependency>
 
             <dependency>

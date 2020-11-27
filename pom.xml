@@ -26,8 +26,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
+        <!-- CIL version-->
         <cd-cil.version>11.0.0-1068</cd-cil.version>
-        <cd-delivery-cil.version>11.0.0-1068</cd-delivery-cil.version>
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>
@@ -365,7 +365,7 @@
             <dependency>
                 <groupId>com.sdl.delivery</groupId>
                 <artifactId>cil</artifactId>
-                <version>${cd-delivery-cil.version}</version>
+                <version>${cd-cil.version}</version>
                 <type>pom</type>
             </dependency>
 

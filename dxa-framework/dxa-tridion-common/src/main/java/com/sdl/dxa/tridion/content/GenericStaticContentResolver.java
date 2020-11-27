@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriUtils;
 
+import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -32,20 +33,23 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
 
     private ConcurrentMap<String, Holder> runningTasksByPaths = new ConcurrentHashMap<>();
 
-    private static class Holder {
-        private String url;
+    static class Holder {
+        private final String url;
         private StaticContentItem previousState;
+
+        Holder(String url) {
+            this.url = url;
+        }
     }
 
     @NotNull
     protected StaticContentItem createStaticContentItem(String path,
                                                         StaticContentRequestDto requestDto) throws ContentProviderException {
-        Holder newHolder = new Holder();
+        Holder newHolder = new Holder(path.intern());
         Holder oldHolder = runningTasksByPaths.putIfAbsent(path, newHolder);
         if (oldHolder != null) {
             newHolder = oldHolder;
         }
-        newHolder.url = path.intern();
         try {
             synchronized (newHolder.url) {
                 newHolder.previousState = getStaticContentFileByPath(path, requestDto);
@@ -84,8 +88,9 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
     }
 
     protected @NotNull String getPublicationPath(String publicationId) {
+        ServletContext servletContext = webApplicationContext.getServletContext();
         return StringUtils.join(new String[]{
-                webApplicationContext.getServletContext().getRealPath("/"),
+                servletContext.getRealPath("/"),
                 STATIC_FILES_DIR,
                 publicationId
         }, File.separator);

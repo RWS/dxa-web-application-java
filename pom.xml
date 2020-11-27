@@ -368,10 +368,6 @@
                 <version>${cd-delivery-cil.version}</version>
                 <type>pom</type>
             </dependency>
-            <dependency>
-                <groupId>com.sdl.delivery</groupId>
-                <artifactId>udp-common-config-legacy</artifactId>
-            </dependency>
 
             <dependency>
                 <groupId>com.51degrees</groupId>

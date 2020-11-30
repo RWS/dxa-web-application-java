@@ -53,7 +53,6 @@ public interface ViewModelRegistry {
     @Nullable
     Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName);
 
-    @NotNull
     Class<? extends ViewModel> getViewModelType(MvcData regionMvcData) throws DxaException;
 
     /**

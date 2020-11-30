@@ -292,15 +292,12 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
         PageModel pageModel = null;
         try {
             Class<? extends ViewModel> viewModelType = viewModelRegistry.getViewModelType(mvcData);
-            if (viewModelType == null) {
-                throw new IllegalStateException("Cannot find a view model type for " + mvcData);
-            }
-
             log.debug("Instantiating a PageModel without a SchemaID = null, modelData = {}, view model type = '{}'", pageModelData, viewModelType);
             // semantic mapping is possible, let's do it
-            if (pageModelData.getSchemaId() != null) {
-                pageModel = createDefaultPageModel();
-            } else {
+            if (pageModelData.getSchemaId() == null) {
+                pageModel = viewModelType == null ? createDefaultPageModel() : null;
+            }
+            if (pageModel == null) {
                 pageModel = (PageModel) createViewModel(viewModelType, pageModelData);
             }
             pageModel.setMvcData(mvcData);

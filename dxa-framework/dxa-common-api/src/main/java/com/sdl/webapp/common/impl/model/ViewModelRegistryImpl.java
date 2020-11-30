@@ -132,7 +132,6 @@ public class ViewModelRegistryImpl implements ViewModelRegistry {
      * {@inheritDoc}
      */
     @Override
-    @NotNull
     public Class<? extends ViewModel> getViewModelType(final MvcData viewData) throws DxaException {
         //Entries with matching viewname
         Set<Map.Entry<MvcData, Class<? extends ViewModel>>> entries = new HashSet<>();

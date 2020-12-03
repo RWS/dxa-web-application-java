@@ -15,6 +15,7 @@ import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.ImageUtils;
+import com.sdl.webapp.common.util.UrlEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -71,10 +72,13 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         synchronized (newHolder.url) {
             ContentNamespace ns = GraphQLUtils.convertUriToGraphQLContentNamespace(requestDto.getUriType());
             ContextData contextData = createContextData(requestDto.getClaims());
+            String fileName = pathInfo.getFileName();
+            String encodedFileName = UrlEncoder.urlPartialPathEncode(fileName);
+            log.debug("Requesting path: {}", encodedFileName);
             BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
                     ns,
                     publicationId,
-                    pathInfo.getFileName(),
+                    encodedFileName,
                     "",
                     contextData);
             StaticContentItem result = processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);

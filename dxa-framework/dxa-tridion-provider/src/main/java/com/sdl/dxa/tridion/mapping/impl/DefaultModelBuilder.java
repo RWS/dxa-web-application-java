@@ -155,8 +155,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
 
     protected List<SemanticSchema> getInheritedSemanticSchemas(ViewModelData viewModelData, Localization localization) {
         Object schemas = viewModelData.getExtensionData() != null ? viewModelData.getExtensionData().get("Schemas") : null;
-        if (schemas == null ||
-            !(schemas instanceof ListWrapper) ||
+        if (!(schemas instanceof ListWrapper) ||
             ((ListWrapper) schemas).getValues().isEmpty()) {
             return Collections.emptyList();
         }
@@ -180,8 +179,7 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
             return semanticFields;
         }
         Object schemas = modelData.getExtensionData().get("Schemas");
-        if (schemas == null ||
-            !(schemas instanceof ListWrapper) ||
+        if (!(schemas instanceof ListWrapper) ||
             ((ListWrapper) schemas).getValues().isEmpty()) {
             return semanticFields;
         }

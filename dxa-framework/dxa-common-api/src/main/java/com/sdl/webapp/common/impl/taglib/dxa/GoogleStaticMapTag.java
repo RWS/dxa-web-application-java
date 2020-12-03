@@ -40,7 +40,7 @@ public class GoogleStaticMapTag extends AbstractGoogleMapTag {
         return HtmlBuilders.div()
                 .withId("map" + UUID.randomUUID().toString().replaceAll("-", ""))
                 .withAttribute(CLASS_STATIC_MAP_ATTR)
-                .withAttribute("style", "height: " + Integer.toString(getMapHeight()))
+                .withAttribute("style", "height: " + getMapHeight())
                 .withNode(HtmlBuilders.img("//maps.googleapis.com/maps/api/staticmap" + sb.toString())
                         .withAlt(getMarkerName())
                         .build())

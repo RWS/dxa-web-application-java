@@ -127,7 +127,7 @@ public abstract class Converter<T> {
                 try {
                     SemanticSchema semanticSchema = localization.getSemanticSchemas().get(Long.parseLong(schemaId));
                     if (semanticSchema == null) {
-                        log.warn("Semantic schema with schemaId {} is not found in localization, skipping semantic mapping", schemaId, localization);
+                        log.warn("Semantic schema with schemaId {} is not found in localization {}, skipping semantic mapping", schemaId, localization);
                         throw new SemanticMappingException("Semantic schema not found");
                     }
                     Map<FieldSemantics, SemanticField> semanticFields = semanticSchema.getSemanticFields();

@@ -74,7 +74,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
             ContextData contextData = createContextData(requestDto.getClaims());
             String fileName = pathInfo.getFileName();
             String encodedFileName = UrlEncoder.urlPartialPathEncode(fileName);
-            log.debug("Requesting path: {}", encodedFileName);
+            log.debug("Requesting fileName/path: {}->{}", fileName, encodedFileName);
             BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
                     ns,
                     publicationId,
@@ -91,9 +91,13 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
 
     @Override
     protected @NotNull StaticContentItem getStaticContentItemById(int binaryId, StaticContentRequestDto requestDto) throws ContentProviderException {
+        String localizationId = requestDto.getLocalizationId();
+        if (localizationId == null) {
+            localizationId = "0";
+        }
         BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
                 GraphQLUtils.convertUriToGraphQLContentNamespace(requestDto.getUriType()),
-                Ints.tryParse(requestDto.getLocalizationId()),
+                Ints.tryParse(localizationId),
                 binaryId,
                 null,
                 null);
@@ -101,15 +105,13 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         if (binaryComponent == null) {
             throw new DxaItemNotFoundException("Item not found");
         }
-        String parentPath = getPublicationPath(requestDto.getLocalizationId());
+        String parentPath = getPublicationPath(localizationId);
         List<BinaryVariantEdge> edges = binaryComponent.getVariants().getEdges();
         String path = edges.get(0).getNode().getPath();
-
-        final File file = new File(parentPath, path);
-        final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
-
+        File file = new File(parentPath, path);
+        ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
         String urlPath = prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl());
-
+        log.debug("Requesting urlPath: {}", urlPath);
         return this.processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);
     }
 

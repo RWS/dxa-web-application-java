@@ -33,7 +33,7 @@ public class RichTextDataConverter implements SemanticModelConverter<RichTextDat
             if (fragment instanceof String) {
                 fragments.add(new RichTextFragmentImpl((String) fragment));
             } else {
-                log.debug("Fragment {} is a not a string but perhaps EntityModelData, skipping link resolving");
+                log.debug("Fragment {} is a not a string but perhaps EntityModelData, skipping link resolving", fragment);
                 EntityModel embeddedItem;
                 EntityModelData entityModelData = (EntityModelData) fragment;
                 try {

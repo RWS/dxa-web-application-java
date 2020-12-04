@@ -1,6 +1,12 @@
 package com.sdl.webapp.common.util;
 
 import com.google.common.base.Strings;
+import com.google.common.collect.Lists;
+import com.google.common.escape.Escaper;
+import com.google.common.net.UrlEscapers;
+
+import java.util.List;
+
 
 /**
  * This class provides a way to use encoded paths for querying with GraphQL
@@ -9,11 +15,30 @@ import com.google.common.base.Strings;
  */
 public class UrlEncoder {
 
+    private static final List<Escaper> PATH_ESCAPERS = Lists.newArrayList(
+            //order of escapers matters!
+            UrlEscapers.urlFormParameterEscaper(),
+            new Escaper() {
+                @Override
+                public String escape(String text) {
+                    return text.replaceAll("\\*", "%2A");
+                }
+            },
+            new Escaper() {
+                @Override
+                public String escape(String text) {
+                    return text.replaceAll("\\+", "%20");
+                }
+            }
+    );
+
     /**
      * Performs an encoding of the url path.
+     * @deprecated use guavaEscaper instead.
      * @param url Unencoded url path
      * @return Encoded url path.
      */
+    @Deprecated
     public static String urlPartialPathEncode(String url)
     {
         if (Strings.isNullOrEmpty(url)) {
@@ -58,5 +83,29 @@ public class UrlEncoder {
         }
 
         return urlCopy.toString();
+    }
+
+    /**
+     * The CMS does not allow to use next characters in file names:
+     * \/:*?"<>|
+     * @param text
+     * @return
+     */
+    public static String guavaEscaper(String text) {
+        StringBuilder result = new StringBuilder(text.length() * 2);
+        for (String part : text.split("/")) {
+            String escapedPart = part;
+            for (Escaper escaper : PATH_ESCAPERS) {
+                escapedPart = escaper.escape(escapedPart);
+            }
+            result.append(escapedPart);
+            result.append("/");
+        }
+        int length = result.length();
+        if (length > 0) {
+            //remove the last /
+            result.setLength(length - 1);
+        }
+        return result.toString();
     }
 }

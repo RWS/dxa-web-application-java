@@ -451,7 +451,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
             try {
                 hyperlink = (Element) linkXPath.evaluate(htmlElement, XPathConstants.NODE);
             } catch (XPathExpressionException e) {
-                LOG.warn("Couldn't find <a> tag", e);
+                LOG.warn("Couldn't find <a> tag in {}", htmlElement, e);
             }
             if (hyperlink == null) {
                 LOG.debug("No hyperlink found in XHTML element: {}", htmlElement);

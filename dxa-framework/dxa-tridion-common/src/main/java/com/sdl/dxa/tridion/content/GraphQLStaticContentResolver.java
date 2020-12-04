@@ -73,7 +73,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
             ContentNamespace ns = GraphQLUtils.convertUriToGraphQLContentNamespace(requestDto.getUriType());
             ContextData contextData = createContextData(requestDto.getClaims());
             String fileName = pathInfo.getFileName();
-            String encodedFileName = UrlEncoder.urlPartialPathEncode(fileName);
+            String encodedFileName = UrlEncoder.guavaEscaper(fileName);
             log.debug("Requesting fileName/path: {}->{}", fileName, encodedFileName);
             BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
                     ns,

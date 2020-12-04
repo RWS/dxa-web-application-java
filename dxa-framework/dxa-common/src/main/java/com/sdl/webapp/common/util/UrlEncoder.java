@@ -88,10 +88,13 @@ public class UrlEncoder {
     /**
      * The CMS does not allow to use next characters in file names:
      * \/:*?"<>|
-     * @param text
-     * @return
+     * @param text file name supported by CM and not encoded.
+     * @return encoded file names to support all characters from CM.
      */
-    public static String guavaEscaper(String text) {
+    public static String urlPartialPathEncodeFullEntityTable(String text) {
+        if (Strings.isNullOrEmpty(text)) {
+            return text;
+        }
         StringBuilder result = new StringBuilder(text.length() * 2);
         for (String part : text.split("/")) {
             String escapedPart = part;

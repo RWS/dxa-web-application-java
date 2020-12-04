@@ -29,7 +29,6 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 
 import static com.sdl.dxa.tridion.common.ContextDataCreator.createContextData;
 import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
@@ -73,7 +72,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
             ContentNamespace ns = GraphQLUtils.convertUriToGraphQLContentNamespace(requestDto.getUriType());
             ContextData contextData = createContextData(requestDto.getClaims());
             String fileName = pathInfo.getFileName();
-            String encodedFileName = UrlEncoder.guavaEscaper(fileName);
+            String encodedFileName = UrlEncoder.urlPartialPathEncodeFullEntityTable(fileName);
             log.debug("Requesting fileName/path: {}->{}", fileName, encodedFileName);
             BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
                     ns,

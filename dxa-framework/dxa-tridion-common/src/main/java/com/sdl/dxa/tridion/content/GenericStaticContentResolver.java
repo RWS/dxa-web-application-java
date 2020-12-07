@@ -12,6 +12,7 @@ import org.jetbrains.annotations.NotNull;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.UriUtils;
 
+import javax.servlet.ServletContext;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -24,7 +25,7 @@ import static com.sdl.webapp.common.util.FileUtils.parentFolderExists;
 @Slf4j
 public abstract class GenericStaticContentResolver implements StaticContentResolver {
 
-    private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d++\\.\\d++/");
+    private static final Pattern SYSTEM_VERSION_PATTERN = Pattern.compile("/system/v\\d+\\.\\d+/");
     private static final String STATIC_FILES_DIR = "BinaryData";
     protected static final String DEFAULT_CONTENT_TYPE = "application/octet-stream";
 
@@ -32,20 +33,23 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
 
     private ConcurrentMap<String, Holder> runningTasksByPaths = new ConcurrentHashMap<>();
 
-    private static class Holder {
-        private String url;
+    static class Holder {
+        private final String url;
         private StaticContentItem previousState;
+
+        Holder(String url) {
+            this.url = url;
+        }
     }
 
     @NotNull
     protected StaticContentItem createStaticContentItem(String path,
                                                         StaticContentRequestDto requestDto) throws ContentProviderException {
-        Holder newHolder = new Holder();
+        Holder newHolder = new Holder(path.intern());
         Holder oldHolder = runningTasksByPaths.putIfAbsent(path, newHolder);
         if (oldHolder != null) {
             newHolder = oldHolder;
         }
-        newHolder.url = path.intern();
         try {
             synchronized (newHolder.url) {
                 newHolder.previousState = getStaticContentFileByPath(path, requestDto);
@@ -60,37 +64,36 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
     @Override
     public @NotNull StaticContentItem getStaticContent(@NotNull StaticContentRequestDto requestDto) throws ContentProviderException {
         log.trace("getStaticContent: {}", requestDto);
-        StaticContentRequestDto request = requestDto.isLocalizationPathSet()
+
+        StaticContentRequestDto adaptedRequest = requestDto.isLocalizationPathSet()
                 ? requestDto
                 : requestDto.toBuilder().localizationPath(resolveLocalizationPath(requestDto)).build();
-        if (requestDto.getBinaryPath() != null) {
 
-            String contentPath = getContentPath(request.getBinaryPath(), request.getLocalizationPath());
-            return getStaticContentFileByPath(contentPath, request);
+        if (requestDto.getBinaryPath() != null) {
+            final String contentPath = getContentPath(adaptedRequest.getBinaryPath(), adaptedRequest.getLocalizationPath());
+            return createStaticContentItem(contentPath, adaptedRequest);
         }
-        return getStaticContentItemById(requestDto.getBinaryId(), request);
+        return getStaticContentItemById(requestDto.getBinaryId(), adaptedRequest);
     }
 
-    @NotNull String getContentPath(@NotNull String binaryPath, @NotNull String localizationPath) {
+    private String getContentPath(@NotNull String binaryPath, @NotNull String localizationPath) {
         if (localizationPath.length() > 1) {
-            String path = binaryPath.startsWith(localizationPath + "/")
-                    ? binaryPath.substring(localizationPath.length())
-                    : binaryPath;
-            return localizationPath + removeVersionNumber(path);
+            return localizationPath + removeVersionNumber(binaryPath);
         }
         return removeVersionNumber(binaryPath);
     }
 
-    @NotNull String removeVersionNumber(String path) {
+    private String removeVersionNumber(String path) {
         return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
 
-    @NotNull String getPublicationPath(String publicationId) {
-        return StringUtils.join(new String[]{getRealPath(), STATIC_FILES_DIR, publicationId}, File.separator);
-    }
-
-    String getRealPath() {
-        return webApplicationContext.getServletContext().getRealPath("/");
+    protected @NotNull String getPublicationPath(String publicationId) {
+        ServletContext servletContext = webApplicationContext.getServletContext();
+        return StringUtils.join(new String[]{
+                servletContext.getRealPath("/"),
+                STATIC_FILES_DIR,
+                publicationId
+        }, File.separator);
     }
 
     private @NotNull StaticContentItem getStaticContentFileByPath(String path, StaticContentRequestDto requestDto) throws ContentProviderException {

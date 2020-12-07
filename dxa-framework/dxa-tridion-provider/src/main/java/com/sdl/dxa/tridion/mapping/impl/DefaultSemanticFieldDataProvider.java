@@ -131,7 +131,7 @@ public class DefaultSemanticFieldDataProvider implements SemanticFieldDataProvid
 
         Optional<Object> field = findField(data, path);
         if (!field.isPresent()) {
-            log.debug("No data is found for path {} for semantic field", path, semanticField);
+            log.debug("No data is found for path {} for semantic field {}", path, semanticField);
             return null;
         }
 

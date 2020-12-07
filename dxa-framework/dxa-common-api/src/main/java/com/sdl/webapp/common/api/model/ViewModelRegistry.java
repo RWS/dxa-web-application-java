@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.api.model;
 
 import com.sdl.webapp.common.exceptions.DxaException;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Set;
@@ -18,18 +19,21 @@ public interface ViewModelRegistry {
      * @return The type of the entity that this entity view needs.
      * @throws com.sdl.webapp.common.exceptions.DxaException if any.
      */
+    @NotNull
     Class<? extends ViewModel> getViewEntityClass(String viewName) throws DxaException;
 
 
     /**
      * @param expectedClass     expected class of an {@link EntityModel}, or {@code null} if you don't have expectation or have anything but {@link EntityModel}
      */
+    @NotNull
     Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames, @Nullable Class<? extends EntityModel> expectedClass) throws DxaException;
 
     /**
      * @deprecated since 2.0
      */
     @Deprecated
+    @Nullable
     Class<? extends ViewModel> getMappedModelTypes(Set<String> semanticTypeNames);
 
     /**
@@ -39,12 +43,14 @@ public interface ViewModelRegistry {
      * @param expectedClass    expected class of an {@link EntityModel}, or {@code null} if you don't have expectation or have anything but {@link EntityModel}
      * @return The type of the entity that this semantic type needs.
      */
+    @NotNull
     Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName, @Nullable Class<? extends EntityModel> expectedClass) throws DxaException;
 
     /**
      * @deprecated since 2.0
      */
     @Deprecated
+    @Nullable
     Class<? extends ViewModel> getMappedModelTypes(String semanticTypeName);
 
     Class<? extends ViewModel> getViewModelType(MvcData regionMvcData) throws DxaException;

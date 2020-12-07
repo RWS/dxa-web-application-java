@@ -37,7 +37,7 @@ public abstract class AbstractLinkResolver implements LinkResolver, Initializing
         return shouldRemoveExtension ? PathUtils.stripDefaultExtension(resolvedUrl) : resolvedUrl;
     }
 
-    @Contract("null, _, _ -> null; !null, _, _ -> !null")
+    @Contract("null, _, _ , null-> null; !null, _, _, !null -> !null")
     private String _resolveLink(String uri, int publicationId, boolean isBinary, String contextId) {
         if (uri == null || !TcmUtils.isTcmUri(uri)) {
             return uri;

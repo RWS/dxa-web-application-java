@@ -25,7 +25,6 @@ public abstract class AbstractGoogleMapTag extends HtmlNodeTag {
     private double longitude;
 
     @Setter
-    @Getter
     private String markerName;
 
     @Setter

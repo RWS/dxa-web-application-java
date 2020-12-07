@@ -8,7 +8,6 @@ public class GraphQLUtils {
             case "ish":
                 return ContentNamespace.Docs;
             case "tcm":
-                return ContentNamespace.Sites;
             default:
                 return ContentNamespace.Sites;
         }

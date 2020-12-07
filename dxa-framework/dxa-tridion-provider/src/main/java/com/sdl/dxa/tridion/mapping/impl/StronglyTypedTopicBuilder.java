@@ -451,7 +451,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
             try {
                 hyperlink = (Element) linkXPath.evaluate(htmlElement, XPathConstants.NODE);
             } catch (XPathExpressionException e) {
-                LOG.warn("Couldn't find <a> tag", e);
+                LOG.warn("Couldn't find <a> tag in {}", htmlElement, e);
             }
             if (hyperlink == null) {
                 LOG.debug("No hyperlink found in XHTML element: {}", htmlElement);
@@ -495,7 +495,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
             LOG.debug("Generic Topic encountered...");
             T stronglyTypedTopic = tryConvertToStronglyTypedTopic(genericTopic, expectedClass);
             if (stronglyTypedTopic != null) {
-                LOG.debug("Converted {} to {}" + genericTopic, stronglyTypedTopic);
+                LOG.debug("Converted {} to {}", genericTopic, stronglyTypedTopic);
                 return stronglyTypedTopic;
             }
             LOG.debug("Unable to convert {} to Strongly Typed Topic.", genericTopic);

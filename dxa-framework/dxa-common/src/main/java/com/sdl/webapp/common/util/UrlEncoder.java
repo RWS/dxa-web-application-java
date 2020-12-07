@@ -87,7 +87,8 @@ public class UrlEncoder {
 
     /**
      * The CMS does not allow to use next characters in file names:
-     * \/:*?"<>|
+     * back-slash, slash, colon, asterix, question mark, double quotes, pipe,
+     * less than and more than.
      * @param text file name supported by CM and not encoded.
      * @return encoded file names to support all characters from CM.
      */

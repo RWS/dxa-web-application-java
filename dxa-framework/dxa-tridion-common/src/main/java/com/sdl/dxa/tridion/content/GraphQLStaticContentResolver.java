@@ -15,6 +15,7 @@ import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.ImageUtils;
+import com.sdl.webapp.common.util.UrlEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -28,7 +29,6 @@ import java.io.File;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.TimeUnit;
 
 import static com.sdl.dxa.tridion.common.ContextDataCreator.createContextData;
 import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
@@ -71,10 +71,13 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         synchronized (newHolder.url) {
             ContentNamespace ns = GraphQLUtils.convertUriToGraphQLContentNamespace(requestDto.getUriType());
             ContextData contextData = createContextData(requestDto.getClaims());
+            String fileName = pathInfo.getFileName();
+            String encodedFileName = UrlEncoder.urlPartialPathEncodeFullEntityTable(fileName);
+            log.debug("Requesting fileName/path: {}->{}", fileName, encodedFileName);
             BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
                     ns,
                     publicationId,
-                    pathInfo.getFileName(),
+                    encodedFileName,
                     "",
                     contextData);
             StaticContentItem result = processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);
@@ -87,9 +90,13 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
 
     @Override
     protected @NotNull StaticContentItem getStaticContentItemById(int binaryId, StaticContentRequestDto requestDto) throws ContentProviderException {
+        String localizationId = requestDto.getLocalizationId();
+        if (localizationId == null) {
+            localizationId = "0";
+        }
         BinaryComponent binaryComponent = apiClientProvider.getClient().getBinaryComponent(
                 GraphQLUtils.convertUriToGraphQLContentNamespace(requestDto.getUriType()),
-                Ints.tryParse(requestDto.getLocalizationId()),
+                Ints.tryParse(localizationId),
                 binaryId,
                 null,
                 null);
@@ -97,15 +104,13 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         if (binaryComponent == null) {
             throw new DxaItemNotFoundException("Item not found");
         }
-        String parentPath = getPublicationPath(requestDto.getLocalizationId());
+        String parentPath = getPublicationPath(localizationId);
         List<BinaryVariantEdge> edges = binaryComponent.getVariants().getEdges();
         String path = edges.get(0).getNode().getPath();
-
-        final File file = new File(parentPath, path);
-        final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
-
+        File file = new File(parentPath, path);
+        ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
         String urlPath = prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl());
-
+        log.debug("Requesting urlPath: {}", urlPath);
         return this.processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);
     }
 

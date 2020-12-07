@@ -9,6 +9,7 @@ import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.serialization.json.annotation.JsonXpmAware;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -38,7 +39,22 @@ public class XpmAwareJsonFilterTest {
         ReflectionTestUtils.setField(xpmAwareJsonFilter, "enabled", true);
     }
 
-    
+    @Ignore("commented out in attempt to get builds green. See UDP-8004.")
+    @Test
+    public void shouldIncludeIfXpmAndAnnotated() {
+        //given
+        AnnotatedMember member = getAnnotatedMember(JsonXpmAware.class);
+        PropertyWriter writer = propertyWriter(BeanPropertyWriter.class, "Test", member);
+
+        when(webRequestContext.isPreview()).thenReturn(true);
+
+        //when
+        boolean include = xpmAwareJsonFilter.include(writer);
+
+        //then
+        assertTrue(include);
+    }
+
     @Test
     public void shouldIncludeIfNoWebRequestContext() {
         //given

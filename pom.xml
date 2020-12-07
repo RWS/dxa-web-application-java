@@ -12,9 +12,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-oss-parent</artifactId>
-
-    <version>2.2.5</version>
-
+    <version>2.2.8</version>
     <packaging>pom</packaging>
 
     <name>DXA - Parent</name>
@@ -28,12 +26,8 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
-
+        <!-- CIL version-->
         <cd-cil.version>11.0.0-1068</cd-cil.version>
-        <cd-delivery-cil.version>11.0.0-1068</cd-delivery-cil.version>
-        <cd-xo.version>11.0.0-1068</cd-xo.version>
-        <udp-common-config-legacy.version>11.0.0-1055</udp-common-config-legacy.version>
-
 
         <!-- DXA versions -->
         <dxa.version>${project.version}</dxa.version>
@@ -55,19 +49,20 @@
         <!-- /DXA Versions -->
 
         <!-- Apache -->
-        <commons-io-version>2.6</commons-io-version>
-        <commons-lang3.version>3.9</commons-lang3.version>
-        <commons-collections4.version>4.3</commons-collections4.version>
-        <httpcomponents-client-version>4.5.8</httpcomponents-client-version>
-        <httpcomponents.core.version>4.4.11</httpcomponents.core.version>
+        <commons-io-version>2.8.0</commons-io-version>
+        <commons-lang3.version>3.11</commons-lang3.version>
+        <commons-text.version>1.9</commons-text.version>
+        <commons-collections4.version>4.4</commons-collections4.version>
+        <httpcomponents-client-version>4.5.13</httpcomponents-client-version>
+        <httpcomponents.core.version>4.4.13</httpcomponents.core.version>
 
-        <guava-version>27.1-jre</guava-version>
+        <guava-version>30.0-jre</guava-version>
 
         <!-- Joda Time -->
         <joda-time-version>2.10</joda-time-version>
 
-        <jackson.version>2.10.0</jackson.version>
-        <lombok.version>1.18.8</lombok.version>
+        <jackson.version>2.10.5</jackson.version>
+        <lombok.version>1.18.16</lombok.version>
 
         <!-- Logging -->
         <logback.version>1.2.3</logback.version>
@@ -111,7 +106,7 @@
         <commons-codec.version>1.12</commons-codec.version>
 
         <fast-classpath-scanner.version>3.1.15</fast-classpath-scanner.version>
-        <gson.version>2.8.5</gson.version>
+        <gson.version>2.8.6</gson.version>
         <javax.jms.version>1.1-rev-1</javax.jms.version>
         <javax.annotation.version>1.3.2</javax.annotation.version>
         <jaxws-api.version>2.3.1</jaxws-api.version>
@@ -125,7 +120,7 @@
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
         <dd4t-latest.version>2.1.5</dd4t-latest.version>
 
-        <pca-client.version>2.2.5</pca-client.version>
+        <pca-client.version>2.2.4</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>
     </properties>
 
@@ -371,13 +366,8 @@
             <dependency>
                 <groupId>com.sdl.delivery</groupId>
                 <artifactId>cil</artifactId>
-                <version>${cd-delivery-cil.version}</version>
+                <version>${cd-cil.version}</version>
                 <type>pom</type>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.delivery</groupId>
-                <artifactId>udp-common-config-legacy</artifactId>
-                <version>${udp-common-config-legacy.version}</version>
             </dependency>
 
             <dependency>
@@ -595,6 +585,11 @@
                 <groupId>org.apache.commons</groupId>
                 <artifactId>commons-lang3</artifactId>
                 <version>${commons-lang3.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons-text.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>

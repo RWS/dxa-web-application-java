@@ -47,7 +47,7 @@ public class ModelServicePageProvider extends BrokerPageProvider implements Page
                     .queryParam("modelType", "DD4T")
                     .build().toUriString();
 
-            log.debug("Loading content from Model Service for url = {} and publication = {}", serviceUrl, url, publication);
+            log.debug("Loading content from Model Service {} for url = {} and publication = {}", serviceUrl, url, publication);
             return decodeAndDecompressContent(modelServiceClient.getForType(serviceUrl, String.class, "tcm", publication, url, "INCLUDE"));
         } catch (ItemNotFoundInModelServiceException e) {
             throw new ItemNotFoundException("Item for url = '" + url + "' and publication = '" + +publication + "' is not found in the Model Service", e);

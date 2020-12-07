@@ -33,7 +33,7 @@ public class GoogleMapTag extends AbstractGoogleMapTag {
         final HtmlElement div = HtmlBuilders.div()
                 .withId(divId)
                 .withAttribute(CLASS_MAP_CANVAS_ATTR)
-                .withAttribute("style", "height:" + Integer.toString(getMapHeight()) + "px")
+                .withAttribute("style", "height:" + getMapHeight() + "px")
                 .build();
 
         final HtmlElement script1 = HtmlBuilders.element("script")

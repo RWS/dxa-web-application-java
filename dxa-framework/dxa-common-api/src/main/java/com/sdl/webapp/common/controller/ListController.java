@@ -64,7 +64,7 @@ public class ListController extends EntityController {
     @Override
     protected ViewModel enrichModel(ViewModel model, HttpServletRequest request) throws Exception {
         if (model instanceof DynamicList) {
-            log.trace("Model {} is a list entity, processing");
+            log.trace("Model {} is a list entity, processing", model);
 
             final ViewModel enrichedEntity = super.enrichModel(model, request);
             final DynamicList dynamicList = enrichedEntity instanceof EntityModel ? (DynamicList) enrichedEntity : (DynamicList) model;

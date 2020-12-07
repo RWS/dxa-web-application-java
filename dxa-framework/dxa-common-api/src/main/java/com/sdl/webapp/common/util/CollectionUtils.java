@@ -44,7 +44,7 @@ public final class CollectionUtils {
             log.warn("Found value '{}' for key '{}' while the requested type is '{}', returning alternative '{}'", value, keyPath, type, alternative);
             return alternative;
         }
-        log.trace("Found value '{}' for key '{}', alternative '{}'", value, keyPath);
+        log.trace("Found value '{}' for key '{}', alternative '{}'", value, keyPath, alternative);
         //cast is type safe because of check for assignable type
         //noinspection unchecked
         return (T) value;

@@ -58,7 +58,7 @@ public final class PathUtils {
      * @param path path to normalize
      * @return a normalized path
      */
-    @Contract("null ,null -> null; _,_ -> !null")
+    @Contract("null,null -> null; !null,_ -> !null; _,!null -> !null")
     public static String combinePath(String url, String path) {
         String securedUrl, securedPath;
         if (url == null && path == null) {

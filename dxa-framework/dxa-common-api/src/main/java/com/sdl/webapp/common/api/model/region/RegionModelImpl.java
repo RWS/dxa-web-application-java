@@ -275,8 +275,7 @@ public class RegionModelImpl extends AbstractViewModel implements RegionModel {
                 this.name,
                 pathToRegion,
                 Joiner.on(", ").join(types),
-                occurrenceConstraintStr,
-                0);
+                occurrenceConstraintStr);
     }
 
     @Override

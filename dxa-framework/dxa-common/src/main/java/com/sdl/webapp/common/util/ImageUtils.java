@@ -114,7 +114,7 @@ public final class ImageUtils {
 
     public static final class StaticContentPathInfo {
 
-        private static final Pattern IMAGE_FILENAME_PATTERN = Pattern.compile("(.*)_w([\\d]+)(?:_h([\\d]+))?(_n)?(\\.[^\\.]+)?");
+        private static final Pattern IMAGE_FILENAME_PATTERN = Pattern.compile("(.*)_w([\\d]+)(?:_h([\\d]+))?(_n)?(\\.[^.]+)?");
 
         private final String fileName;
 

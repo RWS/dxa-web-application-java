@@ -30,7 +30,8 @@ public final class LocalizationUtils {
     public static int schemaIdFromSchemaKey(@NotNull String schemaKey, @NotNull Localization localization) {
         final String[] parts = schemaKey.split("\\.");
         if (parts.length > 2) {
-            log.warn("Schema Key {} should be either content_type (e.g. \"json\") of schema_name.content_type (e.g. \"dev.json\")");
+            log.warn("Schema Key {} should be either content_type (e.g. \"json\") " +
+                    "of schema_name.content_type (e.g. \"dev.json\")", schemaKey);
             return 0;
         }
         final String configKey = parts.length > 1 ? (parts[0] + ".schemas." + parts[1]) : ("core.schemas." + parts[0]);

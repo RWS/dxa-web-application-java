@@ -116,12 +116,13 @@ public class ModelDataTypeIdResolver extends TypeIdResolverBase {
             String typeId = firstValue instanceof HandlesHierarchyTypeInformation ?
                     ((HandlesHierarchyTypeInformation) firstValue).getTypeId() : getIdFromValue(firstValue);
             String id = typeId + Constants.LIST_MARKER;
-            log.trace("Value is instance of ListWrapper without an explicit implementation, value = '{}', id = '{}'", id);
+            log.trace("Value is instance of ListWrapper without an explicit implementation, " +
+                    "value = '{}', id = '{}'", value, id);
             return id;
         }
 
         String id = getMappingName(value.getClass().getSimpleName());
-        log.trace("Value is unknown class without annotation, value = '{}', id = '{}'", id);
+        log.trace("Value is unknown class without annotation, value = '{}', id = '{}'", value, id);
         return id;
     }
 

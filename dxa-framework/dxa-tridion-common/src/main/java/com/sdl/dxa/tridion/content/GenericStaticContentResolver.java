@@ -76,7 +76,7 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
         return getStaticContentItemById(requestDto.getBinaryId(), adaptedRequest);
     }
 
-    private String getContentPath(@NotNull String binaryPath, @NotNull String localizationPath) {
+    String getContentPath(@NotNull String binaryPath, @NotNull String localizationPath) {
         if (localizationPath.length() > 1) {
             return localizationPath + removeVersionNumber(binaryPath);
         }
@@ -87,10 +87,14 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
         return SYSTEM_VERSION_PATTERN.matcher(path).replaceFirst("/system/");
     }
 
-    protected @NotNull String getPublicationPath(String publicationId) {
+    public String getRealPath() {
         ServletContext servletContext = webApplicationContext.getServletContext();
+        return servletContext.getRealPath("/");
+    }
+
+    protected @NotNull String getPublicationPath(String publicationId) {
         return StringUtils.join(new String[]{
-                servletContext.getRealPath("/"),
+                getRealPath(),
                 STATIC_FILES_DIR,
                 publicationId
         }, File.separator);

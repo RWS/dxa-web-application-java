@@ -38,8 +38,8 @@ public class UrlEncoderTest {
 
     @Test
     public void testTildaEncodedGuava() {
-        assertEquals("/media/balloons%20%21%23%24%25%26%27%28%29%2C%3B%3D%40%5B%5D%5E%7B%7D~%20_tcm10-548.jpg",
-                UrlEncoder.urlPartialPathEncodeFullEntityTable("/media/balloons !#$%&'(),;=@[]^{}~ _tcm10-548.jpg"));
+        assertEquals("/media/double~~tilda/balloons%20%21%23%24%25%26%27%28%29%2C%3B%3D%40%5B%5D%5E%7B%7D~%20_tcm10-548.jpg",
+                UrlEncoder.urlPartialPathEncodeFullEntityTable("/media/double~~tilda/balloons !#$%&'(),;=@[]^{}~ _tcm10-548.jpg"));
     }
 
     @Test

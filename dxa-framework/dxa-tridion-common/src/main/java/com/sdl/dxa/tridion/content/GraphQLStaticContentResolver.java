@@ -102,15 +102,18 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
                 null);
 
         if (binaryComponent == null) {
-            throw new DxaItemNotFoundException("Item not found");
+            throw new DxaItemNotFoundException("Item not found for binaryId: " + binaryId);
         }
         String parentPath = getPublicationPath(localizationId);
         List<BinaryVariantEdge> edges = binaryComponent.getVariants().getEdges();
+        if (edges.isEmpty()) {
+            throw new DxaItemNotFoundException("Binary variants not found for binaryId: " + binaryId);
+        }
         String path = edges.get(0).getNode().getPath();
         File file = new File(parentPath, path);
         ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
         String urlPath = prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl());
-        log.debug("Requesting urlPath: {}", urlPath);
+        log.debug("Requesting urlPath: {} for binaryIdL {}", urlPath, binaryId);
         return this.processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);
     }
 

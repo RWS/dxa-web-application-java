@@ -39,7 +39,7 @@ public abstract class AbstractLinkResolver implements LinkResolver, Initializing
 
     @Contract("null, _, _ , null-> null; !null, _, _, !null -> !null")
     private String _resolveLink(String uri, int publicationId, boolean isBinary, String contextId) {
-        if (uri == null || !TcmUtils.isTcmUri(uri)) {
+        if (!TcmUtils.isTcmUri(uri)) {
             return uri;
         }
 
@@ -63,7 +63,7 @@ public abstract class AbstractLinkResolver implements LinkResolver, Initializing
             case TcmUtils.PAGE_ITEM_TYPE:
                 return resolvePage(resolvingData);
             default:
-                log.warn("Could not resolve link: {}", uri);
+                log.warn("Could not resolve {}link: {} in pub: {}", isBinary?"binary ":"", uri, publicationId);
                 return "";
         }
     }

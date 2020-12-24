@@ -44,40 +44,38 @@ public abstract class AbstractLinkResolver implements LinkResolver, Initializing
         }
 
         //Page ID is either tcm uri or int (in string form) -1 means no page context
-        int pageId = -1;
-        if (TcmUtils.isTcmUri(contextId)) {
-            pageId = TcmUtils.getItemId(contextId);
-        } else {
-            pageId = NumberUtils.toInt(contextId, -1);
-        }
+        int pageId = getPageId(contextId);
 
         int itemId = TcmUtils.getItemId(uri);
 
         ResolvingData resolvingData;
         if (publicationId <= 0) {
-            resolvingData = new ResolvingData(TcmUtils.getPublicationId(uri), itemId, uri, pageId);
-        } else {
-            resolvingData = new ResolvingData(publicationId, itemId, uri, pageId);
+            publicationId = TcmUtils.getPublicationId(uri);
         }
+        resolvingData = new ResolvingData(publicationId, itemId, uri, pageId);
 
-        String result = "";
         switch (TcmUtils.getItemType(uri)) {
             case TcmUtils.COMPONENT_ITEM_TYPE:
                 if (isBinary) {
-                    result = resolveBinary(resolvingData);
-                } else {
-                    result = resolveComponent(resolvingData);
+                    return resolveBinary(resolvingData);
                 }
-                break;
+                return resolveComponent(resolvingData);
             case TcmUtils.PAGE_ITEM_TYPE:
-                result = resolvePage(resolvingData);
-                break;
+                return resolvePage(resolvingData);
             default:
                 log.warn("Could not resolve link: {}", uri);
                 return "";
         }
+    }
 
-        return result;
+    private int getPageId(String contextId) {
+        int pageId;
+        if (TcmUtils.isTcmUri(contextId)) {
+            pageId = TcmUtils.getItemId(contextId);
+        } else {
+            pageId = NumberUtils.toInt(contextId, -1);
+        }
+        return pageId;
     }
 
     protected abstract String resolveComponent(ResolvingData resolvingData);

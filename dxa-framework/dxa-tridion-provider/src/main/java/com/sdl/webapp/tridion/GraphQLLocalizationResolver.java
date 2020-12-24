@@ -23,7 +23,11 @@ import org.springframework.web.util.UriUtils;
 import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
+
+import static com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites;
 
 /**
  * Implementation of {@code LocalizationResolver} that uses the Api Client to determine the localization for a request.
@@ -34,7 +38,7 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(GraphQLLocalizationResolver.class);
 
-    private final Map<String, Localization> localizations = Collections.synchronizedMap(new HashMap<String, Localization>());
+    private final Map<String, Localization> localizations = Collections.synchronizedMap(new HashMap<>());
 
     private LocalizationFactory localizationFactory;
 
@@ -74,19 +78,21 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
     @SneakyThrows(UnsupportedEncodingException.class)
     public Localization getLocalization(String url) throws LocalizationResolverException {
         LOG.trace("getLocalization: {}", url);
-        if (!localizations.containsKey(url)) {
-            // truncating on first % because of TSI-1281
-            String path = UriUtils.encodePath(url, "UTF-8").split("%")[0];
-            PublicationMappingData data = getPublicationMappingData(path);
+        if (localizations.containsKey(url)) {
+            return localizations.get(url);
+        }
+        // truncating on first % because of TSI-1281
+        String path = UriUtils.encodePath(url, "UTF-8").split("%")[0];
+        PublicationMappingData data = getPublicationMappingData(path);
 
-            if (data == null) {
-                throw new LocalizationResolverException("Publication mapping is not resolved for URL: " + url);
-            }
-
-            localizations.put(url, createLocalization(data.id, data.path));
+        if (data == null) {
+            throw new LocalizationResolverException("Publication mapping is not resolved for URL: " + url);
         }
 
-        return localizations.get(url);
+        Localization localization = createLocalization(data.id, data.path);
+        localizations.putIfAbsent(url, localization);
+
+        return localization;
     }
 
     /**
@@ -98,27 +104,40 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
             return false;
         }
         String localizationId = localization.getId();
-        if (localizations.remove(localizationId) != null) {
-            LOG.debug("Removed cached localization with id: {}", localizationId);
-            return true;
+        Set<String> toRemove = new HashSet<>();
+        for (Map.Entry<String, Localization> entry : localizations.entrySet()) {
+            String id = entry.getValue().getId();
+            if (id != null && id.equals(localizationId)) {
+                toRemove.add(entry.getKey());
+                LOG.debug("Found cached localization with id: {} and url: {}",
+                        localizationId, entry.getKey());
+            }
+        }
+        for (String idToRemove : toRemove) {
+            if (localizations.remove(idToRemove) != null) {
+                LOG.debug("Removed cached localization with id: {}", localizationId);
+                return true;
+            }
         }
         return false;
     }
 
     protected PublicationMappingData getPublicationMappingData(String url) throws PublicationMappingNotFoundException {
         try {
-            // Publication Mapping is more specific to Tridion Sites, hence Tridion Sites is passed which is similar to .NET implementation
-            PublicationMapping publicationMapping = apiClient.getPublicationMapping(ContentNamespace.Sites, url);
+            // Publication Mapping is more specific to Tridion Sites,
+            // hence Tridion Sites is passed which is similar to .NET implementation
+            PublicationMapping publicationMapping = apiClient.getPublicationMapping(Sites, url);
 
             if (publicationMapping == null) {
-                throw new PublicationMappingNotFoundException("Publication mapping not found. There is no any publication mapping " +
-                        "that matches this URL: " + url);
+                throw new PublicationMappingNotFoundException("Publication mapping not found. " +
+                        "There is not any publication mapping that matches this URL: " + url);
             }
 
-            return new PublicationMappingData(String.valueOf(publicationMapping.getPublicationId()),
-                    getPublicationMappingPath(publicationMapping.getPath()));
+            int pubId = publicationMapping.getPublicationId();
+            String path = getPublicationMappingPath(publicationMapping.getPath());
+            return new PublicationMappingData(String.valueOf(pubId), path);
         } catch (ApiClientException ex) {
-            throw new PublicationMappingNotFoundException("Error found during fetch publication mapping not found for URL: " + url, ex);
+            throw new PublicationMappingNotFoundException("Cannot fetch publication mapping for URL: " + url, ex);
         }
     }
 
@@ -126,7 +145,8 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
         try {
             return localizationFactory.createLocalization(id, path);
         } catch (LocalizationFactoryException e) {
-            throw new LocalizationResolverException("Could not create a localization for pubId: [" + id + "] and path: [" + path + "]", e);
+            throw new LocalizationResolverException("Could not create a localization for pubId: [" + id +
+                    "] and path: [" + path + "]", e);
         }
     }
 

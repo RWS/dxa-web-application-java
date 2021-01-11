@@ -76,9 +76,12 @@ public class TridionLocalizationResolver implements LocalizationResolver {
         if (data == null) {
             throw new LocalizationResolverException("Publication mapping is not resolved for URL: " + url);
         }
-        Localization localization = createLocalization(data.id, data.path);
-        localizations.putIfAbsent(data.id, localization);
-        return localization;
+
+        if (!localizations.containsKey(data.id)) {
+            localizations.put(data.id, createLocalization(data.id, data.path));
+        }
+
+        return localizations.get(data.id);
     }
 
     /**

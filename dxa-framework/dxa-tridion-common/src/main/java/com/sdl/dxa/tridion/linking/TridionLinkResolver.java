@@ -7,6 +7,9 @@ import com.tridion.linking.PageLink;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
+import java.util.Optional;
+import java.util.function.Function;
+
 /**
  * Tridion link resolver.
  *
@@ -26,9 +29,7 @@ public class TridionLinkResolver extends AbstractLinkResolver {
 
     @Override
     protected String resolvePage(ResolvingData resolvingData) {
-        return new PageLink(resolvingData.getPublicationId())
-                .getLink(resolvingData.getItemId())
-                .getURL();
+        return new PageLink(resolvingData.getPublicationId()).getLink(resolvingData.getItemId()).getURL();
     }
 
     @Override

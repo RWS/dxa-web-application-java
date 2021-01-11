@@ -7,6 +7,9 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
+
+import com.sdl.webapp.common.exceptions.DxaException;
+
 import com.sdl.webapp.common.exceptions.DxaRuntimeException;
 import com.tridion.ambientdata.claimstore.ClaimStore;
 import com.tridion.ambientdata.web.WebContext;
@@ -18,10 +21,8 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.support.SimpleValueWrapper;
 import org.springframework.util.Assert;
 
-import java.net.URI;
 import java.util.Collections;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 public abstract class AbstractContentProvider {
@@ -76,7 +77,7 @@ public abstract class AbstractContentProvider {
             try {
                 // Make a deep copy
                 pageModel = pageModel.deepCopy();
-            } catch (DxaRuntimeException e) {
+            } catch (Exception e) {
                 throw new ContentProviderException("PageModel for " + key + " cannot be copied", e);
             }
             //filterConditionalEntities modifies the pagemodel, that is why the deep copy is done.
@@ -140,7 +141,7 @@ public abstract class AbstractContentProvider {
             try {
                 // Make a deep copy
                 pageModel = pageModel.deepCopy();
-            } catch (DxaRuntimeException e) {
+            } catch (Exception e) {
                 throw new ContentProviderException("PageModel for " + key + " cannot be copied", e);
             }
             //filterConditionalEntities modifies the pagemodel, that is why the deep copy is done.
@@ -165,14 +166,11 @@ public abstract class AbstractContentProvider {
      */
     private String getClaimCacheKey() {
         ClaimStore currentClaimStore = WebContext.getCurrentClaimStore();
-        if (currentClaimStore == null) {
+        if (currentClaimStore == null || currentClaimStore.getClaimValues() == null || currentClaimStore.getClaimValues().isEmpty()) {
             return " noclaims";
         }
-        Map<URI, Object> claimValues = currentClaimStore.getClaimValues();
-        if (claimValues == null || claimValues.isEmpty()) {
-            return " noclaims";
-        }
-        String conditions = claimValues
+        String conditions = currentClaimStore
+                .getClaimValues()
                 .entrySet()
                 .stream()
                 .map(Object::toString)
@@ -221,7 +219,7 @@ public abstract class AbstractContentProvider {
         try {
             //Return a deep copy so controllers can dynamically change the content without causing problems.
             entityModel = entityModel.deepCopy();
-        } catch (DxaRuntimeException e) {
+        } catch (Exception e) {
             throw new ContentProviderException("EntityModel for " + key + " cannot be copied", e);
         }
 

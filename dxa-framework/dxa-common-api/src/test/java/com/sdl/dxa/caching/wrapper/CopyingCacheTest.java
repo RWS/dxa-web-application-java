@@ -26,8 +26,6 @@ import static javax.cache.Caching.getCachingProvider;
 import static org.ehcache.config.builders.CacheConfigurationBuilder.newCacheConfigurationBuilder;
 import static org.ehcache.jsr107.Eh107Configuration.fromEhcacheCacheConfiguration;
 import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

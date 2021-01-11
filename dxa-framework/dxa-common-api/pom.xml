@@ -6,12 +6,12 @@
     <parent>
         <groupId>com.sdl.dxa</groupId>
         <artifactId>dxa-framework</artifactId>
-        <version>2.2.8</version>
+        <version>2.2.11</version>
     </parent>
 
     <artifactId>dxa-common-api</artifactId>
 
-    <name>DXA - API</name>
+    <name>DXA - Common API</name>
     <description>DXA Common API project containing framework interfaces and API</description>
 
     <dependencies>

@@ -29,6 +29,12 @@ public class UrlEncoder {
                 public String escape(String text) {
                     return text.replaceAll("\\+", "%20");
                 }
+            },
+            new Escaper() {
+                @Override
+                public String escape(String text) {
+                    return text.replaceAll("%7E", "~");
+                }
             }
     );
 

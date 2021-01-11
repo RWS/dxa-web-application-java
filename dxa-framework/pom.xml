@@ -7,7 +7,7 @@
     <parent>
         <groupId>com.sdl.dxa</groupId>
         <artifactId>dxa-oss-parent</artifactId>
-        <version>2.2.8</version>
+        <version>2.2.11</version>
     </parent>
 
     <artifactId>dxa-framework</artifactId>

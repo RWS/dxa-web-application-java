@@ -12,13 +12,13 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-oss-parent</artifactId>
-    <version>2.2.8</version>
+    <version>2.2.11</version>
     <packaging>pom</packaging>
 
     <name>DXA - Parent</name>
     <description>Parent artifact for DXA</description>
 
-    <url>http://www.sdl.com/cxc/digital-experience/web-experience-management/digital-experience-accelerator.html</url>
+    <url>https://www.sdl.com/products-and-solutions/content-management/sdl-tridion/resources/digital-experience-accelerator/</url>
 
     <properties>
         <java-version>1.8</java-version>
@@ -145,30 +145,7 @@
     </distributionManagement>
 
     <developers>
-        <developer>
-            <id>okondratiuk</id>
-            <name>Oleksii Kondratiuk</name>
-            <email>okondratiuk@sdl.com</email>
-            <timezone>+2</timezone>
-            <organization>SDL Group</organization>
-            <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-        <developer>
-            <id>rpannekoek</id>
-            <name>Rick Pannekoek</name>
-            <email>rpannekoek@sdl.com</email>
-            <timezone>+1</timezone>
-            <organization>SDL Group</organization>
-            <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-        <developer>
-            <id>mbilenko</id>
-            <name>Mykola Bilenko</name>
-            <email>mbilenko@sdl.com</email>
-            <timezone>+2</timezone>
-            <organization>SDL Group</organization>
-            <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
+
         <developer>
             <id>mborysenko</id>
             <name>Maksym Borysenko</name>
@@ -894,7 +871,7 @@
                 <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.5</version>
+                    <version>1.6.9</version>
                     <extensions>true</extensions>
                     <configuration>
                         <serverId>sonatype-nexus-staging</serverId>

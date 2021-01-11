@@ -5,7 +5,6 @@ import com.sdl.web.client.cache.GeneralCacheProvider;
 import com.sdl.web.client.configuration.ClientConstants;
 import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.web.content.client.configuration.impl.BaseClientConfigurationLoader;
-import com.tridion.util.ReflectionUtil;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.tuple.Triple;
@@ -15,8 +14,6 @@ import org.ehcache.expiry.Duration;
 import org.ehcache.xml.XmlConfiguration;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -25,19 +22,15 @@ import javax.cache.Cache;
 import javax.cache.CacheManager;
 import javax.cache.Caching;
 import javax.cache.spi.CachingProvider;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +50,6 @@ import static org.ehcache.jsr107.Eh107Configuration.fromEhcacheCacheConfiguratio
 @Slf4j
 @Component
 public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader implements NamedCacheProvider {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultNamedCacheProvider.class);
 
     @Value("#{'${dxa.caching.disabled.caches}'.split('[,\\s]')}")
     private Set<String> disabledCaches;
@@ -75,7 +67,7 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
 
     private ConcurrentSkipListSet<String> ownCachesNames = new ConcurrentSkipListSet<>();
 
-    private ConcurrentMap<Triple<String, Class, Class>, Cache> ownCaches = new ConcurrentSkipListMap<>();
+    private Map<Triple<String, Class, Class>, Cache> ownCaches = new ConcurrentSkipListMap<>();
 
     private com.sdl.web.client.cache.CacheProvider cilCacheProvider;
 
@@ -85,20 +77,20 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
 
     @PostConstruct
     public void init() throws ConfigurationException {
-        cilCacheProvider = CacheProviderInitializer.getCacheProvider(getCacheConfiguration());
+        this.cilCacheProvider = CacheProviderInitializer.getCacheProvider(getCacheConfiguration());
 
-        boolean cilUsesGeneralCache = cilCacheProvider instanceof GeneralCacheProvider;
-        isCilConfigUsed = cilUsesGeneralCache;
+        boolean cilUsesGeneralCache = this.cilCacheProvider instanceof GeneralCacheProvider;
+        this.isCilConfigUsed = cilUsesGeneralCache;
         String cacheConfigurationUri = cilUsesGeneralCache ?
                 getCacheConfiguration().getProperty(ClientConstants.Cache.CLIENT_CACHE_URI) :
                 cachingConfigurationFile;
-        log.info("Using cache config {}, CIL uses GeneralCacheProvider: {}", cacheConfigurationUri, isCilConfigUsed);
-        cacheManager = getCacheManager(cacheConfigurationUri);
+        log.info("Using cache config {}, CIL uses GeneralCacheProvider: {}", cacheConfigurationUri, cilUsesGeneralCache);
+        this.cacheManager = getCacheManager(cacheConfigurationUri);
 
         //cannot be null because of default value
         //noinspection ConstantConditions
         cacheManager.getCacheNames().forEach(requiredCaches::remove);
-        log.info("Required caches not yet created: '{}', creating them...", requiredCaches);
+        log.info("Required caches not yet created: '{}', creating them", requiredCaches);
         requiredCaches.forEach(this::getCache);
     }
 
@@ -109,10 +101,10 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
 
     @Override
     public <K, V> Cache<K, V> getCache(String cacheName, Class<K> keyType, Class<V> valueType) {
-        log.debug("Trying to get cache name '{}' for key '{}' and value '{}'", cacheName, keyType, valueType);
+        log.debug("Trying to get cache name {} for key {} and value {}", cacheName, keyType, valueType);
         Cache<K, V> newCache = cacheManager.getCache(cacheName, keyType, valueType);
         if (newCache == null) {
-            log.debug("Cache name '{}' for such key/value does not exist, auto-creating...", cacheName);
+            log.debug("Cache name {} for key {} and value {} does not exist, auto-creating", cacheName, keyType, valueType);
             newCache = cacheManager.createCache(cacheName, buildDefaultCacheConfiguration(keyType, valueType));
         }
 
@@ -120,7 +112,7 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
             Triple<String, Class, Class> triple = Triple.of(cacheName, keyType, valueType);
             Cache<K, V> oldCache = ownCaches.put(triple, newCache);
             if (oldCache == null) {
-                log.debug("Added cache '{}' to own caches of DXA", cacheName);
+                if (log.isDebugEnabled()) log.debug("Added cache {} to own caches of DXA", cacheName);
             }
         }
         return newCache;
@@ -155,46 +147,31 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
 
     @NotNull
     private <V, K> CacheConfigurationBuilder<K, V> buildDefaultConfigCacheConfiguration(Class<K> keyType, Class<V> valueType) {
-        String message = "Could not create caches from configuration file " +
-                "(see 'dxa.caching.configuration' property value " +
-                "and cd_client_conf.xml  in 'ServiceConfig' attributes) {}, " +
-                "will be using fallback configuration";
-        if (cachingConfigurationFile == null || cachingConfigurationFile.isEmpty()) {
-            log.warn(message + " cause config is empty");
-            return buildFallbackCacheConfiguration(keyType, valueType);
-        }
         try {
             return buildConfigCacheConfiguration(cachingConfigurationFile, keyType, valueType);
-        } catch (ConfigurationException e) {
-            log.warn(message, cachingConfigurationFile);
-        } catch (IOException | ReflectiveOperationException e) {
-            log.warn(message, cachingConfigurationFile, e);
+        } catch (ConfigurationException | MalformedURLException | IllegalAccessException | ClassNotFoundException | InstantiationException e) {
+            log.warn("Exception happened when creating cache, using fallback configuration", e);
+            return buildFallbackCacheConfiguration(keyType, valueType);
         }
-        return buildFallbackCacheConfiguration(keyType, valueType);
     }
 
     @NotNull
     private <K, V> CacheConfigurationBuilder<K, V> buildDefaultCilCacheConfiguration(Class<K> keyType, Class<V> valueType) {
         CacheConfigurationBuilder<K, V> configurationBuilder;
         try {
-            Properties cacheConfiguration = getCacheConfiguration();
-            String cacheClass = cacheConfiguration.getProperty(ClientConstants.Cache.CLIENT_CACHE_PROVIDER_CLASSNAME);
-            String cacheEnabled = cacheConfiguration.getProperty(ClientConstants.Cache.CLIENT_CACHE_ENABLED);
-            String cacheConfigFileName = cacheConfiguration.getProperty(ClientConstants.Cache.CLIENT_CACHE_URI);
-            log.debug("CIL cache defined with class '{}' and configuration '{}' from 'cd_client_conf.xml': {}",
-                    cacheClass, cacheEnabled, cacheConfigFileName);
-            configurationBuilder = buildConfigCacheConfiguration(cacheConfigFileName, keyType, valueType);
-        } catch (ConfigurationException | ReflectiveOperationException | IOException e) {
+            configurationBuilder = buildConfigCacheConfiguration(
+                    getCacheConfiguration().getProperty(ClientConstants.Cache.CLIENT_CACHE_URI), keyType, valueType);
+        } catch (ConfigurationException | IllegalAccessException | InstantiationException | ClassNotFoundException | MalformedURLException e) {
             log.warn("Cannot create a default CIL cache configuration, fallback to default configuration", e);
             configurationBuilder = buildDefaultConfigCacheConfiguration(keyType, valueType);
         }
 
-        Integer cacheExpirationPeriod = cilCacheProvider.getCacheExpirationPeriod();
+        Integer cacheExpirationPeriod = this.cilCacheProvider.getCacheExpirationPeriod();
         Duration timeToLive;
         if (cacheExpirationPeriod != null) {
             timeToLive = of(cacheExpirationPeriod, TimeUnit.SECONDS);
         } else {
-            log.warn("Cache Expiration Period is not set, fallback to 5 minutes, set it in 'cd_client_conf.xml'");
+            log.warn("Cache Expiration Period is not set, fallback to 5 minutes, set it in cd_client_conf.xml");
             timeToLive = of(5, TimeUnit.MINUTES);
         }
 
@@ -203,29 +180,17 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
 
     @NotNull
     private <V, K> CacheConfigurationBuilder<K, V> buildConfigCacheConfiguration(String config, Class<K> keyType, Class<V> valueType)
-            throws IOException, ReflectiveOperationException, ConfigurationException {
+            throws MalformedURLException, IllegalAccessException, ClassNotFoundException, InstantiationException, ConfigurationException {
         URI configUri = getConfigUri(config);
         if (configUri == null) {
-            throw new MalformedURLException("Cannot load config file: " + config);
+            throw new MalformedURLException("Cannot load because it doesn't exist: " + config);
         }
 
-        XmlConfiguration xmlConfiguration = new XmlConfiguration(configUri.toURL());
-        CacheConfigurationBuilder<K, V> builder =
-                xmlConfiguration.newCacheConfigurationBuilderFromTemplate("default", keyType, valueType);
-        if (builder != null) {
-            return builder;
+        CacheConfigurationBuilder<K, V> cacheConfigurationBuilder = new XmlConfiguration(configUri.toURL()).newCacheConfigurationBuilderFromTemplate("default", keyType, valueType);
+        if (cacheConfigurationBuilder == null) {
+            throw new ConfigurationException("Cannot load 'default' template from " + config);
         }
-        String allTemplatesDefined = "(no defined templates found in xml)";
-        try {
-            Map<String, XmlConfiguration.Template> templates = (Map<String, XmlConfiguration.Template>)
-                    ReflectionUtil.getPrivateField(xmlConfiguration, "templates");
-            allTemplatesDefined = templates.keySet().toString();
-        } catch (ReflectiveOperationException ex) {
-            throw ex;
-        }
-        LOG.debug("whole config xml: {}", xmlConfiguration.asRenderedDocument());
-        throw new ConfigurationException("Cannot load 'default' template from " + configUri.toURL() +
-                ", templates: " + allTemplatesDefined);
+        return cacheConfigurationBuilder;
     }
 
     private <K, V> CacheConfigurationBuilder<K, V> buildFallbackCacheConfiguration(Class<K> keyType, Class<V> valueType) {
@@ -245,35 +210,27 @@ public class DefaultNamedCacheProvider extends BaseClientConfigurationLoader imp
     private URI getConfigUri(String cacheManagerUri) {
         String configUrl = cacheManagerUri;
         if (configUrl == null || configUrl.isEmpty()) {
-            log.warn("Config URI for Cache Provider is empty, will use " +
-                    "'ehcache-default.xml' (as a default fallback option)");
+            log.warn("Config URI for Cache Provider is empty, using default fallback option");
             configUrl = DEFAULT_CACHE_URI;
         }
 
         Path configPath = Paths.get(configUrl);
-        boolean exists = exists(configPath);
-        boolean readable = Files.isReadable(configPath);
-
-        if (exists && readable) {
-            log.info("Config file {} exists and readable", configPath.toFile().getAbsolutePath());
+        if (exists(configPath)) {
             return configPath.toUri();
-        }
-        if (!exists) {
-            log.info("Config file {} does not exist", configPath.toFile().getAbsolutePath());
         } else {
-            log.info("Config file {} cannot be read", configPath.toFile().getAbsolutePath());
-        }
-        URL resource = getClass().getClassLoader().getResource(configUrl);
-        if (resource != null) {
-            try {
-                log.info("Config file {} is found", resource.toURI());
-                return resource.toURI();
-            } catch (URISyntaxException e) {
-                log.warn("Config URI {} is not syntactically correct", cacheManagerUri, e);
-                return null;
+            URL resource = getClass().getClassLoader().getResource(configUrl);
+            if (resource != null) {
+                try {
+                    return resource.toURI();
+                } catch (URISyntaxException e) {
+                    log.warn("Config URI {} is not syntactically correct, fallback to last default option", cacheManagerUri, e);
+                }
             }
         }
-        log.warn("Cannot find EhCache config file {}", cacheManagerUri);
+
+        log.warn("Cannot find EhCache config {}", cacheManagerUri);
         return null;
     }
+
+
 }

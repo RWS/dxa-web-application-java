@@ -24,6 +24,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -93,11 +94,11 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
         loadVersion(id, path, builder);
         loadResources(id, path, builder);
 
-        final List<JsonSchema> semanticSchemas = parseJsonFileObject(contentProvider,
+        List<JsonSchema> semanticSchemas = parseJsonFileObject(contentProvider,
                 SEMANTIC_SCHEMAS_PATH, id, path, new TypeReference<List<JsonSchema>>() {
                 });
 
-        final List<JsonVocabulary> semanticVocabularies = parseJsonFileObject(contentProvider,
+        List<JsonVocabulary> semanticVocabularies = parseJsonFileObject(contentProvider,
                 SEMANTIC_VOCABULARIES_PATH, id, path, new TypeReference<List<JsonVocabulary>>() {
                 });
 
@@ -173,24 +174,24 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                 builder.setHtmlDesignPublished(true);
                 return true;
             }
-        }
-        catch (StaticContentNotFoundException e) {
-            LOG.error("No published version.json found for localization ["+id+"] " + path, e);
-        }
-        catch (ContentProviderException | IOException e) {
-            throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + id +
+        } catch (StaticContentNotFoundException e) {
+            LOG.error("No published version.json found for localization [{}] {}", id, path, e);
+        } catch (ContentProviderException | IOException e) {
+            throw new LocalizationFactoryException("Could not read configuration of localization: [" + id +
                     "] " + path, e);
         }
         return false;
     }
 
-    private boolean loadVersionFromWebapp(String id, String path, LocalizationImpl.Builder builder) throws LocalizationFactoryException {
-        final File file = new File(new File(webApplicationContext.getServletContext().getRealPath("/")), DEFAULT_VERSION_PATH);
-        if (!file.exists()) {
-            throw new LocalizationFactoryException("File not found: " + file.getPath());
+    private boolean loadVersionFromWebapp(String id, String path, LocalizationImpl.Builder builder)
+            throws LocalizationFactoryException {
+        File parent = new File(webApplicationContext.getServletContext().getRealPath("/"));
+        File file = new File(parent, DEFAULT_VERSION_PATH);
+        if (!file.exists() || !file.canRead()) {
+            throw new LocalizationFactoryException("File not found or cannot be read: " + file.getPath());
         }
 
-        try (final InputStream in = new FileInputStream(file)) {
+        try (final InputStream in = new BufferedInputStream(new FileInputStream(file))) {
             builder.setVersion(objectMapper.readTree(in).get("version").asText());
             builder.setHtmlDesignPublished(false);
             return true;

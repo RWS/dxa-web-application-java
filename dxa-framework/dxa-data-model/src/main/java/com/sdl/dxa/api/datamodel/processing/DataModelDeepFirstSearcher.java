@@ -78,35 +78,38 @@ public class DataModelDeepFirstSearcher {
     protected void traverseObject(@Nullable Object value) {
         try {
             if (!goingDeepIsAllowed()) {
-                log.warn("Went too deep expanding the model, returning");
+                log.debug("Went too deep expanding the model, returning");
                 return;
             }
 
             if (value == null) {
-                log.warn("Cannot traverse null value, returning");
+                log.trace("Cannot traverse null value, returning");
                 return;
             }
 
-            log.trace("Traversing '{}'", value);
-
             if (isCollectionType(value)) { // is it a collection type?
                 // then let's expand everything and do not expect it to have anything more than concrete types
+                log.trace("Traversing collection '{}'", value);
                 traverseCollection(value);
                 return;
             }
 
             // ok, we have one of concrete models, which one? do we want to process/expand it?
             if (value instanceof PageModelData) { // maybe it's a Page?
+                log.trace("Traversing page model '{}'", value);
                 traversePageModel((PageModelData) value);
             } else if (value instanceof RegionModelData) { // this is not a page, so maybe region?
+                log.trace("Traversing region model '{}'", value);
                 traverseRegionModel((RegionModelData) value);
             } else { // it's one of data models (entities, keywords, etc...)
+                log.trace("Traversing data model '{}'", value);
                 traverseDataModel(value);
             }
 
             // if it may have own content or metadata, let's process it also, maybe we can find models there
             // should go last because content may appear during other expansions
             if (value instanceof CanWrapContentAndMetadata) {
+                log.trace("Traversing wrapper '{}'", value);
                 traverseWrapper((CanWrapContentAndMetadata) value);
             }
 

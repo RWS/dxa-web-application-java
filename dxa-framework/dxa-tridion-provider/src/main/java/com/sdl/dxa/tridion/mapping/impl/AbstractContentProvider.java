@@ -7,10 +7,6 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
-
-import com.sdl.webapp.common.exceptions.DxaException;
-
-import com.sdl.webapp.common.exceptions.DxaRuntimeException;
 import com.tridion.ambientdata.claimstore.ClaimStore;
 import com.tridion.ambientdata.web.WebContext;
 import lombok.extern.slf4j.Slf4j;
@@ -71,7 +67,7 @@ public abstract class AbstractContentProvider {
                 pageModel = loadPage(path, localization);
                 if (pageModel.canBeCached() && !webRequestContext.isSessionPreview()) {
                     pagemodelCache.put(key, pageModel);
-                    pagemodelCache.put(createKeyForCacheByPath(pageModel.getId(), localization, "pagemodel"), pageModel);
+                    pagemodelCache.put(createKeyForCacheById(pageModel.getId(), localization, "pagemodel"), pageModel);
                 }
             }
             try {

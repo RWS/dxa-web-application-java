@@ -21,8 +21,10 @@ import org.springframework.cache.CacheManager;
 import org.springframework.cache.support.SimpleValueWrapper;
 import org.springframework.util.Assert;
 
+import java.net.URI;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public abstract class AbstractContentProvider {
@@ -166,11 +168,14 @@ public abstract class AbstractContentProvider {
      */
     private String getClaimCacheKey() {
         ClaimStore currentClaimStore = WebContext.getCurrentClaimStore();
-        if (currentClaimStore == null || currentClaimStore.getClaimValues() == null || currentClaimStore.getClaimValues().isEmpty()) {
+        if (currentClaimStore == null) {
             return " noclaims";
         }
-        String conditions = currentClaimStore
-                .getClaimValues()
+        Map<URI, Object> claimValues = currentClaimStore.getClaimValues();
+        if (claimValues == null || claimValues.isEmpty()) {
+            return " noclaims";
+        }
+        String conditions = claimValues
                 .entrySet()
                 .stream()
                 .map(Object::toString)

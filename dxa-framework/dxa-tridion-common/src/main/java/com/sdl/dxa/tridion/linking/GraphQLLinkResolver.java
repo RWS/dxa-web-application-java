@@ -25,9 +25,12 @@ public class GraphQLLinkResolver extends AbstractLinkResolver {
 
     @Override
     protected String resolveComponent(ResolvingData resolvingData) {
-        String componentLink = apiClientProvider.getClient().resolveComponentLink(resolveNamespace(resolvingData.getUri()),
-                resolvingData.getPublicationId(), resolvingData.getItemId(), resolvingData.getPageId(),
-                null, true);
+        ApiClient client = apiClientProvider.getClient();
+        ContentNamespace namespace = resolveNamespace(resolvingData.getUri());
+        int pubId = resolvingData.getPublicationId();
+        int itemId = resolvingData.getItemId();
+        int pageId = resolvingData.getPageId();
+        String componentLink = client.resolveComponentLink(namespace, pubId, itemId, pageId, null, true);
         if ("null".equals(componentLink)) {
             return null;
         }
@@ -36,7 +39,11 @@ public class GraphQLLinkResolver extends AbstractLinkResolver {
 
     @Override
     protected String resolvePage(ResolvingData resolvingData) {
-        String pageLink = apiClientProvider.getClient().resolvePageLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), true);
+        ApiClient client = apiClientProvider.getClient();
+        ContentNamespace namespace = resolveNamespace(resolvingData.getUri());
+        int pubId = resolvingData.getPublicationId();
+        int itemId = resolvingData.getItemId();
+        String pageLink = client.resolvePageLink(namespace, pubId, itemId, true);
         if ("null".equals(pageLink)) {
             return null;
         }
@@ -45,7 +52,11 @@ public class GraphQLLinkResolver extends AbstractLinkResolver {
 
     @Override
     protected String resolveBinary(ResolvingData resolvingData) {
-        String binaryLink = apiClientProvider.getClient().resolveBinaryLink(resolveNamespace(resolvingData.getUri()), resolvingData.getPublicationId(), resolvingData.getItemId(), null, true);
+        ApiClient client = apiClientProvider.getClient();
+        ContentNamespace namespace = resolveNamespace(resolvingData.getUri());
+        int pubId = resolvingData.getPublicationId();
+        int itemId = resolvingData.getItemId();
+        String binaryLink = client.resolveBinaryLink(namespace, pubId, itemId, null, true);
         if ("null".equals(binaryLink)) {
             return null;
         }

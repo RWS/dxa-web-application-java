@@ -1,5 +1,8 @@
 SDL Digital Experience Accelerator Java Spring MVC web application
 ===
+===
+## Build status
+* Develop - [![Build Status](https://travis-ci.com/sdl/dxa-web-application-java.svg?branch=develop)](https://travis-ci.com/sdl/dxa-web-application-java)
 
 About
 -----

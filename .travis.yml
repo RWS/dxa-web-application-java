@@ -11,4 +11,6 @@ install:
   export PATH=$M2_HOME/bin:$PATH;
   mvn -version;
 script:
-  mvn clean install --batch-mode
+# To get rid of  the "Downloading/Downloaded" lines we use: 
+# --batch-mode  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  mvn clean install --batch-mode  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn

@@ -12,4 +12,5 @@ install:
   mvn -version;
 script:
   mvn -B clean install;
-  mvn -B clean source:jar deploy -Prelease -DstagingProgressTimeoutMinutes=15;
+  ./gradlew -Pcommand="-B clean source:jar deploy -Prelease"
+  #  mvn -B clean source:jar deploy -Prelease -DstagingProgressTimeoutMinutes=15;

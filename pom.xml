@@ -144,25 +144,22 @@
         </snapshotRepository>
     </distributionManagement>
 
-    <developers>
-
-        <developer>
-            <id>mborysenko</id>
+    <contributors>
+        <contributor>
             <name>Maksym Borysenko</name>
             <email>mborysenko@sdl.com</email>
-            <timezone>+2</timezone>
+            <timezone>+1</timezone>
             <organization>SDL Group</organization>
             <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-        <developer>
-            <id>inikonov</id>
+        </contributor>
+        <contributor>
             <name>Igor Nikonov</name>
             <email>inikonov@sdl.com</email>
             <timezone>+2</timezone>
             <organization>SDL Group</organization>
             <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-    </developers>
+        </contributor>
+    </contributors>
 
     <modules>
         <module>dxa-model-service-client</module>
@@ -862,7 +859,8 @@
                                     <version>${project.version}</version>
                                 </docletArtifact>
                                 <useStandardDocletOptions>true</useStandardDocletOptions>
-                                <reportOutputDirectory>${project.reporting.outputDirectory}/publicApi
+                                <reportOutputDirectory>
+                                    ${project.reporting.outputDirectory}/publicApi
                                 </reportOutputDirectory>
                             </configuration>
                         </execution>
@@ -894,7 +892,3 @@
     </build>
 
 </project>
-
-
-
-

@@ -11,6 +11,6 @@ install:
   export PATH=$M2_HOME/bin:$PATH;
   mvn -version;
 script:
+  echo "Building DXA framework...";
   mvn -B clean install;
-  ./gradlew -Pcommand="-B clean source:jar deploy -Prelease"
-  #  mvn -B clean source:jar deploy -Prelease -DstagingProgressTimeoutMinutes=15;
+  # mvn -B clean source:jar deploy -Prelease -DstagingProgressTimeoutMinutes=15;

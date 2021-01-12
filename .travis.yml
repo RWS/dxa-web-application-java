@@ -12,5 +12,4 @@ install:
   mvn -version;
 script:
   echo "Building DXA framework...";
-  mvn -B clean install source:jar deploy;  
-  # mvn -B clean source:jar deploy -Prelease -DstagingProgressTimeoutMinutes=15;
+  mvn clean install

@@ -118,7 +118,7 @@
         <!-- DD4T dependencies -->
         <!-- These are not really used in the framework and are needed only for Model Service adapter -->
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
-        <dd4t-latest.version>2.1.5</dd4t-latest.version>
+        <dd4t-latest.version>2.1.7</dd4t-latest.version>
 
         <pca-client.version>2.2.4</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>

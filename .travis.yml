@@ -11,4 +11,4 @@ install:
   export PATH=$M2_HOME/bin:$PATH;
   mvn -version;
 script:
-  mvn clean install
+  mvn clean install --batch-mode

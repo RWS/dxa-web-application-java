@@ -12,4 +12,6 @@ install:
   mvn -version;
 script:
   echo "Building DXA framework...";
-  mvn clean install
+# To get rid of  the "Downloading/Downloaded" lines we use: 
+# --batch-mode  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  mvn clean install --batch-mode  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn

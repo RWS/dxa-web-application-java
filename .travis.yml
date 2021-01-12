@@ -11,4 +11,5 @@ install:
   export PATH=$M2_HOME/bin:$PATH;
   mvn -version;
 script:
-  mvn clean install -DstagingProgressTimeoutMinutes=15;
+  mvn -B clean install;
+  mvn -B clean source:jar deploy -Prelease -DstagingProgressTimeoutMinutes=15;

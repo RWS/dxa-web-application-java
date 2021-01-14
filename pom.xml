@@ -74,7 +74,7 @@
         <jstl-version>1.2</jstl-version>
 
         <!-- JUnit and other test libraries -->
-        <junit-version>4.12</junit-version>
+        <junit-version>4.13.1</junit-version>
         <hamcrest-version>2.1</hamcrest-version>
         <mockito-version>1.10.19</mockito-version>
         <openpojo.version>0.8.12</openpojo.version>
@@ -118,7 +118,7 @@
         <!-- DD4T dependencies -->
         <!-- These are not really used in the framework and are needed only for Model Service adapter -->
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
-        <dd4t-latest.version>2.1.5</dd4t-latest.version>
+        <dd4t-latest.version>2.1.7</dd4t-latest.version>
 
         <pca-client.version>2.2.4</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>
@@ -144,6 +144,15 @@
         </snapshotRepository>
     </distributionManagement>
 
+    <developers>
+        <developer>
+            <id>renarj</id>
+            <email>rdevries@sdl.com</email>
+            <name>Renze de Vries</name>
+            <timezone>+1</timezone>
+        </developer>
+    </developers>
+
     <contributors>
         <contributor>
             <name>Maksym Borysenko</name>
@@ -160,6 +169,14 @@
             <organizationUrl>http://www.sdl.com</organizationUrl>
         </contributor>
     </contributors>
+
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <modules>
         <module>dxa-model-service-client</module>
@@ -803,7 +820,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>3.3</version>
                     <configuration>
                         <source>${java-version}</source>
                         <target>${java-version}</target>
@@ -874,7 +891,7 @@
                     <configuration>
                         <serverId>sonatype-nexus-staging</serverId>
                         <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                        <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
                     </configuration>
                 </plugin>
             </plugins>

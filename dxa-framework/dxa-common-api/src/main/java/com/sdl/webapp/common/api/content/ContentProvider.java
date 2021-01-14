@@ -1,6 +1,5 @@
 package com.sdl.webapp.common.api.content;
 
-import com.sdl.dxa.common.dto.ClaimHolder;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
@@ -64,6 +63,7 @@ public interface ContentProvider {
      * @return The {@link StaticContentItem}.
      * @throws ContentProviderException If an error occurred so that the static content item could not be retrieved.
      */
-    @NotNull StaticContentItem getStaticContent(String path, String localizationId, String localizationPath) throws ContentProviderException;
+    @NotNull
+    StaticContentItem getStaticContent(String path, String localizationId, String localizationPath) throws ContentProviderException;
 
 }

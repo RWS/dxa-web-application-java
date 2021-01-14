@@ -35,7 +35,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(TridionLocalizationResolver.class);
 
-    private final Map<String, Localization> localizations = Collections.synchronizedMap(new HashMap<String, Localization>());
+    private final Map<String, Localization> localizations = Collections.synchronizedMap(new HashMap<>());
 
     @Autowired
     private LocalizationFactory localizationFactory;
@@ -122,7 +122,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     }
 
     @AllArgsConstructor
-    protected static class PublicationMappingData {
-        protected String id, path;
+    private static class PublicationMappingData {
+        private String id, path;
     }
 }

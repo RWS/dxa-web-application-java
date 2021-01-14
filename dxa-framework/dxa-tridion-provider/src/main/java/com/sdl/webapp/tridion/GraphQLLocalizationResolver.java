@@ -3,7 +3,6 @@ package com.sdl.webapp.tridion;
 import com.google.common.base.Strings;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.ApiClient;
-import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
 import com.sdl.web.pca.client.contentmodel.generated.PublicationMapping;
 import com.sdl.web.pca.client.exception.ApiClientException;
 import com.sdl.webapp.common.api.localization.Localization;
@@ -21,11 +20,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriUtils;
 
 import java.io.UnsupportedEncodingException;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites;
 
@@ -38,7 +38,7 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(GraphQLLocalizationResolver.class);
 
-    private final Map<String, Localization> localizations = Collections.synchronizedMap(new HashMap<>());
+    private final ConcurrentMap<String, Localization> localizations = new ConcurrentHashMap<>();
 
     private LocalizationFactory localizationFactory;
 
@@ -78,8 +78,10 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
     @SneakyThrows(UnsupportedEncodingException.class)
     public Localization getLocalization(String url) throws LocalizationResolverException {
         LOG.trace("getLocalization: {}", url);
-        if (localizations.containsKey(url)) {
-            return localizations.get(url);
+        Localization result = localizations.get(url);
+        if (result != null) {
+            LOG.trace("Cached localization returned by url: {}, id: {}", url, result.getId());
+            return result;
         }
         // truncating on first % because of TSI-1281
         String path = UriUtils.encodePath(url, "UTF-8").split("%")[0];
@@ -89,10 +91,10 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
             throw new LocalizationResolverException("Publication mapping is not resolved for URL: " + url);
         }
 
-        Localization localization = createLocalization(data.id, data.path);
-        localizations.putIfAbsent(url, localization);
-
-        return localization;
+        result = createLocalization(data.id, data.path);
+        localizations.putIfAbsent(url, result);
+        LOG.trace("Creating and cache localization by url: {}, id: {}", url, result.getId());
+        return result;
     }
 
     /**
@@ -151,7 +153,11 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
     }
 
     @AllArgsConstructor
-    protected static class PublicationMappingData {
-        protected String id, path;
+    private static class PublicationMappingData {
+        private String id, path;
+    }
+
+    Map<String, Localization> getAllLocalizations() {
+        return new HashMap<>(localizations);
     }
 }

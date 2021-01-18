@@ -45,7 +45,7 @@ public class GraphQLLocalizationResolverTest {
         when(apiClientProvider.getClient()).thenReturn(publicContentApi);
 
         when(localization.getId()).thenReturn("5");
-        when(localizationFactory.createLocalization("5","/verola")).thenReturn(localization);
+        when(localizationFactory.createLocalization("5", "/verola")).thenReturn(localization);
         when(publicationMapping.getPublicationId()).thenReturn(5);
         when(publicationMapping.getPath()).thenReturn("/verola");
         when(apiClientProvider.getClient().getPublicationMapping(Sites, testUrl)).thenReturn(publicationMapping);
@@ -63,7 +63,7 @@ public class GraphQLLocalizationResolverTest {
 
     @Test
     public void refreshLocalization() throws Exception {
-        createAndCache3Localizations();
+        createAndCacheNLocalizations(2);
         assertEquals(3, localizationResolver.getAllLocalizations().size());
 
         localizationResolver.refreshLocalization(localization);
@@ -76,21 +76,20 @@ public class GraphQLLocalizationResolverTest {
         assertTrue(localizationResolver.getAllLocalizations().isEmpty());
     }
 
-    private void createAndCache3Localizations() throws Exception {
+    //creates and caches 1-9 localizations
+    private void createAndCacheNLocalizations(int n) throws Exception {
+        String[] cypherWords = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
         localizationResolver.getLocalization(testUrl); //create for pub "5" and url
 
-        when(apiClientProvider.getClient().getPublicationMapping(Sites, testUrl + "one")).thenReturn(publicationMapping);
-        when(publicationMapping.getPublicationId()).thenReturn(1);
-        when(publicationMapping.getPath()).thenReturn("/one");
-        when(localizationFactory.createLocalization("1","/one")).thenReturn(localization2);
-        when(localization2.getId()).thenReturn("1");
-        localizationResolver.getLocalization(testUrl + "one");
-
-        when(apiClientProvider.getClient().getPublicationMapping(Sites, testUrl + "two")).thenReturn(publicationMapping);
-        when(publicationMapping.getPublicationId()).thenReturn(2);
-        when(publicationMapping.getPath()).thenReturn("/two");
-        when(localizationFactory.createLocalization("2","/two")).thenReturn(localization3);
-        when(localization3.getId()).thenReturn("2");
-        localizationResolver.getLocalization(testUrl + "two");
+        for (int i = 0; i <= n - 1; i++) {
+            when(apiClientProvider.getClient().getPublicationMapping(Sites, testUrl + cypherWords[i]))
+                    .thenReturn(publicationMapping);
+            when(publicationMapping.getPublicationId()).thenReturn(i + 1);
+            when(publicationMapping.getPath()).thenReturn("/" + cypherWords[i]);
+            when(localizationFactory.createLocalization(String.valueOf(i + 1), "/" + cypherWords[i]))
+                    .thenReturn(localization2);
+            when(localization2.getId()).thenReturn(String.valueOf(i + 1));
+            localizationResolver.getLocalization(testUrl + cypherWords[i]);
+        }
     }
 }

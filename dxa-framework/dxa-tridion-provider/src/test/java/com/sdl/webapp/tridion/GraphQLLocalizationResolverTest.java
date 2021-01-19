@@ -16,6 +16,7 @@ import static com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -63,21 +64,28 @@ public class GraphQLLocalizationResolverTest {
 
     @Test
     public void refreshLocalization() throws Exception {
-        createAndCacheNLocalizations(2);
+        createAndCacheNLocalizations(2, false);
         assertEquals(3, localizationResolver.getAllLocalizations().size());
 
         localizationResolver.refreshLocalization(localization);
         assertEquals(2, localizationResolver.getAllLocalizations().size());
 
         localizationResolver.refreshLocalization(localization2);
-        assertEquals(1, localizationResolver.getAllLocalizations().size());
-
-        localizationResolver.refreshLocalization(localization3);
         assertTrue(localizationResolver.getAllLocalizations().isEmpty());
     }
 
+    @Test
+    public void refreshLocalizationWithSeveralUrlsForLocalization() throws Exception {
+        createAndCacheNLocalizations(5, true);
+        when(localization2.getId()).thenReturn("5");
+        assertEquals(6, localizationResolver.getAllLocalizations().size());
+
+        localizationResolver.refreshLocalization(localization2);
+        assertEquals(4, localizationResolver.getAllLocalizations().size());
+    }
+
     //creates and caches 1-9 localizations
-    private void createAndCacheNLocalizations(int n) throws Exception {
+    private void createAndCacheNLocalizations(int n, boolean useDifferentLocalizationa) throws Exception {
         String[] cypherWords = {"one", "two", "three", "four", "five", "six", "seven", "eight", "nine"};
         localizationResolver.getLocalization(testUrl); //create for pub "5" and url
 
@@ -86,9 +94,18 @@ public class GraphQLLocalizationResolverTest {
                     .thenReturn(publicationMapping);
             when(publicationMapping.getPublicationId()).thenReturn(i + 1);
             when(publicationMapping.getPath()).thenReturn("/" + cypherWords[i]);
-            when(localizationFactory.createLocalization(String.valueOf(i + 1), "/" + cypherWords[i]))
-                    .thenReturn(localization2);
-            when(localization2.getId()).thenReturn(String.valueOf(i + 1));
+            if (useDifferentLocalizationa) {
+                Localization loc = mock(Localization.class);
+                when(loc.getId()).thenReturn(String.valueOf(i + 1));
+                when(localizationFactory.createLocalization(String.valueOf(i + 1), "/" + cypherWords[i]))
+                        .thenReturn(loc);
+            } else {
+                when(localization2.getId()).thenReturn(String.valueOf(i + 1));
+                when(localizationFactory.createLocalization(String.valueOf(i + 1), "/" + cypherWords[i]))
+                        .thenReturn(localization2);
+            }
+
+
             localizationResolver.getLocalization(testUrl + cypherWords[i]);
         }
     }

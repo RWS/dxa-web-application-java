@@ -115,13 +115,14 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
                         localizationId, entry.getKey());
             }
         }
-        for (String idToRemove : toRemove) {
-            if (localizations.remove(idToRemove) != null) {
-                LOG.debug("Removed cached localization with id: {}", localizationId);
-                return true;
-            }
+        if (toRemove.isEmpty()) {
+            return false;
         }
-        return false;
+        for (String idToRemove : toRemove) {
+            localizations.remove(idToRemove);
+            LOG.debug("Removed cached localization with id: {}", localizationId);
+        }
+        return true;
     }
 
     protected PublicationMappingData getPublicationMappingData(String url) throws PublicationMappingNotFoundException {

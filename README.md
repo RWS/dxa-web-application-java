@@ -4,7 +4,7 @@ Build status
 ------------
 - Develop: [![Build Status](https://travis-ci.com/sdl/dxa-web-application-java.svg?branch=develop)](https://travis-ci.com/sdl/dxa-web-application-java)
 - 2.2: [![Build Status](https://travis-ci.com/sdl/dxa-web-application-java.svg?branch=release%2F2.2)](https://travis-ci.com/sdl/dxa-web-application-java)
-- 1.8: [![Build Status](https://travis-ci.com/sdl/dxa-web-application-java.svg?branch=release%2F1.8)](https://travis-ci.com/sdl/dxa-web-application-java)
+- 2.0: [![Build Status](https://travis-ci.com/sdl/dxa-web-application-java.svg?branch=release%2F2.0)](https://travis-ci.com/sdl/dxa-web-application-java)
 
 About
 -----
@@ -92,7 +92,7 @@ DXA publishes SNAPSHOT versions to Sonatype. To use them, configure `https://oss
 
 License
 -------
-Copyright (c) 2014-2020 SDL Group.
+Copyright (c) 2014-2021 SDL Group.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

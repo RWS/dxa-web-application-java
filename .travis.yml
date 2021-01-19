@@ -7,4 +7,5 @@ before_install:
 script:
 # To get rid of  the "Downloading/Downloaded" lines we use: --batch-mode  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
 # Starting with Maven 3.6.1, to get rid of  the "Downloading/Downloaded" lines we use: --no-transfer-progress
-  mvn clean install --batch-mode  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn --no-transfer-progress
+#  mvn clean install --batch-mode  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn --no-transfer-progress
+  ./gradlew build

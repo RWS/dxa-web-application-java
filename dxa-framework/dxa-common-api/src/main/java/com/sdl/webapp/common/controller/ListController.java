@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.controller;
 
 import com.google.common.base.Strings;
+import com.sdl.dxa.common.util.StacktraceShortener;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
 import com.sdl.webapp.common.api.content.ContentProviderException;
@@ -66,8 +67,8 @@ public class ListController extends EntityController {
         if (model instanceof DynamicList) {
             log.trace("Model {} is a list entity, processing", model);
 
-            final ViewModel enrichedEntity = super.enrichModel(model, request);
-            final DynamicList dynamicList = enrichedEntity instanceof EntityModel ? (DynamicList) enrichedEntity : (DynamicList) model;
+            ViewModel enrichedEntity = super.enrichModel(model, request);
+            DynamicList dynamicList = enrichedEntity instanceof EntityModel ? (DynamicList) enrichedEntity : (DynamicList) model;
 
             if (!isEmpty(dynamicList.getQueryResults())) {
                 log.debug("Dynamic list {} is already populated with results, returning model {}", dynamicList, model);
@@ -85,7 +86,9 @@ public class ListController extends EntityController {
             try {
                 contentProvider.populateDynamicList(dynamicList, webRequestContext.getLocalization());
             } catch (ContentProviderException e) {
-                log.error("An unexpected error occurred", e);
+                StacktraceShortener shortener = new StacktraceShortener(e);
+                shortener.addRuleToBeLeftExpanded("SDL", new String[] {"com.sdl.", "org.dd4t."});
+                log.error("An unexpected error occurred {}", shortener.generateString());
                 throw new InternalServerErrorException("An unexpected error occurred", e);
             }
         }

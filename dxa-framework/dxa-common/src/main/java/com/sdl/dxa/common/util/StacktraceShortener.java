@@ -151,25 +151,31 @@ public class StacktraceShortener {
         return false;
     }
 
-    private boolean processRule(StringBuilder result, ProcessorRule processorRuleSpring, StackTraceElement element) {
-        processorRuleSpring.processCurrentLine(element.getClassName());
-        if (processorRuleSpring.currentRuleMet && processorRuleSpring.prevRuleMet == null) {
-            if (!result.toString().endsWith(processorRuleSpring.compactedName)) {
-                processorRuleSpring.appendCompacted(result);
+    private boolean processRule(StringBuilder result, ProcessorRule processorRule, StackTraceElement element) {
+        processorRule.processCurrentLine(element.getClassName());
+        if (processorRule.currentRuleMet && processorRule.prevRuleMet == null) {
+            if (!result.toString().endsWith(processorRule.compactedName)) {
+                processorRule.appendCompacted(result);
             }
-            processorRuleSpring.setPrevious(true);
+            processorRule.setPrevious(true);
             return true;
         }
-        if (processorRuleSpring.currentRuleMet && processorRuleSpring.isPreviousLineMeetRule()) {
+        if (processorRule.currentRuleMet && processorRule.isPreviousLineMeetRule()) {
             //compact
             return true;
         }
-        if (processorRuleSpring.currentRuleMet || !processorRuleSpring.isPreviousLineMeetRule()) {
-            processorRuleSpring.setPrevious(true);
-            return true;
+        if (processorRule.currentRuleMet || !processorRule.isPreviousLineMeetRule()) {
+            if (processorRule.currentRuleMet) {
+                processorRule.setPrevious(true);
+                return true;
+            }
         }
-        if (processorRuleSpring.prevRuleMet && processorRuleSpring.counter > 1) {
-            result.append(" <" + processorRuleSpring.counter + " lines>\n");
+        if (processorRule.prevRuleMet != null && processorRule.prevRuleMet) {
+            if (processorRule.counter > 1) {
+                result.append(" <" + processorRule.counter + " lines>\n");
+            } else if (processorRule.counter == 1) {
+                result.append("\n");
+            }
         }
         return false;
     }

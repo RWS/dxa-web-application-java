@@ -46,10 +46,7 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
     @NotNull
     String getContentPath(@NotNull String binaryPath, @NotNull String localizationPath) {
         if (localizationPath.length() > 1) {
-            String path = binaryPath.startsWith(localizationPath + "/")
-                    ? binaryPath.substring(localizationPath.length())
-                    : binaryPath;
-            return localizationPath + removeVersionNumber(path);
+            return localizationPath + removeVersionNumber(binaryPath);
         }
         return removeVersionNumber(binaryPath);
     }

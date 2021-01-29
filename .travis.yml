@@ -11,4 +11,6 @@ dist:
 
 script:
   - git update-index --chmod=+x gradlew
+  - chmod +x gradlew
+  - git ls-tree HEAD
   - ./gradlew build

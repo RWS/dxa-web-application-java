@@ -10,4 +10,5 @@ dist:
   - trusty
 
 script:
+  - git update-index --chmod=+x gradlew
   - ./gradlew build

@@ -21,7 +21,11 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Gradle
-    - run git update-index --chmod=+x gradlew
-    - run chmod +x gradlew
-    - run git ls-tree HEAD
-    - run ./gradlew build
+    - name: gradle erapper update-index
+      run: git update-index --chmod=+x gradlew
+    - name: chmod gradle wrapper
+      run: chmod +x gradlew
+    - name: list of permissions
+      run: git ls-tree HEAD
+    - name: Build with gradle
+      run: ./gradlew build

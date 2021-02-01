@@ -21,5 +21,4 @@ jobs:
       with:
         java-version: 1.8
     - name: Build with Maven
-      run:  mvn clean install --batch-mode --no-transfer-progress -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
- --file pom.xml
+      run:  mvn clean install --batch-mode --no-transfer-progress -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn --file pom.xml

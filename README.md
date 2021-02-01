@@ -2,8 +2,12 @@ SDL Digital Experience Accelerator Java Spring MVC web application
 ===
 Build status
 ------------
+TRAVIS:
 - Develop: [![Build Status](https://travis-ci.com/sdl/dxa-web-application-java.svg?branch=develop)](https://travis-ci.com/sdl/dxa-web-application-java)
 - 1.8: [![Build Status](https://travis-ci.com/sdl/dxa-web-application-java.svg?branch=release%2F1.8)](https://travis-ci.com/sdl/dxa-web-application-java)
+Java CI with Maven:
+- ![Develop](https://github.com/sdl/dxa-web-application-java/workflows/Java%20CI%20with%20Maven/badge.svg)
+
 
 About
 -----

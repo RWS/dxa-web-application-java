@@ -122,7 +122,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     }
 
     @AllArgsConstructor
-    private static class PublicationMappingData {
+    public static class PublicationMappingData {
         private String id, path;
     }
 }

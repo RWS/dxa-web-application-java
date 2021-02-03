@@ -54,9 +54,9 @@
         <commons-text.version>1.9</commons-text.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <httpcomponents-client-version>4.5.13</httpcomponents-client-version>
-        <httpcomponents.core.version>4.4.13</httpcomponents.core.version>
+        <httpcomponents.core.version>4.4.14</httpcomponents.core.version>
 
-        <guava-version>30.0-jre</guava-version>
+        <guava-version>30.1-jre</guava-version>
 
         <!-- Joda Time -->
         <joda-time-version>2.10</joda-time-version>
@@ -87,7 +87,7 @@
         <spring-security.version>4.2.12.RELEASE</spring-security.version>
 
         <jsoup.version>1.12.1</jsoup.version>
-        <rome.version>1.12.0</rome.version>
+        <rome.version>1.15.0</rome.version>
         <xalan-version>2.7.2</xalan-version>
 
         <dozer.version>5.5.1</dozer.version>

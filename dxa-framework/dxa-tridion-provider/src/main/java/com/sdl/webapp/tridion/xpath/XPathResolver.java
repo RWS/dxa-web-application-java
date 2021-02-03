@@ -13,6 +13,7 @@ import javax.xml.xpath.XPathFactory;
  * Resolver for particular xPath string.
  * Uses {@link javax.xml.xpath.XPathExpression} which is not thread-safe.
  */
+@Deprecated
 public enum XPathResolver {
     XPATH_LINKS("//a[@xlink:href]"),
     XPATH_YOUTUBE("//img[@data-youTubeId]"),
@@ -43,7 +44,15 @@ public enum XPathResolver {
             @Override
             protected XPathExpression initialValue() {
                 try {
-                    final XPath xpath = XPathFactory.newInstance().newXPath();
+                    /**
+                     * This hardcoded XPathFactory is needed to avoid the possibility that a wrong implementation is
+                     * being loaded from classpath when using the javax.xml.xpath.XPathFactory. (cfr javadoc newInstance())
+                     *
+                     * Example of a wrong implementation: org.apache.taglibs.standard.tag.common.xml.JSTLXPathFactory.
+                     * Issue: XPathExpression will be null for xpath.compile!
+                     */
+                    XPathFactory xPathFactory = new org.apache.xpath.jaxp.XPathFactoryImpl();
+                    final XPath xpath = xPathFactory.newXPath();
                     xpath.setNamespaceContext(NAMESPACE_CONTEXT);
                     return xpath.compile(sourceString);
                 } catch (XPathExpressionException e) {

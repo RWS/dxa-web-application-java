@@ -86,6 +86,12 @@ DD4T support
 DD4T 2.1 for Java is incorporated into the DXA codebase in the `dxa-compatible` artifact. As a result, when migrating from DD4T to DXA, you do not need separate dependencies on DD4T.
 
 
+UDP version
+---
+The DXA 2.2 used to be based upon UDP 11.0.0 version. Since 2.2.12 the minimal required version for UDP is 11.0.1.
+This version has no backward compatibility with 11.0.0 due to major database changes. So make sure you have completed all required task for UDP 11.0.1 installation.  
+
+
 Snapshots
 ---------
 DXA publishes SNAPSHOT versions to Sonatype. To use them, configure `https://oss.sonatype.org/content/repositories/snapshots` as a repository in your Maven settings. Read [this](https://maven.apache.org/settings.html#Repositories) for instructions.

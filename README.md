@@ -2,9 +2,10 @@ SDL Digital Experience Accelerator Java Spring MVC web application
 ===
 Build status
 ------------
-- Develop: [![Build Status](https://travis-ci.com/sdl/dxa-web-application-java.svg?branch=develop)](https://travis-ci.com/sdl/dxa-web-application-java)
-- 2.2: [![Build Status](https://travis-ci.com/sdl/dxa-web-application-java.svg?branch=release%2F2.2)](https://travis-ci.com/sdl/dxa-web-application-java)
-- 2.0: [![Build Status](https://travis-ci.com/sdl/dxa-web-application-java.svg?branch=release%2F2.0)](https://travis-ci.com/sdl/dxa-web-application-java)
+Java CI with Maven:
+- Develop - ![Build Status](https://github.com/sdl/dxa-web-application-java/workflows/Build/badge.svg)
+- 1.8 -![Build Status](https://github.com/sdl/dxa-web-application-java/workflows/Build/badge.svg?branch=release%2F1.8)
+
 
 About
 -----
@@ -83,6 +84,12 @@ On Windows, you can also just run `get-started.cmd` script at first run.
 DD4T support
 ---
 DD4T 2.1 for Java is incorporated into the DXA codebase in the `dxa-compatible` artifact. As a result, when migrating from DD4T to DXA, you do not need separate dependencies on DD4T.
+
+
+UDP version
+---
+The DXA 2.2 used to be based upon UDP 11.0.0 version. Since 2.2.12 the minimal required version for UDP is 11.0.1.
+This version has no backward compatibility with 11.0.0 due to major database changes. So make sure you have completed all required task for UDP 11.0.1 installation.  
 
 
 Snapshots

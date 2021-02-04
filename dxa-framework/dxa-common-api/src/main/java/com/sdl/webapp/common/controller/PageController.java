@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sdl.dxa.common.util.StacktraceShortener;
 import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ContentProvider;
@@ -232,7 +233,9 @@ public class PageController extends BaseController {
         try {
             originalPageModel = contentProvider.getPageModel(notFoundPageUrl, webRequestContext.getLocalization());
         } catch (ContentProviderException e) {
-            log.error("Could not find error page", e);
+            StacktraceShortener shortener = new StacktraceShortener(e);
+            shortener.addRuleToBeLeftExpanded("SDL", new String[] {"com.sdl.", "org.dd4t."});
+            log.error("Could not find error page\n" + shortener.generateString());
             throw new HTTPException(SC_NOT_FOUND);
         }
 
@@ -305,7 +308,9 @@ public class PageController extends BaseController {
             log.info("Page not found: {}, localizationId: {}", path, localization.getId());
             throw new NotFoundException("Page not found: " + path, e);
         } catch (ContentProviderException e) {
-            log.error("An unexpected error occurred", e);
+            StacktraceShortener shortener = new StacktraceShortener(e);
+            shortener.addRuleToBeLeftExpanded("SDL", new String[] {"com.sdl.", "org.dd4t."});
+            log.error("An unexpected error occurred\n{}", shortener.generateString());
             throw new InternalServerErrorException("An unexpected error occurred", e);
         }
     }

@@ -134,13 +134,13 @@
     <distributionManagement>
         <repository>
             <id>releases-nexus</id>
-            <name>SDL Releases</name>
-            <url>https://nexus.sdl.com/repository/releases</url>
+            <name>OSS sonatype release</name>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
         </repository>
         <snapshotRepository>
             <id>snapshots-nexus</id>
-            <name>SDL Snapshots</name>
-            <url>https://nexus.sdl.com/repository/snapshots</url>
+            <name>OSS sonatype snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 

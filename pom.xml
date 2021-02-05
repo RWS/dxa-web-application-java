@@ -130,7 +130,14 @@
         <developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
-
+<repositories>
+       <repository>
+         <id>snapshots-repo</id>
+         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+         <releases><enabled>false</enabled></releases>
+         <snapshots><enabled>true</enabled></snapshots>
+       </repository>
+</repositories>
     <distributionManagement>
         <repository>
             <id>releases-nexus</id>

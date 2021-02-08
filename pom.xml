@@ -18,7 +18,9 @@
     <name>DXA - Parent</name>
     <description>Parent artifact for DXA</description>
 
-    <url>https://www.sdl.com/products-and-solutions/content-management/sdl-tridion/resources/digital-experience-accelerator/</url>
+    <url>
+        https://www.sdl.com/products-and-solutions/content-management/sdl-tridion/resources/digital-experience-accelerator/
+    </url>
 
     <properties>
         <java-version>1.8</java-version>
@@ -130,14 +132,18 @@
         <developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
-<repositories>
-       <repository>
-         <id>snapshots-repo</id>
-         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-         <releases><enabled>false</enabled></releases>
-         <snapshots><enabled>true</enabled></snapshots>
-       </repository>
-</repositories>
+    <repositories>
+        <repository>
+            <id>snapshots-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
     <distributionManagement>
         <repository>
             <id>sonatype-nexus-staging</id>
@@ -360,7 +366,7 @@
             <dependency>
                 <groupId>com.sdl.tridion.xo</groupId>
                 <artifactId>xo-compatible-client</artifactId>
-<!--                <version>11.0.1-1015</version>-->
+                <!--                <version>11.0.1-1015</version>-->
             </dependency>
             <dependency>
                 <groupId>com.sdl.delivery</groupId>

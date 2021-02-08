@@ -14,11 +14,8 @@
     <description>Tridion Common contains common code for Tridion for other DXA artifacts expect model-specific (like
         DD4T)
     </description>
-    <properties>
-        <cd_broker.version>(,11.0.1)</cd_broker.version>
-    </properties>
-    <dependencies>
 
+    <dependencies>
         <dependency>
             <groupId>com.sdl.dxa</groupId>
             <artifactId>dxa-common</artifactId>

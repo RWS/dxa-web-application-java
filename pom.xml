@@ -233,37 +233,37 @@
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-data-model</artifactId>
-                <version>${dxa.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-common</artifactId>
-                <version>${dxa.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-common-api</artifactId>
-                <version>${dxa.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-tridion-common</artifactId>
-                <version>${dxa.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-model-service-client</artifactId>
-                <version>${dxa.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-dd4t-ms-provider</artifactId>
-                <version>${dxa.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa</groupId>
                 <artifactId>dxa-tridion-provider</artifactId>
-                <version>${dxa.version}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>

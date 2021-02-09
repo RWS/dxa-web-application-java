@@ -228,7 +228,7 @@
         <profile>
             <id>release</id>
             <properties>
-                <gpg.executable>gpg</gpg.executable>
+                <gpg.executable>gpgwrapper.sh</gpg.executable>
             </properties>
         </profile>
     </profiles>

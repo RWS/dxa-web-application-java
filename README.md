@@ -25,6 +25,7 @@ If you really must modify the DXA framework, we kindly request you to submit you
 Build
 -----
 You need Maven 3.2+ to build from source. Maven should be available in the system `PATH`.
+
 `mvn install`
 
 Support

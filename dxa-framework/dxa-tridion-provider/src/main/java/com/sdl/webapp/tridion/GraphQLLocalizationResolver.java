@@ -78,11 +78,7 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
     @SneakyThrows(UnsupportedEncodingException.class)
     public Localization getLocalization(String url) throws LocalizationResolverException {
         LOG.trace("getLocalization: {}", url);
-        Localization result = localizations.get(url);
-        if (result != null) {
-            LOG.trace("Cached localization returned by url: {}, id: {}", url, result.getId());
-            return result;
-        }
+
         // truncating on first % because of TSI-1281
         String path = UriUtils.encodePath(url, "UTF-8").split("%")[0];
         PublicationMappingData data = getPublicationMappingData(path);
@@ -91,9 +87,15 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
             throw new LocalizationResolverException("Publication mapping is not resolved for URL: " + url);
         }
 
+        Localization result = localizations.get(data.id);
+        if (result != null) {
+            LOG.trace("Cached localization returned by publication id: {}, id: {}", data.id, result.getId());
+            return result;
+        }
+
         result = createLocalization(data.id, data.path);
-        localizations.putIfAbsent(url, result);
-        LOG.trace("Creating and cache localization by url: {}, id: {}", url, result.getId());
+        localizations.putIfAbsent(data.id, result);
+        LOG.trace("Creating and cache localization by publication id: {}, id: {}", data.id, result.getId());
         return result;
     }
 

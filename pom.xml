@@ -225,6 +225,12 @@
                 <module>dxa-javadoc-tools</module>
             </modules>
         </profile>
+        <profile>
+            <id>release</id>
+            <properties>
+                <gpg.executable>gpg</gpg.executable>
+            </properties>
+        </profile>
     </profiles>
 
     <dependencyManagement>

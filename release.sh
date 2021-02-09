@@ -45,9 +45,9 @@ GPG_PASS="${4}"
 REL_TAG="DXA_${REL_VERSION}"
 
 mvn clean
-mvn -Prelease release:prepare -DreleaseVersion="${REL_VERSION}" -DdevelopmentVersion="${DEV_VERSION}" -Dtag=${REL_TAG} -Darguments="-Dgpg.passphrase=${GPG_PASS} -Dgpg.keyname=${GPG_KEYNAME}"
-mvn -Prelease release:perform -DreleaseVersion="${REL_VERSION}" -DdevelopmentVersion="${DEV_VERSION}" -Dtag=${REL_TAG} -Darguments="-Dgpg.passphrase=${GPG_PASS} -Dgpg.keyname=${GPG_KEYNAME}"
-mvn -Prelease deploy -Dgpg.passphrase=${GPG_PASS} -Dgpg.keyname=${GPG_KEYNAME}
+mvn -Prelease release:prepare -DreleaseVersion="${REL_VERSION}" -DdevelopmentVersion="${DEV_VERSION}" -Dtag=${REL_TAG} -Darguments="-Dgpg.passphrase=${GPG_PASS} -Dgpg.keyname=${GPG_KEYNAME} -Dgpg.executable=./gpgwrapper.sh"
+mvn -Prelease release:perform -DreleaseVersion="${REL_VERSION}" -DdevelopmentVersion="${DEV_VERSION}" -Dtag=${REL_TAG} -Darguments="-Dgpg.passphrase=${GPG_PASS} -Dgpg.keyname=${GPG_KEYNAME} -Dgpg.executable=./gpgwrapper.sh"
+mvn -Prelease deploy -Dgpg.passphrase=${GPG_PASS} -Dgpg.keyname=${GPG_KEYNAME} -Dgpg.executable=gpg -Dgpg.executable=./gpgwrapper.sh
 
 echo "Released version:       ${REL_VERSION}"
 echo "Release tag:            ${REL_TAG}"

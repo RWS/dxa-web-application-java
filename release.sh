@@ -24,17 +24,16 @@ function usage {
    echo "Release using Apache Maven"
    echo ""
    echo "Usage:"
-   echo "   release.sh REL_VERSION DEV_VERSION GPG_KEYNAME GPG_PASS [PROFILE_ID]"
+   echo "   release.sh REL_VERSION DEV_VERSION GPG_KEYNAME GPG_PASS"
    echo ""
    echo "      REL_VERSION    The version to use for the release"
    echo "      DEV_VERSION    The version to use for the development"
    echo "      GPG_KEYNAME    The GPG key name"
    echo "      GPG_PASS       The GPG passphrase"
-   echo "      PROFILE_ID     The Sonatype Staging Profile ID"
    echo ""
 }
 
-if [[ $# -lt "5" ]]; then
+if [[ $# -lt "4" ]]; then
    usage
    exit 1
 fi
@@ -43,8 +42,7 @@ REL_VERSION="$1"
 DEV_VERSION="$2"
 GPG_KEYNAME="$3"
 GPG_PASS="${4}"
-PROFILE_ID="${5}"
-REL_TAG="v${REL_VERSION}"
+REL_TAG="DXA_${REL_VERSION}"
 
 mvn clean
 mvn -Prelease release:prepare -DreleaseVersion="${REL_VERSION}" -DdevelopmentVersion="${DEV_VERSION}" -Dtag=${REL_TAG} -Darguments="-Dgpg.passphrase=${GPG_PASS} -Dgpg.keyname=${GPG_KEYNAME}"

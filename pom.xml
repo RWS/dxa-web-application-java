@@ -30,22 +30,7 @@
         <cd-cil.version>11.0.1-1019</cd-cil.version>
 
         <!-- DXA versions -->
-        <dxa.version>${project.version}</dxa.version>
-        <dxa-modules.version>${dxa.version}</dxa-modules.version>
-        <dxa-module-core.version>${dxa.version}</dxa-module-core.version>
-        <dxa-module-cid.version>${dxa.version}</dxa-module-cid.version>
-        <dxa-module-googleanalytics.version>${dxa.version}</dxa-module-googleanalytics.version>
-        <dxa-module-mediamanager.version>${dxa.version}</dxa-module-mediamanager.version>
-        <dxa-module-search.version>${dxa.version}</dxa-module-search.version>
-        <dxa-module-smarttarget.version>${dxa.version}</dxa-module-smarttarget.version>
-        <dxa-module-context-expressions>${dxa.version}</dxa-module-context-expressions>
-        <dxa-module-51degrees.version>${dxa.version}</dxa-module-51degrees.version>
-        <dxa-module-audience-manager.version>${dxa.version}</dxa-module-audience-manager.version>
-        <dxa-module-ugc.version>${dxa.version}</dxa-module-ugc.version>
-        <dxa-module-test.version>${dxa.version}</dxa-module-test.version>
-        <dxa-module-tridion-docs-mashup.version>${dxa.version}</dxa-module-tridion-docs-mashup.version>
-        <dxa-module-tridion-docs-search.version>${dxa.version}</dxa-module-tridion-docs-search.version>
-        <dxa-module-dd.version>${dxa.version}</dxa-module-dd.version>
+        <dxa.version>2.2.13-SNAPSHOT</dxa.version>
         <!-- /DXA Versions -->
 
         <!-- Apache -->

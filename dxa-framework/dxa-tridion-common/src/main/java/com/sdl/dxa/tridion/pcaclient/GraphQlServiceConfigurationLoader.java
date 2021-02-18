@@ -72,7 +72,7 @@ public class GraphQlServiceConfigurationLoader extends BaseClientConfigurationLo
     }
 
     @Override
-    synchronized public String getServiceUrl() {
+    public String getServiceUrl() {
         initialize();
         return serviceUrl;
     }

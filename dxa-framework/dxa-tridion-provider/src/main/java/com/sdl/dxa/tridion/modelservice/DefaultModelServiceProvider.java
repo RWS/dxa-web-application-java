@@ -70,7 +70,7 @@ public class DefaultModelServiceProvider implements ModelServiceProvider {
             log.trace("Loaded '{}' for pageRequest '{}'", page, pageRequest);
             return page;
         } catch (ModelServiceInternalServerErrorException e) {
-            throw new ContentProviderException("Cannot load page from model service", e);
+            throw new ContentProviderException("Cannot load page '" + pageRequest + "' from model service", e);
         } catch (ItemNotFoundInModelServiceException e) {
             throw new PageNotFoundException("Cannot load page '" + pageRequest + "'", e);
         }

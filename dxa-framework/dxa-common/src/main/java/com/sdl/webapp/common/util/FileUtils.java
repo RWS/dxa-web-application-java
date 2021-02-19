@@ -112,7 +112,9 @@ public final class FileUtils {
      */
     public static boolean isEssentialConfiguration(@NotNull String path, String localizationPath) {
         String processedPath = !"/".equals(localizationPath) && path.startsWith(localizationPath) ? path.replaceFirst(localizationPath, "") : path;
-        return VERSION_JSON.equals(processedPath) || SYSTEM_FOLDER_PATTERN.matcher(processedPath).matches() || isFavicon(processedPath);
+        return VERSION_JSON.equals(processedPath) ||
+               SYSTEM_FOLDER_PATTERN.matcher(processedPath).matches() ||
+               isFavicon(processedPath);
     }
 
     /**

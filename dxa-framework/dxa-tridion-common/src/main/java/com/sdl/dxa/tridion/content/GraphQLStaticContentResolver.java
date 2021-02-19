@@ -149,7 +149,8 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         }
         if (!requestDto.isNoMediaCache()) {
             log.debug("File cannot be cached: {}", file.getAbsolutePath());
-            binaryComponent.setLastPublishDate(new DateTime().toString());
+            long time = System.currentTimeMillis() - 5000;
+            binaryComponent.setLastPublishDate(new DateTime(time).toString());
         }
         downloadBinaryWhenNeeded(binaryComponent, file, pathInfo);
         BinaryVariant variant = binaryComponent.getVariants().getEdges().get(0).getNode();

@@ -217,11 +217,12 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
 
+        boolean essentialConfiguration = FileUtils.isEssentialConfiguration(path, localizationPath);
         StaticContentRequestDto requestDto = StaticContentRequestDto
                 .builder(path, localizationId)
                 .localizationPath(localizationPath)
                 .baseUrl(webRequestContext.getBaseUrl())
-                .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isSessionPreview())
+                .noMediaCache(!essentialConfiguration && webRequestContext.isSessionPreview())
                 .build();
         StaticContentItem staticContent = staticContentResolver.getStaticContent(requestDto);
         return staticContent;

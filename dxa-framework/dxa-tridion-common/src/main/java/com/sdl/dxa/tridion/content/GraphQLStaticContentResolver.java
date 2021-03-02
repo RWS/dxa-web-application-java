@@ -16,8 +16,11 @@ import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.common.util.UrlEncoder;
+import com.tridion.data.BinaryData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -167,10 +171,15 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
             log.debug("File does not need to be refreshed: {}", file.getAbsolutePath());
             return;
         }
-        log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
-        byte[] content = downloadBinary(file, binaryComponent);
-        if (content != null) {
-            refreshBinary(file, pathInfo, content);
+        Triple<Integer, Integer, String> key = new ImmutableTriple<>(binaryComponent.getPublicationId(), binaryComponent.getItemId(), pathInfo.getFileName());
+        synchronized (key.toString().intern()) {
+            log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
+            byte[] content = downloadBinary(file, binaryComponent);
+            if (content != null) {
+                refreshBinary(file, pathInfo, content);
+                return;
+            }
         }
+        log.debug("File cannot be updated as content is empty: {}", file.getAbsolutePath());
     }
 }

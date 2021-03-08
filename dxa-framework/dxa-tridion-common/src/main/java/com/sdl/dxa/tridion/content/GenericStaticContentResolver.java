@@ -91,7 +91,15 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
         return UriUtils.encodePath(baseUrl + path, "UTF-8");
     }
 
-    protected void refreshBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, byte[] binaryContent) throws ContentProviderException {
+    /**
+     * Note: this code is not a thread-safe so it should be called inside sync block.
+     * @param file to be refreshed.
+     * @param pathInfo path to a binary.
+     * @param binaryContent binary file content to be written.
+     * @throws ContentProviderException is thrown if saving cannot be completed.
+     */
+    protected void refreshBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, byte[] binaryContent)
+            throws ContentProviderException {
         log.debug("Writing binary content to file: {}", file);
         try {
             if (!parentFolderExists(file, true)) {

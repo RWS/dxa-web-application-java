@@ -50,7 +50,6 @@ public class ModelDataTypeResolverTest {
         resolver.inclusion(JsonTypeInfo.As.PROPERTY).init(JsonTypeInfo.Id.CUSTOM, new ModelDataTypeIdResolver());
     }
 
-    @Ignore("Test depends on soemthing related to jdk internal security and fails on some machines.")
     @Test
     public void shouldDetect_ThatPolymorphicMixin_IsSet() {
         //given

@@ -7,9 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
-/**
- * @dxa.publicApi
- */
 @Getter
 @EqualsAndHashCode(callSuper = false)
 public final class HtmlStartTag extends HtmlRenderable {

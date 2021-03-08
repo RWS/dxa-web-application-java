@@ -18,9 +18,6 @@ import java.util.*;
 
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 
-/**
- * @dxa.publicApi
- */
 @Data
 @EqualsAndHashCode(callSuper = true, of = {"title", "originalTitle", "type", "publishedDate"})
 @Slf4j

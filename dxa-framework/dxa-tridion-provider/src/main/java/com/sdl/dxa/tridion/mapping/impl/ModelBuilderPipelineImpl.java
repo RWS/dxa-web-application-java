@@ -26,7 +26,6 @@ import java.util.List;
  * If the Model Builder gets {@code null}, it has to construct the View Model.
  * {@linkplain DefaultModelBuilder} should normally be the first.
  *
- * @dxa.publicApi
  * @see EntityModelBuilder
  * @see PageModelBuilder
  */
@@ -51,7 +50,6 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
     /**
      * {@inheritDoc}
      *
-     * @dxa.publicApi
      */
     @Override
     @NotNull
@@ -71,7 +69,6 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
     /**
      * {@inheritDoc}
      *
-     * @dxa.publicApi
      */
     @Override
     @NotNull
@@ -82,7 +79,6 @@ public class ModelBuilderPipelineImpl implements ModelBuilderPipeline {
     /**
      * {@inheritDoc}
      *
-     * @dxa.publicApi
      */
     @NotNull
     @Override

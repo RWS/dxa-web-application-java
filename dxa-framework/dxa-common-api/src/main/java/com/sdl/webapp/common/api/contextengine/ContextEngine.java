@@ -5,7 +5,6 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Context engine gives you access to a request-scoped collection of claims and other context data.
  *
- * @dxa.publicApi
  */
 public interface ContextEngine {
 

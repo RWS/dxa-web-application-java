@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Implementors of this interface are capable to provide content by the definitive query (e.g. path of a page or TCM URI).
  *
- * @dxa.publicApi
  */
 public interface ContentProvider {
 

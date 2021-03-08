@@ -8,7 +8,6 @@ import java.util.List;
 /**
  * ContextClaims with a 'browser' aspect.
  *
- * @dxa.publicApi
  */
 public class BrowserClaims extends ContextClaims {
 

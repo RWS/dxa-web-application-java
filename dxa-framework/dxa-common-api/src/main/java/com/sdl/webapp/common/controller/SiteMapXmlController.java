@@ -28,7 +28,6 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.MARKUP;
 /**
  * Controller which returns the sitemap in XML format.
  *
- * @dxa.publicApi
  */
 @Controller
 public class SiteMapXmlController {

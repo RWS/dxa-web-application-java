@@ -1,8 +1,5 @@
 package com.sdl.webapp.common.markup.html;
 
-/**
- * @dxa.publicApi
- */
 public abstract class HtmlRenderable {
 
     // Cached HTML string, to avoid rendering multiple times

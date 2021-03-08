@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 /**
  * @deprecated
  * Default implementation of entities cache for manual access.
- * @dxa.publicApi
  */
 @Deprecated
 @Component

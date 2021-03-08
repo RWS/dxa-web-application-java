@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
 /**
  * Annotates types that should never be cached.
  *
- * @dxa.publicApi
  */
 @Target({ElementType.ANNOTATION_TYPE, ElementType.TYPE})
 @Retention(RetentionPolicy.RUNTIME)

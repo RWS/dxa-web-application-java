@@ -22,7 +22,6 @@ import static org.springframework.util.ClassUtils.getDefaultClassLoader;
 /**
  * Module's Spring configuration.
  *
- * @dxa.publicApi
  */
 @Configuration
 @ComponentScan("com.sdl.dxa.api.datamodel")

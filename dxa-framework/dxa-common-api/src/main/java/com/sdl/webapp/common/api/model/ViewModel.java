@@ -9,7 +9,6 @@ import java.util.Map;
 /**
  * Basic DXA View Model. Everything that is a part of entity/region/page models in DXA is a ViewModel.
  *
- * @dxa.publicApi
  */
 public interface ViewModel extends Cloneable {
 
@@ -77,7 +76,6 @@ public interface ViewModel extends Cloneable {
      * Returns whether the model is cacheable and may be cached.
      *
      * @return whether the model never may be cached
-     * @dxa.publicApi
      */
     default boolean canBeCached() {
         return !this.getClass().isAnnotationPresent(NeverCached.class);

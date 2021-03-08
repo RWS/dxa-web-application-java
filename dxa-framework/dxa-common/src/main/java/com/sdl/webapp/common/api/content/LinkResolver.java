@@ -7,7 +7,6 @@ import org.springframework.cache.annotation.Cacheable;
 /**
  * Link resolver that resolves links to components.
  *
- * @dxa.publicApi
  */
 @FunctionalInterface
 public interface LinkResolver {

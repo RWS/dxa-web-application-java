@@ -9,7 +9,6 @@ import java.util.Map;
 /**
  * Page Model is a basic interface for Page Model implementations in DXA.
  *
- * @dxa.publicApi
  */
 public interface PageModel extends ViewModel, FeedItemsProvider, CanFilterEntities {
 
@@ -48,7 +47,6 @@ public interface PageModel extends ViewModel, FeedItemsProvider, CanFilterEntiti
      * <p>It is a workaround that might be removed in a future in case the better solution is found. So preferably
      * the good idea is <i>not to use it.</i></p>
      *
-     * @dxa.publicApi
      */
     interface WithResponseData extends PageModel {
 

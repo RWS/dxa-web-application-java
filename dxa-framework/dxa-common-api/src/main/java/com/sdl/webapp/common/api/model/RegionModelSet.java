@@ -4,7 +4,6 @@ import java.util.Set;
 
 /**
  * <p>RegionModelSet interface.</p>
- * @dxa.publicApi
  */
 public interface RegionModelSet extends Set<RegionModel> {
 

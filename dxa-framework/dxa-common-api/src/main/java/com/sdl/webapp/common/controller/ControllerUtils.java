@@ -9,9 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * @dxa.publicApi
- */
 public final class ControllerUtils {
 
     public static final String INCLUDE_PATH_PREFIX = "/system/mvc/";

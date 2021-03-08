@@ -64,7 +64,6 @@ import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
  * Page controller is a main controller and a entry point to DXA. This handles requests that come from the client.
- * @dxa.publicApi
  */
 @Controller
 @Profile("!dxa.docs.enabled")

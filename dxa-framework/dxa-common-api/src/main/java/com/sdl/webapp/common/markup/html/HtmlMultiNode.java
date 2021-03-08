@@ -3,9 +3,6 @@ package com.sdl.webapp.common.markup.html;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
-/**
- * @dxa.publicApi
- */
 @Getter
 @EqualsAndHashCode(callSuper = false)
 public class HtmlMultiNode extends HtmlNode {

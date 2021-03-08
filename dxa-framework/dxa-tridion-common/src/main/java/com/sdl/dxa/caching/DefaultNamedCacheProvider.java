@@ -52,7 +52,6 @@ import static org.ehcache.jsr107.Eh107Configuration.fromEhcacheCacheConfiguratio
 /**
  * Default implementation of DXA cache.
  *
- * @dxa.publicApi
  */
 @Slf4j
 @Component

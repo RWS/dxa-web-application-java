@@ -17,7 +17,6 @@ public interface StaticContentResolver {
      * @param requestDto request DTO
      * @return requested static file
      * @throws StaticContentNotFoundException if cannot resolve static file for any reason
-     * @dxa.publicApi
      */
     @NotNull StaticContentItem getStaticContent(@NotNull StaticContentRequestDto requestDto) throws ContentProviderException;
 }

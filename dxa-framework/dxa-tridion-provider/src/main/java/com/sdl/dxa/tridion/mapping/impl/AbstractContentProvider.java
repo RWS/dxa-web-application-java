@@ -193,7 +193,6 @@ public abstract class AbstractContentProvider {
     /**
      * {@inheritDoc}
      *
-     * @dxa.publicApi
      */
     public EntityModel getEntityModel(@NotNull String id, Localization localization) throws ContentProviderException {
         Assert.notNull(id);

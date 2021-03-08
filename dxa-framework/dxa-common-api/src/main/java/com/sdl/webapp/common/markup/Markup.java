@@ -7,9 +7,6 @@ import com.sdl.webapp.common.api.model.RegionModel;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import org.joda.time.DateTime;
 
-/**
- * @dxa.publicApi
- */
 public interface Markup {
 
     String url(String path);

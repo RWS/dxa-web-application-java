@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 /**
  * Utilities to work with files.
- * @dxa.publicApi
  */
 @Slf4j
 public final class FileUtils {

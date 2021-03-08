@@ -6,7 +6,6 @@ import com.sdl.webapp.common.api.model.entity.SitemapItem;
 
 /**
  * Navigation provider.
- * @dxa.publicApi
  */
 public interface NavigationProvider {
 

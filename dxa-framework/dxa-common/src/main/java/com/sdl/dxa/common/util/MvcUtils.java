@@ -9,7 +9,6 @@ import java.util.List;
 /**
  * MVC utils to work with String MVC Data.
  *
- * @dxa.publicApi
  */
 public final class MvcUtils {
 

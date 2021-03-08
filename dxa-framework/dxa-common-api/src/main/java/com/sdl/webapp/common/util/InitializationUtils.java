@@ -34,7 +34,6 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 /**
  * Initialization utils to deal with properties and other configuration and startup elements.
  *
- * @dxa.publicApi
  */
 @Slf4j
 public final class InitializationUtils {

@@ -9,7 +9,6 @@ import java.io.InputStream;
 /**
  * Static content item.
  *
- * @dxa.publicApi
  */
 public class StaticContentItem {
 

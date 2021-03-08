@@ -3,7 +3,6 @@ package com.sdl.dxa.caching;
 /**
  * Functional interface that can provide ID of the current localization.
  *
- * @dxa.publicApi
  */
 @FunctionalInterface
 public interface LocalizationIdProvider {
@@ -15,7 +14,6 @@ public interface LocalizationIdProvider {
      * then this may lead to cache key collision.
      *
      * @return current localization ID
-     * @dxa.publicApi
      */
     String getId();
 }

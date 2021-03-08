@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
  * These are the functions that are new with DXA 2.2
  *
  * @since DXA 2.2
- * @dxa.publicApi
  */
 public interface Dxa22ContentProvider extends ContentProvider {
 

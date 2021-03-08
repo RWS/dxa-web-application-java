@@ -13,7 +13,6 @@ import com.sdl.dxa.api.datamodel.json.Polymorphic;
  * <p>A parent should also implement {@link Polymorphic}, so we know it is a parent and not a concrete class. By the way,
  * it cannot be abstract or interface. Sorry about this.</p>
  *
- * @dxa.publicApi
  */
 @FunctionalInterface
 public interface HandlesHierarchyTypeInformation {

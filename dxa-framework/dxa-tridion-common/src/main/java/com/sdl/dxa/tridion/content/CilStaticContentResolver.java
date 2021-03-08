@@ -36,7 +36,6 @@ import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
  * Static content resolver is capable to resolve static (also versioned) binary content from broker database,
  * and to cache it for same request.
  *
- * @dxa.publicApi
  * @deprecated since PCA implementation added which supports mashup scenario.
  */
 @Slf4j

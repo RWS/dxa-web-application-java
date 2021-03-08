@@ -4,9 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.springframework.web.util.HtmlUtils;
 
-/**
- * @dxa.publicApi
- */
 @Getter
 @EqualsAndHashCode(callSuper = false)
 public final class HtmlAttribute extends HtmlRenderable {

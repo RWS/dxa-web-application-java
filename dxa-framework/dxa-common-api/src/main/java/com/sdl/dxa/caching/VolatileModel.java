@@ -3,7 +3,6 @@ package com.sdl.dxa.caching;
 /**
  * @deprecated
  * Interface that determines if the implementor model is cacheable and may be cached.
- * @dxa.publicApi
  */
 @Deprecated
 public interface VolatileModel {
@@ -12,7 +11,6 @@ public interface VolatileModel {
      * Returns whether the model is cacheable and may be cached.
      *
      * @return whether the model never may be cached
-     * @dxa.publicApi
      * This method is subject to be deleted, use isPossibleToCache instead.
      */
     @Deprecated
@@ -24,7 +22,6 @@ public interface VolatileModel {
      * Returns whether the model is cacheable and may be cached.
      *
      * @return whether the model never may be cached
-     * @dxa.publicApi
      */
     default boolean isPossibleToCache() {
         return !this.getClass().isAnnotationPresent(NeverCached.class) && isStaticModel();
@@ -34,7 +31,6 @@ public interface VolatileModel {
      * Returns whether the model is static meaning that is can be cached. Can be set dynamically with {@link #setStaticModel(boolean)}.
      *
      * @return whether the model is static
-     * @dxa.publicApi
      */
     default boolean isStaticModel() {
         return false;
@@ -44,7 +40,6 @@ public interface VolatileModel {
      * Set if the model is static.
      *
      * @param staticModel if the model is static
-     * @dxa.publicApi
      */
     default void setStaticModel(boolean staticModel) {
         // default implementation does nothing

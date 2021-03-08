@@ -860,36 +860,6 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.0.0-M1</version>
-                    <configuration>
-                        <taglet>com.sdl.dxa.javadoc.PublicApiTaglet</taglet>
-                        <tagletArtifact>
-                            <groupId>com.sdl.dxa</groupId>
-                            <artifactId>dxa-javadoc-tools</artifactId>
-                            <version>${project.version}</version>
-                        </tagletArtifact>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>publicApi</id>
-                            <configuration>
-                                <doclet>com.sdl.dxa.javadoc.PublicApiDoclet</doclet>
-                                <docletArtifact>
-                                    <groupId>com.sdl.dxa</groupId>
-                                    <artifactId>dxa-javadoc-tools</artifactId>
-                                    <version>${project.version}</version>
-                                </docletArtifact>
-                                <useStandardDocletOptions>true</useStandardDocletOptions>
-                                <reportOutputDirectory>
-                                    ${project.reporting.outputDirectory}/publicApi
-                                </reportOutputDirectory>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
                     <version>1.6.9</version>

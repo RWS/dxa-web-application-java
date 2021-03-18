@@ -78,7 +78,7 @@ public class GraphQLLocalizationResolverTest {
     public void refreshLocalizationWithSeveralUrlsForLocalization() throws Exception {
         createAndCacheNLocalizations(5, true);
         when(localization2.getId()).thenReturn("5");
-        assertEquals(6, localizationResolver.getAllLocalizations().size());
+        assertEquals(5, localizationResolver.getAllLocalizations().size());
 
         localizationResolver.refreshLocalization(localization2);
         assertEquals(4, localizationResolver.getAllLocalizations().size());

@@ -1,7 +1,5 @@
 package com.sdl.webapp.common.api.content;
 
-import org.springframework.cache.annotation.Cacheable;
-
 /**
  * Link resolver that resolves links to components.
  *
@@ -19,8 +17,7 @@ public interface LinkResolver {
      * @param resolveToBinary whether the expected URL is an URL to a binary
      * @return The translated URL.
      */
-    default String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary){
-
+    default String resolveLink(String url, String localizationId, boolean resolveToBinary){
         return resolveLink(url, localizationId, resolveToBinary, null);
     }
 
@@ -33,8 +30,7 @@ public interface LinkResolver {
      * @param localizationId The localization ID to use.
      * @return The translated URL.
      */
-    @Cacheable(value = "resolvedLinks", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary, #contextId }", sync = true)
-    default String resolveLink(@Nullable String url, @Nullable String localizationId) {
+    default String resolveLink(String url, String localizationId) {
         return resolveLink(url, localizationId, false, null);
     }
 
@@ -48,7 +44,7 @@ public interface LinkResolver {
      * @param contextId The ID of the context page within which we are resolving
      * @return The translated URL.
      */
-    default String resolveLink(@Nullable String url, @Nullable String localizationId, @Nullable String contextId) {
+    default String resolveLink(String url, String localizationId, String contextId) {
         return resolveLink(url, localizationId, false, contextId);
     }
 
@@ -63,5 +59,5 @@ public interface LinkResolver {
      * @param contextId The ID of the context page within which we are resolving
      * @return The translated URL.
      */
-    String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary, @Nullable String contextId);
+    String resolveLink(String url, String localizationId, boolean resolveToBinary, String contextId);
 }

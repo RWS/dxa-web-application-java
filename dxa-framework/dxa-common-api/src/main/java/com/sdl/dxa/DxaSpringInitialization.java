@@ -44,6 +44,7 @@ import org.springframework.web.servlet.view.JstlView;
 import org.springframework.web.servlet.view.UrlBasedViewResolver;
 
 import java.util.Locale;
+import java.util.Objects;
 
 import static com.sdl.webapp.common.api.serialization.json.DxaViewModelJsonChainFilter.FILTER_NAME;
 import static com.sdl.webapp.common.util.InitializationUtils.traceBeanInitialization;
@@ -207,6 +208,9 @@ public class DxaSpringInitialization {
         ClassPathScanningCandidateComponentProvider scanner = new ClassPathScanningCandidateComponentProvider(false);
         scanner.addIncludeFilter(new AnnotationTypeFilter(Polymorphic.class));
         scanner.findCandidateComponents(DataModelSpringConfiguration.class.getPackage().getName())
+                .stream()
+                .filter(Objects::nonNull)
+                .filter(type -> type.getBeanClassName() != null)
                 .forEach(type -> {
                     try {
                         Class<?> aClass = forName(type.getBeanClassName(), getDefaultClassLoader());

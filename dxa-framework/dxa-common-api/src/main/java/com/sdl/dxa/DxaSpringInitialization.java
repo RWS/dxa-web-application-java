@@ -177,7 +177,8 @@ public class DxaSpringInitialization {
     @Primary
     public ObjectMapper objectMapper() {
         ObjectMapper objectMapper = new ObjectMapper() {
-            // this is working replacements for Jackson 2.11 and later
+            // this is working replacements for Jackson 2.11 and later as
+            // mixins do not work anymore for standard java classes (includes Object.class)
             protected ClassIntrospector defaultClassIntrospector() {
                 return new BasicClassIntrospector() {
                     @Override

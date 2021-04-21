@@ -195,6 +195,7 @@ public class DxaSpringInitialization {
             }
         };
 
+        objectMapper.findAndRegisterModules();
         objectMapper.registerModule(new JodaModule());
         objectMapper.setFilterProvider(jsonFilterProvider());
         objectMapper.setDateFormat(new StdDateFormat());

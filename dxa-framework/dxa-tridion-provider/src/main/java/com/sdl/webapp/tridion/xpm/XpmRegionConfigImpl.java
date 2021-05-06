@@ -88,7 +88,12 @@ public class XpmRegionConfigImpl implements XpmRegionConfig {
         }
         try (final InputStream in = item.getContent();) {
             message += " and path: " + localization.getPath() + " as " + REGIONS_PATH;
-            SimpleModule module = new SimpleModule("ComponentTypeMapper", Version.unknownVersion());
+            SimpleModule module = new SimpleModule("ComponentTypeMapper", Version.unknownVersion()) {
+                @Override
+                public Object getTypeId() {
+                    return this.getClass().getName();
+                }
+            };
             module.addAbstractTypeMapping(ComponentType.class, ComponentTypeImpl.class);
             module.addAbstractTypeMapping(OccurrenceConstraint.class, OccurrenceConstraintImpl.class);
             objectMapper.registerModule(module); // important, otherwise won't have any effect on mapper's configuration

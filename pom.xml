@@ -105,7 +105,7 @@
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
         <dd4t-latest.version>2.1.7</dd4t-latest.version>
 
-        <pca-client.version>2.2.15</pca-client.version>
+        <pca-client.version>2.2.16</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>
     </properties>
 

@@ -7,6 +7,7 @@ import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.content.StaticContentNotLoadedException;
 import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.common.util.TcmUtils;
+
 import com.tridion.broker.StorageException;
 import com.tridion.content.BinaryFactory;
 import com.tridion.data.BinaryData;
@@ -16,12 +17,14 @@ import com.tridion.meta.ComponentMeta;
 import com.tridion.meta.ComponentMetaFactory;
 import com.tridion.meta.PublicationMeta;
 import com.tridion.meta.PublicationMetaFactory;
+
 import lombok.extern.slf4j.Slf4j;
+
 import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.tuple.ImmutableTriple;
-import org.apache.commons.lang3.tuple.Triple;
+
 import org.jetbrains.annotations.NotNull;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
@@ -29,6 +32,8 @@ import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import static com.sdl.webapp.common.util.FileUtils.isToBeRefreshed;
 
@@ -48,6 +53,13 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
     private final BinaryFactory binaryFactory;
     private final PublicationMetaFactory webPublicationMetaFactory;
 
+    private ConcurrentMap<String, Holder> runningTasks = new ConcurrentHashMap<>();
+
+    private static class Holder {
+        private String url;
+        private StaticContentItem previousState;
+    }
+
     @Autowired
     public CilStaticContentResolver(WebApplicationContext webApplicationContext,
                                     DynamicMetaRetriever dynamicMetaRetriever,
@@ -60,26 +72,47 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
     }
 
     @Override
-    protected @NotNull StaticContentItem createStaticContentItem(StaticContentRequestDto requestDto, File file, int publicationId, ImageUtils.StaticContentPathInfo pathInfo, String urlPath) throws ContentProviderException {
-        BinaryMeta binaryMeta = getBinaryMeta(urlPath, publicationId);
+    protected @NotNull StaticContentItem createStaticContentItem(StaticContentRequestDto requestDto,
+                                                                 File file,
+                                                                 int publicationId,
+                                                                 ImageUtils.StaticContentPathInfo pathInfo,
+                                                                 String urlPath) throws ContentProviderException {
+        Holder newHolder = new Holder();
+        Holder oldHolder = runningTasks.putIfAbsent(urlPath, newHolder);
 
-        int itemId = (int) binaryMeta.getURI().getItemId();
-        ComponentMeta componentMeta = getComponentMeta(pathInfo, publicationId, itemId);
-
-        long componentTime = componentMeta.getLastPublicationDate().getTime();
-
-        boolean shouldRefresh = requestDto.isNoMediaCache() || isToBeRefreshed(file, componentTime);
-
-        if (shouldRefresh) {
-            log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
-            refreshBinary(file, pathInfo, publicationId, binaryMeta, itemId);
-        } else {
-            log.debug("File does not need to be refreshed: {}", file.getAbsolutePath());
+        if (oldHolder != null) {
+            newHolder = oldHolder;
         }
+        newHolder.url = urlPath.intern();
+        try {
+            synchronized (newHolder.url) {
+                BinaryMeta binaryMeta = getBinaryMeta(urlPath, publicationId);
 
-        String contentType = StringUtils.isEmpty(binaryMeta.getType()) ? DEFAULT_CONTENT_TYPE : binaryMeta.getType();
-        boolean versioned = requestDto.getBinaryPath().contains("/system/");
-        return new StaticContentItem(contentType, file, versioned);
+                int itemId = (int) binaryMeta.getURI().getItemId();
+                ComponentMeta componentMeta = getComponentMeta(pathInfo, publicationId, itemId);
+
+                long componentTime = componentMeta.getLastPublicationDate().getTime();
+
+                boolean shouldRefresh = requestDto.isNoMediaCache() || isToBeRefreshed(file, componentTime);
+
+                if (shouldRefresh) {
+                    log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
+                    refreshBinary(file, pathInfo, publicationId, binaryMeta, itemId);
+                } else {
+                    log.debug("File does not need to be refreshed: {}", file.getAbsolutePath());
+                }
+
+                String contentType = StringUtils.isEmpty(binaryMeta.getType()) ? DEFAULT_CONTENT_TYPE : binaryMeta.getType();
+                boolean versioned = requestDto.getBinaryPath().contains("/system/");
+                StaticContentItem result = new StaticContentItem(contentType, file, versioned);
+                newHolder.previousState = result;
+                log.debug("Returned file: {}", newHolder.url);
+            }
+        }
+        finally {
+            runningTasks.remove(newHolder.url);
+        }
+        return newHolder.previousState;
     }
 
     @Override
@@ -121,15 +154,12 @@ public class CilStaticContentResolver extends GenericStaticContentResolver imple
     }
 
     private void refreshBinary(File file, ImageUtils.StaticContentPathInfo pathInfo, int publicationId, BinaryMeta binaryMeta, int itemId) throws ContentProviderException {
-        Triple<Integer, Integer, String> key = new ImmutableTriple<>(publicationId, itemId, binaryMeta.getVariantId());
         try {
-            synchronized (key.toString().intern()) {
-                BinaryData binaryData = binaryFactory.getBinary(publicationId, itemId, binaryMeta.getVariantId());
-                if (binaryData == null) {
-                    throw new IOException("Cannot find binary for " + publicationId + ":" + itemId);
-                }
-                refreshBinary(file, pathInfo, binaryData.getBytes());
+            BinaryData binaryData = binaryFactory.getBinary(publicationId, itemId, binaryMeta.getVariantId());
+            if (binaryData == null) {
+                throw new IOException("Cannot find binary for " + publicationId + ":" + itemId);
             }
+            refreshBinary(file, pathInfo, binaryData.getBytes());
         } catch (IOException e) {
             throw new StaticContentNotLoadedException("Cannot write new loaded content to a file " + file, e);
         }

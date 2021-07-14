@@ -41,7 +41,7 @@
         <httpcomponents-client-version>4.5.13</httpcomponents-client-version>
         <httpcomponents.core.version>4.4.14</httpcomponents.core.version>
 
-        <guava-version>30.1-jre</guava-version>
+        <guava-version>30.1.1-jre</guava-version>
 
         <!-- Joda Time -->
         <joda-time-version>2.10</joda-time-version>

@@ -10,7 +10,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-oss-parent</artifactId>
-    <version>2.2.17-SNAPSHOT</version>
+    <version>2.2.17</version>
     <packaging>pom</packaging>
 
     <name>DXA - Parent</name>
@@ -30,7 +30,7 @@
         <cd-cil.version>11.0.1-1019</cd-cil.version>
 
         <!-- DXA versions -->
-        <dxa.version>2.2.17-SNAPSHOT</dxa.version>
+        <dxa.version>2.2.17</dxa.version>
         <!-- /DXA Versions -->
 
         <!-- Apache -->
@@ -113,7 +113,7 @@
         <url>https://github.com/sdl/dxa-web-application-java</url>
         <connection>scm:git:git@github.com:sdl/dxa-web-application-java.git</connection>
         <developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>DXA_2.2.17</tag>
     </scm>
     <repositories>
         <repository>

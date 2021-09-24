@@ -3,6 +3,7 @@ package com.sdl.webapp.common.markup.html;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Entities;
 import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 
@@ -33,6 +34,9 @@ public class ParsableHtmlNode extends HtmlNode {
         if (this.html == null) {
             Element htmlElement = null;
             Document doc = Jsoup.parse(this.htmlText);
+            // The following settings ensure that Jsoup keeps self-enclosing tags unchanged
+            doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+            doc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
             List<Node> htmlNodes = doc.childNodes();
             Node firstNode = htmlNodes.get(0);
             if (firstNode instanceof Element) {

@@ -29,6 +29,9 @@ public abstract class AbstractLinkResolver implements LinkResolver, Initializing
     @Value("${dxa.web.link-resolver.strip-index-path:#{true}}")
     private boolean shouldStripIndexPath;
 
+    @Value("${dxa.web.link-resolver.keep-trailing-slash:#{false}}")
+    private boolean shouldKeepTrailingSlash;
+
     @Cacheable(value = "resolvedLinks", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary, #contextId }", sync = true)
     public String resolveLink(@Nullable String url, @Nullable String localizationId) {
         return resolveLink(url, localizationId, false, null);
@@ -40,6 +43,9 @@ public abstract class AbstractLinkResolver implements LinkResolver, Initializing
 
         String resolvedLink = _resolveLink(url, publicationId, resolveToBinary, contextId);
         String resolvedUrl = shouldStripIndexPath ? PathUtils.stripIndexPath(resolvedLink) : resolvedLink;
+        if (shouldKeepTrailingSlash && (! "/".equals(resolvedUrl)) && PathUtils.isIndexPath(resolvedLink)) {
+            resolvedUrl = resolvedUrl + "/";
+        }
         return shouldRemoveExtension ? PathUtils.stripDefaultExtension(resolvedUrl) : resolvedUrl;
     }
 

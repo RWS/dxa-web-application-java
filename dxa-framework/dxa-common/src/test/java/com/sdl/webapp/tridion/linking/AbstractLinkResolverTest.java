@@ -91,7 +91,7 @@ public class AbstractLinkResolverTest {
     }
 
     @Test
-    public void shouldNotRemoveIndex_IfExtensionIsNotRemoved() {
+    public void shouldRemoveIndex_IfExtensionIsNotRemoved() {
         //given
         TestLinkResolver linkResolver = new TestLinkResolver(false, true, false);
 
@@ -99,7 +99,7 @@ public class AbstractLinkResolverTest {
         String indexHtml = linkResolver.resolveLink("/index.html", "1");
 
         //then
-        assertEquals("/index.html", indexHtml);
+        assertEquals("/", indexHtml);
     }
 
     @Test

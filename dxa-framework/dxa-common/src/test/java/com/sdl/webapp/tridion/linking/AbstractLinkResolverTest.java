@@ -10,7 +10,7 @@ public class AbstractLinkResolverTest {
 
     @Test
     public void shouldReturnUrlItself_IfNotTcmUri() {
-        //given 
+        //given
         TestLinkResolver linkResolver = new TestLinkResolver();
 
         //when
@@ -28,7 +28,7 @@ public class AbstractLinkResolverTest {
 
     @Test
     public void shouldGetPublicationIdFromTcmUri_IfPublicationIdIsNullOrEmpty() {
-        //given 
+        //given
         TestLinkResolver linkResolver = new TestLinkResolver();
 
         //when
@@ -43,21 +43,45 @@ public class AbstractLinkResolverTest {
     }
 
     @Test
-    public void shouldNotRemoveExtension_IfDisabled() {
+    public void shouldRemoveExtension() {
         //given
-        TestLinkResolver linkResolver = new TestLinkResolver(false, true);
+        TestLinkResolver linkResolver = new TestLinkResolver(true, true, false);
 
         //when
-        String indexHtml = linkResolver.resolveLink("/index.html", "1");
+        String pageHtml = linkResolver.resolveLink("/page.html", "1");
 
         //then
-        assertEquals("/index.html", indexHtml);
+        assertEquals("/page", pageHtml);
+    }
+
+    @Test
+    public void shouldNotRemoveExtension_IfDisabled() {
+        //given
+        TestLinkResolver linkResolver = new TestLinkResolver(false, true, false);
+
+        //when
+        String pageHtml = linkResolver.resolveLink("/page.html", "1");
+
+        //then
+        assertEquals("/page.html", pageHtml);
+    }
+
+    @Test
+    public void shouldRemoveIndex() {
+        //given
+        TestLinkResolver linkResolver = new TestLinkResolver(true, true, false);
+
+        //when
+        String indexHtml = linkResolver.resolveLink("/index", "1");
+
+        //then
+        assertEquals("/", indexHtml);
     }
 
     @Test
     public void shouldNotRemoveIndex_IfDisabled() {
         //given
-        TestLinkResolver linkResolver = new TestLinkResolver(true, false);
+        TestLinkResolver linkResolver = new TestLinkResolver(true, false, false);
 
         //when
         String indexHtml = linkResolver.resolveLink("/index", "1");
@@ -69,7 +93,7 @@ public class AbstractLinkResolverTest {
     @Test
     public void shouldNotRemoveIndex_IfExtensionIsNotRemoved() {
         //given
-        TestLinkResolver linkResolver = new TestLinkResolver(false, true);
+        TestLinkResolver linkResolver = new TestLinkResolver(false, true, false);
 
         //when
         String indexHtml = linkResolver.resolveLink("/index.html", "1");
@@ -81,7 +105,7 @@ public class AbstractLinkResolverTest {
     @Test
     public void shouldNotRemoveIndexOrExtension_IfDisabled() throws Exception {
         //given
-        TestLinkResolver linkResolver = new TestLinkResolver(false, false);
+        TestLinkResolver linkResolver = new TestLinkResolver(false, false, false);
 
         //when
         String indexHtml = linkResolver.resolveLink("/index.html", "1");
@@ -90,15 +114,44 @@ public class AbstractLinkResolverTest {
         assertEquals("/index.html", indexHtml);
     }
 
+    @Test
+    public void shouldKeepIndexTrailingSlash() throws Exception {
+        //given
+        TestLinkResolver linkResolver = new TestLinkResolver(true, true, true);
+
+        //when
+        String indexHtml = linkResolver.resolveLink("/branch/index.html", "1");
+
+        //then
+        assertEquals("/branch/", indexHtml);
+    }
+
+    @Test
+    public void shouldNotAddIndexTrailingSlash() throws Exception {
+        //given
+        TestLinkResolver linkResolver = new TestLinkResolver(true, true, true);
+
+        //when
+        String indexHtml = linkResolver.resolveLink("/index.html", "1");
+
+        //then
+        assertEquals("/", indexHtml);
+    }
+
     @Profile("test")
     private static class TestLinkResolver extends AbstractLinkResolver {
 
         public TestLinkResolver() {
             ReflectionTestUtils.setField(this, "shouldRemoveExtension", true);
             ReflectionTestUtils.setField(this, "shouldStripIndexPath", true);
+            ReflectionTestUtils.setField(this, "shouldKeepTrailingSlash", false);
         }
 
-        public TestLinkResolver(boolean shouldRemoveExtension, boolean shouldStripIndexPath) {
+        public TestLinkResolver(boolean shouldRemoveExtension, boolean shouldStripIndexPath,
+                                boolean shouldKeepTrailingSlash) {
+            ReflectionTestUtils.setField(this, "shouldRemoveExtension", shouldRemoveExtension);
+            ReflectionTestUtils.setField(this, "shouldStripIndexPath", shouldStripIndexPath);
+            ReflectionTestUtils.setField(this, "shouldKeepTrailingSlash", shouldKeepTrailingSlash);
         }
 
         @Override

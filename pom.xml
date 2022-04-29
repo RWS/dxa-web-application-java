@@ -10,7 +10,7 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-oss-parent</artifactId>
-    <version>2.2.19-SNAPSHOT</version>
+    <version>2.2.20-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>DXA - Parent</name>
@@ -30,7 +30,7 @@
         <cd-cil.version>11.0.1-1019</cd-cil.version>
 
         <!-- DXA versions -->
-        <dxa.version>2.2.19-SNAPSHOT</dxa.version>
+        <dxa.version>2.2.20-SNAPSHOT</dxa.version>
         <!-- /DXA Versions -->
 
         <!-- Apache -->
@@ -105,7 +105,7 @@
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
         <dd4t-latest.version>2.1.7</dd4t-latest.version>
 
-        <pca-client.version>2.2.16</pca-client.version>
+        <pca-client.version>2.2.20</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>
     </properties>
 

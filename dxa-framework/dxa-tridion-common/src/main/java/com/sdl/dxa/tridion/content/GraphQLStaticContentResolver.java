@@ -16,7 +16,6 @@ import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.common.util.UrlEncoder;
-import com.tridion.data.BinaryData;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
@@ -29,7 +28,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.context.WebApplicationContext;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
@@ -151,12 +149,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
             throw new StaticContentNotFoundException("No binary found for pubId: [" +
                     requestDto.getLocalizationId() + "] and urlPath: " + urlPath);
         }
-        if (!requestDto.isNoMediaCache()) {
-            log.debug("File cannot be cached: {}", file.getAbsolutePath());
-            long time = System.currentTimeMillis() - 5000;
-            binaryComponent.setLastPublishDate(new DateTime(time).toString());
-        }
-        downloadBinaryWhenNeeded(binaryComponent, file, pathInfo);
+        downloadBinaryWhenNeeded(binaryComponent, requestDto, file, pathInfo);
         BinaryVariant variant = binaryComponent.getVariants().getEdges().get(0).getNode();
         String binaryComponentType = variant.getType();
         String contentType = StringUtils.isEmpty(binaryComponentType) ? DEFAULT_CONTENT_TYPE : binaryComponentType;
@@ -164,9 +157,9 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         return new StaticContentItem(contentType, file, versioned);
     }
 
-    private void downloadBinaryWhenNeeded(BinaryComponent binaryComponent, File file, ImageUtils.StaticContentPathInfo pathInfo) throws ContentProviderException {
+    private void downloadBinaryWhenNeeded(BinaryComponent binaryComponent, StaticContentRequestDto requestDto, File file, ImageUtils.StaticContentPathInfo pathInfo) throws ContentProviderException {
         long componentTime = new DateTime(binaryComponent.getLastPublishDate()).getMillis();
-        boolean toBeRefreshed = isToBeRefreshed(file, componentTime);
+        boolean toBeRefreshed = requestDto.isNoMediaCache() || isToBeRefreshed(file, componentTime);
         if (!toBeRefreshed) {
             log.debug("File does not need to be refreshed: {}", file.getAbsolutePath());
             return;

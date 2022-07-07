@@ -68,7 +68,7 @@
         <xmlunit.version>2.6.2</xmlunit.version>
 
         <!-- Spring -->
-        <spring.version>4.3.24.RELEASE</spring.version>
+        <spring.version>5.2.21.RELEASE</spring.version>
         <spring-security.version>5.2.10.RELEASE</spring-security.version>
 
         <jsoup.version>1.12.1</jsoup.version>

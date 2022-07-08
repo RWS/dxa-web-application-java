@@ -3,10 +3,12 @@ package com.sdl.dxa.tridion.content;
 import com.sdl.web.pca.client.auth.Authentication;
 import com.sdl.webapp.common.api.content.StaticContentNotLoadedException;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpHost;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.conn.DefaultProxyRoutePlanner;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
@@ -24,7 +26,26 @@ public class BinaryContentDownloader {
     private Authentication authentication;
 
     public BinaryContentDownloader() {
-        httpclient = HttpClients.createDefault();
+        HttpHost proxy = createProxy();
+        if (proxy != null) {
+            DefaultProxyRoutePlanner routePlanner = new DefaultProxyRoutePlanner(proxy);
+            httpclient = HttpClients.custom().setRoutePlanner(routePlanner).build();
+        }
+        else {
+            httpclient = HttpClients.createDefault();
+        }
+    }
+
+    public HttpHost createProxy() {
+        String proxyHost = System.getProperty("http.proxyHost");
+        if (proxyHost != null) {
+            String proxyPort = System.getProperty("http.proxyPort");
+            return new HttpHost(
+                    proxyHost,
+                    proxyPort != null ? Integer.parseInt(proxyPort) : -1,
+                    "http");
+        }
+        return null;
     }
 
     public byte[] downloadContent(File file, String downloadUrl) throws StaticContentNotLoadedException {

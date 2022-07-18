@@ -40,10 +40,7 @@ public class BinaryContentDownloader {
         String proxyHost = System.getProperty("http.proxyHost");
         if (proxyHost != null) {
             String proxyPort = System.getProperty("http.proxyPort");
-            return new HttpHost(
-                    proxyHost,
-                    proxyPort != null ? Integer.parseInt(proxyPort) : -1,
-                    "http");
+            return new HttpHost(proxyHost, proxyPort != null ? Integer.parseInt(proxyPort) : -1);
         }
         return null;
     }

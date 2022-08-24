@@ -82,7 +82,7 @@ public class EntityXpmMarkup implements MarkupDecorator {
     @Override
     public HtmlNode process(HtmlNode markup, ViewModel model, WebRequestContext webRequestContext) {
 
-        if (!webRequestContext.isSessionPreview()) {
+        if (!webRequestContext.getLocalization().isStaging()) {
             return markup;
         }
         EntityModel entity = (EntityModel) model;

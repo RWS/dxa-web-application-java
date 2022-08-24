@@ -61,7 +61,7 @@ public class RegionXpmMarkup implements MarkupDecorator {
     @Override
     public HtmlNode process(HtmlNode markup, ViewModel model, WebRequestContext webRequestContext) {
 
-        if (webRequestContext.isSessionPreview()) {
+        if (webRequestContext.getLocalization().isStaging()) {
             RegionModel region = (RegionModel) model;
 
             // TODO determine min occurs and max occurs for the region

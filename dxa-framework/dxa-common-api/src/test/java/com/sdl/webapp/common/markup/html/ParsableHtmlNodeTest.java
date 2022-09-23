@@ -22,7 +22,7 @@ public class ParsableHtmlNodeTest {
         String xpmMarkup = "<!-- Start Component Presentation -->";
         html.prepend(xpmMarkup);
 
-        assertThat("XPM markup has been injected into HTML", markup.toHtml(), is("<div id=\"region\">\n <!-- Start Component Presentation -->\n <p>Hello there!!!</p>\n <a href=\"#\">LINK</a>\n</div>"));
+        assertThat("XPM markup has been injected into HTML", markup.toHtml(), is("<div id=\"region\">\n <!-- Start Component Presentation -->\n <p>Hello there!!!</p><a href=\"#\">LINK</a>\n</div>"));
     }
 
 }

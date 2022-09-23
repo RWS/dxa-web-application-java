@@ -83,7 +83,6 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
         return createStaticContentItem(requestDto, file, publicationId, pathInfo, urlPath);
     }
 
-    @SneakyThrows(UnsupportedEncodingException.class)
     protected String prependFullUrlIfNeeded(String path, String baseUrl) {
         if (path.contains(baseUrl)) {
             return path;

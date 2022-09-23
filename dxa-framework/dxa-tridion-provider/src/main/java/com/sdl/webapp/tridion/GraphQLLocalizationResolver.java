@@ -75,7 +75,6 @@ public class GraphQLLocalizationResolver implements LocalizationResolver {
      * {@inheritDoc}
      */
     @Override
-    @SneakyThrows(UnsupportedEncodingException.class)
     public Localization getLocalization(String url) throws LocalizationResolverException {
         LOG.trace("getLocalization: {}", url);
 

@@ -36,7 +36,7 @@
         <!-- Apache -->
         <commons-io-version>2.8.0</commons-io-version>
         <commons-lang3.version>3.11</commons-lang3.version>
-        <commons-text.version>1.9</commons-text.version>
+        <commons-text.version>1.10.0</commons-text.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <httpcomponents-client-version>4.5.13</httpcomponents-client-version>
         <httpcomponents.core.version>4.4.14</httpcomponents.core.version>
@@ -47,6 +47,7 @@
         <joda-time-version>2.10</joda-time-version>
 
         <jackson.version>2.13.4</jackson.version>
+        <jackson-binding.version>2.13.4.2</jackson-binding.version>
         <lombok.version>1.18.24</lombok.version>
 
         <!-- Logging -->
@@ -68,8 +69,8 @@
         <xmlunit.version>2.6.2</xmlunit.version>
 
         <!-- Spring -->
-        <spring.version>5.2.22.RELEASE</spring.version>
-        <spring-security.version>5.7.3</spring-security.version>
+        <spring.version>5.3.23</spring.version>
+        <spring-security.version>5.7.4</spring-security.version>
 
         <jsoup.version>1.15.3</jsoup.version>
         <rome.version>1.15.0</rome.version>
@@ -105,7 +106,7 @@
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
         <dd4t-latest.version>2.1.7</dd4t-latest.version>
 
-        <pca-client.version>2.2.27</pca-client.version>
+        <pca-client.version>2.2.28</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>
     </properties>
 
@@ -634,7 +635,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson.version}</version>
+                <version>${jackson-binding.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>

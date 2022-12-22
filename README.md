@@ -41,10 +41,19 @@ Documentation
 -------------
 Documentation can be found online in the SDL documentation portal: https://docs.sdl.com/sdldxa
 
+Updating the DXA Locally
+-------------
+If you are updating an existing DXA web application, particularly to a minor version, the process involves updating the dependencies in Maven or Gradle, and recompiling your solution using the latest version of the DXA artifacts available from Maven Central. It should be taken into account any dependency updates to supporting libraries or frameworks such as Jackson and Spring.
+RWS Professional Services can perform an upgrade scan of your web application. The outcome of this scan is a document highlighting the steps to take you to the next version. Please contact RWS for more information.
+
+DXA Templating
+-------------
+Make sure to apply the latest updates to the DXA templating side in the Tridion Sites Content Manager. This is available from [this repository](https://github.com/RWS/dxa-content-management).
+Instructions for updating the Content Manager can be found [here](https://docs.rws.com/784837/466718/sdl-digital-experience-accelerator-2-2/upgrading-------------dxa-on-the-------------sdl-tridion-sites-content-manager).  
 
 Repositories
-------------
-You can find all the DXA related repositories [here](https://github.com/sdl/?q=dxa&type=source&language=)
+-------------
+You can find all the DXA related repositories [here](https://github.com/rws/?q=dxa&type=source&language=)
 
 
 Branches and Contributions
@@ -96,7 +105,7 @@ DXA publishes SNAPSHOT versions to Sonatype. To use them, configure `https://oss
 
 License
 -------
-Copyright (c) 2014-2021 RWS Group.
+Copyright (c) 2014-2022 RWS Group.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

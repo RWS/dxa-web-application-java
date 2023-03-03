@@ -2,7 +2,6 @@ package com.sdl.dxa.tridion.pcaclient;
 
 import com.sdl.web.client.cache.CacheProvider;
 import com.sdl.web.client.cache.CacheProviderInitializer;
-import com.sdl.web.client.cache.GeneralCacheProvider;
 import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.web.content.client.util.ClientCacheKeyEnhancer;
 import com.sdl.web.pca.client.DefaultGraphQLClient;
@@ -71,24 +70,11 @@ public class DXAGraphQLClient extends DefaultGraphQLClient {
     }
 
     private Serializable getFromCache(Cache<String, Serializable> cache, String cacheKey) {
-        LOG.debug("Cache is enabled, trying to get the cached response from cache, Hit/miss/backup:" + HIT_CACHE.get() + "/" + MISS_CACHE.get() + "/" + HIT_BACKUP_CACHE.get() + ", key:" + cacheKey);
+        LOG.debug("Cache is enabled, trying to get the cached response from cache, Hit/miss:" + HIT_CACHE.get() + "/" + MISS_CACHE.get() + ", key:" + cacheKey);
         Serializable cachedResponse = cache.get(cacheKey);
         if (cachedResponse != null) {
             HIT_CACHE.incrementAndGet();
             return cachedResponse;
-        }
-        else if (this.cacheProvider.needCheckHostAvailability() && !this.cacheProvider.getServiceChecker().isHostAvailable() && this.cacheProvider instanceof GeneralCacheProvider) {
-            LOG.debug("Host is not available. Trying to get the cached response from backup cache");
-            GeneralCacheProvider generalCacheProvider = (GeneralCacheProvider)this.cacheProvider;
-            Cache<String, Serializable> backupCache = generalCacheProvider.provideBackupCacheForClass(String.class, Serializable.class);
-            cachedResponse = backupCache.get(cacheKey);
-            if (cachedResponse == null) {
-                throw new RuntimeException("The service is not available and cache does not contain value for key: " + cacheKey);
-            }
-            else {
-                HIT_BACKUP_CACHE.incrementAndGet();
-                return cachedResponse;
-            }
         }
         else {
             LOG.debug("Entity ({}) is not found in cache", cacheKey);

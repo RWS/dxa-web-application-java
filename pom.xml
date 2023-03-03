@@ -414,7 +414,7 @@
                 <version>${jsp-api-version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.servlet.jsp.jstl</groupId>
+                <groupId>javax.servlet</groupId>
                 <artifactId>jstl</artifactId>
                 <version>${jstl-version}</version>
             </dependency>

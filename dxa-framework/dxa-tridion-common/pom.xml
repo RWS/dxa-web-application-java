@@ -26,6 +26,12 @@
             <groupId>com.sdl.delivery</groupId>
             <artifactId>cil</artifactId>
             <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <!-- pca Model -->
         <dependency>

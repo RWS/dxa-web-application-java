@@ -46,8 +46,7 @@
         <!-- Joda Time -->
         <joda-time-version>2.10</joda-time-version>
 
-        <jackson.version>2.13.4</jackson.version>
-        <jackson-binding.version>2.13.4.2</jackson-binding.version>
+        <jackson.version>2.13.5</jackson.version>
         <lombok.version>1.18.24</lombok.version>
 
         <!-- Logging -->
@@ -72,9 +71,9 @@
         <spring.version>5.3.23</spring.version>
         <spring-security.version>5.7.4</spring-security.version>
 
-        <jsoup.version>1.15.3</jsoup.version>
+        <jsoup.version>1.15.4</jsoup.version>
         <rome.version>1.15.0</rome.version>
-        <xalan-version>2.7.2</xalan-version>
+        <!--<xalan-version>2.7.2</xalan-version>-->
 
         <dozer.version>5.5.1</dozer.version>
         <device-detection.version>3.2.18.1</device-detection.version>
@@ -338,6 +337,10 @@
                         <groupId>com.sdl.web</groupId>
                         <artifactId>web-ambient-engine</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>xalan</groupId>
+                        <artifactId>xalan</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -411,7 +414,7 @@
                 <version>${jsp-api-version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
+                <groupId>javax.servlet.jsp.jstl</groupId>
                 <artifactId>jstl</artifactId>
                 <version>${jstl-version}</version>
             </dependency>
@@ -635,7 +638,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson-binding.version}</version>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
@@ -685,6 +688,7 @@
                 <version>${rome.version}</version>
             </dependency>
 
+            <!--
             <dependency>
                 <groupId>xalan</groupId>
                 <artifactId>xalan</artifactId>
@@ -697,6 +701,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            -->
 
             <dependency>
                 <groupId>org.jetbrains</groupId>
@@ -805,6 +810,37 @@
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-impl</artifactId>
                 <version>${jaxb.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.github.ua-parser</groupId>
+                <artifactId>uap-java</artifactId>
+                <version>1.5.4</version>
+            </dependency>
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>1.22</version>
+            </dependency>
+            <dependency>
+                <groupId>org.codehaus.jettison</groupId>
+                <artifactId>jettison</artifactId>
+                <version>1.5.3</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>4.10.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>logging-interceptor</artifactId>
+                <version>4.10.0</version>
             </dependency>
 
         </dependencies>

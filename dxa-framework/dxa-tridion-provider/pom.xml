@@ -36,6 +36,12 @@
             <groupId>com.sdl.web</groupId>
             <artifactId>cil</artifactId>
             <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Spring Framework -->
@@ -97,10 +103,12 @@
             <artifactId>cache-api</artifactId>
         </dependency>
 
+        <!--
         <dependency>
             <groupId>xalan</groupId>
             <artifactId>xalan</artifactId>
         </dependency>
+        -->
 
         <dependency>
             <groupId>org.jsoup</groupId>

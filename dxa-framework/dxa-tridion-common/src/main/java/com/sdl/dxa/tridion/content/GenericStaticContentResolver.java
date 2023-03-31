@@ -5,7 +5,6 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotLoadedException;
 import com.sdl.webapp.common.util.ImageUtils;
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -14,7 +13,7 @@ import org.springframework.web.util.UriUtils;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
 import static com.sdl.webapp.common.util.FileUtils.parentFolderExists;
@@ -73,10 +72,21 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
 
     @NotNull
     private StaticContentItem getStaticContentFileByPath(String path, StaticContentRequestDto requestDto) throws ContentProviderException {
-        String parentPath = getPublicationPath(requestDto.getLocalizationId());
+        String parentPath = Paths.get(getPublicationPath(requestDto.getLocalizationId())).normalize().toString();
+        String normalized_path = Paths.get(path).normalize().toString();
 
-        final File file = new File(parentPath, path);
+        final File file = new File(parentPath, normalized_path);
+        try {
+            if (!file.getCanonicalPath().startsWith(parentPath)) {
+                throw new ContentProviderException("The path to the static file not starting with the expected " +
+                        "parent path. [" + file.getCanonicalPath() + "]");
+            }
+        }
+        catch(IOException ioException) {
+            throw new ContentProviderException(ioException);
+        }
         log.trace("getStaticContentFileByPath: {}", file.getAbsolutePath());
+
         final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
         int publicationId = Integer.parseInt(requestDto.getLocalizationId());
         String urlPath = prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl());

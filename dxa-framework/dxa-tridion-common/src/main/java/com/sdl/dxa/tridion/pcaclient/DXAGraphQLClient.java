@@ -10,11 +10,14 @@ import com.sdl.web.pca.client.exception.GraphQLClientException;
 import com.sdl.web.pca.client.exception.UnauthorizedException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 
+import com.tridion.ambientdata.web.WebContext;
+
 import org.slf4j.Logger;
 
 import javax.cache.Cache;
 import java.io.Serializable;
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
 
 import static org.slf4j.LoggerFactory.getLogger;
@@ -24,7 +27,6 @@ public class DXAGraphQLClient extends DefaultGraphQLClient {
     private static final Logger LOG = getLogger(DXAGraphQLClient.class);
 
     private static final AtomicLong HIT_CACHE = new AtomicLong();
-    private static final AtomicLong HIT_BACKUP_CACHE = new AtomicLong();
     private static final AtomicLong MISS_CACHE = new AtomicLong();
 
     private GraphQlServiceConfigurationLoader configurationLoader;
@@ -66,7 +68,12 @@ public class DXAGraphQLClient extends DefaultGraphQLClient {
     }
 
     private String createCacheKey(String query) {
-        return (new ClientCacheKeyEnhancer(query)).addUserConditions().compile();
+        if (WebContext.getCurrentClaimStore() != null) {
+            LOG.debug("ClaimStore is available, so utilizing the ClientCacheKeyEnhancer");
+            return (new ClientCacheKeyEnhancer(query)).addUserConditions().compile();
+        }
+        LOG.debug("There is no ClaimStore, so utilizing the query itself as key");
+        return UUID.nameUUIDFromBytes(query.getBytes()).toString();
     }
 
     private Serializable getFromCache(Cache<String, Serializable> cache, String cacheKey) {

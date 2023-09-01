@@ -27,7 +27,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- CIL version-->
-        <cd-cil.version>11.5.0-1174</cd-cil.version>
+        <cd-cil.version>11.6.0-1123</cd-cil.version>
 
         <!-- DXA versions -->
         <dxa.version>2.2.34-SNAPSHOT</dxa.version>
@@ -41,12 +41,12 @@
         <httpcomponents-client-version>4.5.13</httpcomponents-client-version>
         <httpcomponents.core.version>4.4.14</httpcomponents.core.version>
 
-        <guava-version>30.1.1-jre</guava-version>
+        <guava-version>32.1.2-jre</guava-version>
 
         <!-- Joda Time -->
         <joda-time-version>2.10</joda-time-version>
 
-        <jackson.version>2.13.5</jackson.version>
+        <jackson.version>2.15.2</jackson.version>
         <lombok.version>1.18.24</lombok.version>
 
         <!-- Logging -->
@@ -68,11 +68,12 @@
         <xmlunit.version>2.6.2</xmlunit.version>
 
         <!-- Spring -->
-        <spring.version>5.3.23</spring.version>
-        <spring-security.version>5.7.4</spring-security.version>
+        <spring.version>5.3.29</spring.version>
+        <spring-security.version>5.8.5</spring-security.version>
 
         <jsoup.version>1.15.4</jsoup.version>
         <rome.version>1.15.0</rome.version>
+        <jettison.version>1.5.4</jettison.version>
         <!--<xalan-version>2.7.2</xalan-version>-->
 
         <dozer.version>5.5.1</dozer.version>
@@ -689,6 +690,42 @@
                 <groupId>com.rometools</groupId>
                 <artifactId>rome</artifactId>
                 <version>${rome.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.codehaus.jettison</groupId>
+                <artifactId>jettison</artifactId>
+                <version>${jettison.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio-jvm</artifactId>
+                <version>3.5.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang.modules</groupId>
+                <artifactId>scala-parser-combinators_2.12</artifactId>
+                <version>2.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>1.9.10</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-common</artifactId>
+                <version>1.9.10</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk7</artifactId>
+                <version>1.9.10</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <version>1.9.10</version>
             </dependency>
 
             <!--

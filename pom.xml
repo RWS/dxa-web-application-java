@@ -727,6 +727,11 @@
                 <artifactId>kotlin-stdlib-jdk8</artifactId>
                 <version>1.9.10</version>
             </dependency>
+            <dependency>
+                <groupId>com.github.ua-parser</groupId>
+                <artifactId>uap-java</artifactId>
+                <version>1.5.4</version>
+            </dependency>
 
             <!--
             <dependency>

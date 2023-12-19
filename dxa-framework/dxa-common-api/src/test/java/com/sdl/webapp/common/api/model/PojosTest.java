@@ -15,14 +15,14 @@ import com.openpojo.validation.test.Tester;
 import com.openpojo.validation.utils.ValidationHelper;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 @Slf4j
 public abstract class PojosTest {
@@ -56,9 +56,9 @@ public abstract class PojosTest {
                 if (!getExcludedGetterSetterFieldNames().contains(fieldEntry.getName())) {
                     Object value = RandomFactory.getRandomValue(fieldEntry);
                     fieldEntry.invokeSetter(classInstance, value);
-                    assertEquals("Setter/getter are not working fine together, if you have custom logic write a separate test " +
-                                    "and exclude from automatic check by overriding #getExcludedGetterSetterFieldNames()",
-                            fieldEntry.invokeGetter(classInstance), value);
+                    assertEquals(fieldEntry.invokeGetter(classInstance), value,
+                            "Setter/getter are not working fine together, if you have custom logic write a separate test " +
+                            "and exclude from automatic check by overriding #getExcludedGetterSetterFieldNames()");
                 } else {
                     log.debug("{} field is excluded from automatic test, please make sure you have a custom test for " +
                             "this by overriding #getExcludedGetterSetterFieldNames()", fieldEntry.getName());

@@ -12,20 +12,20 @@ import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import com.sdl.webapp.common.api.model.region.RegionModelImpl;
 import com.sdl.webapp.common.exceptions.DxaException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatcher;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static junit.framework.TestCase.assertNotNull;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AbstractInitializerTest {
 
     private static final String AREA = "area";
@@ -54,26 +54,22 @@ public class AbstractInitializerTest {
     }
 
     private void verifyRegistration(final String viewName, final String controllerName, Class<? extends ViewModel> clazz) {
-        verify(registry).registerViewModel(argThat(new ArgumentMatcher<MvcData>() {
-
-            @Override
-            public boolean matches(Object argument) {
-                if (argument == null || viewName == null) {
-                    return viewName == null && argument == null;
-                }
-
-                MvcData mvcData = (MvcData) argument;
-
-                if (EntityModel.class.isAssignableFrom(clazz) ||
-                        PageModel.class.isAssignableFrom(clazz) ||
-                        RegionModel.class.isAssignableFrom(clazz)) {
-                    assertNotNull(mvcData.getControllerName());
-                }
-
-                return mvcData.getViewName().equals(viewName)
-                        && mvcData.getControllerName().equals(controllerName)
-                        && mvcData.getAreaName().equals(AREA);
+        verify(registry).registerViewModel(argThat(argument -> {
+            if (argument == null || viewName == null) {
+                return viewName == null && argument == null;
             }
+
+            MvcData mvcData = (MvcData) argument;
+
+            if (EntityModel.class.isAssignableFrom(clazz) ||
+                    PageModel.class.isAssignableFrom(clazz) ||
+                    RegionModel.class.isAssignableFrom(clazz)) {
+                assertNotNull(mvcData.getControllerName());
+            }
+
+            return mvcData.getViewName().equals(viewName)
+                    && mvcData.getControllerName().equals(controllerName)
+                    && mvcData.getAreaName().equals(AREA);
         }), eq(clazz));
     }
 

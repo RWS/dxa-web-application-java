@@ -1,12 +1,13 @@
 package com.sdl.webapp.common.api.model.mvcdata;
 
 import com.sdl.webapp.common.api.model.MvcData;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator.creator;
 import static com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl.newBuilder;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class MvcDataCreatorTest {
 
@@ -86,51 +87,55 @@ public class MvcDataCreatorTest {
                 .viewName(viewName), mvcDataShort);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldFailForWrongInitNameWithTooManySemicolons() {
-        //given
-        String manySemicolons = "q:a:s:z";
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            // Given
+            String manySemicolons = "q:a:s:z";
 
-        //when
-        creator().fromQualifiedName(manySemicolons);
+            // When
+            creator().fromQualifiedName(manySemicolons);
 
-        //then
-//        exception expected
+            // Then exception expected
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldFailForWrongInitNameWhichIsEmpty() {
-        //given
-        String empty = "";
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            // Given
+            String empty = "";
 
-        //when
-        creator().fromQualifiedName(empty);
+            // When
+            creator().fromQualifiedName(empty);
 
-        //then
-//        exception expected
+            // Then exception expected
+        });
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldFailForWrongInitNameWhichIsNull() {
-        //given
+        Assertions.assertThrows(NullPointerException.class, () -> {
+            // Given
 
-        //when
-        creator().fromQualifiedName(null);
+            // When
+            creator().fromQualifiedName(null);
 
-        //then
-//        exception expected
+            // Then exception expected
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldFailForWrongInitNamWithTooManySemicolons() {
-        //given
-        String manySemicolons = "q:a:s:z";
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            // Given
+            String manySemicolons = "q:a:s:z";
 
-        //when
-        creator().fromQualifiedName(manySemicolons);
+            // When
+            creator().fromQualifiedName(manySemicolons);
 
-        //then
-//        exception expected
+            // Then exception expected
+        });
     }
 
     @Test

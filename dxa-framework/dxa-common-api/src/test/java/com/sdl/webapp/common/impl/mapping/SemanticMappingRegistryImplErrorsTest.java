@@ -4,7 +4,8 @@ import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntities;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticEntity;
 import com.sdl.webapp.common.api.mapping.semantic.annotations.SemanticProperty;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE;
 
@@ -13,16 +14,20 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
  */
 public class SemanticMappingRegistryImplErrorsTest {
 
-    @Test(expected = SemanticAnnotationException.class)
+    @Test
     public void testSemanticEntityAnnosWithTheSamePrefix() {
-        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
-        registry.registerEntity(TestEntity1.class);
+        Assertions.assertThrows(SemanticAnnotationException.class, () -> {
+            final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
+            registry.registerEntity(TestEntity1.class);
+        });
     }
 
-    @Test(expected = SemanticAnnotationException.class)
+    @Test
     public void testSemanticPropertyAnnoWithUnknownPrefix() {
-        final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
-        registry.registerEntity(TestEntity2.class);
+        Assertions.assertThrows(SemanticAnnotationException.class, () -> {
+            final SemanticMappingRegistryImpl registry = new SemanticMappingRegistryImpl();
+            registry.registerEntity(TestEntity2.class);
+        });
     }
 
     @SemanticEntities({

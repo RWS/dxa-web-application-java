@@ -5,22 +5,22 @@ import com.sdl.dxa.tridion.modelservice.ModelServiceClientConfiguration;
 import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceException;
 import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.core.exceptions.SerializationException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ModelServicePageProviderTest {
 
     @Mock
@@ -32,9 +32,9 @@ public class ModelServicePageProviderTest {
     @InjectMocks
     private ModelServicePageProvider modelServicePageProvider;
 
-    @Before
+    @BeforeEach
     public void init() {
-        when(modelServiceClientConfiguration.getPageModelUrl()).thenReturn("/conf");
+        lenient().when(modelServiceClientConfiguration.getPageModelUrl()).thenReturn("/conf");
         modelServicePageProvider.setContentIsCompressed("false");
         modelServicePageProvider.setContentIsBase64Encoded(false);
     }
@@ -44,7 +44,7 @@ public class ModelServicePageProviderTest {
         //given
         String content = "content";
         //noinspection unchecked
-        when(modelServiceClient.getForType(anyString(), any(Class.class), anyString(), anyInt(), anyString(), eq("INCLUDE")))
+        lenient().when(modelServiceClient.getForType(anyString(), any(Class.class), anyString(), anyInt(), anyString(), eq("INCLUDE")))
                 .thenReturn(content);
 
         //when
@@ -60,7 +60,7 @@ public class ModelServicePageProviderTest {
         //given
         ItemNotFoundInModelServiceException exception = new ItemNotFoundInModelServiceException("Msg");
         //noinspection unchecked
-        when(modelServiceClient.getForType(anyString(), any(Class.class), anyString(), anyInt(), anyString(), eq("INCLUDE")))
+        lenient().when(modelServiceClient.getForType(anyString(), any(Class.class), anyString(), anyInt(), anyString(), eq("INCLUDE")))
                 .thenThrow(exception);
 
         //when

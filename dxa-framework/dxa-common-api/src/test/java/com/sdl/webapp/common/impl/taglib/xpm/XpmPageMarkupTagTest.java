@@ -6,15 +6,14 @@ import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.HtmlMultiNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@code XpmPageMarkupTag}.
@@ -50,7 +49,7 @@ public class XpmPageMarkupTagTest {
 
     private XpmPageMarkupTag setup(Map<String, Object> pageData) {
         final PageModel page = mock(PageModel.class);
-        when(page.getXpmMetadata()).thenReturn(pageData);
+        lenient().when(page.getXpmMetadata()).thenReturn(pageData);
 
         final XpmPageMarkupTag tag = new XpmPageMarkupTag();
         tag.setPage(page);

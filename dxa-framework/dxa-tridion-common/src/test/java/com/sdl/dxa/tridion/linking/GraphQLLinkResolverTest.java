@@ -3,18 +3,17 @@ package com.sdl.dxa.tridion.linking;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.enums.ContentNamespace;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyInt;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GraphQLLinkResolverTest {
 
     @Mock
@@ -26,7 +25,7 @@ public class GraphQLLinkResolverTest {
     @InjectMocks
     private GraphQLLinkResolver linkResolver = new GraphQLLinkResolver();
 
-    @Before
+    @BeforeEach
     public void setup(){
         when(apiClientProvider.getClient()).thenReturn(publicContentApi);
     }

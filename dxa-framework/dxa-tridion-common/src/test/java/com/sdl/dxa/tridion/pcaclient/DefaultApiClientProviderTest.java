@@ -3,9 +3,9 @@ package com.sdl.dxa.tridion.pcaclient;
 import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.web.pca.client.auth.Authentication;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
@@ -16,15 +16,15 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 
 import java.util.Properties;
 
-import static org.junit.Assert.assertNotNull;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.mockito.Mockito.lenient;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("test")
 public class DefaultApiClientProviderTest {
@@ -36,12 +36,12 @@ public class DefaultApiClientProviderTest {
 
     private DefaultApiClientProvider apiClientProvider;
 
-    @Before
+    @BeforeEach
     public void setup() throws ConfigurationException {
         MockitoAnnotations.initMocks(this);
-        when(configurationLoader.getServiceUrl()).thenReturn("http://localhost:8082/cd/api");
-        when(configurationLoader.getConfiguration()).thenReturn(new Properties());
-        when(configurationLoader.getCacheConfiguration()).thenReturn(new Properties());
+        lenient().when(configurationLoader.getServiceUrl()).thenReturn("http://localhost:8082/cd/api");
+        lenient().when(configurationLoader.getConfiguration()).thenReturn(new Properties());
+        lenient().when(configurationLoader.getCacheConfiguration()).thenReturn(new Properties());
         apiClientProvider = new DefaultApiClientProvider(configurationLoader, auth);
     }
 

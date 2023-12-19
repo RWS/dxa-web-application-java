@@ -3,14 +3,13 @@ package com.sdl.webapp.common.util;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.PageNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 public class LocalizationUtilsTest {
 
@@ -18,7 +17,7 @@ public class LocalizationUtilsTest {
     public void shouldRetrieveSchemaIdFromLocalization() {
         //given
         Localization localization = mock(Localization.class);
-        when(localization.getConfiguration(eq("core.schemas.json"))).thenReturn("42");
+        lenient().when(localization.getConfiguration(eq("core.schemas.json"))).thenReturn("42");
 
         //when
         int key = LocalizationUtils.schemaIdFromSchemaKey("json", localization);
@@ -31,7 +30,7 @@ public class LocalizationUtilsTest {
     public void shouldRetrieveSchemaIdFromLocalizationForCustomKey() {
         //given
         Localization localization = mock(Localization.class);
-        when(localization.getConfiguration(eq("custom.schemas.json"))).thenReturn("42");
+        lenient().when(localization.getConfiguration(eq("custom.schemas.json"))).thenReturn("42");
 
         //when
         int key = LocalizationUtils.schemaIdFromSchemaKey("custom.json", localization);
@@ -44,7 +43,7 @@ public class LocalizationUtilsTest {
     public void shouldReturnZeroIfFailedToParse() {
         //given
         Localization localization = mock(Localization.class);
-        when(localization.getConfiguration(eq("core.schemas.json"))).thenReturn("asd");
+        lenient().when(localization.getConfiguration(eq("core.schemas.json"))).thenReturn("asd");
 
         //when
         int key = LocalizationUtils.schemaIdFromSchemaKey("json", localization);
@@ -86,10 +85,10 @@ public class LocalizationUtilsTest {
 
         LocalizationUtils.TryFindPage callback = mock(LocalizationUtils.TryFindPage.class);
 
-        when(callback.tryFindPage(eq(path), eq(1))).thenReturn(page);
+        lenient().when(callback.tryFindPage(eq(path), eq(1))).thenReturn(page);
 
         Localization localization = mock(Localization.class);
-        when(localization.getId()).thenReturn(publicationId);
+        lenient().when(localization.getId()).thenReturn(publicationId);
 
         //when
         Object pageByPath = LocalizationUtils.findPageByPath(path, localization, callback);
@@ -109,10 +108,10 @@ public class LocalizationUtilsTest {
 
         LocalizationUtils.TryFindPage callback = mock(LocalizationUtils.TryFindPage.class);
 
-        when(callback.tryFindPage(anyString(), eq(1))).thenReturn(null, page);
+        lenient().when(callback.tryFindPage(anyString(), eq(1))).thenReturn(null, page);
 
         Localization localization = mock(Localization.class);
-        when(localization.getId()).thenReturn(publicationId);
+        lenient().when(localization.getId()).thenReturn(publicationId);
 
         //when
         Object pageByPath = LocalizationUtils.findPageByPath(path, localization, callback);
@@ -124,24 +123,26 @@ public class LocalizationUtilsTest {
         assertEquals(page, pageByPath);
     }
 
-    @Test(expected = PageNotFoundException.class)
+    @Test
     public void shouldThrowExceptionIfNotFound() throws ContentProviderException {
-        //given
-        String path = "mypage.html";
-        String publicationId = "1";
+        Assertions.assertThrows(PageNotFoundException.class, () -> {
+            //given
+            String path = "mypage.html";
+            String publicationId = "1";
 
-        LocalizationUtils.TryFindPage callback = mock(LocalizationUtils.TryFindPage.class);
+            LocalizationUtils.TryFindPage callback = mock(LocalizationUtils.TryFindPage.class);
 
-        when(callback.tryFindPage(eq(path), eq(1))).thenReturn(null);
+            lenient().when(callback.tryFindPage(eq(path), eq(1))).thenReturn(null);
 
-        Localization localization = mock(Localization.class);
-        when(localization.getId()).thenReturn(publicationId);
+            Localization localization = mock(Localization.class);
+            lenient().when(localization.getId()).thenReturn(publicationId);
 
-        //when
-        LocalizationUtils.findPageByPath(path, localization, callback);
+            //when
+            LocalizationUtils.findPageByPath(path, localization, callback);
 
-        //then
-        verify(localization).getId();
-        verify(callback).tryFindPage(eq("mypage.html"), eq(1));
+            //then
+            verify(localization).getId();
+            verify(callback).tryFindPage(eq("mypage.html"), eq(1));
+        });
     }
 }

@@ -1,12 +1,12 @@
 package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.api.model.PojosTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ConfigurationTest extends PojosTest {
 

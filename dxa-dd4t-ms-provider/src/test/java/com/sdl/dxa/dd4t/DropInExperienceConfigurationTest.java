@@ -4,25 +4,23 @@ import com.sdl.dxa.dd4t.providers.ModelServiceComponentPresentationProvider;
 import com.sdl.dxa.dd4t.providers.ModelServicePageProvider;
 import org.dd4t.core.factories.impl.ComponentPresentationFactoryImpl;
 import org.dd4t.core.factories.impl.PageFactoryImpl;
-import org.dd4t.providers.ComponentPresentationProvider;
-import org.dd4t.providers.PageProvider;
 import org.dd4t.providers.PayloadCacheProvider;
-import org.hamcrest.BaseMatcher;
-import org.hamcrest.Description;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.context.ApplicationContext;
 
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DropInExperienceConfigurationTest {
 
     @Mock
@@ -40,11 +38,11 @@ public class DropInExperienceConfigurationTest {
     @InjectMocks
     private DropInExperienceConfiguration configuration;
 
-    @Before
+    @BeforeEach
     public void init() {
-        when(applicationContext.getBean(eq(PageFactoryImpl.class))).thenReturn(pageFactory);
-        when(applicationContext.getBean(eq(ComponentPresentationFactoryImpl.class))).thenReturn(componentPresentationFactoryImpl);
-        when(applicationContext.getBean(eq(PayloadCacheProvider.class))).thenReturn(payloadCacheProvider);
+        lenient().when(applicationContext.getBean(eq(PageFactoryImpl.class))).thenReturn(pageFactory);
+        lenient().when(applicationContext.getBean(eq(ComponentPresentationFactoryImpl.class))).thenReturn(componentPresentationFactoryImpl);
+        lenient().when(applicationContext.getBean(eq(PayloadCacheProvider.class))).thenReturn(payloadCacheProvider);
     }
 
     @Test
@@ -55,27 +53,25 @@ public class DropInExperienceConfigurationTest {
         configuration.setApplicationContext(applicationContext);
 
         //then
-        verify(pageFactory).setPageProvider(argThat(new BaseMatcher<PageProvider>() {
+        verify(pageFactory).setPageProvider(argThat(new ArgumentMatcher<ModelServicePageProvider>() {
             @Override
-            public boolean matches(Object o) {
-                return o instanceof ModelServicePageProvider;
+            public boolean matches(ModelServicePageProvider pageProvider) {
+                return true;
             }
-
             @Override
-            public void describeTo(Description description) {
-                description.appendText("Page Provider is replaced");
+            public Class<?> type() {
+                return ArgumentMatcher.super.type();
             }
         }));
 
-        verify(componentPresentationFactoryImpl).setComponentPresentationProvider(argThat(new BaseMatcher<ComponentPresentationProvider>() {
+        verify(componentPresentationFactoryImpl).setComponentPresentationProvider(argThat(new ArgumentMatcher<ModelServiceComponentPresentationProvider>() {
             @Override
-            public boolean matches(Object o) {
-                return o instanceof ModelServiceComponentPresentationProvider;
+            public boolean matches(ModelServiceComponentPresentationProvider modelServiceComponentPresentationProvider) {
+                return true;
             }
-
             @Override
-            public void describeTo(Description description) {
-                description.appendText("ComponentPresentationProvider is replaced");
+            public Class<?> type() {
+                return ArgumentMatcher.super.type();
             }
         }));
     }

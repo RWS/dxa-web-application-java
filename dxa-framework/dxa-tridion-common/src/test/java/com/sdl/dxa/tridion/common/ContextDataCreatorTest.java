@@ -5,16 +5,15 @@ import com.sdl.web.pca.client.contentmodel.ContextData;
 import com.sdl.web.pca.client.contentmodel.generated.ClaimValue;
 import com.sdl.web.pca.client.contentmodel.generated.ClaimValueType;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import static com.sdl.dxa.tridion.common.ContextDataCreator.convertClaimHolderToClaimValue;
 import static com.sdl.dxa.tridion.common.ContextDataCreator.createContextData;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContextDataCreatorTest {
 
@@ -22,11 +21,13 @@ public class ContextDataCreatorTest {
     private static final String CLAIM_URI = "claim:uri";
     private static final String CLAIM_VALUE = "claim:value";
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testConvertClaimHolderToClaimValueException() {
-        ClaimHolder holder = new ClaimHolder();
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            ClaimHolder holder = new ClaimHolder();
 
-        convertClaimHolderToClaimValue(holder);
+            convertClaimHolderToClaimValue(holder);
+        });
     }
 
     @Test

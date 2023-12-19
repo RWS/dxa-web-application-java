@@ -2,22 +2,23 @@ package com.sdl.dxa.caching;
 
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.io.Serializable;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class LocalizationAwareKeyGeneratorTest {
 
     @Mock
@@ -28,10 +29,10 @@ public class LocalizationAwareKeyGeneratorTest {
 
     private LocalizationAwareKeyGenerator keyGenerator = new LocalizationAwareKeyGenerator();
 
-    @Before
+    @BeforeEach
     public void init() {
-        when(webRequestContext.getLocalization()).thenReturn(localization);
-        when(localization.getId()).thenReturn("42");
+        lenient().when(webRequestContext.getLocalization()).thenReturn(localization);
+        lenient().when(localization.getId()).thenReturn("42");
         WebRequestContextLocalizationIdProvider localizationIdProvider = new WebRequestContextLocalizationIdProvider();
         ReflectionTestUtils.setField(localizationIdProvider, "webRequestContext", webRequestContext);
         ReflectionTestUtils.setField(keyGenerator, "localizationIdProvider", localizationIdProvider);

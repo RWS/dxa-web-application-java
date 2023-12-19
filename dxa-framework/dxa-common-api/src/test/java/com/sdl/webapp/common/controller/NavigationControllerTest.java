@@ -1,18 +1,17 @@
 package com.sdl.webapp.common.controller;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.model.entity.TaxonomyNode;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,14 +19,13 @@ import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class NavigationControllerTest {
 
     @Mock
@@ -69,8 +67,8 @@ public class NavigationControllerTest {
     }
 
     public void mockWithModel(SitemapItem staticModel) throws NavigationProviderException {
-        doReturn(staticModel).when(navigationController).getEntityFromRequest(any(HttpServletRequest.class), eq("entityId"));
-        when(navigationProvider.getNavigationModel(any())).thenReturn(staticModel);
+        lenient().doReturn(staticModel).when(navigationController).getEntityFromRequest(any(HttpServletRequest.class), eq("entityId"));
+        lenient().when(navigationProvider.getNavigationModel(any())).thenReturn(staticModel);
     }
 
     @Test

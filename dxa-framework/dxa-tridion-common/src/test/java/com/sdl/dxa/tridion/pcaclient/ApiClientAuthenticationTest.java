@@ -3,17 +3,17 @@ package com.sdl.dxa.tridion.pcaclient;
 import com.sdl.web.client.impl.OAuthTokenProvider;
 import org.apache.http.HttpRequest;
 import org.apache.http.message.BasicHttpRequest;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ApiClientAuthenticationTest {
 
     @Mock

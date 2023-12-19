@@ -7,8 +7,8 @@ import com.sdl.webapp.common.util.InitializationUtils;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.joda.time.DateTime;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
@@ -18,6 +18,7 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.Ordered;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.ViewResolver;
@@ -28,13 +29,10 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = DxaSpringInitializationTest.TestContextConfiguration.class)
 @ActiveProfiles("test")
 public class DxaSpringInitializationTest {
@@ -236,7 +234,7 @@ public class DxaSpringInitializationTest {
         @Bean
         public ContextEngine contextEngine() {
             ContextEngine contextEngine = mock(ContextEngine.class);
-            when(contextEngine.getDeviceFamily()).thenReturn("android");
+            lenient().when(contextEngine.getDeviceFamily()).thenReturn("android");
             return contextEngine;
         }
     }

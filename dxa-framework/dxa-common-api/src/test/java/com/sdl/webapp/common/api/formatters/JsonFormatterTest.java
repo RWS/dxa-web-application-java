@@ -1,12 +1,13 @@
 package com.sdl.webapp.common.api.formatters;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JsonFormatterTest {
 
@@ -35,10 +36,11 @@ public class JsonFormatterTest {
         assertSame(expected, result);
     }
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void shouldGetSyndicationItemFromTeaser() throws Exception {
-        //when
-        new JsonFormatter(null, null).getSyndicationItem(null);
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+            // When
+            new JsonFormatter(null, null).getSyndicationItem(null);
+        });
     }
-
 }

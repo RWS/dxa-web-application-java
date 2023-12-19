@@ -1,17 +1,15 @@
 package com.sdl.webapp.common.util;
 
 import com.sdl.webapp.common.api.content.ContentProviderException;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class FileUtilsTest {
@@ -20,9 +18,9 @@ public class FileUtilsTest {
     public void shouldSayIfFileShouldBeRefreshed() throws ContentProviderException {
         //given
         File file = mock(File.class);
-        when(file.exists()).thenReturn(true);
-        when(file.canRead()).thenReturn(true);
-        when(file.lastModified()).thenReturn(1000L);
+        lenient().when(file.exists()).thenReturn(true);
+        lenient().when(file.canRead()).thenReturn(true);
+        lenient().when(file.lastModified()).thenReturn(1000L);
 
         //when
         boolean toBeRefreshed = FileUtils.isFileOlderThan(file, 2000L);
@@ -37,7 +35,7 @@ public class FileUtilsTest {
     public void shouldSayThatFileIsOldBecauseDoesntExist() {
         //given
         File file = mock(File.class);
-        when(file.exists()).thenReturn(false);
+        lenient().when(file.exists()).thenReturn(false);
 
         //when
         boolean toBeRefreshed = FileUtils.isFileOlderThan(file, 2000L);
@@ -50,11 +48,11 @@ public class FileUtilsTest {
     public void shouldReturnTrueIfFileDoesntExistAndCreateFolders() throws Exception {
         //given
         File file = mock(File.class);
-        when(file.exists()).thenReturn(false);
+        lenient().when(file.exists()).thenReturn(false);
         File parent = mock(File.class);
-        when(file.getParentFile()).thenReturn(parent);
-        when(parent.exists()).thenReturn(false, true, true);
-        when(parent.mkdirs()).thenReturn(true);
+        lenient().when(file.getParentFile()).thenReturn(parent);
+        lenient().when(parent.exists()).thenReturn(false, true, true);
+        lenient().when(parent.mkdirs()).thenReturn(true);
 
         //when
         boolean shouldBeTrue = FileUtils.parentFolderExists(file, true);
@@ -68,8 +66,8 @@ public class FileUtilsTest {
         //given
         File file = mock(File.class);
         File parent = mock(File.class);
-        when(file.getParentFile()).thenReturn(parent);
-        when(file.exists()).thenReturn(false);
+        lenient().when(file.getParentFile()).thenReturn(parent);
+        lenient().when(file.exists()).thenReturn(false);
 
         //when
         boolean shouldBeFalse = FileUtils.parentFolderExists(file, false);
@@ -78,15 +76,17 @@ public class FileUtilsTest {
         assertFalse(shouldBeFalse);
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void shouldReturnFalseIfParentFileIsNull() throws Exception {
-        //given
-        File file = mock(File.class);
-        when(file.exists()).thenReturn(true);
-        when(file.getParentFile()).thenReturn(null);
+        Assertions.assertThrows(IOException.class, () -> {
+            // Given
+            File file = mock(File.class);
+            lenient().when(file.exists()).thenReturn(true);
+            lenient().when(file.getParentFile()).thenReturn(null);
 
-        //when
-        FileUtils.parentFolderExists(file, true);
+            // When
+            FileUtils.parentFolderExists(file, true);
+        });
     }
 
     @Test
@@ -94,9 +94,9 @@ public class FileUtilsTest {
         //given
         File file = mock(File.class);
         File parent = mock(File.class);
-        when(file.getParentFile()).thenReturn(parent);
-        when(file.exists()).thenReturn(true);
-        when(parent.exists()).thenReturn(true);
+        lenient().when(file.getParentFile()).thenReturn(parent);
+        lenient().when(file.exists()).thenReturn(true);
+        lenient().when(parent.exists()).thenReturn(true);
 
         //when
         boolean folderExists = FileUtils.parentFolderExists(file, true);
@@ -112,10 +112,10 @@ public class FileUtilsTest {
         //given
         File file = mock(File.class);
         File parent = mock(File.class);
-        when(file.getParentFile()).thenReturn(parent);
-        when(file.exists()).thenReturn(true);
-        when(parent.exists()).thenReturn(false);
-        when(parent.mkdirs()).thenReturn(true);
+        lenient().when(file.getParentFile()).thenReturn(parent);
+        lenient().when(file.exists()).thenReturn(true);
+        lenient().when(parent.exists()).thenReturn(false);
+        lenient().when(parent.mkdirs()).thenReturn(true);
 
         //when
         boolean notCreated = FileUtils.parentFolderExists(file, false);
@@ -139,11 +139,11 @@ public class FileUtilsTest {
     public void shouldCreateAllFoldersForNonExisting() throws Exception {
         //given
         File file = mock(File.class);
-        when(file.exists()).thenReturn(false);
+        lenient().when(file.exists()).thenReturn(false);
 
         File parent = mock(File.class);
-        when(file.getParentFile()).thenReturn(parent);
-        when(parent.exists()).thenReturn(true);
+        lenient().when(file.getParentFile()).thenReturn(parent);
+        lenient().when(parent.exists()).thenReturn(true);
 
         //when
         //file.exists = false, parent.exists = true
@@ -157,13 +157,13 @@ public class FileUtilsTest {
     public void shouldSayFalseForFreshFile() throws ContentProviderException {
         //given
         File file = mock(File.class);
-        when(file.exists()).thenReturn(true);
-        when(file.canRead()).thenReturn(true);
-        when(file.lastModified()).thenReturn(1000L);
+        lenient().when(file.exists()).thenReturn(true);
+        lenient().when(file.canRead()).thenReturn(true);
+        lenient().when(file.lastModified()).thenReturn(1000L);
         File parent = mock(File.class);
-        when(file.getParentFile()).thenReturn(parent);
-        when(parent.exists()).thenReturn(false);
-        when(parent.mkdirs()).thenReturn(true);
+        lenient().when(file.getParentFile()).thenReturn(parent);
+        lenient().when(parent.exists()).thenReturn(false);
+        lenient().when(parent.mkdirs()).thenReturn(true);
 
         //when
         //file.exists = false, parent.exists = false, parent.mkdirs = true
@@ -173,33 +173,34 @@ public class FileUtilsTest {
         assertFalse(newFile);
     }
 
-    @Test(expected = ContentProviderException.class)
+    @Test
     public void shouldFailForProblemsWithDirs() throws ContentProviderException {
-        //given
-        File file = mock(File.class);
-        when(file.exists()).thenReturn(false);
-        when(file.lastModified()).thenReturn(1000L);
-        File parent = mock(File.class);
-        when(file.getParentFile()).thenReturn(parent);
-        when(parent.exists()).thenReturn(false);
-        when(parent.mkdirs()).thenReturn(false);
+        Assertions.assertThrows(ContentProviderException.class, () -> {
+            // Given
+            File file = mock(File.class);
+            lenient().when(file.exists()).thenReturn(false);
+            lenient().when(file.lastModified()).thenReturn(1000L);
+            File parent = mock(File.class);
+            lenient().when(file.getParentFile()).thenReturn(parent);
+            lenient().when(parent.exists()).thenReturn(false);
+            lenient().when(parent.mkdirs()).thenReturn(false);
 
-        //when
-        //file.exists = false, parent.exists = false, parent.mkdirs = false
-        FileUtils.isToBeRefreshed(file, 500L);
-        //then
-        //exception
+            // When
+            // file.exists = false, parent.exists = false, parent.mkdirs = false
+            FileUtils.isToBeRefreshed(file, 500L);
+            // Then exception
+        });
     }
 
     @Test
     public void shouldFindTheOldFileForRefreshFolderAction() throws ContentProviderException {
         //given
         File file = mock(File.class);
-        when(file.exists()).thenReturn(true);
-        when(file.lastModified()).thenReturn(1000L);
+        lenient().when(file.exists()).thenReturn(true);
+        lenient().when(file.lastModified()).thenReturn(1000L);
         File parent = mock(File.class);
-        when(file.getParentFile()).thenReturn(parent);
-        when(parent.exists()).thenReturn(true);
+        lenient().when(file.getParentFile()).thenReturn(parent);
+        lenient().when(parent.exists()).thenReturn(true);
 
         //when
         //file.exists = true, parent.exists = true

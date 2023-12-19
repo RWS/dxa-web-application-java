@@ -2,7 +2,7 @@ package com.sdl.webapp.common.impl.contextengine;
 
 import com.sdl.webapp.common.api.contextengine.ContextClaimsProvider;
 import com.sdl.webapp.common.exceptions.DxaException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Map;
@@ -13,10 +13,9 @@ import static com.sdl.webapp.common.impl.contextengine.Claims.desktopClaims;
 import static com.sdl.webapp.common.impl.contextengine.Claims.featurePhoneClaims;
 import static com.sdl.webapp.common.impl.contextengine.Claims.smartPhoneClaims;
 import static com.sdl.webapp.common.impl.contextengine.Claims.tabletClaims;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.isNull;
+import static org.mockito.Mockito.*;
 
 public class ContextEngineImplTest {
 
@@ -91,7 +90,7 @@ public class ContextEngineImplTest {
         String expected = "FromProvider";
 
         //when
-        when(claimsProvider.getDeviceFamily()).thenReturn(expected);
+        lenient().when(claimsProvider.getDeviceFamily()).thenReturn(expected);
 
         //then
         assertEquals(expected, contextEngine.getDeviceFamily());
@@ -103,7 +102,7 @@ public class ContextEngineImplTest {
         ContextEngineImpl contextEngine = contextEngineImpl(claimsProvider, !isFallbackScenario);
 
         //when
-        when(claimsProvider.getContextClaims(isNull(String.class))).thenReturn(claims);
+        lenient().when(claimsProvider.getContextClaims(isNull(String.class))).thenReturn(claims);
 
         //then
         assertEquals(deviceFamily, contextEngine.getDeviceFamily());

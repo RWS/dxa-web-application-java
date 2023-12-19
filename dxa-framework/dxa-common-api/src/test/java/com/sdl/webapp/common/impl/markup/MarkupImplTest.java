@@ -11,7 +11,7 @@ import com.sdl.webapp.common.impl.markup.MarkupTest.MarkupTestConfig.TestEntity;
 import com.sdl.webapp.common.markup.Markup;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
 import java.util.HashMap;
@@ -19,7 +19,7 @@ import java.util.LinkedHashSet;
 import java.util.Locale;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class MarkupImplTest {
 

@@ -15,31 +15,26 @@ import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoMoreInteractions;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DefaultModelBuilderOnMocksTest {
     public static final String REGION_SCHEMA_ID = "region schema id : 1";
     @Mock
@@ -63,9 +58,9 @@ public class DefaultModelBuilderOnMocksTest {
     @InjectMocks
     private DefaultModelBuilder modelBuilder;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        when(pageModelData.getMvcData()).thenReturn(mvcModelData);
+        lenient().when(pageModelData.getMvcData()).thenReturn(mvcModelData);
     }
 
     @Test
@@ -73,20 +68,22 @@ public class DefaultModelBuilderOnMocksTest {
         assertSame(pageModel, modelBuilder.instantiatePageModel(pageModel, pageModelData));
     }
 
-    @Test(expected = SemanticMappingException.class)
+    @Test
     public void instantiatePageModelException() throws Exception {
-        doReturn(mvcData).when(modelBuilder).createMvcData(mvcModelData, DefaultsMvcData.PAGE);
-        doThrow(SemanticMappingException.class).when(viewModelRegistry).getViewModelType(mvcData);
+        Assertions.assertThrows(SemanticMappingException.class, () -> {
+            lenient().doReturn(mvcData).when(modelBuilder).createMvcData(mvcModelData, DefaultsMvcData.PAGE);
+            doThrow(SemanticMappingException.class).when(viewModelRegistry).getViewModelType(mvcData);
 
-        modelBuilder.instantiatePageModel(null, pageModelData);
+            modelBuilder.instantiatePageModel(null, pageModelData);
+        });
     }
 
     @Test
     public void instantiatePageModelVerifyCreateByType() throws Exception {
-        doReturn(mvcData).when(modelBuilder).createMvcData(mvcModelData, DefaultsMvcData.PAGE);
-        doReturn(TestPageModel.class).when(viewModelRegistry).getViewModelType(mvcData);
+        lenient().doReturn(mvcData).when(modelBuilder).createMvcData(mvcModelData, DefaultsMvcData.PAGE);
+        lenient().doReturn(TestPageModel.class).when(viewModelRegistry).getViewModelType(mvcData);
         TestPageModel realPageModel = mock(TestPageModel.class);
-        doReturn(realPageModel).when(modelBuilder).createViewModel(TestPageModel.class, pageModelData);
+        lenient().doReturn(realPageModel).when(modelBuilder).createViewModel(TestPageModel.class, pageModelData);
 
         assertSame(realPageModel, modelBuilder.instantiatePageModel(null, pageModelData));
 
@@ -96,10 +93,10 @@ public class DefaultModelBuilderOnMocksTest {
 
     @Test
     public void instantiatePageModelVerifyDefaultPageModel() throws Exception {
-        doReturn(mvcData).when(modelBuilder).createMvcData(mvcModelData, DefaultsMvcData.PAGE);
-        doReturn(null).when(viewModelRegistry).getViewModelType(mvcData);
+        lenient().doReturn(mvcData).when(modelBuilder).createMvcData(mvcModelData, DefaultsMvcData.PAGE);
+        lenient().doReturn(null).when(viewModelRegistry).getViewModelType(mvcData);
         TestPageModel realPageModel = mock(TestPageModel.class);
-        doReturn(realPageModel).when(modelBuilder).createDefaultPageModel();
+        lenient().doReturn(realPageModel).when(modelBuilder).createDefaultPageModel();
 
         assertSame(realPageModel, modelBuilder.instantiatePageModel(null, pageModelData));
 
@@ -118,14 +115,16 @@ public class DefaultModelBuilderOnMocksTest {
         verifyNoMoreInteractions(modelBuilder, regionsToAdd);
     }
 
-    @Test(expected = SemanticMappingException.class)
+    @Test
     public void processRegionsExceptionOnSecondItem() throws Exception {
-        List<RegionModelData> regions = prepareRegions();
-        doThrow(new SemanticMappingException()).when(modelBuilder).createRegionModel(regions.get(1));
+        Assertions.assertThrows(SemanticMappingException.class, () -> {
+            List<RegionModelData> regions = prepareRegions();
+            doThrow(new SemanticMappingException()).when(modelBuilder).createRegionModel(regions.get(1));
 
-        RegionModelSet regionsToAdd = mock(RegionModelSet.class);
+            RegionModelSet regionsToAdd = mock(RegionModelSet.class);
 
-        modelBuilder.processRegions(regions, regionsToAdd);
+            modelBuilder.processRegions(regions, regionsToAdd);
+        });
     }
 
     @Test
@@ -145,17 +144,17 @@ public class DefaultModelBuilderOnMocksTest {
     public void createRegionModel() throws Exception {
         RegionModelData regionModelData = mock(RegionModelData.class);
         List<RegionModelData> regions = new ArrayList<>();
-        when(regionModelData.getRegions()).thenReturn(regions);
-        when(regionModelData.getMvcData()).thenReturn(mvcModelData);
-        doReturn(mvcData).when(modelBuilder).createMvcData(mvcModelData, DefaultsMvcData.REGION);
-        doReturn(TestPageModel.class).when(viewModelRegistry).getViewModelType(mvcData);
-        doReturn(regionModel1).when(modelBuilder).createRegionModel(regionModelData, TestPageModel.class);
-        when(regionModelData.getSchemaId()).thenReturn(REGION_SCHEMA_ID);
-        doNothing().when(modelBuilder).processOwnSchema(regionModelData, TestPageModel.class, regionModel1, REGION_SCHEMA_ID);
+        lenient().when(regionModelData.getRegions()).thenReturn(regions);
+        lenient().when(regionModelData.getMvcData()).thenReturn(mvcModelData);
+        lenient().doReturn(mvcData).when(modelBuilder).createMvcData(mvcModelData, DefaultsMvcData.REGION);
+        lenient().doReturn(TestPageModel.class).when(viewModelRegistry).getViewModelType(mvcData);
+        lenient().doReturn(regionModel1).when(modelBuilder).createRegionModel(regionModelData, TestPageModel.class);
+        lenient().when(regionModelData.getSchemaId()).thenReturn(REGION_SCHEMA_ID);
+        lenient().doNothing().when(modelBuilder).processOwnSchema(regionModelData, TestPageModel.class, regionModel1, REGION_SCHEMA_ID);
         RegionModelSet regionModelSet = mock(RegionModelSet.class);
-        when(regionModel1.getRegions()).thenReturn(regionModelSet);
-        doNothing().when(modelBuilder).processRegions(regions, regionModelSet);
-        doNothing().when(modelBuilder).addEntitiesToRegionModels(regionModelData, regionModel1);
+        lenient().when(regionModel1.getRegions()).thenReturn(regionModelSet);
+        lenient().doNothing().when(modelBuilder).processRegions(regions, regionModelSet);
+        lenient().doNothing().when(modelBuilder).addEntitiesToRegionModels(regionModelData, regionModel1);
 
         assertEquals(regionModel1, modelBuilder.createRegionModel(regionModelData));
 
@@ -169,7 +168,7 @@ public class DefaultModelBuilderOnMocksTest {
     @Test
     public void addEntitiesToRegionModelsNoEntities() {
         RegionModelData regionModelData = mock(RegionModelData.class);
-        when(regionModelData.getEntities()).thenReturn(null);
+        lenient().when(regionModelData.getEntities()).thenReturn(null);
 
         modelBuilder.addEntitiesToRegionModels(regionModelData, regionModel1);
 
@@ -182,15 +181,15 @@ public class DefaultModelBuilderOnMocksTest {
         RegionModelData regionModelData = mock(RegionModelData.class);
         EntityModelData entityModelData = mock(EntityModelData.class);
         EntityModel entityModel = mock(EntityModel.class);
-        when(regionModelData.getEntities()).thenReturn(Collections.singletonList(entityModelData));
+        lenient().when(regionModelData.getEntities()).thenReturn(Collections.singletonList(entityModelData));
         doReturn(entityModel).when(modelBuilder).createEntityModel(entityModelData);
-        when(entityModel.getMvcData()).thenReturn(mvcData);
-        when(regionModelData.getName()).thenReturn("regionModelData name");
+        lenient().when(entityModel.getMvcData()).thenReturn(mvcData);
+        lenient().when(regionModelData.getName()).thenReturn("regionModelData name");
 
         modelBuilder.addEntitiesToRegionModels(regionModelData, regionModel1);
 
         verify(modelBuilder).addEntitiesToRegionModels(regionModelData, regionModel1);
-        verify(entityModel).setMvcData(any(MvcData.class));
+        verify(entityModel).setMvcData(any());
         verify(regionModel1).addEntity(entityModel);
     }
 
@@ -200,9 +199,9 @@ public class DefaultModelBuilderOnMocksTest {
         RegionModelData regionModelData2 = mock(RegionModelData.class);
         RegionModelData regionModelData3 = mock(RegionModelData.class);
         List<RegionModelData> regions = Lists.newArrayList(regionModelData1, regionModelData2, regionModelData3);
-        doReturn(regionModel1).when(modelBuilder).createRegionModel(regionModelData1);
-        doReturn(regionModel2).when(modelBuilder).createRegionModel(regionModelData2);
-        doReturn(regionModel3).when(modelBuilder).createRegionModel(regionModelData3);
+        lenient().doReturn(regionModel1).when(modelBuilder).createRegionModel(regionModelData1);
+        lenient().doReturn(regionModel2).when(modelBuilder).createRegionModel(regionModelData2);
+        lenient().doReturn(regionModel3).when(modelBuilder).createRegionModel(regionModelData3);
         return regions;
     }
 

@@ -1,18 +1,18 @@
 package com.sdl.dxa.common.util;
 
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class StacktraceShortenerTest {
     private final StackTraceElement[] EMPTY = new StackTraceElement[0];
     private StacktraceShortener shortener;
@@ -50,7 +50,7 @@ public class StacktraceShortenerTest {
 
     private StackTraceElement[] trace1;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         List<StackTraceElement> list = new ArrayList<>(Arrays.asList(trace2));
         list.add(new StackTraceElement("java.lang.Thread", "run", null, 0));

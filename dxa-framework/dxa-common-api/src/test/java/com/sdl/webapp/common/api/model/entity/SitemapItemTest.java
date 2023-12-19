@@ -3,24 +3,22 @@ package com.sdl.webapp.common.api.model.entity;
 import com.google.common.collect.Lists;
 import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.LinkedHashSet;
 import java.util.Set;
 
-import static junit.framework.TestCase.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class SitemapItemTest {
 
     @Mock
@@ -29,10 +27,10 @@ public class SitemapItemTest {
     @Mock
     protected LinkResolver linkResolver;
 
-    @Before
+    @BeforeEach
     public void init() {
-        when(localization.getId()).thenReturn("1");
-        when(linkResolver.resolveLink(anyString(), anyString())).thenReturn("resolved");
+        lenient().when(localization.getId()).thenReturn("1");
+        lenient().when(linkResolver.resolveLink(anyString(), anyString())).thenReturn("resolved");
     }
 
     @Test

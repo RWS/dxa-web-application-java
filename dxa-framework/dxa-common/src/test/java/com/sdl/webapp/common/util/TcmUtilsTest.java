@@ -1,6 +1,7 @@
 package com.sdl.webapp.common.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import static com.sdl.webapp.common.util.TcmUtils.CATEGORY_ITEM_TYPE;
 import static com.sdl.webapp.common.util.TcmUtils.COMPONENT_ITEM_TYPE;
@@ -14,9 +15,7 @@ import static com.sdl.webapp.common.util.TcmUtils.SCHEMA_ITEM_TYPE;
 import static com.sdl.webapp.common.util.TcmUtils.STRUCTURE_GROUP_ITEM_TYPE;
 import static com.sdl.webapp.common.util.TcmUtils.TARGET_GROUP_ITEM_TYPE;
 import static com.sdl.webapp.common.util.TcmUtils.buildKeywordTcmUri;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TcmUtilsTest {
 
@@ -292,13 +291,14 @@ public class TcmUtilsTest {
         assertEquals("tcm:81-6-7", tcmUri2);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldThrowExceptionIfArgumentIsNotValid() {
-        //when
-        TcmUtils.localizeTcmUri("qwe", 1);
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            // When
+            TcmUtils.localizeTcmUri("qwe", 1);
 
-        //then
-        //IAE
+            // Then IAE
+        });
     }
 
     @Test

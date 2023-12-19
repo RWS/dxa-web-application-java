@@ -2,16 +2,15 @@ package com.sdl.webapp.common.api.serialization.json;
 
 import com.fasterxml.jackson.databind.ser.BeanPropertyWriter;
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.List;
 
 import static com.google.common.collect.Lists.newArrayList;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 public class DxaViewModelJsonChainFilterTest {
 
@@ -29,10 +28,10 @@ public class DxaViewModelJsonChainFilterTest {
         //given 
         PropertyWriter writer = mock(PropertyWriter.class);
         DxaViewModelJsonPropertyFilter filter1 = mock(DxaViewModelJsonPropertyFilter.class);
-        when(filter1.include(writer)).thenReturn(true);
+        lenient().when(filter1.include(writer)).thenReturn(true);
 
         DxaViewModelJsonPropertyFilter filter2 = mock(DxaViewModelJsonPropertyFilter.class);
-        when(filter2.include(writer)).thenReturn(false);
+        lenient().when(filter2.include(writer)).thenReturn(false);
 
         DxaViewModelJsonChainFilter filter = new DxaViewModelJsonChainFilter();
         setFilters(filter, newArrayList(filter1, filter2));
@@ -50,10 +49,10 @@ public class DxaViewModelJsonChainFilterTest {
         //given
         PropertyWriter writer = mock(PropertyWriter.class);
         DxaViewModelJsonPropertyFilter filter1 = mock(DxaViewModelJsonPropertyFilter.class);
-        when(filter1.include(writer)).thenReturn(true);
+        lenient().when(filter1.include(writer)).thenReturn(true);
 
         DxaViewModelJsonPropertyFilter filter2 = mock(DxaViewModelJsonPropertyFilter.class);
-        when(filter2.include(writer)).thenReturn(true);
+        lenient().when(filter2.include(writer)).thenReturn(true);
 
         DxaViewModelJsonChainFilter filter = new DxaViewModelJsonChainFilter();
         setFilters(filter, newArrayList(filter1, filter2));

@@ -9,18 +9,16 @@ import com.sdl.webapp.common.api.model.RegionModelSet;
 import com.sdl.webapp.common.exceptions.DxaException;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class RegionModelSetImplTest {
 
@@ -104,27 +102,29 @@ public class RegionModelSetImplTest {
         assertFalse(notContainsClass || notContainsName);
     }
 
-    @Test(expected = DxaException.class)
+    @Test
     public void shouldThrowExceptionIfNameIsEmpty() throws DxaException {
-        //given
-        RegionModelSet set = new RegionModelSetImpl();
+        Assertions.assertThrows(DxaException.class, () -> {
+            // Given
+            RegionModelSet set = new RegionModelSetImpl();
 
-        //when
-        set.add(new RegionModelImpl(null, ""));
+            // When
+            set.add(new RegionModelImpl(null, ""));
 
-        //then
-        //exception
+            // Then exception
+        });
     }
 
-    @Test(expected = DxaException.class)
+    @Test
     public void shouldThrowExceptionIfNameIsNull() throws DxaException {
-        RegionModelSet set = new RegionModelSetImpl();
+        Assertions.assertThrows(DxaException.class, () -> {
+            RegionModelSet set = new RegionModelSetImpl();
 
-        //when
-        set.add(new RegionModelImpl("", ""));
+            // When
+            set.add(new RegionModelImpl("", ""));
 
-        //then
-        //exception
+            // Then exception
+        });
     }
 
     @Test

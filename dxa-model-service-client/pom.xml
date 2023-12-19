@@ -11,6 +11,18 @@
     <artifactId>dxa-model-service-client</artifactId>
     <name>DXA - Model Service Client</name>
     <description>Client to request DXA Model Service</description>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>16</source>
+                    <target>16</target>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
     <dependencies>
         <dependency>

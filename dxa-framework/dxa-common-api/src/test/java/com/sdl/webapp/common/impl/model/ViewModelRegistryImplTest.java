@@ -8,21 +8,21 @@ import com.sdl.webapp.common.api.model.ViewModelRegistry;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import com.sdl.webapp.common.exceptions.DxaException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.lenient;
 import static org.springframework.test.util.ReflectionTestUtils.getField;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ViewModelRegistryImplTest {
 
     @Mock
@@ -31,7 +31,7 @@ public class ViewModelRegistryImplTest {
     @InjectMocks
     private ViewModelRegistry registry = new ViewModelRegistryImpl();
 
-    @Before
+    @BeforeEach
     public void init() throws SemanticMappingException {
         registry.registerViewModel(MvcDataCreator.creator()
                 .fromQualifiedName("AreaName:Entity:TestEntity")
@@ -41,7 +41,7 @@ public class ViewModelRegistryImplTest {
                 .fromQualifiedName("Test:Entity:TestEntity2")
                 .create(), TestEntity2.class);
 
-        doReturn(TestEntity.class).when(semanticMappingRegistry).getEntityClassByFullyQualifiedName("registered", null);
+        lenient().doReturn(TestEntity.class).when(semanticMappingRegistry).getEntityClassByFullyQualifiedName("registered", null);
     }
 
     @Test
@@ -76,10 +76,12 @@ public class ViewModelRegistryImplTest {
         assertEquals(((Map) getField(registry, "viewEntityClassMap")).size(), initial);
     }
 
-    @Test(expected = DxaException.class)
+    @Test
     public void shouldThrowException_WhenClassNotFound() throws DxaException {
-        //when
-        registry.getViewEntityClass("Area:View");
+        Assertions.assertThrows(DxaException.class, () -> {
+            // When
+            registry.getViewEntityClass("Area:View");
+        });
     }
 
     @Test

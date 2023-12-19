@@ -16,16 +16,15 @@ import com.sdl.dxa.api.datamodel.model.known.KnownClass;
 import com.sdl.dxa.api.datamodel.model.known.SecondChildKnownClass;
 import com.sdl.dxa.api.datamodel.model.unknown.UnknownModelData;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -37,12 +36,10 @@ import java.util.ListIterator;
 import java.util.Map;
 
 import static org.hamcrest.collection.IsMapContaining.hasEntry;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = DeserializationTest.SpringConfigurationContext.class)
 public class DeserializationTest {
 

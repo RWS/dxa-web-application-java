@@ -10,29 +10,24 @@ import com.sdl.webapp.common.api.model.ViewModel;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 import com.sdl.webapp.common.api.model.entity.DynamicList;
 import com.sdl.webapp.common.controller.exception.InternalServerErrorException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.util.AssertionErrors.assertEquals;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ListControllerTest {
 
     @Mock
@@ -61,9 +56,9 @@ public class ListControllerTest {
         //given
         String id = "id";
         DynamicList testList = mock(DynamicList.class);
-        doCallRealMethod().when(testList).setStart(anyInt());
-        doCallRealMethod().when(testList).getStart();
-        when(testList.getId()).thenReturn(id);
+        lenient().doCallRealMethod().when(testList).setStart(anyInt());
+        lenient().doCallRealMethod().when(testList).getStart();
+        lenient().when(testList.getId()).thenReturn(id);
         MockHttpServletRequest request = new MockHttpServletRequest();
         request.setParameter("id", id);
         request.setParameter("start", "5");
@@ -93,18 +88,20 @@ public class ListControllerTest {
         verify(contentProvider, never()).populateDynamicList(any(DynamicList.class), any());
     }
 
-    @Test(expected = InternalServerErrorException.class)
+    @Test
     public void shouldHandleContentProviderException() throws Exception {
-        //given
-        DynamicList testList = mock(DynamicList.class);
-        doThrow(ContentProviderException.class)
-                .when(contentProvider).populateDynamicList(any(DynamicList.class), any());
+        Assertions.assertThrows(InternalServerErrorException.class, () -> {
+            // Given
+            DynamicList testList = mock(DynamicList.class);
+            doThrow(ContentProviderException.class)
+                    .when(contentProvider).populateDynamicList(any(DynamicList.class), any());
 
-        //when
-        listController.enrichModel(testList, new MockHttpServletRequest());
+            // When
+            listController.enrichModel(testList, new MockHttpServletRequest());
 
-        //then
-        verify(contentProvider).populateDynamicList(any(DynamicList.class), any(Localization.class));
+            // Then
+            verify(contentProvider).populateDynamicList(any(DynamicList.class), any(Localization.class));
+        });
     }
 
     private static class TestEntity extends AbstractEntityModel {

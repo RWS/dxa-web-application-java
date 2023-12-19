@@ -4,7 +4,7 @@ import com.google.common.collect.ImmutableMap;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.markup.html.HtmlCommentNode;
 import com.sdl.webapp.common.markup.html.HtmlNode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

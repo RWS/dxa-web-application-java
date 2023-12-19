@@ -14,13 +14,14 @@ import com.tridion.meta.PublicationMeta;
 import com.tridion.meta.PublicationMetaFactory;
 import com.tridion.util.TCDURI;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.powermock.api.mockito.PowerMockito;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.MockedConstruction;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -28,34 +29,22 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Date;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(CilStaticContentResolver.class)
+@ExtendWith(MockitoExtension.class)
 public class CilStaticContentResolverTest {
 
-    @Mock
-    private PublicationMetaFactory publicationMetaFactory;
-
-    @Mock
-    private BinaryFactory binaryFactory;
-
-    @Mock
-    private DynamicMetaRetriever dynamicMetaRetriever;
+    private MockedConstruction<PublicationMetaFactory> mockedConstructionPublicationMetaFactory;
+    private MockedConstruction<BinaryFactory> mockedConstructionBinaryFactory;
+    private MockedConstruction<DynamicMetaRetriever> mockedConstructionDynamicMetaRetriever;
+    private MockedConstruction<ComponentMetaFactory> mockedConstructionWebComponentMetaFactory;
 
     @Mock
     private WebApplicationContext webApplicationContext;
-
-    @Mock
-    private ComponentMetaFactory webComponentMetaFactory;
 
     @Mock
     private PublicationMeta publicationMeta;
@@ -69,46 +58,54 @@ public class CilStaticContentResolverTest {
     @Mock
     private ComponentMeta componentMeta;
 
-    private CilStaticContentResolver staticContentResolver;
-
-    @Before
+    @BeforeEach
     public void init() throws Exception {
-        PowerMockito.whenNew(DynamicMetaRetriever.class).withAnyArguments().thenReturn(dynamicMetaRetriever);
-        PowerMockito.whenNew(BinaryFactory.class).withAnyArguments().thenReturn(binaryFactory);
-        PowerMockito.whenNew(PublicationMetaFactory.class).withAnyArguments().thenReturn(publicationMetaFactory);
-        PowerMockito.whenNew(ComponentMetaFactory.class).withAnyArguments().thenReturn(webComponentMetaFactory);
-
-        when(publicationMetaFactory.getMeta(any())).thenReturn(publicationMeta);
-        when(publicationMeta.getPublicationUrl()).thenReturn("/");
-
-        when(dynamicMetaRetriever.getBinaryMetaByURL(any())).thenReturn(binaryMeta);
+        mockedConstructionDynamicMetaRetriever = Mockito.mockConstruction(DynamicMetaRetriever.class,
+                (mock, context) -> lenient().when(mock.getBinaryMetaByURL(any())).thenReturn(binaryMeta));
         TCDURI tcduri = mock(TCDURI.class);
-        when(binaryMeta.getURI()).thenReturn(tcduri);
-        when(tcduri.getItemId()).thenReturn(123L);
+        lenient().when(binaryMeta.getURI()).thenReturn(tcduri);
+        lenient().when(tcduri.getItemId()).thenReturn(123L);
 
-        when(webComponentMetaFactory.getMeta(eq(123))).thenReturn(componentMeta);
-        when(componentMeta.getLastPublicationDate()).thenReturn(new Date());
+        mockedConstructionBinaryFactory = Mockito.mockConstruction(BinaryFactory.class,
+                (mock, context) -> lenient().when(mock.getBinary(anyInt(), anyInt(), any())).thenReturn(binaryData));
+        lenient().when(binaryData.getBytes()).thenReturn("hello".getBytes());
 
-        when(binaryFactory.getBinary(eq(42), eq(123), any())).thenReturn(binaryData);
-        when(binaryData.getBytes()).thenReturn("hello".getBytes());
+        mockedConstructionPublicationMetaFactory = Mockito.mockConstruction(PublicationMetaFactory.class,
+                (mock, context) -> lenient().when(mock.getMeta(any())).thenReturn(publicationMeta));
+        lenient().when(publicationMeta.getPublicationUrl()).thenReturn("/");
+
+        mockedConstructionWebComponentMetaFactory = Mockito.mockConstruction(ComponentMetaFactory.class,
+                (mock, context) -> lenient().when(mock.getMeta(anyInt())).thenReturn(componentMeta));
+        lenient().when(componentMeta.getLastPublicationDate()).thenReturn(new Date());
 
         MockServletContext context = new MockServletContext();
-        when(webApplicationContext.getServletContext()).thenReturn(context);
+        lenient().when(webApplicationContext.getServletContext()).thenReturn(context);
+    }
 
-        staticContentResolver = new CilStaticContentResolver(
-                webApplicationContext, dynamicMetaRetriever, binaryFactory, publicationMetaFactory);
+    @AfterEach
+    public void afterEachTest() {
+        mockedConstructionDynamicMetaRetriever.close();
+        mockedConstructionBinaryFactory.close();
+        mockedConstructionPublicationMetaFactory.close();
+        mockedConstructionWebComponentMetaFactory.close();
     }
 
     @Test
     public void shouldResolveLocalizationPath_IfItIsNotPassedInRequest() throws ContentProviderException, StorageException, IOException {
-        //given 
+        // Given
         StaticContentRequestDto requestDto = StaticContentRequestDto.builder("/path_not_in_request", "42").build();
-        when(binaryData.getBytes()).thenReturn("path_not_in_request".getBytes());
+        lenient().when(binaryData.getBytes()).thenReturn("path_not_in_request".getBytes());
 
-        //when
+        // When
+        PublicationMetaFactory publicationMetaFactory = new PublicationMetaFactory();
+        DynamicMetaRetriever dynamicMetaRetriever = new DynamicMetaRetriever();
+        BinaryFactory binaryFactory = new BinaryFactory();
+        CilStaticContentResolver staticContentResolver = new CilStaticContentResolver(webApplicationContext,
+                dynamicMetaRetriever, binaryFactory, publicationMetaFactory);
+
         StaticContentItem item = staticContentResolver.getStaticContent(requestDto);
 
-        //then
+        // Then
         verify(publicationMetaFactory).getMeta(eq("tcm:0-42-1"));
         assertEquals("path_not_in_request", IOUtils.toString(item.getContent(), "UTF-8"));
         assertFalse(item.isVersioned());
@@ -116,29 +113,39 @@ public class CilStaticContentResolverTest {
 
     @Test
     public void shouldReturnRightContentType() throws IOException, ContentProviderException {
-        //given 
+        // Given
         StaticContentRequestDto requestDto = StaticContentRequestDto.builder("/content_type", "42").build();
-        when(binaryData.getBytes()).thenReturn("content_type".getBytes());
-        when(binaryMeta.getType()).thenReturn("content_type");
+        lenient().when(binaryData.getBytes()).thenReturn("content_type".getBytes());
+        lenient().when(binaryMeta.getType()).thenReturn("content_type");
 
-        //when
+        // When
+        PublicationMetaFactory publicationMetaFactory = new PublicationMetaFactory();
+        DynamicMetaRetriever dynamicMetaRetriever = new DynamicMetaRetriever();
+        BinaryFactory binaryFactory = new BinaryFactory();
+        CilStaticContentResolver staticContentResolver = new CilStaticContentResolver(webApplicationContext,
+                dynamicMetaRetriever, binaryFactory, publicationMetaFactory);
         StaticContentItem item = staticContentResolver.getStaticContent(requestDto);
 
-        //then
+        // Then
         assertEquals("content_type", item.getContentType());
     }
 
     @Test
     public void shouldResolveFile_WhenRequested_WithAllData() throws Exception {
-        //given
+        // Given
         StaticContentRequestDto requestDto = StaticContentRequestDto.builder("/all_data", "42")
                 .localizationPath("/publication").baseUrl("http://base").build();
-        when(binaryData.getBytes()).thenReturn("all_data".getBytes());
+        lenient().when(binaryData.getBytes()).thenReturn("all_data".getBytes());
 
-        //when
+        // When
+        PublicationMetaFactory publicationMetaFactory = new PublicationMetaFactory();
+        DynamicMetaRetriever dynamicMetaRetriever = new DynamicMetaRetriever();
+        BinaryFactory binaryFactory = new BinaryFactory();
+        CilStaticContentResolver staticContentResolver = new CilStaticContentResolver(webApplicationContext,
+                dynamicMetaRetriever, binaryFactory, publicationMetaFactory);
         StaticContentItem item = staticContentResolver.getStaticContent(requestDto);
 
-        //then
+        // Then
         assertEquals("all_data", IOUtils.toString(item.getContent(), "UTF-8"));
         assertFalse(item.isVersioned());
         assertEquals("application/octet-stream", item.getContentType());
@@ -151,9 +158,14 @@ public class CilStaticContentResolverTest {
         //given 
         StaticContentRequestDto requestDto = StaticContentRequestDto.builder("/loc_root", "42")
                 .localizationPath("/").baseUrl("http://base").build();
-        when(binaryData.getBytes()).thenReturn("loc_root".getBytes());
+        lenient().when(binaryData.getBytes()).thenReturn("loc_root".getBytes());
 
         //when
+        PublicationMetaFactory publicationMetaFactory = new PublicationMetaFactory();
+        DynamicMetaRetriever dynamicMetaRetriever = new DynamicMetaRetriever();
+        BinaryFactory binaryFactory = new BinaryFactory();
+        CilStaticContentResolver staticContentResolver = new CilStaticContentResolver(webApplicationContext,
+                dynamicMetaRetriever, binaryFactory, publicationMetaFactory);
         staticContentResolver.getStaticContent(requestDto);
 
         //then
@@ -166,6 +178,11 @@ public class CilStaticContentResolverTest {
         StaticContentRequestDto requestDto = StaticContentRequestDto.builder("/system/v1.2/version", "42").build();
 
         //when
+        PublicationMetaFactory publicationMetaFactory = new PublicationMetaFactory();
+        DynamicMetaRetriever dynamicMetaRetriever = new DynamicMetaRetriever();
+        BinaryFactory binaryFactory = new BinaryFactory();
+        CilStaticContentResolver staticContentResolver = new CilStaticContentResolver(webApplicationContext,
+                dynamicMetaRetriever, binaryFactory, publicationMetaFactory);
         staticContentResolver.getStaticContent(requestDto);
 
         //then

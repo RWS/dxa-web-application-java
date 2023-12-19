@@ -7,16 +7,16 @@ import com.sdl.webapp.common.api.model.TestEntity;
 import com.sdl.webapp.common.api.model.query.SimpleBrokerQuery;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static com.sdl.webapp.common.api.model.TestEntity.entity;
 import static com.sdl.webapp.common.api.model.TestEntity.feedItem;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.*;
 
 public class DynamicListTest {
 
@@ -38,7 +38,7 @@ public class DynamicListTest {
         TestEntity entity2 = entity(feedItem2);
 
         DynamicList<TestEntity, SimpleBrokerQuery> dynamicList = spy(getDynamicList());
-        when(dynamicList.getQueryResults()).thenReturn(Lists.newArrayList(entity1, entity2));
+        lenient().when(dynamicList.getQueryResults()).thenReturn(Lists.newArrayList(entity1, entity2));
 
         //when
         List<FeedItem> list = dynamicList.extractFeedItems();

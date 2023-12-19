@@ -8,28 +8,22 @@ import com.sdl.webapp.common.api.localization.LocalizationResolver;
 import com.sdl.webapp.common.api.localization.LocalizationResolverException;
 import com.sdl.webapp.common.api.localization.UnknownLocalizationHandler;
 import com.sdl.webapp.common.impl.localization.LocalizationImpl;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class WebRequestContextImplTest {
 
     @InjectMocks
@@ -41,39 +35,41 @@ public class WebRequestContextImplTest {
     @Mock
     private HttpServletRequest servletRequest;
 
-    @Before
+    @BeforeEach
     public void init() {
-        when(servletRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:8080/context/publication/request"));
-        when(servletRequest.getRequestURI()).thenReturn("/context/publication/request");
-        when(servletRequest.getContextPath()).thenReturn("/context");
+        lenient().when(servletRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:8080/context/publication/request"));
+        lenient().when(servletRequest.getRequestURI()).thenReturn("/context/publication/request");
+        lenient().when(servletRequest.getContextPath()).thenReturn("/context");
     }
 
 
-    @Test(expected = LocalizationNotFoundException.class)
+    @Test
     public void shouldThrowExceptionIfNoLocalizationFoundWithSpecialHandler() throws Exception {
-        //given
-        when(localizationResolver.getLocalization(anyString())).thenThrow(new LocalizationResolverException("Test"));
+        Assertions.assertThrows(LocalizationNotFoundException.class, () -> {
+            //given
+            lenient().when(localizationResolver.getLocalization(anyString())).thenThrow(new LocalizationResolverException("Test"));
 
-        UnknownLocalizationHandler unknownLocalizationHandler = mock(UnknownLocalizationHandler.class);
-        when(unknownLocalizationHandler.handleUnknown(any(Exception.class), any(ServletRequest.class)))
-                .thenReturn(null);
-        ReflectionTestUtils.setField(webRequestContext, "unknownLocalizationHandler", unknownLocalizationHandler);
+            UnknownLocalizationHandler unknownLocalizationHandler = mock(UnknownLocalizationHandler.class);
+            lenient().when(unknownLocalizationHandler.handleUnknown(any(Exception.class), any(ServletRequest.class)))
+                    .thenReturn(null);
+            ReflectionTestUtils.setField(webRequestContext, "unknownLocalizationHandler", unknownLocalizationHandler);
 
-        //when
-        webRequestContext.getLocalization();
+            //when
+            webRequestContext.getLocalization();
 
-        //then
-        // exception
+            //then
+            // exception
+        });
     }
 
     @Test
     public void shouldResolveLocalizationWithSpecialHandler() throws Exception {
         //given
-        when(localizationResolver.getLocalization(anyString())).thenThrow(new LocalizationResolverException("Test"));
+        lenient().when(localizationResolver.getLocalization(anyString())).thenThrow(new LocalizationResolverException("Test"));
 
         UnknownLocalizationHandler unknownLocalizationHandler = mock(UnknownLocalizationHandler.class);
         LocalizationImpl localization = mock(LocalizationImpl.class);
-        when(unknownLocalizationHandler.handleUnknown(any(Exception.class), any(ServletRequest.class))).thenReturn(localization);
+        lenient().when(unknownLocalizationHandler.handleUnknown(any(Exception.class), any(ServletRequest.class))).thenReturn(localization);
         ReflectionTestUtils.setField(webRequestContext, "unknownLocalizationHandler", unknownLocalizationHandler);
 
         //when
@@ -88,12 +84,12 @@ public class WebRequestContextImplTest {
     @Test
     public void shouldFallBackExceptionIfDefaultAndCustomLocalizationResolversFailed() throws LocalizationResolverException {
         //given
-        when(localizationResolver.getLocalization(anyString())).thenThrow(new LocalizationResolverException("Test"));
+        lenient().when(localizationResolver.getLocalization(anyString())).thenThrow(new LocalizationResolverException("Test"));
 
         UnknownLocalizationHandler unknownLocalizationHandler = mock(UnknownLocalizationHandler.class);
-        when(unknownLocalizationHandler.handleUnknown(any(Exception.class), any(ServletRequest.class))).thenReturn(null);
+        lenient().when(unknownLocalizationHandler.handleUnknown(any(Exception.class), any(ServletRequest.class))).thenReturn(null);
         LocalizationNotResolvedException exception = new LocalizationNotResolvedException("Test exception");
-        when(unknownLocalizationHandler.getFallbackException(any(Exception.class), any(ServletRequest.class))).thenReturn(exception);
+        lenient().when(unknownLocalizationHandler.getFallbackException(any(Exception.class), any(ServletRequest.class))).thenReturn(exception);
         ReflectionTestUtils.setField(webRequestContext, "unknownLocalizationHandler", unknownLocalizationHandler);
 
         //when
@@ -113,11 +109,11 @@ public class WebRequestContextImplTest {
     @Test
     public void shouldFallBackToDefaultExceptionIfDefaultAndCustomLocalizationResolversFailedAndNoFallback() throws LocalizationResolverException {
         //given
-        when(localizationResolver.getLocalization(anyString())).thenThrow(new LocalizationResolverException("Test"));
+        lenient().when(localizationResolver.getLocalization(anyString())).thenThrow(new LocalizationResolverException("Test"));
 
         UnknownLocalizationHandler unknownLocalizationHandler = mock(UnknownLocalizationHandler.class);
-        when(unknownLocalizationHandler.handleUnknown(any(Exception.class), any(ServletRequest.class))).thenReturn(null);
-        when(unknownLocalizationHandler.getFallbackException(any(Exception.class), any(ServletRequest.class))).thenReturn(null);
+        lenient().when(unknownLocalizationHandler.handleUnknown(any(Exception.class), any(ServletRequest.class))).thenReturn(null);
+        lenient().when(unknownLocalizationHandler.getFallbackException(any(Exception.class), any(ServletRequest.class))).thenReturn(null);
         ReflectionTestUtils.setField(webRequestContext, "unknownLocalizationHandler", unknownLocalizationHandler);
 
         //when
@@ -133,17 +129,18 @@ public class WebRequestContextImplTest {
         verify(unknownLocalizationHandler).getFallbackException(any(Exception.class), any(ServletRequest.class));
     }
 
-    @Test(expected = LocalizationNotFoundException.class)
+    @Test
     public void shouldThrowExceptionIfNoLocalizationFoundWithoutSpecialHandler() throws Exception {
-        //given
-        when(localizationResolver.getLocalization(anyString())).thenThrow(new LocalizationResolverException("Test"));
-        //no UnknownLocalizationHandler set
+        Assertions.assertThrows(LocalizationNotFoundException.class, () -> {
+            // Given
+            lenient().when(localizationResolver.getLocalization(anyString())).thenThrow(new LocalizationResolverException("Test"));
+            // No UnknownLocalizationHandler set
 
-        //when
-        webRequestContext.getLocalization();
+            // When
+            webRequestContext.getLocalization();
 
-        //then
-        // exception
+            // Then exception
+        });
     }
 
     @Test
@@ -185,8 +182,8 @@ public class WebRequestContextImplTest {
     @Test
     public void shouldBeAwareOfRootRequests() {
         //given
-        when(servletRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:8080/"));
-        when(servletRequest.getRequestURI()).thenReturn("/");
+        lenient().when(servletRequest.getRequestURL()).thenReturn(new StringBuffer("http://localhost:8080/"));
+        lenient().when(servletRequest.getRequestURI()).thenReturn("/");
 
         //when
         String baseUrl = webRequestContext.getBaseUrl();

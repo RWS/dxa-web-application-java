@@ -2,7 +2,7 @@ package com.sdl.webapp.common.impl.contextengine;
 
 import com.sdl.webapp.common.exceptions.DxaException;
 import org.jetbrains.annotations.Nullable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Map;
@@ -13,9 +13,7 @@ import static com.sdl.webapp.common.impl.contextengine.Claims.desktopClaims;
 import static com.sdl.webapp.common.impl.contextengine.Claims.featurePhoneClaims;
 import static com.sdl.webapp.common.impl.contextengine.Claims.smartPhoneClaims;
 import static com.sdl.webapp.common.impl.contextengine.Claims.tabletClaims;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class DeviceFamiliesEvaluatorTest {
 

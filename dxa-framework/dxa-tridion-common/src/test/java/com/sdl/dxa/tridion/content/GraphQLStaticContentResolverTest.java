@@ -14,13 +14,12 @@ import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.tridion.broker.StorageException;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockServletContext;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -29,16 +28,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(GraphQLStaticContentResolver.class)
+@ExtendWith(MockitoExtension.class)
 public class GraphQLStaticContentResolverTest {
 
     private static final String LOCALIZATION_ID = "42";
@@ -63,7 +58,7 @@ public class GraphQLStaticContentResolverTest {
     private BinaryComponent binaryComponent;
     private BinaryVariant binaryVariant;
 
-    @Before
+    @BeforeEach
     public void init() throws Exception {
         MockServletContext context = new MockServletContext();
         when(webApplicationContext.getServletContext()).thenReturn(context);
@@ -88,14 +83,14 @@ public class GraphQLStaticContentResolverTest {
                 eq(42),
                 anyString(),
                 eq(""),
-                any(ContextData.class))).thenReturn(binaryComponent);
+                any())).thenReturn(binaryComponent);
 
         binaryComponent.getVariants().getEdges().get(0).getNode().getDownloadUrl();
 
         Publication publication = new Publication();
         publication.setPublicationUrl("publication URL");
 
-        when(pcaClientProvider.getClient().getPublication(eq(ContentNamespace.Sites),
+        lenient().when(pcaClientProvider.getClient().getPublication(eq(ContentNamespace.Sites),
                 eq(Integer.parseInt(LOCALIZATION_ID)),
                 eq(""),
                 any(ContextData.class))).thenReturn(publication);

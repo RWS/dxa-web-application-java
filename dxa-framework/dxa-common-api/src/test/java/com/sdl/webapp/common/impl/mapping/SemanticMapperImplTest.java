@@ -19,14 +19,15 @@ import lombok.EqualsAndHashCode;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.convert.TypeDescriptor;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.lang.reflect.Field;
 import java.util.Collections;
@@ -41,12 +42,12 @@ import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabula
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.hasEntry;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.MatcherAssert.assertThat;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = SemanticMapperImplTest.SemanticMapperImplTestConfig.class)
 public class SemanticMapperImplTest {
 
@@ -66,7 +67,7 @@ public class SemanticMapperImplTest {
     }
 
     private void mockData(Field field, SemanticField semanticField, FieldData fieldData, FieldData... rest) throws SemanticMappingException {
-        when(fieldDataProvider.getFieldData(semanticField, new TypeDescriptor(field))).thenReturn(fieldData, rest);
+        lenient().when(fieldDataProvider.getFieldData(semanticField, new TypeDescriptor(field))).thenReturn(fieldData, rest);
     }
 
 
@@ -74,7 +75,7 @@ public class SemanticMapperImplTest {
     public void shouldCorrectlyResolveSemanticMappings() throws SemanticMappingException, NoSuchFieldException {
         //given
         SemanticSchema semanticSchema = new SemanticSchema(1L, "not important", Collections.emptySet(), TestArticle.getSemantics());
-        when(fieldDataProvider.getSemanticSchema()).thenReturn(semanticSchema);
+        lenient().when(fieldDataProvider.getSemanticSchema()).thenReturn(semanticSchema);
 
         // headline in Article
         mockData(TestArticle.class.getDeclaredField("headline"), TestArticle.SEMANTIC_FIELDS.get("headline"), new FieldData("HEADLINE", "tcm:Content/HeadlineField"));

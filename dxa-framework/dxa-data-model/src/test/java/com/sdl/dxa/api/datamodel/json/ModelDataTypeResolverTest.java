@@ -7,24 +7,21 @@ import com.fasterxml.jackson.databind.jsontype.TypeDeserializer;
 import com.fasterxml.jackson.databind.jsontype.TypeSerializer;
 import com.fasterxml.jackson.databind.type.SimpleType;
 import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest({DeserializationConfig.class, SerializationConfig.class})
+@ExtendWith(MockitoExtension.class)
 public class ModelDataTypeResolverTest {
 
     @Mock
@@ -35,17 +32,17 @@ public class ModelDataTypeResolverTest {
 
     private ModelDataTypeResolver resolver = new ModelDataTypeResolver();
 
-    @Before
+    @BeforeEach
     public void init() {
-        doReturn(null).when(deserializationConfig).findMixInClassFor(any());
-        doReturn(DummyInterface.class).when(deserializationConfig).findMixInClassFor(eq(ModelDataTypeResolver.class));
-        doReturn(PolymorphicObjectMixin.class).when(deserializationConfig).findMixInClassFor(eq(Object.class));
-        doReturn(PolymorphicObjectMixin.class).when(deserializationConfig).findMixInClassFor(eq(SitemapItemModelData.class));
+        lenient().doReturn(null).when(deserializationConfig).findMixInClassFor(any());
+        lenient().doReturn(DummyInterface.class).when(deserializationConfig).findMixInClassFor(eq(ModelDataTypeResolver.class));
+        lenient().doReturn(PolymorphicObjectMixin.class).when(deserializationConfig).findMixInClassFor(eq(Object.class));
+        lenient().doReturn(PolymorphicObjectMixin.class).when(deserializationConfig).findMixInClassFor(eq(SitemapItemModelData.class));
 
-        doReturn(null).when(serializationConfig).findMixInClassFor(any());
-        doReturn(DummyInterface.class).when(serializationConfig).findMixInClassFor(eq(ModelDataTypeResolver.class));
-        doReturn(PolymorphicObjectMixin.class).when(serializationConfig).findMixInClassFor(eq(Object.class));
-        doReturn(PolymorphicObjectMixin.class).when(serializationConfig).findMixInClassFor(eq(SitemapItemModelData.class));
+        lenient().doReturn(null).when(serializationConfig).findMixInClassFor(any());
+        lenient().doReturn(DummyInterface.class).when(serializationConfig).findMixInClassFor(eq(ModelDataTypeResolver.class));
+        lenient().doReturn(PolymorphicObjectMixin.class).when(serializationConfig).findMixInClassFor(eq(Object.class));
+        lenient().doReturn(PolymorphicObjectMixin.class).when(serializationConfig).findMixInClassFor(eq(SitemapItemModelData.class));
 
         resolver.inclusion(JsonTypeInfo.As.PROPERTY).init(JsonTypeInfo.Id.CUSTOM, new ModelDataTypeIdResolver());
     }

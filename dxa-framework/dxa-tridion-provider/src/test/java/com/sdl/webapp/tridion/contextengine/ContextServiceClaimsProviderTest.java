@@ -5,12 +5,13 @@ import com.sdl.context.odata.client.api.ODataContextEngine;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.exceptions.DxaException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -20,13 +21,12 @@ import javax.servlet.http.HttpServletRequest;
 import java.util.Map;
 
 import static org.apache.commons.collections4.MapUtils.isEmpty;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ContextServiceClaimsProviderTest {
 
     @Mock
@@ -44,11 +44,11 @@ public class ContextServiceClaimsProviderTest {
     @InjectMocks
     private ContextServiceClaimsProvider contextServiceClaimsProvider;
 
-    @Before
+    @BeforeEach
     public void init() {
-        when(webRequestContext.getLocalization()).thenReturn(localization);
+        lenient().when(webRequestContext.getLocalization()).thenReturn(localization);
 
-        when(localization.getId()).thenReturn("1");
+        lenient().when(localization.getId()).thenReturn("1");
 
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(httpServletRequest));
         ReflectionTestUtils.setField(contextServiceClaimsProvider, "oDataContextEngine", oDataContextEngine);

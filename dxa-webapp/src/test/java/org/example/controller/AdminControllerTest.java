@@ -1,23 +1,23 @@
 package org.example.controller;
 
 import org.example.service.AdminService;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import javax.cache.Cache;
 import javax.cache.CacheManager;
 import java.util.Collections;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AdminControllerTest {
 
     @Mock
@@ -43,7 +43,7 @@ public class AdminControllerTest {
 
         //then
         verify(adminService).refreshLocalization();
-        assertEquals("Should redirect to expected path", "redirect:/index", redirectString);
+        assertEquals("redirect:/index", redirectString, "Should redirect to expected path");
         verify(cache).clear();
     }
 }

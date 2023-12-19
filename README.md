@@ -4,7 +4,7 @@ Build status
 ------------
 Java CI with Maven:
 - Develop - ![Build Status](https://github.com/sdl/dxa-web-application-java/workflows/Build/badge.svg)
-- 1.8 -![Build Status](https://github.com/sdl/dxa-web-application-java/workflows/Build/badge.svg?branch=release%2F1.8)
+- 17 -![Build Status](https://github.com/sdl/dxa-web-application-java/workflows/Build/badge.svg?branch=release%2F17)
 
 
 About

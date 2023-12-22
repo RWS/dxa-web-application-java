@@ -15,11 +15,11 @@ import org.springframework.util.AntPathMatcher;
 import org.springframework.util.ClassUtils;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterRegistration;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterRegistration;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -222,7 +222,8 @@ public final class InitializationUtils {
      * @return dynamic registration object or <code>null</code> if classname if not found
      */
     public static FilterRegistration.Dynamic registerFilter(@NonNull ServletContext servletContext,
-                                                            @NonNull Class<? extends Filter> clazz, @NonNull String... urlMappings) {
+                                                            @NonNull Class<? extends Filter> clazz,
+                                                            @NonNull String... urlMappings) {
 
         FilterRegistration.Dynamic registration = servletContext.addFilter(clazz.getName(), clazz);
         if (registration != null) {
@@ -247,8 +248,10 @@ public final class InitializationUtils {
      * @param urlMappings    mappings for the filter
      * @return dynamic registration object or <code>null</code> if classname if not found
      */
-    public static FilterRegistration.Dynamic registerFilter(@NonNull ServletContext servletContext, @NonNull String filterName,
-                                                            @NonNull Class<? extends Filter> clazz, @NonNull String... urlMappings) {
+    public static FilterRegistration.Dynamic registerFilter(@NonNull ServletContext servletContext,
+                                                            @NonNull String filterName,
+                                                            @NonNull Class<? extends Filter> clazz,
+                                                            @NonNull String... urlMappings) {
 
         FilterRegistration.Dynamic registration = servletContext.addFilter(filterName, clazz);
         registration.addMappingForUrlPatterns(null, false, urlMappings);

@@ -3,7 +3,7 @@ package com.sdl.webapp.common.api.formatters;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Produces the feed in json format.

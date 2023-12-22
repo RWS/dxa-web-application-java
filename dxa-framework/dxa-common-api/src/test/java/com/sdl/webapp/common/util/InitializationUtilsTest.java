@@ -7,11 +7,11 @@ import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ConfigurableWebEnvironment;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
-import javax.servlet.Filter;
-import javax.servlet.FilterRegistration;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterRegistration;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import java.util.Collection;
 import java.util.EventListener;
 import java.util.Iterator;
@@ -223,7 +223,7 @@ public class InitializationUtilsTest {
     public void shouldRegisterFilterByNameIfPresent() {
         //given
         ServletContext context = mock(ServletContext.class);
-        String className = "javax.servlet.Filter";
+        String className = "jakarta.servlet.Filter";
         String mapping = "/mapping";
         FilterRegistration.Dynamic registration = mock(FilterRegistration.Dynamic.class);
         lenient().when(context.addFilter(same(className), same(className))).thenReturn(registration);
@@ -242,7 +242,7 @@ public class InitializationUtilsTest {
     public void shouldRegisterServletByNameIfPresent() {
         //given
         ServletContext context = mock(ServletContext.class);
-        String className = "javax.servlet.Servlet";
+        String className = "jakarta.servlet.Servlet";
         String mapping = "/mapping";
         ServletRegistration.Dynamic servletRegistration = mock(ServletRegistration.Dynamic.class);
         lenient().when(context.addServlet(same(className), same(className))).thenReturn(servletRegistration);

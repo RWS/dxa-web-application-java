@@ -5,7 +5,7 @@ import com.rometools.rome.feed.rss.Item;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Produces the feed in RSS format.

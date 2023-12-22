@@ -42,7 +42,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 
-import javax.servlet.http.HttpSession;
+import jakarta.servlet.http.HttpSession;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;

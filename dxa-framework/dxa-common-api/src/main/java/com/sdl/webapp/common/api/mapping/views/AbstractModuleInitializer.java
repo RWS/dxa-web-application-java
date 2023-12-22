@@ -10,7 +10,7 @@ import com.sdl.webapp.common.api.model.mvcdata.MvcDataImpl;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 import java.lang.annotation.Annotation;
 
 import static com.google.common.base.Strings.isNullOrEmpty;

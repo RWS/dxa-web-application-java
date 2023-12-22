@@ -16,12 +16,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.Validator;
 import org.springframework.web.bind.ServletRequestDataBinder;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.mvc.method.RequestMappingInfo;
 import org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Map;
 import java.util.Objects;
 
@@ -152,6 +151,9 @@ public abstract class BaseController {
 
         for (Map.Entry<RequestMappingInfo, HandlerMethod> item : handlerMethods.entrySet()) {
             RequestMappingInfo mapping = item.getKey();
+
+            if (mapping.getPatternsCondition() == null)
+                continue;
 
             for (String urlPattern : mapping.getPatternsCondition().getPatterns()) {
                 if (urlPattern.contains('/' + controllerAreaName + '/' + controllerName)) {

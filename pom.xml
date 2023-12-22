@@ -27,7 +27,6 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- CIL version-->
-        <!-- 11.6.0-1123 -->
         <cd-cil.version>12.0.0-1197</cd-cil.version>
 
         <!-- DXA versions -->
@@ -35,72 +34,68 @@
         <!-- /DXA Versions -->
 
         <!-- Apache -->
-        <commons-io-version>2.8.0</commons-io-version>
-        <commons-lang3.version>3.11</commons-lang3.version>
-        <commons-text.version>1.10.0</commons-text.version>
+        <commons-io-version>2.15.1</commons-io-version>
+        <commons-lang3.version>3.14.0</commons-lang3.version>
+        <commons-text.version>1.11.0</commons-text.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <commons-compress.version>1.25.0</commons-compress.version>
-        <httpcomponents-client-version>4.5.13</httpcomponents-client-version>
-        <httpcomponents.core.version>4.4.14</httpcomponents.core.version>
+        <httpcomponents-client-version>4.5.14</httpcomponents-client-version>
+        <httpcomponents.core.version>4.4.16</httpcomponents.core.version>
 
-        <guava-version>32.1.2-jre</guava-version>
+        <guava-version>32.1.3-jre</guava-version>
 
         <!-- Joda Time -->
-        <joda-time-version>2.10</joda-time-version>
+        <joda-time-version>2.12.5</joda-time-version>
 
-        <jackson.version>2.15.3</jackson.version>
+        <jackson.version>2.16.0</jackson.version>
         <lombok.version>1.18.30</lombok.version>
 
         <!-- Logging -->
-        <logback.version>1.3.14</logback.version>
-        <slf4j-version>1.7.26</slf4j-version>
+        <logback.version>1.4.14</logback.version>
+        <slf4j-version>2.0.9</slf4j-version>
 
         <!-- Servlet and JSP APIs -->
-        <servlet-api-version>4.0.1</servlet-api-version>
-        <jsp-api-version>2.3.3</jsp-api-version>
-        <jstl-version>1.2</jstl-version>
+        <servlet-api-version>6.0.0</servlet-api-version>
+        <jsp-api-version>3.1.1</jsp-api-version>
+        <jstl-version>3.0.0</jstl-version>
+        <glassfish-jstl-version>3.0.1</glassfish-jstl-version>
 
         <!-- JUnit and other test libraries -->
         <junit-version>5.10.1</junit-version>
         <hamcrest-version>2.2</hamcrest-version>
         <mockito-version>5.8.0</mockito-version>
         <openpojo.version>0.9.1</openpojo.version>
-        <jsonassert.version>1.5.0</jsonassert.version>
+        <jsonassert.version>1.5.1</jsonassert.version>
         <xmlunit.version>2.9.1</xmlunit.version>
 
         <!-- Spring -->
-        <spring.version>5.3.31</spring.version>
-        <spring-security.version>5.8.8</spring-security.version>
+        <spring.version>6.1.2</spring.version>
+        <spring-security.version>6.2.0</spring-security.version>
 
-        <jsoup.version>1.15.4</jsoup.version>
-        <rome.version>1.15.0</rome.version>
+        <jsoup.version>1.17.1</jsoup.version>
+        <rome.version>2.1.0</rome.version>
         <jettison.version>1.5.4</jettison.version>
-        <!--<xalan-version>2.7.2</xalan-version>-->
 
-        <dozer.version>5.5.1</dozer.version>
+        <dozer.version>6.5.2</dozer.version>
         <device-detection.version>3.2.18.1</device-detection.version>
 
-        <jb-annotations.version>17.0.0</jb-annotations.version>
-        <jaxen.version>1.2.0</jaxen.version>
-        <jdom2.version>2.0.6</jdom2.version>
+        <jb-annotations.version>24.1.0</jb-annotations.version>
+        <jaxen.version>2.0.0</jaxen.version>
+        <jdom2.version>2.0.6.1</jdom2.version>
 
         <ehcache.version>3.7.1</ehcache.version>
         <cache-api.version>1.1.1</cache-api.version>
 
-        <!-- DD4T PROPERTIES -->
-        <activation.version>1.1.1</activation.version>
+        <commons-codec.version>1.16.0</commons-codec.version>
 
-        <commons-codec.version>1.12</commons-codec.version>
-
-        <fast-classpath-scanner.version>3.1.15</fast-classpath-scanner.version>
-        <gson.version>2.9.1</gson.version>
-        <javax.jms.version>1.1-rev-1</javax.jms.version>
-        <javax.annotation.version>1.3.2</javax.annotation.version>
-        <jaxws-api.version>2.3.1</jaxws-api.version>
-        <jaxb.api.version>2.3.1</jaxb.api.version>
-        <jaxb.core.version>2.3.0.1</jaxb.core.version>
-        <jaxb.version>2.3.2</jaxb.version>
-        <javax.activation.version>1.2.0</javax.activation.version>
+        <fast-classpath-scanner.version>4.8.165</fast-classpath-scanner.version>
+        <gson.version>2.10.1</gson.version>
+        <jakarta.annotation.version>3.0.0-M1</jakarta.annotation.version>
+        <jakarta.xml.ws-api.version>4.0.1</jakarta.xml.ws-api.version>
+        <jakarta.xml.bind-api.version>4.0.1</jakarta.xml.bind-api.version>
+        <jakarta.activation.version>2.1.2</jakarta.activation.version>
+        <jaxb.core.version>4.0.4</jaxb.core.version>
+        <jaxb.version>4.0.4</jaxb.version>
 
         <!-- DD4T dependencies -->
         <!-- These are not really used in the framework and are needed only for Model Service adapter -->
@@ -165,6 +160,13 @@
             <timezone>+2</timezone>
             <organization>SDL Group</organization>
             <organizationUrl>http://www.sdl.com</organizationUrl>
+        </contributor>
+        <contributor>
+            <name>Philip Medcraft</name>
+            <email>pmedcraft@rws.com</email>
+            <timezone>+1</timezone>
+            <organization>RWS Group</organization>
+            <organizationUrl>http://www.rws.com</organizationUrl>
         </contributor>
     </contributors>
 
@@ -297,12 +299,6 @@
             </dependency>
             <dependency>
                 <groupId>com.sdl.dxa.modules</groupId>
-                <artifactId>dxa-module-ugc</artifactId>
-                <version>${dxa-module-ugc.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-            <dependency>
-                <groupId>com.sdl.dxa.modules</groupId>
                 <artifactId>dxa-module-test</artifactId>
                 <version>${dxa-module-test.version}</version>
                 <scope>runtime</scope>
@@ -375,8 +371,8 @@
             </dependency>
 
             <dependency>
-                <groupId>net.sf.dozer</groupId>
-                <artifactId>dozer</artifactId>
+                <groupId>com.github.dozermapper</groupId>
+                <artifactId>dozer-core</artifactId>
                 <version>${dozer.version}</version>
             </dependency>
 
@@ -416,20 +412,26 @@
 
             <!-- Servlet and JSP APIs -->
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
+                <groupId>jakarta.servlet</groupId>
+                <artifactId>jakarta.servlet-api</artifactId>
                 <version>${servlet-api-version}</version>
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>javax.servlet.jsp</groupId>
-                <artifactId>javax.servlet.jsp-api</artifactId>
+                <groupId>jakarta.servlet.jsp</groupId>
+                <artifactId>jakarta.servlet.jsp-api</artifactId>
                 <version>${jsp-api-version}</version>
+                <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>jstl</artifactId>
+                <groupId>jakarta.servlet.jsp.jstl</groupId>
+                <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
                 <version>${jstl-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.web</groupId>
+                <artifactId>jakarta.servlet.jsp.jstl</artifactId>
+                <version>${glassfish-jstl-version}</version>
             </dependency>
 
             <!-- JUnit and other test libraries -->
@@ -437,12 +439,6 @@
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-api</artifactId>
                 <version>${junit-version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.hamcrest</groupId>
-                <artifactId>hamcrest-all</artifactId>
-                <version>${hamcrest-version}</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -678,16 +674,15 @@
                 <version>${cache-api.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.annotation</groupId>
-                <artifactId>javax.annotation-api</artifactId>
-                <version>${javax.annotation.version}</version>
+                <groupId>jakarta.annotation</groupId>
+                <artifactId>jakarta.annotation-api</artifactId>
+                <version>${jakarta.annotation.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.xml.ws</groupId>
-                <artifactId>jaxws-api</artifactId>
-                <version>${jaxws-api.version}</version>
+                <groupId>jakarta.xml.ws</groupId>
+                <artifactId>jakarta.xml.ws-api</artifactId>
+                <version>${jakarta.xml.ws-api.version}</version>
             </dependency>
-
 
             <dependency>
                 <groupId>org.jsoup</groupId>
@@ -708,7 +703,7 @@
             <dependency>
                 <groupId>com.squareup.okio</groupId>
                 <artifactId>okio-jvm</artifactId>
-                <version>3.5.0</version>
+                <version>3.7.0</version>
             </dependency>
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
@@ -718,43 +713,28 @@
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>1.9.10</version>
+                <version>1.9.21</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
-                <version>1.9.10</version>
+                <version>1.9.21</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk7</artifactId>
-                <version>1.9.10</version>
+                <version>1.9.21</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk8</artifactId>
-                <version>1.9.10</version>
+                <version>1.9.21</version>
             </dependency>
             <dependency>
                 <groupId>com.github.ua-parser</groupId>
                 <artifactId>uap-java</artifactId>
-                <version>1.5.4</version>
+                <version>1.6.1</version>
             </dependency>
-
-            <!--
-            <dependency>
-                <groupId>xalan</groupId>
-                <artifactId>xalan</artifactId>
-                <version>${xalan-version}</version>
-                <scope>runtime</scope>
-                <exclusions>
-                    <exclusion>
-                        <groupId>xml-apis</groupId>
-                        <artifactId>xml-apis</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            -->
 
             <dependency>
                 <groupId>org.jetbrains</groupId>
@@ -763,7 +743,6 @@
             </dependency>
 
             <!--added for dd4t-->
-            <!-- Spring -->
 
             <!-- Spring Framework -->
             <dependency>
@@ -773,10 +752,11 @@
             </dependency>
 
             <dependency>
-                <groupId>io.github.lukehutch</groupId>
-                <artifactId>fast-classpath-scanner</artifactId>
+                <groupId>io.github.classgraph</groupId>
+                <artifactId>classgraph</artifactId>
                 <version>${fast-classpath-scanner.version}</version>
             </dependency>
+
             <dependency>
                 <groupId>com.fasterxml.jackson.module</groupId>
                 <artifactId>jackson-module-afterburner</artifactId>
@@ -800,6 +780,12 @@
                 <groupId>org.dd4t</groupId>
                 <artifactId>dd4t-providers-common</artifactId>
                 <version>${dd4t-latest.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.simpleframework</groupId>
+                        <artifactId>simple-xml</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.dd4t</groupId>
@@ -845,14 +831,14 @@
             </dependency>
 
             <dependency>
-                <groupId>com.sun.activation</groupId>
-                <artifactId>javax.activation</artifactId>
-                <version>${javax.activation.version}</version>
+                <groupId>jakarta.activation</groupId>
+                <artifactId>jakarta.activation-api</artifactId>
+                <version>${jakarta.activation.version}</version>
             </dependency>
             <dependency>
-                <groupId>javax.xml.bind</groupId>
-                <artifactId>jaxb-api</artifactId>
-                <version>${jaxb.api.version}</version>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta.xml.bind-api.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.sun.xml.bind</groupId>
@@ -868,17 +854,17 @@
             <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
-                <version>2.0</version>
+                <version>2.2</version>
             </dependency>
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
-                <version>4.10.0</version>
+                <version>4.12.0</version>
             </dependency>
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>logging-interceptor</artifactId>
-                <version>4.10.0</version>
+                <version>4.12.0</version>
             </dependency>
 
             <dependency>
@@ -894,13 +880,13 @@
             <dependency>
                 <groupId>org.glassfish.jersey.core</groupId>
                 <artifactId>jersey-common</artifactId>
-                <version>3.1.3</version>
+                <version>3.1.5</version>
             </dependency>
 
             <dependency>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
-                <version>3.29.2-GA</version>
+                <version>3.30.1-GA</version>
             </dependency>
 
         </dependencies>

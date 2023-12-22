@@ -5,7 +5,7 @@ import com.google.common.base.Splitter;
 import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;

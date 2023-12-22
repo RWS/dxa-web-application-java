@@ -43,9 +43,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.util.UrlPathHelper;
 import org.springframework.web.util.WebUtils;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.xml.ws.http.HTTPException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.xml.ws.http.HTTPException;
 import java.io.IOException;
 
 import static com.sdl.webapp.common.api.serialization.json.filter.IgnoreByNameInRequestFilter.ignoreByName;
@@ -60,7 +60,7 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_ID;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.PAGE_MODEL;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.SCREEN_WIDTH;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.SOCIALSHARE_URL;
-import static javax.servlet.http.HttpServletResponse.SC_NOT_FOUND;
+import static jakarta.servlet.http.HttpServletResponse.SC_NOT_FOUND;
 
 /**
  * Page controller is a main controller and a entry point to DXA. This handles requests that come from the client.
@@ -173,9 +173,9 @@ public class PageController extends BaseController {
     }
 
     @RequestMapping(value = {"/resolve/{itemId}", "/{locPath}/resolve/{itemId}"})
-    public String handleResolve(@PathVariable String itemId, @RequestParam String localizationId,
-                                @RequestParam(required = false) String defaultPath,
-                                @RequestParam(required = false) String defaultItem) throws DxaException {
+    public String handleResolve(@PathVariable("itemId") String itemId, @RequestParam("localizationId") String localizationId,
+                                @RequestParam(value = "defaultPath", required = false) String defaultPath,
+                                @RequestParam(value = "defaultItem", required = false) String defaultItem) throws DxaException {
         if (StringUtils.isEmpty(localizationId)) {
             throw new DxaException(new IllegalArgumentException("Localization ID is null while it shouldn't be"));
         }

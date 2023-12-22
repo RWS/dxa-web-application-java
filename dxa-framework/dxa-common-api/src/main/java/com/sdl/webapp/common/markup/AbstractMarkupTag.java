@@ -9,11 +9,12 @@ import com.sdl.webapp.common.controller.ControllerUtils;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import com.sdl.webapp.common.markup.html.ParsableHtmlNode;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
+import jakarta.servlet.jsp.JspWriter;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.TagSupport;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.TagSupport;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;

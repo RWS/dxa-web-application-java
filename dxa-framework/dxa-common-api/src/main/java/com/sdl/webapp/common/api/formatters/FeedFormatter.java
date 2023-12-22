@@ -8,7 +8,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.util.Assert;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +51,7 @@ public abstract class FeedFormatter extends BaseFormatter {
      * Gets the list of syndicated items from a page.
      */
     private List<Object> getFeedItemsFromPage(@NotNull PageModel page) {
-        Assert.notNull(page.getRegions());
+        Assert.notNull(page.getRegions(), "Page regions can't be null");
 
         List<Object> items = new ArrayList<>();
 

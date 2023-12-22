@@ -6,8 +6,8 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.servlet.DispatcherServlet;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 
 import static com.sdl.webapp.common.util.InitializationUtils.loadActiveSpringProfiles;
 import static com.sdl.webapp.common.util.InitializationUtils.registerListener;

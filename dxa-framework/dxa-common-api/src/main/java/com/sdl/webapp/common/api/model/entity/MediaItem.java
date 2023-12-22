@@ -156,8 +156,8 @@ public abstract class MediaItem extends AbstractEntityModel {
         // Return the Item (Reference) ID part of the TCM URI.
         String id = getNodeAttribute(xhtmlElement, "xlink:href");
 
-        Assert.notNull(id);
-        Assert.isTrue(id.contains("-"));
+        Assert.notNull(id, "xlink:href id can't be null");
+        Assert.isTrue(id.contains("-"), "xlink:href must contain a hyphen");
 
         setId(id.split("-")[1]);
 

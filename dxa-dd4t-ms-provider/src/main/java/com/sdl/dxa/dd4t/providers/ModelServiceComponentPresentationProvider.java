@@ -12,7 +12,7 @@ import org.dd4t.core.exceptions.ItemNotFoundException;
 import org.dd4t.providers.ComponentPresentationProvider;
 import org.dd4t.providers.impl.BrokerComponentPresentationProvider;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 import java.io.IOException;
 
 import static org.springframework.web.util.UriComponentsBuilder.fromUriString;

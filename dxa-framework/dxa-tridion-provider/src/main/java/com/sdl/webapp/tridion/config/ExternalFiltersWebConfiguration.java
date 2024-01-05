@@ -1,25 +1,25 @@
 package com.sdl.webapp.tridion.config;
 
+import com.sdl.webapp.tridion.xpm.filter.AmbientClientFilter;
+import com.sdl.webapp.tridion.xpm.filter.ClientBinaryContentFilter;
+import com.sdl.webapp.tridion.xpm.filter.ClientPageContentFilter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import org.springframework.web.WebApplicationInitializer;
 
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
-
-/*
 import java.util.Properties;
+
 import static com.sdl.webapp.common.util.InitializationUtils.loadDxaProperties;
 import static com.sdl.webapp.common.util.InitializationUtils.registerFilter;
-*/
 
 @Slf4j
 public class ExternalFiltersWebConfiguration implements WebApplicationInitializer, Ordered {
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
-        log.info("XPM not currently supported with Spring Framework 6!");
-        /*
+    public void onStartup(@NotNull ServletContext servletContext) throws ServletException {
         log.info("Registration for XPM and preview filters if needed...");
         Properties properties = loadDxaProperties();
         if (Boolean.parseBoolean(properties.getProperty("dxa.web.xpm.enabled"))) {
@@ -30,7 +30,6 @@ public class ExternalFiltersWebConfiguration implements WebApplicationInitialize
             log.info("dxa.web.adf.enabled = true, thus registering ADF");
             registerAdf(servletContext);
         }
-        */
     }
 
     @Override
@@ -38,7 +37,6 @@ public class ExternalFiltersWebConfiguration implements WebApplicationInitialize
         return Ordered.HIGHEST_PRECEDENCE;
     }
 
-    /*
     private void registerXpm(ServletContext servletContext) {
         registerFilter(servletContext, ClientPageContentFilter.class, "/*");
         registerFilter(servletContext, ClientBinaryContentFilter.class, "/*");
@@ -49,5 +47,4 @@ public class ExternalFiltersWebConfiguration implements WebApplicationInitialize
         registerFilter(servletContext, AmbientClientFilter.class, "/*");
         log.debug("ADF filter is registered");
     }
-    */
 }

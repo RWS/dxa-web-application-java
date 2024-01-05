@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.webapp.common.impl.interceptor.StaticContentInterceptor;
 import com.sdl.webapp.common.impl.interceptor.ThreadLocalInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
@@ -28,7 +27,6 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import jakarta.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 
@@ -36,7 +34,6 @@ import java.util.List;
 @EnableWebMvc
 @ComponentScan("com.sdl.webapp.common.impl")
 public class SpringConfiguration implements WebMvcConfigurer {
-
 
     @Autowired
     private ObjectMapper objectMapper;

@@ -11,7 +11,7 @@
             <ttl unit="seconds">300</ttl>
         </expiry>
         <resources>
-            <heap unit="entries">10000</heap>
+            <heap unit="entries">2000</heap>
         </resources>
     </cache-template>
 

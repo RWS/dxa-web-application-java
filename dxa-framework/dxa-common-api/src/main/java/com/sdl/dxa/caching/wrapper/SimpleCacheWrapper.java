@@ -126,7 +126,16 @@ public abstract class SimpleCacheWrapper<B, V> {
      */
     @Nullable
     public V get(Object key) {
-        return containsKey(key) ? (V)getCache().get(key) : null;
+        if (!isCachingEnabled()) {
+            return null;
+        }
+        V v = (V) getCache().get(key);
+        if (v != null) {
+            logHit(key, getCache().getName());
+        } else {
+            logMiss(key, getCache().getName());
+        }
+        return v;
     }
 
     /**

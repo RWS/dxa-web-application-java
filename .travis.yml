@@ -1,0 +1,16 @@
+language: java
+sudo: false
+jdk:
+  - openjdk8
+install:
+  export CUSTOM_MVN_VERSION=3.6.3;
+  echo "Updating Maven to ${CUSTOM_MVN_VERSION}...";
+  wget https://archive.apache.org/dist/maven/maven-3/${CUSTOM_MVN_VERSION}/binaries/apache-maven-${CUSTOM_MVN_VERSION}-bin.zip || travis_terminate 1;
+  unzip -qq apache-maven-${CUSTOM_MVN_VERSION}-bin.zip || travis_terminate 1;
+  export M2_HOME=$PWD/apache-maven-${CUSTOM_MVN_VERSION};
+  export PATH=$M2_HOME/bin:$PATH;
+  mvn -version;
+script:
+# To get rid of  the "Downloading/Downloaded" lines we use: 
+# --batch-mode  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn
+  mvn clean install --batch-mode  -Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=warn

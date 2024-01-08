@@ -18,7 +18,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * AbstractModuleInitializer which initializes views registration in modules with {@link RegisteredViewModel} and {@link RegisteredViewModels}.
  *
- * @dxa.publicApi
  */
 @Slf4j
 public abstract class AbstractModuleInitializer {

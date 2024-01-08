@@ -4,9 +4,6 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.apache.commons.lang3.StringUtils;
 
-/**
- * @dxa.publicApi
- */
 @Getter
 @EqualsAndHashCode(callSuper = false)
 public final class HtmlEndTag extends HtmlRenderable {

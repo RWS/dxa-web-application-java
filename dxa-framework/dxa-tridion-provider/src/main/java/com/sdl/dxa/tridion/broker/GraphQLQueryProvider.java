@@ -4,7 +4,6 @@ import com.google.common.base.Strings;
 import com.sdl.dxa.tridion.pcaclient.ApiClientProvider;
 import com.sdl.web.pca.client.contentmodel.Pagination;
 import com.sdl.web.pca.client.contentmodel.enums.ContentIncludeMode;
-import com.sdl.web.pca.client.contentmodel.generated.FilterItemType;
 import com.sdl.web.pca.client.contentmodel.generated.InputItemFilter;
 import com.sdl.web.pca.client.contentmodel.generated.InputSchemaCriteria;
 import com.sdl.web.pca.client.contentmodel.generated.InputSortParam;
@@ -21,6 +20,8 @@ import org.springframework.cache.support.SimpleValueWrapper;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import static com.sdl.web.pca.client.contentmodel.generated.FilterItemType.COMPONENT;
 
 public class GraphQLQueryProvider implements QueryProvider {
 
@@ -90,7 +91,7 @@ public class GraphQLQueryProvider implements QueryProvider {
 
     private InputItemFilter buildFilter(SimpleBrokerQuery queryParams) {
         InputItemFilter filter = new InputItemFilter();
-        filter.setItemTypes(Arrays.asList(FilterItemType.COMPONENT));
+        filter.setItemTypes(Arrays.asList(COMPONENT));
 
         if (queryParams.getSchemaId() > 0) {
             InputSchemaCriteria schema = new InputSchemaCriteria();
@@ -101,32 +102,48 @@ public class GraphQLQueryProvider implements QueryProvider {
         if (queryParams.getPublicationId() > 0) {
             filter.setPublicationIds(Arrays.asList(queryParams.getPublicationId()));
         }
+/** @ToDo https://github.com/sdl/dxa-web-application-java/issues/129
+        if (queryParams.getKeywordFilters() != null) {
+            List<InputItemFilter> extraTaxonolies = new ArrayList<>();
+            queryParams.getKeywordFilters().entries().forEach(entry -> {
+                InputItemFilter extraFilter = new InputItemFilter();
+                extraFilter.setItemTypes(Arrays.asList(KEYWORD));
+                TaxonomyKeywordCriteria tkc = new TaxonomyKeywordCriteria(entry.getKey(), entry.getValue(), true);
+                InputKeywordCriteria keywordCriteria = new InputKeywordCriteria();
+                keywordCriteria.setKey(entry.getKey());
+                keywordCriteria.setKeywordId(tkc.getKeywordId());
+                extraFilter.setKeyword(keywordCriteria);
+            });
+            filter.setAnd(extraTaxonolies);
+        }
+*/
         return filter;
     }
 
     private InputSortParam buildSort(SimpleBrokerQuery queryParams) {
-        if (!Strings.isNullOrEmpty(queryParams.getSort()) && !"none".equalsIgnoreCase(queryParams.getSort())) {
-
-            InputSortParam sort = new InputSortParam();
-
-            sort.setOrder(queryParams.getSort().toLowerCase().endsWith("asc") ?
-                    SortOrderType.Ascending : SortOrderType.Descending);
-            int idx = queryParams.getSort().trim().indexOf(" ");
-            String sortColumn = idx > 0 ? queryParams.getSort().trim().substring(0, idx) : queryParams.getSort().trim();
-
-            switch (sortColumn.toLowerCase()) {
-                case "title":
-                    sort.setSortBy(SortFieldType.TITLE);
-                    break;
-                case "pubdate":
-                    sort.setSortBy(SortFieldType.LAST_PUBLISH_DATE);
-                    break;
-                default:
-                    sort.setSortBy(SortFieldType.CREATION_DATE);
-                    break;
-            }
-            return sort;
+        if (Strings.isNullOrEmpty(queryParams.getSort()) ||
+            "none".equalsIgnoreCase(queryParams.getSort())) {
+            return null;
         }
-        return null;
+
+        InputSortParam sort = new InputSortParam();
+
+        sort.setOrder(queryParams.getSort().toLowerCase().endsWith("asc") ?
+                SortOrderType.Ascending : SortOrderType.Descending);
+        int idx = queryParams.getSort().trim().indexOf(" ");
+        String sortColumn = idx > 0 ? queryParams.getSort().trim().substring(0, idx) : queryParams.getSort().trim();
+
+        switch (sortColumn.toLowerCase()) {
+            case "title":
+                sort.setSortBy(SortFieldType.TITLE);
+                break;
+            case "pubdate":
+                sort.setSortBy(SortFieldType.LAST_PUBLISH_DATE);
+                break;
+            default:
+                sort.setSortBy(SortFieldType.CREATION_DATE);
+                break;
+        }
+        return sort;
     }
 }

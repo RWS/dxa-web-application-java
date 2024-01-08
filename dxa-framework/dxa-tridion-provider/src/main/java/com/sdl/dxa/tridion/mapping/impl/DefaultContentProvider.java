@@ -69,7 +69,6 @@ import static com.sdl.dxa.common.dto.PageRequestDto.PageInclusion.INCLUDE;
 /**
  * Content Provider default implementation. Look at {@link ContentProvider} documentation for details.
  *
- * @dxa.publicApi
  * @deprecated since PCA implementation added which supports mashup scenario.
  */
 @Service(value = "DefaultContentProvider")
@@ -173,7 +172,6 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
 
     /**
      * @deprecated
-     * @dxa.publicApi
      */
     @Override
     public PageModel getPageModel(String path, Localization localization) throws ContentProviderException {
@@ -182,18 +180,15 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
 
     /**
      * @deprecated
-     * @dxa.publicApi
      */
     @Override
     public EntityModel getEntityModel(@NotNull String id, Localization _localization) throws ContentProviderException {
         return super.getEntityModel(id, _localization);
     }
 
-
     /**
      * {@inheritDoc}
      *
-     * @dxa.publicApi
      */
     @Override
     public <T extends EntityModel> void populateDynamicList(DynamicList<T, SimpleBrokerQuery> dynamicList, Localization localization) throws ContentProviderException {
@@ -212,17 +207,17 @@ public class DefaultContentProvider extends AbstractContentProvider implements C
     /**
      * {@inheritDoc}
      *
-     * @dxa.publicApi
      */
     @Override
     public StaticContentItem getStaticContent(final String path, String localizationId, String localizationPath)
             throws ContentProviderException {
 
+        boolean essentialConfiguration = FileUtils.isEssentialConfiguration(path, localizationPath);
         StaticContentRequestDto requestDto = StaticContentRequestDto
                 .builder(path, localizationId)
                 .localizationPath(localizationPath)
                 .baseUrl(webRequestContext.getBaseUrl())
-                .noMediaCache(!FileUtils.isEssentialConfiguration(path, localizationPath) && webRequestContext.isSessionPreview())
+                .noMediaCache(!essentialConfiguration && webRequestContext.isSessionPreview())
                 .build();
         StaticContentItem staticContent = staticContentResolver.getStaticContent(requestDto);
         return staticContent;

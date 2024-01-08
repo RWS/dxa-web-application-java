@@ -52,7 +52,6 @@ import java.util.stream.Collectors;
 /**
  * Content Provider GraphQL implementation. Look at {@link ContentProvider} documentation for details.
  *
- * @dxa.publicApi
  */
 @Service(value = "GraphQLContentProvider")
 @Profile("!cil.providers.active")
@@ -84,7 +83,6 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     /**
      * {@inheritDoc}
      *
-     * @dxa.publicApi
      */
     @Override
     public <T extends EntityModel> void populateDynamicList(DynamicList<T, SimpleBrokerQuery> dynamicList, Localization localization) throws ContentProviderException {
@@ -161,7 +159,6 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     /**
      * {@inheritDoc}
      *
-     * @dxa.publicApi
      */
     @Override
     public @NotNull StaticContentItem getStaticContent(String path, String localizationId, String localizationPath)

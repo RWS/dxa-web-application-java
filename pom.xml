@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -12,13 +10,15 @@
 
     <groupId>com.sdl.dxa</groupId>
     <artifactId>dxa-oss-parent</artifactId>
-    <version>2.2.8</version>
+    <version>2.2.38-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>DXA - Parent</name>
     <description>Parent artifact for DXA</description>
 
-    <url>http://www.sdl.com/cxc/digital-experience/web-experience-management/digital-experience-accelerator.html</url>
+    <url>
+        https://www.sdl.com/products-and-solutions/content-management/sdl-tridion/resources/digital-experience-accelerator/
+    </url>
 
     <properties>
         <java-version>1.8</java-version>
@@ -27,45 +27,31 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 
         <!-- CIL version-->
-        <cd-cil.version>11.0.0-1068</cd-cil.version>
+        <cd-cil.version>11.6.0-1123</cd-cil.version>
 
         <!-- DXA versions -->
-        <dxa.version>${project.version}</dxa.version>
-        <dxa-modules.version>${dxa.version}</dxa-modules.version>
-        <dxa-module-core.version>${dxa.version}</dxa-module-core.version>
-        <dxa-module-cid.version>${dxa.version}</dxa-module-cid.version>
-        <dxa-module-googleanalytics.version>${dxa.version}</dxa-module-googleanalytics.version>
-        <dxa-module-mediamanager.version>${dxa.version}</dxa-module-mediamanager.version>
-        <dxa-module-search.version>${dxa.version}</dxa-module-search.version>
-        <dxa-module-smarttarget.version>${dxa.version}</dxa-module-smarttarget.version>
-        <dxa-module-context-expressions>${dxa.version}</dxa-module-context-expressions>
-        <dxa-module-51degrees.version>${dxa.version}</dxa-module-51degrees.version>
-        <dxa-module-audience-manager.version>${dxa.version}</dxa-module-audience-manager.version>
-        <dxa-module-ugc.version>${dxa.version}</dxa-module-ugc.version>
-        <dxa-module-test.version>${dxa.version}</dxa-module-test.version>
-        <dxa-module-tridion-docs-mashup.version>${dxa.version}</dxa-module-tridion-docs-mashup.version>
-        <dxa-module-tridion-docs-search.version>${dxa.version}</dxa-module-tridion-docs-search.version>
-        <dxa-module-dd.version>${dxa.version}</dxa-module-dd.version>
+        <dxa.version>2.2.38-SNAPSHOT</dxa.version>
         <!-- /DXA Versions -->
 
         <!-- Apache -->
         <commons-io-version>2.8.0</commons-io-version>
         <commons-lang3.version>3.11</commons-lang3.version>
-        <commons-text.version>1.9</commons-text.version>
+        <commons-text.version>1.10.0</commons-text.version>
         <commons-collections4.version>4.4</commons-collections4.version>
+        <commons-compress.version>1.25.0</commons-compress.version>
         <httpcomponents-client-version>4.5.13</httpcomponents-client-version>
-        <httpcomponents.core.version>4.4.13</httpcomponents.core.version>
+        <httpcomponents.core.version>4.4.14</httpcomponents.core.version>
 
-        <guava-version>30.0-jre</guava-version>
+        <guava-version>32.1.2-jre</guava-version>
 
         <!-- Joda Time -->
         <joda-time-version>2.10</joda-time-version>
 
-        <jackson.version>2.10.5</jackson.version>
-        <lombok.version>1.18.16</lombok.version>
+        <jackson.version>2.15.3</jackson.version>
+        <lombok.version>1.18.24</lombok.version>
 
         <!-- Logging -->
-        <logback.version>1.2.3</logback.version>
+        <logback.version>1.3.14</logback.version>
         <slf4j-version>1.7.26</slf4j-version>
 
         <!-- Servlet and JSP APIs -->
@@ -74,7 +60,7 @@
         <jstl-version>1.2</jstl-version>
 
         <!-- JUnit and other test libraries -->
-        <junit-version>4.12</junit-version>
+        <junit-version>4.13.1</junit-version>
         <hamcrest-version>2.1</hamcrest-version>
         <mockito-version>1.10.19</mockito-version>
         <openpojo.version>0.8.12</openpojo.version>
@@ -83,12 +69,13 @@
         <xmlunit.version>2.6.2</xmlunit.version>
 
         <!-- Spring -->
-        <spring.version>4.3.24.RELEASE</spring.version>
-        <spring-security.version>4.2.12.RELEASE</spring-security.version>
+        <spring.version>5.3.31</spring.version>
+        <spring-security.version>5.8.8</spring-security.version>
 
-        <jsoup.version>1.12.1</jsoup.version>
-        <rome.version>1.12.0</rome.version>
-        <xalan-version>2.7.2</xalan-version>
+        <jsoup.version>1.15.4</jsoup.version>
+        <rome.version>1.15.0</rome.version>
+        <jettison.version>1.5.4</jettison.version>
+        <!--<xalan-version>2.7.2</xalan-version>-->
 
         <dozer.version>5.5.1</dozer.version>
         <device-detection.version>3.2.18.1</device-detection.version>
@@ -106,7 +93,7 @@
         <commons-codec.version>1.12</commons-codec.version>
 
         <fast-classpath-scanner.version>3.1.15</fast-classpath-scanner.version>
-        <gson.version>2.8.6</gson.version>
+        <gson.version>2.9.1</gson.version>
         <javax.jms.version>1.1-rev-1</javax.jms.version>
         <javax.annotation.version>1.3.2</javax.annotation.version>
         <jaxws-api.version>2.3.1</jaxws-api.version>
@@ -118,9 +105,9 @@
         <!-- DD4T dependencies -->
         <!-- These are not really used in the framework and are needed only for Model Service adapter -->
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
-        <dd4t-latest.version>2.1.5</dd4t-latest.version>
+        <dd4t-latest.version>2.1.7</dd4t-latest.version>
 
-        <pca-client.version>2.2.4</pca-client.version>
+        <pca-client.version>2.2.29</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>
     </properties>
 
@@ -130,62 +117,64 @@
         <developerConnection>scm:git:git@github.com:sdl/dxa-web-application-java.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
-
+    <repositories>
+        <repository>
+            <id>snapshots-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
     <distributionManagement>
         <repository>
-            <id>releases-nexus</id>
-            <name>SDL Releases</name>
-            <url>https://nexus.sdl.com/repository/releases</url>
+            <id>sonatype-nexus-staging</id>
+            <name>OSS sonatype release</name>
+            <url>https://oss.sonatype.org/content/repositories/releases</url>
         </repository>
         <snapshotRepository>
-            <id>snapshots-nexus</id>
-            <name>SDL Snapshots</name>
-            <url>https://nexus.sdl.com/repository/snapshots</url>
+            <id>sonatype-nexus-snapshots</id>
+            <name>OSS sonatype snapshots</name>
+            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
         </snapshotRepository>
     </distributionManagement>
 
     <developers>
         <developer>
-            <id>okondratiuk</id>
-            <name>Oleksii Kondratiuk</name>
-            <email>okondratiuk@sdl.com</email>
-            <timezone>+2</timezone>
-            <organization>SDL Group</organization>
-            <organizationUrl>http://www.sdl.com</organizationUrl>
+            <id>renarj</id>
+            <email>rdevries@sdl.com</email>
+            <name>Renze de Vries</name>
+            <timezone>+1</timezone>
         </developer>
-        <developer>
-            <id>rpannekoek</id>
-            <name>Rick Pannekoek</name>
-            <email>rpannekoek@sdl.com</email>
+    </developers>
+
+    <contributors>
+        <contributor>
+            <name>Maksym Borysenko</name>
+            <email>mborysenko@sdl.com</email>
             <timezone>+1</timezone>
             <organization>SDL Group</organization>
             <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-        <developer>
-            <id>mbilenko</id>
-            <name>Mykola Bilenko</name>
-            <email>mbilenko@sdl.com</email>
-            <timezone>+2</timezone>
-            <organization>SDL Group</organization>
-            <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-        <developer>
-            <id>mborysenko</id>
-            <name>Maksym Borysenko</name>
-            <email>mborysenko@sdl.com</email>
-            <timezone>+2</timezone>
-            <organization>SDL Group</organization>
-            <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-        <developer>
-            <id>inikonov</id>
+        </contributor>
+        <contributor>
             <name>Igor Nikonov</name>
             <email>inikonov@sdl.com</email>
             <timezone>+2</timezone>
             <organization>SDL Group</organization>
             <organizationUrl>http://www.sdl.com</organizationUrl>
-        </developer>
-    </developers>
+        </contributor>
+    </contributors>
+
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://opensource.org/licenses/MIT</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
 
     <modules>
         <module>dxa-model-service-client</module>
@@ -195,31 +184,24 @@
 
     <profiles>
         <profile>
-            <id>sonatype-repository</id>
-            <distributionManagement>
-                <repository>
-                    <id>sonatype-nexus-staging</id>
-                    <name>Nexus Staging Repository</name>
-                    <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-                <snapshotRepository>
-                    <id>sonatype-nexus-snapshots</id>
-                    <name>Sonatype Nexus Snapshots</name>
-                    <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
-                </snapshotRepository>
-            </distributionManagement>
-        </profile>
-        <profile>
-            <id>jdk8</id>
-            <activation>
-                <!-- This activates on all JDK version between 1.5 and 1.8.9.
-                 (1.8.9 is used so all patch versions of JDK are also included, like 1.8.0_201-b09) -->
-                <jdk>[1.5,1.8.9)</jdk>
-            </activation>
-            <modules>
-                <!-- This module is JDK8 specific, and only needed if you want to generate Javadoc -->
-                <module>dxa-javadoc-tools</module>
-            </modules>
+            <id>release</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-gpg-plugin</artifactId>
+                        <version>1.6</version>
+                        <configuration>
+                            <executable>gpg</executable>
+                            <!-- Prevent gpg from using pinentry programs -->
+                            <gpgArguments>
+                                <arg>--pinentry-mode</arg>
+                                <arg>loopback</arg>
+                            </gpgArguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
 
@@ -356,6 +338,22 @@
                     <exclusion>
                         <groupId>com.sdl.web</groupId>
                         <artifactId>web-ambient-engine</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>xalan</groupId>
+                        <artifactId>xalan</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.mockito</groupId>
+                        <artifactId>mockito-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.scala-lang.modules</groupId>
+                        <artifactId>scala-parser-combinators_2.12</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>xerces</groupId>
+                        <artifactId>xercesImpl</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
@@ -601,6 +599,11 @@
                 <artifactId>commons-codec</artifactId>
                 <version>${commons-codec.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>${commons-compress.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>jaxen</groupId>
@@ -666,6 +669,11 @@
                 <version>${jackson.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>${ehcache.version}</version>
@@ -699,6 +707,48 @@
             </dependency>
 
             <dependency>
+                <groupId>org.codehaus.jettison</groupId>
+                <artifactId>jettison</artifactId>
+                <version>${jettison.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio-jvm</artifactId>
+                <version>3.5.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.scala-lang.modules</groupId>
+                <artifactId>scala-parser-combinators_2.12</artifactId>
+                <version>2.3.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib</artifactId>
+                <version>1.9.10</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-common</artifactId>
+                <version>1.9.10</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk7</artifactId>
+                <version>1.9.10</version>
+            </dependency>
+            <dependency>
+                <groupId>org.jetbrains.kotlin</groupId>
+                <artifactId>kotlin-stdlib-jdk8</artifactId>
+                <version>1.9.10</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.ua-parser</groupId>
+                <artifactId>uap-java</artifactId>
+                <version>1.5.4</version>
+            </dependency>
+
+            <!--
+            <dependency>
                 <groupId>xalan</groupId>
                 <artifactId>xalan</artifactId>
                 <version>${xalan-version}</version>
@@ -710,6 +760,7 @@
                     </exclusion>
                 </exclusions>
             </dependency>
+            -->
 
             <dependency>
                 <groupId>org.jetbrains</groupId>
@@ -820,6 +871,38 @@
                 <version>${jaxb.version}</version>
             </dependency>
 
+            <dependency>
+                <groupId>org.yaml</groupId>
+                <artifactId>snakeyaml</artifactId>
+                <version>2.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>4.10.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>logging-interceptor</artifactId>
+                <version>4.10.0</version>
+            </dependency>
+
+            <dependency>
+                <groupId>net.lingala.zip4j</groupId>
+                <artifactId>zip4j</artifactId>
+                <version>2.11.5</version>
+            </dependency>
+            <dependency>
+                <groupId>net.minidev</groupId>
+                <artifactId>json-smart</artifactId>
+                <version>2.5.0</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-common</artifactId>
+                <version>3.1.3</version>
+            </dependency>
+
         </dependencies>
     </dependencyManagement>
 
@@ -829,7 +912,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.1</version>
+                    <version>3.3</version>
                     <configuration>
                         <source>${java-version}</source>
                         <target>${java-version}</target>
@@ -863,43 +946,14 @@
                     </configuration>
                 </plugin>
                 <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-javadoc-plugin</artifactId>
-                    <version>3.0.0-M1</version>
-                    <configuration>
-                        <taglet>com.sdl.dxa.javadoc.PublicApiTaglet</taglet>
-                        <tagletArtifact>
-                            <groupId>com.sdl.dxa</groupId>
-                            <artifactId>dxa-javadoc-tools</artifactId>
-                            <version>${project.version}</version>
-                        </tagletArtifact>
-                    </configuration>
-                    <executions>
-                        <execution>
-                            <id>publicApi</id>
-                            <configuration>
-                                <doclet>com.sdl.dxa.javadoc.PublicApiDoclet</doclet>
-                                <docletArtifact>
-                                    <groupId>com.sdl.dxa</groupId>
-                                    <artifactId>dxa-javadoc-tools</artifactId>
-                                    <version>${project.version}</version>
-                                </docletArtifact>
-                                <useStandardDocletOptions>true</useStandardDocletOptions>
-                                <reportOutputDirectory>${project.reporting.outputDirectory}/publicApi
-                                </reportOutputDirectory>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                <plugin>
                     <groupId>org.sonatype.plugins</groupId>
                     <artifactId>nexus-staging-maven-plugin</artifactId>
-                    <version>1.6.5</version>
+                    <version>1.6.9</version>
                     <extensions>true</extensions>
                     <configuration>
                         <serverId>sonatype-nexus-staging</serverId>
                         <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                        <autoReleaseAfterClose>false</autoReleaseAfterClose>
+                        <autoReleaseAfterClose>true</autoReleaseAfterClose>
                     </configuration>
                 </plugin>
             </plugins>
@@ -917,7 +971,3 @@
     </build>
 
 </project>
-
-
-
-

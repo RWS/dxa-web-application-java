@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 /**
  * Simple utility functions to process TCM-URIs.
  *
- * @dxa.publicApi
  */
 @Slf4j
 public final class TcmUtils {

@@ -9,7 +9,6 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Builds a strongly typed {@linkplain PageModel Page Model} based on a given DXA R2 Data Model.
  *
- * @dxa.publicApi
  * @see ModelBuilder
  */
 public interface PageModelBuilder extends ModelBuilder {

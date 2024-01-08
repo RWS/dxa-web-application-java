@@ -18,7 +18,6 @@ import static org.springframework.util.StringUtils.isEmpty;
 /**
  * This utils class holds helper-methods for the logic related to operations with page paths.
  *
- * @dxa.publicApi
  */
 @Slf4j
 public final class PathUtils {

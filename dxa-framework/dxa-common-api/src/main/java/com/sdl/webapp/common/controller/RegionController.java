@@ -21,7 +21,6 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.REGION_MODE
  * </p>
  *
  * @see ControllerUtils
- * @dxa.publicApi
  */
 @Controller
 @RequestMapping(INCLUDE_MAPPING + "/Region")

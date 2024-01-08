@@ -15,7 +15,6 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Exception entity that will be shown on a page as an exception block without breaking the whole page.
  *
- * @dxa.publicApi
  */
 @Data
 @EqualsAndHashCode(callSuper = true)

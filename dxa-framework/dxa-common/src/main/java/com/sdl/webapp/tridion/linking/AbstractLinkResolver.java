@@ -15,6 +15,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -28,56 +29,65 @@ public abstract class AbstractLinkResolver implements LinkResolver, Initializing
     @Value("${dxa.web.link-resolver.strip-index-path:#{true}}")
     private boolean shouldStripIndexPath;
 
+    @Value("${dxa.web.link-resolver.keep-trailing-slash:#{false}}")
+    private boolean shouldKeepTrailingSlash;
+
+    @Cacheable(value = "resolvedLinks", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary, #contextId }", sync = true)
+    public String resolveLink(@Nullable String url, @Nullable String localizationId) {
+        return resolveLink(url, localizationId, false, null);
+    }
+
     @Override
     public String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary, @Nullable String contextId) {
         final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
 
         String resolvedLink = _resolveLink(url, publicationId, resolveToBinary, contextId);
         String resolvedUrl = shouldStripIndexPath ? PathUtils.stripIndexPath(resolvedLink) : resolvedLink;
+        if (shouldKeepTrailingSlash && (! "/".equals(resolvedUrl)) && PathUtils.isIndexPath(resolvedLink)) {
+            resolvedUrl = resolvedUrl + "/";
+        }
         return shouldRemoveExtension ? PathUtils.stripDefaultExtension(resolvedUrl) : resolvedUrl;
     }
 
     @Contract("null, _, _ , null-> null; !null, _, _, !null -> !null")
     private String _resolveLink(String uri, int publicationId, boolean isBinary, String contextId) {
-        if (uri == null || !TcmUtils.isTcmUri(uri)) {
+        if (!TcmUtils.isTcmUri(uri)) {
             return uri;
         }
 
         //Page ID is either tcm uri or int (in string form) -1 means no page context
-        int pageId = -1;
-        if (TcmUtils.isTcmUri(contextId)) {
-            pageId = TcmUtils.getItemId(contextId);
-        } else {
-            pageId = NumberUtils.toInt(contextId, -1);
-        }
+        int pageId = getPageId(contextId);
 
         int itemId = TcmUtils.getItemId(uri);
 
         ResolvingData resolvingData;
         if (publicationId <= 0) {
-            resolvingData = new ResolvingData(TcmUtils.getPublicationId(uri), itemId, uri, pageId);
-        } else {
-            resolvingData = new ResolvingData(publicationId, itemId, uri, pageId);
+            publicationId = TcmUtils.getPublicationId(uri);
         }
+        resolvingData = new ResolvingData(publicationId, itemId, uri, pageId);
 
-        String result = "";
         switch (TcmUtils.getItemType(uri)) {
             case TcmUtils.COMPONENT_ITEM_TYPE:
                 if (isBinary) {
-                    result = resolveBinary(resolvingData);
-                } else {
-                    result = resolveComponent(resolvingData);
+                    return resolveBinary(resolvingData);
                 }
-                break;
+                return resolveComponent(resolvingData);
             case TcmUtils.PAGE_ITEM_TYPE:
-                result = resolvePage(resolvingData);
-                break;
+                return resolvePage(resolvingData);
             default:
-                log.warn("Could not resolve link: {}", uri);
+                log.warn("Could not resolve {}link: {} in pub: {}", isBinary?"binary ":"", uri, publicationId);
                 return "";
         }
+    }
 
-        return result;
+    private int getPageId(String contextId) {
+        int pageId;
+        if (TcmUtils.isTcmUri(contextId)) {
+            pageId = TcmUtils.getItemId(contextId);
+        } else {
+            pageId = NumberUtils.toInt(contextId, -1);
+        }
+        return pageId;
     }
 
     protected abstract String resolveComponent(ResolvingData resolvingData);

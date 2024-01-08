@@ -15,7 +15,6 @@ import static java.util.Arrays.asList;
 /**
  * Checks if current request contains list of properties to ignore set with {@link IgnoreByNameInRequestFilter#ignoreByName(ServletRequest, String...)}.
  * If current serialized property name is exactly the same as specified in attribute, it's skipped.
- * @dxa.publicApi
  */
 @Slf4j
 @Component

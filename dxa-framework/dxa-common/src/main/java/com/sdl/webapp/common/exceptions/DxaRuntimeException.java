@@ -1,8 +1,5 @@
 package com.sdl.webapp.common.exceptions;
 
-/**
- * @dxa.publicApi
- */
 public class DxaRuntimeException extends RuntimeException {
     public DxaRuntimeException() {
         super();

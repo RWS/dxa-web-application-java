@@ -17,7 +17,6 @@ import org.springframework.core.Ordered;
  * unless they are required to be injected in the middle of default implementations.
  * Default ones are still expected to be the first.</p>
  *
- * @dxa.publicApi
  * @see EntityModelData
  * @see PageModelData
  * @see EntityModelBuilder

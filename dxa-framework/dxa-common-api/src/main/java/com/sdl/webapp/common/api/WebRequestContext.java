@@ -7,7 +7,6 @@ import com.sdl.webapp.common.api.model.RegionModel;
 /**
  * Provides information relevant for the current request.
  *
- * @dxa.publicApi
  */
 public interface WebRequestContext {
 

@@ -1,54 +1,66 @@
-SDL Digital Experience Accelerator Java Spring MVC web application
+RWS Digital Experience Accelerator Java Spring MVC web application
 ===
+Build status
+------------
+Java CI with Maven:
+- Develop - ![Build Status](https://github.com/sdl/dxa-web-application-java/workflows/Build/badge.svg)
+- 1.8 -![Build Status](https://github.com/sdl/dxa-web-application-java/workflows/Build/badge.svg?branch=release%2F1.8)
+
 
 About
 -----
-The SDL Digital Experience Accelerator (DXA) is a reference implementation of SDL Tridion Sites 9 and SDL Web 8 intended to help you create, design and publish an SDL Tridion/Web-based website quickly.
+The RWS Digital Experience Accelerator (DXA) is a reference implementation of RWS Tridion Sites 9 and RWS Web 8 intended to help you create, design and publish an RWS Tridion/Web-based website quickly.
 
-DXA is available for both .NET and Java web applications. Its modular architecture consists of a framework and example web application, which includes all core SDL Tridion/Web functionality as well as separate Modules for additional, optional functionality.
+DXA is available for both .NET and Java web applications. Its modular architecture consists of a framework and example web application, which includes all core RWS Tridion/Web functionality as well as separate Modules for additional, optional functionality.
 
 This repository contains the source code of the DXA Framework, an example Java web application, and a Maven archetype for Java. 
 
-The full DXA distribution (including Content Manager-side items and installation support) is downloadable from the [SDL AppStore](https://appstore.sdl.com/list/?search=dxa) 
+The full DXA distribution (including Content Manager-side items and installation support) is downloadable from the [RWS AppStore](https://appstore.sdl.com/list/?search=dxa) 
 or the [Releases in GitHub](https://github.com/sdl/dxa-web-application-java/releases)
 Furthermore, the compiled DXA artifacts are available on [Maven Central](http://search.maven.org/#search%7Cga%7C1%7Cdxa). 
 
 To facilitate upgrades, we strongly recommend that you use official, compiled DXA artifacts from Maven Central instead of a custom build.
 If you really must modify the DXA framework, we kindly request you to submit your changes as a Contribution (see the Branches and Contributions section below). 
 
+Build
+-----
+You need Maven 3.2+ to build from source. Maven should be available in the system `PATH`.
+
+`mvn install`
 
 Support
 ---------------
-At SDL we take your investment in Digital Experience very seriously, if you encounter any issues with the Digital Experience Accelerator, please use one of the following channels:
+At RWS we take your investment in Digital Experience very seriously, if you encounter any issues with the Digital Experience Accelerator, please use one of the following channels:
 
 - Report issues directly in [this repository](https://github.com/sdl/dxa-web-application-java/issues)
-- Ask questions 24/7 on the SDL Tridion Community at https://tridion.stackexchange.com
-- Contact SDL Professional Services for DXA release management support packages to accelerate your support requirements
+- Ask questions 24/7 on the RWS Tridion Community at https://tridion.stackexchange.com
+- Contact RWS Professional Services for DXA release management support packages to accelerate your support requirements
 
 
 Documentation
 -------------
 Documentation can be found online in the SDL documentation portal: https://docs.sdl.com/sdldxa
 
+Updating the DXA Locally
+-------------
+If you are updating an existing DXA web application, particularly to a minor version, the process involves updating the dependencies in Maven or Gradle, and recompiling your solution using the latest version of the DXA artifacts available from Maven Central. It should be taken into account any dependency updates to supporting libraries or frameworks such as Jackson and Spring.
+RWS Professional Services can perform an upgrade scan of your web application. The outcome of this scan is a document highlighting the steps to take you to the next version. Please contact RWS for more information.
+
+DXA Templating
+-------------
+Make sure to apply the latest updates to the DXA templating side in the Tridion Sites Content Manager. This is available from [this repository](https://github.com/RWS/dxa-content-management).
+Instructions for updating the Content Manager can be found [here](https://docs.rws.com/784837/466718/sdl-digital-experience-accelerator-2-2/upgrading-------------dxa-on-the-------------sdl-tridion-sites-content-manager).  
 
 Repositories
-------------
-The following repositories with source code are available:
-
- - https://github.com/sdl/dxa-content-management - CM-side framework (.NET Template Building Blocks)
- - https://github.com/sdl/dxa-html-design - Whitelabel HTML Design
- - https://github.com/sdl/dxa-model-service - Model Service (Java)
- - https://github.com/sdl/dxa-modules - Modules (.NET and Java)
- - https://github.com/sdl/dxa-web-application-dotnet - ASP.NET MVC web application (including framework)
- - https://github.com/sdl/dxa-web-application-java - Java Spring MVC web application (including framework)
+-------------
+You can find all the DXA related repositories [here](https://github.com/rws/?q=dxa&type=source&language=)
 
 
 Branches and Contributions
 --------------------------
 We are using the following branching strategy:
 
- - `master` - Represents the latest stable version. This may be a pre-release version (tagged as `DXA x.y Sprint z`). Updated each development Sprint (approximately bi-weekly).
- - `develop` - Represents the latest development version. Updated very frequently (typically nightly).
+ - `develop` - Represents the latest development version.
  - `release/x.y` - Represents the x.y Release. If hotfixes are applicable, they will be applied to the appropriate release branch so that the branch actually represents the initial release plus hotfixes.
 
 All releases (including pre-releases and hotfix releases) are tagged. 
@@ -80,6 +92,12 @@ DD4T support
 DD4T 2.1 for Java is incorporated into the DXA codebase in the `dxa-compatible` artifact. As a result, when migrating from DD4T to DXA, you do not need separate dependencies on DD4T.
 
 
+DXD version
+---
+The DXA 2.2 used to be based upon DXD 11.0.0 version. Since 2.2.12 the minimal required version for DXD is 11.0.1.
+This version has no backward compatibility with 11.0.0 due to major database changes. So make sure you have completed all required task for DXD 11.0.1 installation.  
+
+
 Snapshots
 ---------
 DXA publishes SNAPSHOT versions to Sonatype. To use them, configure `https://oss.sonatype.org/content/repositories/snapshots` as a repository in your Maven settings. Read [this](https://maven.apache.org/settings.html#Repositories) for instructions.
@@ -87,7 +105,7 @@ DXA publishes SNAPSHOT versions to Sonatype. To use them, configure `https://oss
 
 License
 -------
-Copyright (c) 2014-2020 SDL Group.
+Copyright (c) 2014-2022 RWS Group.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.

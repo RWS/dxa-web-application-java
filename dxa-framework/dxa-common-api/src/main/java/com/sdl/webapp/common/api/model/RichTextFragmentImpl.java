@@ -5,9 +5,6 @@ import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.builders.HtmlBuilders;
 import lombok.Data;
 
-/**
- * @dxa.publicApi
- */
 @Data
 public class RichTextFragmentImpl implements RichTextFragment {
 

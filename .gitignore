@@ -12,3 +12,4 @@ temp/
 build/
 logs/
 pom.xml.versionsBackup
+release.ps1

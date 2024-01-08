@@ -9,7 +9,6 @@ import java.io.Serializable;
 /**
  * Combined cache key with a localization ID and key itself.
  *
- * @dxa.publicApi
  */
 @Value
 @EqualsAndHashCode

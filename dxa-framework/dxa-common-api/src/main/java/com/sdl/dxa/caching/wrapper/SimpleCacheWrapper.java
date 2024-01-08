@@ -18,7 +18,6 @@ import javax.cache.Cache;
  *
  * @param <B> base type used for a key calculation in {@link #getSpecificKey(Object, Object...)}
  * @param <V> value type of the cache
- * @dxa.publicApi
  */
 @Slf4j
 public abstract class SimpleCacheWrapper<B, V> {

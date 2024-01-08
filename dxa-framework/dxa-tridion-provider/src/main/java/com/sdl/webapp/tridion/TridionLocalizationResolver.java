@@ -35,7 +35,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
 
     private static final Logger LOG = LoggerFactory.getLogger(TridionLocalizationResolver.class);
 
-    private final Map<String, Localization> localizations = Collections.synchronizedMap(new HashMap<String, Localization>());
+    private final Map<String, Localization> localizations = Collections.synchronizedMap(new HashMap<>());
 
     @Autowired
     private LocalizationFactory localizationFactory;
@@ -65,7 +65,6 @@ public class TridionLocalizationResolver implements LocalizationResolver {
      * {@inheritDoc}
      */
     @Override
-    @SneakyThrows(UnsupportedEncodingException.class)
     public Localization getLocalization(String url) throws LocalizationResolverException {
         LOG.trace("getLocalization: {}", url);
 
@@ -76,12 +75,9 @@ public class TridionLocalizationResolver implements LocalizationResolver {
         if (data == null) {
             throw new LocalizationResolverException("Publication mapping is not resolved for URL: " + url);
         }
-
-        if (!localizations.containsKey(data.id)) {
-            localizations.put(data.id, createLocalization(data.id, data.path));
-        }
-
-        return localizations.get(data.id);
+        Localization localization = createLocalization(data.id, data.path);
+        localizations.putIfAbsent(data.id, localization);
+        return localization;
     }
 
     /**
@@ -125,7 +121,7 @@ public class TridionLocalizationResolver implements LocalizationResolver {
     }
 
     @AllArgsConstructor
-    protected static class PublicationMappingData {
-        protected String id, path;
+    public static class PublicationMappingData {
+        private String id, path;
     }
 }

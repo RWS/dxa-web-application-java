@@ -9,7 +9,6 @@ import java.lang.annotation.Target;
 
 /**
  * Annotation that wires view name and a model class representing data for this view with optional controller name.
- * @dxa.publicApi
  */
 @Target({ElementType.TYPE, ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)

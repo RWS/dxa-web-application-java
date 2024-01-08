@@ -11,7 +11,6 @@ import org.jetbrains.annotations.Nullable;
 /**
  * Builds a strongly typed {@linkplain EntityModel Entity Model} based on a given DXA R2 Data Model.
  *
- * @dxa.publicApi
  * @see ModelBuilder
  */
 public interface EntityModelBuilder extends ModelBuilder {

@@ -2,7 +2,6 @@ package com.sdl.webapp.common.api.content;
 
 /**
  * Thrown when a static content provider cannot load the requested static content.
- * @dxa.publicApi
  */
 public class StaticContentNotLoadedException extends ContentProviderException {
 

@@ -31,7 +31,6 @@ import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.getDefault
 
 /**
  * Abstract superclass for controllers with utility methods and exception handling.
- * @dxa.publicApi
  */
 @Controller
 @Slf4j

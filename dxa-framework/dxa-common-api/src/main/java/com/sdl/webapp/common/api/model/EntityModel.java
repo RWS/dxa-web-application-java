@@ -15,7 +15,6 @@ import java.util.Map;
  *     private List&lt;String&gt; elements;
  * </code></pre>
  *
- * @dxa.publicApi
  */
 public interface EntityModel extends ViewModel, RichTextFragment {
 

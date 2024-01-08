@@ -6,9 +6,6 @@ import lombok.Getter;
 
 import java.util.List;
 
-/**
- * @dxa.publicApi
- */
 @Getter
 @EqualsAndHashCode(callSuper = false)
 public final class HtmlElement extends HtmlNode {

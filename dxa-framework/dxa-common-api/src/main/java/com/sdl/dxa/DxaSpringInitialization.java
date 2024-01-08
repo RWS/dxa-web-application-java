@@ -1,6 +1,7 @@
 package com.sdl.dxa;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.PropertyNamingStrategy;
@@ -9,7 +10,11 @@ import com.fasterxml.jackson.databind.ser.FilterProvider;
 import com.fasterxml.jackson.databind.ser.impl.SimpleFilterProvider;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.sdl.dxa.api.datamodel.Constants;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
+import com.sdl.dxa.api.datamodel.json.ModelDataTypeIdResolver;
+import com.sdl.dxa.api.datamodel.json.ModelDataTypeResolver;
 import com.sdl.dxa.api.datamodel.json.Polymorphic;
 import com.sdl.dxa.api.datamodel.json.PolymorphicObjectMixin;
 import com.sdl.webapp.common.api.contextengine.ContextEngine;
@@ -169,6 +174,7 @@ public class DxaSpringInitialization {
         ObjectMapper objectMapper = new ObjectMapper();
 
         objectMapper.registerModule(new JodaModule());
+        objectMapper.registerModule(new JavaTimeModule());
         objectMapper.setFilterProvider(jsonFilterProvider());
         objectMapper.setDateFormat(new StdDateFormat());
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
@@ -188,6 +194,14 @@ public class DxaSpringInitialization {
                     }
                 });
         objectMapper.addMixIn(Object.class, PolymorphicObjectMixin.class);
+
+        ModelDataTypeResolver mapResolverBuilder = new ModelDataTypeResolver();
+        mapResolverBuilder.init(JsonTypeInfo.Id.CUSTOM, new ModelDataTypeIdResolver());
+        mapResolverBuilder.inclusion(JsonTypeInfo.As.PROPERTY);
+        mapResolverBuilder.typeProperty(Constants.DOLLAR_TYPE);
+        mapResolverBuilder.typeIdVisibility(true);
+        objectMapper.setDefaultTyping(mapResolverBuilder);
+
         traceBeanInitialization(objectMapper);
         return objectMapper;
     }

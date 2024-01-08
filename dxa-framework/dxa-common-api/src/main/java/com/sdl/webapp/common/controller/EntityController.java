@@ -21,7 +21,6 @@ import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODE
  * Entity controller for the Core area that handles include requests to <code>/system/mvc/Framework/Entity/Entity/{entityId}</code>.
  *
  * @see ControllerUtils
- * @dxa.publicApi
  */
 @Controller
 @Profile("!dxa.docs.enabled")

@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Thrown when a content provider cannot find the requested page.
- * @dxa.publicApi
  */
 @Getter
 @ResponseStatus(reason = "Page not found", code = HttpStatus.NOT_FOUND)

@@ -7,7 +7,6 @@ import org.springframework.stereotype.Component;
 /**
  * @deprecated
  * Default implementation of pages cache for manual access. By cache retrieval makes a deep copy instead of returning an object from cache.
- * @dxa.publicApi
  */
 @Component
 @Deprecated

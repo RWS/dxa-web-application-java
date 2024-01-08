@@ -21,9 +21,6 @@ import org.w3c.dom.Node;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SCHEMA_ORG;
 
-/**
- * @dxa.publicApi
- */
 @EqualsAndHashCode(callSuper = true)
 @Data
 @Slf4j

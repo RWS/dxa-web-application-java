@@ -7,9 +7,6 @@ import com.sdl.webapp.common.markup.html.HtmlElement;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import com.sdl.webapp.common.markup.html.HtmlTextNode;
 
-/**
- * @dxa.publicApi
- */
 public abstract class AbstractElementBuilder<B extends AbstractElementBuilder<B>> {
 
     private final String tagName;

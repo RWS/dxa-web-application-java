@@ -54,7 +54,6 @@ import java.util.stream.Collectors;
 /**
  * Default implementation of {@link EntityModelBuilder} and {@link PageModelBuilder}. Priority of this builder is always {@code highest precedence}.
  *
- * @dxa.publicApi
  */
 @Slf4j
 @Service
@@ -80,7 +79,6 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     /**
      * {@inheritDoc}
      *
-     * @dxa.publicApi
      */
     @Override
     public <T extends EntityModel> T buildEntityModel(@Nullable T originalEntityModel,
@@ -249,7 +247,6 @@ public class DefaultModelBuilder implements EntityModelBuilder, PageModelBuilder
     /**
      * {@inheritDoc}
      *
-     * @dxa.publicApi
      */
     @Override
     @NotNull

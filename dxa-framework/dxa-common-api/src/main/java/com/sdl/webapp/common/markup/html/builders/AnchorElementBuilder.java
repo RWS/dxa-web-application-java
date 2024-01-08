@@ -1,8 +1,5 @@
 package com.sdl.webapp.common.markup.html.builders;
 
-/**
- * @dxa.publicApi
- */
 public final class AnchorElementBuilder extends AbstractElementBuilder<AnchorElementBuilder> {
 
     public AnchorElementBuilder() {

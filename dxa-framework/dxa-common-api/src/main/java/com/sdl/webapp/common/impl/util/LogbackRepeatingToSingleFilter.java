@@ -15,7 +15,6 @@ import java.util.Set;
 /**
  * Folter for logback to prevent repeating messages.
  *
- * @dxa.publicApi
  */
 public class LogbackRepeatingToSingleFilter extends Filter<ILoggingEvent> {
 

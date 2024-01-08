@@ -28,6 +28,7 @@ import org.springframework.web.util.WebUtils;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Stack;
+import java.util.regex.Pattern;
 
 /**
  * This implementation gets information about the display width etc. from the Ambient Data Framework.
@@ -201,7 +202,7 @@ public class WebRequestContextImpl implements WebRequestContext {
     }
 
     private String baseUrl() {
-        return servletRequest.getRequestURL().toString().replaceFirst(servletRequest.getRequestURI() + "$", "");
+        return servletRequest.getRequestURL().toString().replaceFirst(Pattern.quote(servletRequest.getRequestURI()) + "$", "");
     }
 
     private String contextPath() {

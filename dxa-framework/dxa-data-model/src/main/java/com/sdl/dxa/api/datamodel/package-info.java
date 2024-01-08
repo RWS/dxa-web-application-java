@@ -34,8 +34,5 @@
  * </code></pre></li>
  * </ol>
  *
- * @dxa.publicApi Not everything in data Model is included as Public API in data model.
- * @dxa.publicApi Only {@link com.sdl.dxa.api.datamodel.json.Polymorphic} and {@link com.sdl.dxa.api.datamodel.model.util.HandlesHierarchyTypeInformation} are.
- * @dxa.publicApi These two are the only thing that you really need, the rest you can also use but consider they are not part of officially supported public API.
  */
 package com.sdl.dxa.api.datamodel;

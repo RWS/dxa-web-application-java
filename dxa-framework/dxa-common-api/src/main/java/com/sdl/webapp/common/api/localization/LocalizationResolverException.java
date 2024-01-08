@@ -5,7 +5,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
  * Thrown when an error occurs in a localization resolver when resolving a localization.
- * @dxa.publicApi
  */
 @ResponseStatus(HttpStatus.NOT_FOUND)
 public class LocalizationResolverException extends Exception {

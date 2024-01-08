@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.DefaultApiClient;
-import com.sdl.web.pca.client.DefaultGraphQLClient;
 import com.sdl.web.pca.client.GraphQLClient;
 import com.sdl.web.pca.client.auth.Authentication;
 import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
@@ -88,7 +87,7 @@ public class DefaultApiClientProvider implements ApiClientProvider {
         if (previewToken != null) {
             defaultHeaders.put(HttpHeaders.COOKIE, String.format("%s=%s", PREVIEW_SESSION_TOKEN, previewToken));
         }
-        GraphQLClient graphQLClient = new DefaultGraphQLClient(configurationLoader.getServiceUrl(), defaultHeaders, auth);
+        GraphQLClient graphQLClient = new DXAGraphQLClient(configurationLoader.getServiceUrl(), defaultHeaders, auth);
         Integer requestTimeout = Integer.valueOf(configurationLoader.getConfiguration().getOrDefault(CONNECTION_TIMEOUT, 0).toString());
         ApiClient client = new DefaultApiClient(graphQLClient, requestTimeout);
         client.setDefaultModelType(DataModelType.R2);

@@ -11,7 +11,6 @@ import java.util.Collection;
 
 /**
  * Supports "on-demand" navigation (for example, can provide navigation subtrees).
- * @dxa.publicApi
  */
 @FunctionalInterface
 public interface OnDemandNavigationProvider {

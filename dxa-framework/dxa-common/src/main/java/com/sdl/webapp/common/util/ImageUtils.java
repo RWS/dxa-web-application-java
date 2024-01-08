@@ -16,9 +16,6 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * @dxa.publicApi
- */
 @Slf4j
 public final class ImageUtils {
 

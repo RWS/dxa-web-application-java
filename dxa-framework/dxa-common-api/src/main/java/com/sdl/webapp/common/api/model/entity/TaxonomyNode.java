@@ -14,7 +14,6 @@ import java.util.LinkedHashSet;
 
 /**
  * Represents a special kind of {@link SitemapItem} which is used for Taxonomy Nodes.
- * @dxa.publicApi
  */
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)

@@ -46,6 +46,11 @@ public class ModelDataTypeResolver extends StdTypeResolverBuilder {
                 null;
     }
 
+    @Override
+    public StdTypeResolverBuilder withDefaultImpl(Class<?> defaultImpl) {
+        return new ModelDataTypeResolver();
+    }
+
     private boolean useForType(JavaType t, ClassIntrospector.MixInResolver mixInResolver) {
         Class<?> mixin = mixInResolver.findMixInClassFor(t.getRawClass());
         return mixin != null && PolymorphicObjectMixin.class.isAssignableFrom(mixin);

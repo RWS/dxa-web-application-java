@@ -5,7 +5,6 @@ import java.util.Map;
 /**
  * Data for the MVC framework to determine how a view model object should be handled.
  *
- * @dxa.publicApi
  */
 public interface MvcData {
 

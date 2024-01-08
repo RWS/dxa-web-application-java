@@ -18,6 +18,8 @@ import com.sdl.webapp.common.util.ImageUtils;
 import com.sdl.webapp.common.util.UrlEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
+import org.apache.commons.lang3.tuple.Triple;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -102,15 +104,18 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
                 null);
 
         if (binaryComponent == null) {
-            throw new DxaItemNotFoundException("Item not found");
+            throw new DxaItemNotFoundException("Item not found for binaryId: " + binaryId);
         }
         String parentPath = getPublicationPath(localizationId);
         List<BinaryVariantEdge> edges = binaryComponent.getVariants().getEdges();
+        if (edges.isEmpty()) {
+            throw new DxaItemNotFoundException("Binary variants not found for binaryId: " + binaryId);
+        }
         String path = edges.get(0).getNode().getPath();
         File file = new File(parentPath, path);
         ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
         String urlPath = prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl());
-        log.debug("Requesting urlPath: {}", urlPath);
+        log.debug("Requesting urlPath: {} for binaryIdL {}", urlPath, binaryId);
         return this.processBinaryComponent(binaryComponent, requestDto, file, urlPath, pathInfo);
     }
 
@@ -144,11 +149,7 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
             throw new StaticContentNotFoundException("No binary found for pubId: [" +
                     requestDto.getLocalizationId() + "] and urlPath: " + urlPath);
         }
-        if (!requestDto.isNoMediaCache()) {
-            log.debug("File cannot be cached: {}", file.getAbsolutePath());
-            binaryComponent.setLastPublishDate(new DateTime().toString());
-        }
-        downloadBinaryWhenNeeded(binaryComponent, file, pathInfo);
+        downloadBinaryWhenNeeded(binaryComponent, requestDto, file, pathInfo);
         BinaryVariant variant = binaryComponent.getVariants().getEdges().get(0).getNode();
         String binaryComponentType = variant.getType();
         String contentType = StringUtils.isEmpty(binaryComponentType) ? DEFAULT_CONTENT_TYPE : binaryComponentType;
@@ -156,17 +157,22 @@ public class GraphQLStaticContentResolver extends GenericStaticContentResolver i
         return new StaticContentItem(contentType, file, versioned);
     }
 
-    private void downloadBinaryWhenNeeded(BinaryComponent binaryComponent, File file, ImageUtils.StaticContentPathInfo pathInfo) throws ContentProviderException {
+    private void downloadBinaryWhenNeeded(BinaryComponent binaryComponent, StaticContentRequestDto requestDto, File file, ImageUtils.StaticContentPathInfo pathInfo) throws ContentProviderException {
         long componentTime = new DateTime(binaryComponent.getLastPublishDate()).getMillis();
-        boolean toBeRefreshed = isToBeRefreshed(file, componentTime);
+        boolean toBeRefreshed = requestDto.isNoMediaCache() || isToBeRefreshed(file, componentTime);
         if (!toBeRefreshed) {
             log.debug("File does not need to be refreshed: {}", file.getAbsolutePath());
             return;
         }
-        log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
-        byte[] content = downloadBinary(file, binaryComponent);
-        if (content != null) {
-            refreshBinary(file, pathInfo, content);
+        Triple<Integer, Integer, String> key = new ImmutableTriple<>(binaryComponent.getPublicationId(), binaryComponent.getItemId(), pathInfo.getFileName());
+        synchronized (key.toString().intern()) {
+            log.debug("File needs to be refreshed: {}", file.getAbsolutePath());
+            byte[] content = downloadBinary(file, binaryComponent);
+            if (content != null) {
+                refreshBinary(file, pathInfo, content);
+                return;
+            }
         }
+        log.debug("File cannot be updated as content is empty: {}", file.getAbsolutePath());
     }
 }

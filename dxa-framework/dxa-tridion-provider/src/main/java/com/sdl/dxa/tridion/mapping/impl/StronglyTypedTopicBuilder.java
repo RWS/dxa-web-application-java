@@ -135,10 +135,8 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
         T stronglyTypedTopic = null;
         try {
             stronglyTypedTopic = buildStronglyTypedTopic(topicType, rootElement);
-        } catch (IllegalAccessException e) {
-            throw new DxaException("Could not build strongly typed topic", e);
-        } catch (InstantiationException e) {
-            throw new DxaException("Could not instantiate strongly typed topic", e);
+        } catch (ReflectiveOperationException e) {
+            throw new DxaException("Could not build strongly typed topic " + topicType.getCanonicalName(), e);
         }
 
         if (stronglyTypedTopic.getId() == null)
@@ -370,7 +368,7 @@ public class StronglyTypedTopicBuilder implements EntityModelBuilder {
                     }
                     LOG.debug("No XHTML elements found for DITA property '" + ditaPropertyName + "'.");
                 } catch (XPathExpressionException e) {
-                    LOG.warn("Failed to evaluate Xpath", e);
+                    LOG.warn("Failed to evaluate Xpath " + propertyXPath, e);
                 }
                 if (htmlElements == null || htmlElements.isEmpty()) {
                     LOG.debug("Unable to map property '" + fieldSemantics.getPropertyName() + "'");

@@ -21,8 +21,8 @@ Furthermore, the compiled DXA artifacts are available on [Maven Central](http://
 To facilitate upgrades, we strongly recommend that you use official, compiled DXA artifacts from Maven Central instead of a custom build.
 If you really must modify the DXA framework, we kindly request you to submit your changes as a Contribution (see the Branches and Contributions section below).
 
-Compatibility Matrix
---------------------
+Compatibility Matrices
+----------------------
 <table>
     <tr>
         <th nowrap="nowrap">DXA Version</th>
@@ -30,6 +30,26 @@ Compatibility Matrix
         <th nowrap="nowrap">Tridion Sites 9.6</th>
         <th nowrap="nowrap">Tridion Sites 9.5</th>
         <th nowrap="nowrap">Tridion Sites 9.1</th>
+    </tr>
+    <tr>
+        <td nowrap="nowrap">2.2.x</td>
+        <td nowrap="nowrap" align="center">✔️</td>
+        <td nowrap="nowrap" align="center">✔️</td>
+        <td nowrap="nowrap" align="center">✔️</td>
+        <td nowrap="nowrap" align="center">✔️</td>
+    </tr>
+    <tr text-align="center">
+        <td nowrap="nowrap">2.3.x</td>
+        <td nowrap="nowrap" align="center">✔️</td>
+        <td nowrap="nowrap" align="center">✔️</td>
+        <td nowrap="nowrap" align="center">✔️</td>
+        <td nowrap="nowrap" align="center">✔️</td>
+    </tr>
+</table>
+
+<table>
+    <tr>
+        <th nowrap="nowrap">DXA Version</th>
         <th nowrap="nowrap">JDK 1.8</th>
         <th nowrap="nowrap">JDK 11</th>
         <th nowrap="nowrap">JDK 17</th>
@@ -40,20 +60,12 @@ Compatibility Matrix
         <td nowrap="nowrap">2.2.x</td>
         <td nowrap="nowrap" align="center">✔️</td>
         <td nowrap="nowrap" align="center">✔️</td>
-        <td nowrap="nowrap" align="center">✔️</td>
-        <td nowrap="nowrap" align="center">✔️</td>
-        <td nowrap="nowrap" align="center">✔️</td>
-        <td nowrap="nowrap" align="center">✔️</td>
         <td nowrap="nowrap" align="center">❌</td>
         <td nowrap="nowrap" align="center">✔️</td>
         <td nowrap="nowrap" align="center">❌</td>
     </tr>
     <tr text-align="center">
         <td nowrap="nowrap">2.3.x</td>
-        <td nowrap="nowrap" align="center">✔️</td>
-        <td nowrap="nowrap" align="center">✔️</td>
-        <td nowrap="nowrap" align="center">✔️</td>
-        <td nowrap="nowrap" align="center">✔️</td>
         <td nowrap="nowrap" align="center">❌</td>
         <td nowrap="nowrap" align="center">❌</td>
         <td nowrap="nowrap" align="center">✔️</td>
@@ -62,7 +74,7 @@ Compatibility Matrix
     </tr>
 </table>
 
-The latest `DXA 2.3` version includes the Spring Framework version 6 and Jakarta Servlet API as dependencies.
+The latest `DXA 2.3` version includes the `Spring Framework version 6` and `Jakarta Servlet API` as dependencies.
 
 Build
 -----

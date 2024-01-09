@@ -7,13 +7,11 @@ import com.sdl.dxa.api.datamodel.model.ExternalContentData;
 import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.exceptions.DxaException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.util.AssertionErrors.assertNotNull;
+import static org.springframework.test.util.AssertionErrors.assertNull;
 
 public class EntityModelDataConverterTest {
 
@@ -27,7 +25,7 @@ public class EntityModelDataConverterTest {
         TypeInformation typeInformation = new TypeInformation(EntityModel.class, null);
         ModelBuilderPipeline pipeline = mock(ModelBuilderPipeline.class);
         EntityModel entityModelMock = mock(EntityModel.class);
-        when(pipeline.createEntityModel(any(), any())).thenReturn(entityModelMock);
+        lenient().when(pipeline.createEntityModel(any(), any())).thenReturn(entityModelMock);
 
         //when
         Object result = converter.convert(data, typeInformation, null, pipeline, null);
@@ -44,7 +42,7 @@ public class EntityModelDataConverterTest {
         TypeInformation typeInformation = new TypeInformation(EntityModel.class, null);
         ModelBuilderPipeline pipeline = mock(ModelBuilderPipeline.class);
         EntityModel entityModelMock = mock(EntityModel.class);
-        when(pipeline.createEntityModel(any(), any())).thenReturn(entityModelMock);
+        lenient().when(pipeline.createEntityModel(any(), any())).thenReturn(entityModelMock);
 
         //when
         Object result = converter.convert(data, typeInformation, null, pipeline, null);

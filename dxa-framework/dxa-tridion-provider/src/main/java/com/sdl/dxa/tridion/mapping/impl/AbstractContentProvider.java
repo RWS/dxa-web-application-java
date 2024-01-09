@@ -56,7 +56,7 @@ public abstract class AbstractContentProvider {
         PageModel pageModel = null;
         long time = System.currentTimeMillis();
         try {
-            Assert.notNull(localization);
+            Assert.notNull(localization, "Localization must not be null");
             String key = createKeyForCacheByPath(path, localization, "pagemodel");
             SimpleValueWrapper simpleValueWrapper = null;
             if (!webRequestContext.isSessionPreview()) {
@@ -119,7 +119,7 @@ public abstract class AbstractContentProvider {
         PageModel pageModel = null;
         long time = System.currentTimeMillis();
         try {
-            Assert.notNull(localization);
+            Assert.notNull(localization, "Localization must not be null");
             String key = createKeyForCacheById("" + pageId, localization, "pagemodel");
 
             SimpleValueWrapper simpleValueWrapper = null;
@@ -195,7 +195,7 @@ public abstract class AbstractContentProvider {
      *
      */
     public EntityModel getEntityModel(@NotNull String id, Localization localization) throws ContentProviderException {
-        Assert.notNull(id);
+        Assert.notNull(id, "Id must not be null");
         long time = System.currentTimeMillis();
         String key = createKeyForCacheById(id, localization, "entitymodel");
         SimpleValueWrapper simpleValueWrapper = null;

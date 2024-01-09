@@ -14,14 +14,16 @@ import com.sdl.webapp.common.api.xpm.XpmRegionConfig;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import org.hamcrest.collection.IsIterableContainingInOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Matchers;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import java.util.ArrayList;
@@ -31,22 +33,13 @@ import java.util.List;
 
 import static com.sdl.webapp.common.api.model.TestEntity.entity;
 import static com.sdl.webapp.common.api.model.TestEntity.feedItem;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.same;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.*;
 
 @ActiveProfiles("test")
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = RegionModelImplTest.RegionModelImplTestContextConfiguration.class)
 public class RegionModelImplTest {
 
@@ -68,8 +61,8 @@ public class RegionModelImplTest {
         //given
         RegionModelImpl model = new RegionModelImpl("name");
         final TestEntity testEntity = mock(TestEntity.class);
-        doCallRealMethod().when(testEntity).setId(anyString());
-        doCallRealMethod().when(testEntity).getId();
+        lenient().doCallRealMethod().when(testEntity).setId(anyString());
+        lenient().doCallRealMethod().when(testEntity).getId();
         testEntity.setId("123");
         model.setEntities(new ArrayList<EntityModel>() {{
             add(testEntity);
@@ -97,16 +90,17 @@ public class RegionModelImplTest {
         assertEquals(mvcData, region.getMvcData());
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldNotAllowToSetXpmMetadataToNull() throws DxaException {
-        //given
-        RegionModelImpl regionModel = new RegionModelImpl("name");
+        Assertions.assertThrows(NullPointerException.class, () -> {
+            // Given
+            RegionModelImpl regionModel = new RegionModelImpl("name");
 
-        //when
-        regionModel.setXpmMetadata(null);
+            // When
+            regionModel.setXpmMetadata(null);
 
-        //then
-        //NPE
+            // Then NPE
+        });
     }
 
     @Test
@@ -214,8 +208,8 @@ public class RegionModelImplTest {
         ConditionalEntityEvaluator evaluator = mock(ConditionalEntityEvaluator.class);
         List<ConditionalEntityEvaluator> evaluators = Collections.singletonList(evaluator);
 
-        when(evaluator.includeEntity(same(entity1))).thenReturn(true);
-        when(evaluator.includeEntity(same(entity2))).thenReturn(false);
+        lenient().when(evaluator.includeEntity(same(entity1))).thenReturn(true);
+        lenient().when(evaluator.includeEntity(same(entity2))).thenReturn(false);
 
         //when
         assertEquals(2, region.getEntities().size());
@@ -241,11 +235,11 @@ public class RegionModelImplTest {
             XpmRegionConfig xpmRegionConfig = mock(XpmRegionConfig.class);
             XpmRegion xpmRegion = mock(XpmRegion.class);
             ComponentType componentType = mock(ComponentType.class);
-            when(componentType.getSchemaId()).thenReturn("123");
-            when(componentType.getTemplateId()).thenReturn("234");
-            when(xpmRegion.getComponentTypes()).thenReturn(Collections.singletonList(componentType));
+            lenient().when(componentType.getSchemaId()).thenReturn("123");
+            lenient().when(componentType.getTemplateId()).thenReturn("234");
+            lenient().when(xpmRegion.getComponentTypes()).thenReturn(Collections.singletonList(componentType));
 
-            when(xpmRegionConfig.getXpmRegion(anyString(), Matchers.any())).thenReturn(xpmRegion);
+            lenient().when(xpmRegionConfig.getXpmRegion(anyString(), any())).thenReturn(xpmRegion);
             return xpmRegionConfig;
         }
     }

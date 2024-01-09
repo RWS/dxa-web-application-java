@@ -1,10 +1,10 @@
 package com.sdl.webapp.common.impl.contextengine;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.sdl.webapp.common.impl.contextengine.Claims.getClaims;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class DeviceClaimsTest {
 

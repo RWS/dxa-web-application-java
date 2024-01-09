@@ -1,18 +1,17 @@
 package com.sdl.webapp.common.api.contextengine;
 
 import com.google.common.collect.ImmutableMap;
-import org.jetbrains.annotations.Nullable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 
-import static junit.framework.TestCase.assertTrue;
 import static org.hamcrest.Matchers.hasItems;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.Assert.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ContextClaimsTest {
 
@@ -232,8 +231,8 @@ public class ContextClaimsTest {
         Boolean booleanFalse = claims.getSingleClaim("BooleanFalse", Boolean.class);
 
         //then
-        assertTrue("Claim not right", booleanTrue);
-        assertFalse("Claim not right", booleanFalse);
+        assertTrue(booleanTrue, "Claim not right");
+        assertFalse(booleanFalse, "Claim not right");
     }
 
     private static class TestClaims extends ContextClaims {

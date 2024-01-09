@@ -1,14 +1,13 @@
 package com.sdl.webapp.common.api.mapping.semantic.annotations;
 
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@code SemanticPropertyInfo}.
@@ -111,8 +110,8 @@ public class SemanticPropertyInfoTest {
 
     private SemanticProperty mockSemanticProperty(String propertyName, String value) {
         final SemanticProperty anno = mock(SemanticProperty.class);
-        when(anno.propertyName()).thenReturn(propertyName);
-        when(anno.value()).thenReturn(value);
+        lenient().when(anno.propertyName()).thenReturn(propertyName);
+        lenient().when(anno.value()).thenReturn(value);
         return anno;
     }
 

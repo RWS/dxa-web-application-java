@@ -10,9 +10,9 @@ import com.sdl.dxa.tridion.mapping.ModelBuilderPipeline;
 import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.tridion.fields.exceptions.FieldConverterException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;

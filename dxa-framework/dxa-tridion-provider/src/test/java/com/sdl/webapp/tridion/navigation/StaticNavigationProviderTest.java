@@ -13,13 +13,15 @@ import com.sdl.webapp.common.api.model.entity.NavigationLinks;
 import com.sdl.webapp.common.api.model.entity.SitemapItem;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import org.apache.commons.io.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -33,18 +35,12 @@ import java.util.LinkedHashSet;
 import java.util.List;
 
 import static com.sdl.webapp.tridion.navigation.StaticNavigationProvider.TYPE_STRUCTURE_GROUP;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class StaticNavigationProviderTest {
 
     private static final String NAVIGATION_JSON = "/navigation.json";
@@ -82,15 +78,15 @@ public class StaticNavigationProviderTest {
         return sitemapItem;
     }
 
-    @Before
+    @BeforeEach
     public void before() throws IOException, ContentProviderException {
         ReflectionTestUtils.setField(provider, "navigationModelUrl", NAVIGATION_JSON);
 
-        when(linkResolver.resolveLink(anyString(), anyString())).thenAnswer(invocation ->
+        lenient().when(linkResolver.resolveLink(anyString(), anyString())).thenAnswer(invocation ->
                 invocation.getArgument(0));
 
-        when(localization.localizePath(eq(NAVIGATION_JSON))).thenReturn(NORMALIZED_PATH);
-        when(localization.getId()).thenReturn("1");
+        lenient().when(localization.localizePath(eq(NAVIGATION_JSON))).thenReturn(NORMALIZED_PATH);
+        lenient().when(localization.getId()).thenReturn("1");
 
         SitemapItem parentGroup = getSiteMapGroup("parent", "parent");
         SitemapItem child1Group = getSiteMapGroup("child1", "parent/child1");
@@ -108,9 +104,9 @@ public class StaticNavigationProviderTest {
         child11Group.setItems(new LinkedHashSet<>(Lists.newArrayList(child11)));
 
         // CM orders navigation model and the collection IS already sorted once we load it in DXA
-        when(objectMapper.readValue(any(InputStream.class), eq(SitemapItem.class))).thenReturn(parentGroup);
+        lenient().when(objectMapper.readValue(any(InputStream.class), eq(SitemapItem.class))).thenReturn(parentGroup);
 
-        when(defaultModelService.loadPageContent(any(PageRequestDto.class))).thenReturn("");
+        lenient().when(defaultModelService.loadPageContent(any(PageRequestDto.class))).thenReturn("");
     }
 
     @Test
@@ -132,43 +128,49 @@ public class StaticNavigationProviderTest {
         assertEquals("child2", items.get(2).getTitle());
     }
 
-    @Test(expected = ContentProviderException.class)
+    @Test
     @SuppressWarnings("unchecked")
     public void shouldGetNavigationModeFactoryException() throws ContentProviderException {
-        //given
-        doThrow(ContentProviderException.class).when(provider).getPageContent(anyString(), any(Localization.class));
+        Assertions.assertThrows(ContentProviderException.class, () -> {
+            //given
+            doThrow(ContentProviderException.class).when(provider).getPageContent(anyString(), any(Localization.class));
 
-        //when
-        provider.getNavigationModel(localization);
+            //when
+            provider.getNavigationModel(localization);
 
-        //then
-        //exception
+            //then
+            //exception
+        });
     }
 
     @SuppressWarnings("unchecked")
-    @Test(expected = NavigationProviderException.class)
+    @Test
     public void shouldRethrowExceptionInGetNavigationModel() throws ContentProviderException {
-        //given
-        when(defaultModelService.loadPageContent(any())).thenThrow(ContentProviderException.class);
+        Assertions.assertThrows(NavigationProviderException.class, () -> {
+            //given
+            when(defaultModelService.loadPageContent(any())).thenThrow(ContentProviderException.class);
 
-        //when
-        provider.getNavigationModel(localization);
+            //when
+            provider.getNavigationModel(localization);
 
-        //then
-        //exception
+            //then
+            //exception
+        });
     }
 
     @SuppressWarnings("unchecked")
-    @Test(expected = NavigationProviderException.class)
+    @Test
     public void shouldRethrowExceptionInGetNavigationModel2() throws NavigationProviderException, IOException {
-        //given
-        when(objectMapper.readValue(any(InputStream.class), any(Class.class))).thenThrow(IOException.class);
+        Assertions.assertThrows(NavigationProviderException.class, () -> {
+            //given
+            when(objectMapper.readValue(any(InputStream.class), any(Class.class))).thenThrow(IOException.class);
 
-        //when
-        provider.getNavigationModel(localization);
+            //when
+            provider.getNavigationModel(localization);
 
-        //then
-        //exception
+            //then
+            //exception
+        });
     }
 
     @Test

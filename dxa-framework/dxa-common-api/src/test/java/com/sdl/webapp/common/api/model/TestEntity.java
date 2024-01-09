@@ -5,14 +5,13 @@ import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public abstract class TestEntity extends AbstractEntityModel implements FeedItemsProvider {
 
     public static TestEntity entity(FeedItem feedItem) {
         TestEntity testEntity = mock(TestEntity.class);
-        when(testEntity.extractFeedItems()).thenReturn(Lists.newArrayList(feedItem));
+        lenient().when(testEntity.extractFeedItems()).thenReturn(Lists.newArrayList(feedItem));
         return testEntity;
     }
 

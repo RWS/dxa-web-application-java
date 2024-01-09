@@ -5,7 +5,7 @@ import com.sdl.webapp.common.markup.MarkupDecoratorRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 /**
  * XpmMarkupInitializer

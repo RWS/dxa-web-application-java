@@ -4,7 +4,7 @@ import com.sdl.dxa.caching.CompositeOutputCacheKeyBase;
 import com.sdl.webapp.common.markup.html.HtmlNode;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * Output cache that accepts a composite key as a required key. This is a default implementation for manual access.

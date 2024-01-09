@@ -8,13 +8,14 @@ import com.sdl.webapp.common.api.MediaHelper;
 import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
 import org.apache.commons.lang3.StringUtils;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.w3c.dom.NamedNodeMap;
@@ -25,13 +26,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.sdl.webapp.common.api.model.entity.MediaItemTest.mockAttributesWithDefault;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(loader = AnnotationConfigContextLoader.class)
 @ActiveProfiles("test")
 public class EclItemTest {
@@ -114,7 +112,7 @@ public class EclItemTest {
                 .put("data-multimediaFileSize", "1024")
                 .build());
 
-        when(xhtmlNode.getAttributes()).thenReturn(map);
+        lenient().when(xhtmlNode.getAttributes()).thenReturn(map);
 
         //when
         eclItem.readFromXhtmlElement(xhtmlNode);

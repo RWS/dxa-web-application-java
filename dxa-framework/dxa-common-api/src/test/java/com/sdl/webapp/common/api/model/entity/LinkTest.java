@@ -2,12 +2,11 @@ package com.sdl.webapp.common.api.model.entity;
 
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.PojosTest;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
 public class LinkTest extends PojosTest {
 
@@ -25,7 +24,7 @@ public class LinkTest extends PojosTest {
 
     private Localization localization(String url) {
         Localization localization = mock(Localization.class);
-        when(localization.getPath()).thenReturn(url);
+        lenient().when(localization.getPath()).thenReturn(url);
         return localization;
     }
 

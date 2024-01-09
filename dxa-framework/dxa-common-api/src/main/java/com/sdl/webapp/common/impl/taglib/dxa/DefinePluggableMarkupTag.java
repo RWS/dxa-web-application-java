@@ -6,9 +6,9 @@ import com.sdl.webapp.common.markup.html.ParsableHtmlNode;
 import lombok.Setter;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.tagext.BodyContent;
-import javax.servlet.jsp.tagext.BodyTagSupport;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.tagext.BodyContent;
+import jakarta.servlet.jsp.tagext.BodyTagSupport;
 
 @Setter
 public class DefinePluggableMarkupTag extends BodyTagSupport {

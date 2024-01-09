@@ -2,8 +2,8 @@ package com.sdl.webapp.common.impl.taglib.xpm;
 
 import com.sdl.webapp.common.markup.html.HtmlNode;
 
-import javax.servlet.jsp.JspException;
-import javax.servlet.jsp.JspWriter;
+import jakarta.servlet.jsp.JspException;
+import jakarta.servlet.jsp.JspWriter;
 import java.io.IOException;
 
 public abstract class XpmMarkupTag extends XpmIfEnabledTag {

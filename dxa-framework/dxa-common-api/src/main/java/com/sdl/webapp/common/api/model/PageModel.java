@@ -1,9 +1,8 @@
 package com.sdl.webapp.common.api.model;
 
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
-import com.sdl.webapp.common.exceptions.DxaException;
 
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
 
 /**

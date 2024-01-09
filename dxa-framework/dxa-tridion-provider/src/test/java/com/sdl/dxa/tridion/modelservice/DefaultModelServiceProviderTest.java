@@ -8,18 +8,21 @@ import com.sdl.dxa.tridion.modelservice.exceptions.ItemNotFoundInModelServiceExc
 import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.webapp.common.api.content.ContentProviderException;
 import com.sdl.webapp.common.api.localization.Localization;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DefaultModelServiceProviderTest {
 
     @Mock
@@ -37,11 +40,11 @@ public class DefaultModelServiceProviderTest {
     public DefaultModelServiceProviderTest() throws ConfigurationException {
     }
 
-    @Before
+    @BeforeEach
     public void init() {
 
-        when(configuration.getPageModelUrl()).thenReturn("/model-service/page");
-        when(configuration.getEntityModelUrl()).thenReturn("/model-service/entity");
+        lenient().when(configuration.getPageModelUrl()).thenReturn("/model-service/page");
+        lenient().when(configuration.getEntityModelUrl()).thenReturn("/model-service/entity");
     }
 
     @Test
@@ -52,7 +55,7 @@ public class DefaultModelServiceProviderTest {
                 .build();
         PageModelData modelData = new PageModelData();
         modelData.setId("123");
-        when(modelServiceClient.getForType(eq("/model-service/page"), eq(PageModelData.class), eq("tcm"), eq(42),
+        lenient().when(modelServiceClient.getForType(eq("/model-service/page"), eq(PageModelData.class), eq("tcm"), eq(42),
                 eq("path"), eq(PageRequestDto.PageInclusion.INCLUDE))).thenReturn(modelData);
 
         //when

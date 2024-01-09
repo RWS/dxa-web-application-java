@@ -40,16 +40,18 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import com.sdl.webapp.common.impl.mapping.SemanticMapperImpl;
 import com.sdl.webapp.common.impl.mapping.SemanticMappingRegistryImpl;
 import com.sdl.webapp.common.impl.model.ViewModelRegistryImpl;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import javax.xml.xpath.XPathExpressionException;
 import java.util.ArrayList;
@@ -59,11 +61,11 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import static junit.framework.TestCase.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.test.util.AssertionErrors.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = {DefaultModelBuilderTest.SpringConfigurationContext.class, StronglyTypedTopicBuilderTest.SpringConfigurationContext.class})
 @ActiveProfiles("test")
 public class StronglyTypedTopicBuilderTest {
@@ -75,17 +77,19 @@ public class StronglyTypedTopicBuilderTest {
     @Autowired
     StronglyTypedTopicBuilder stronglyTypedTopicBuilder;
 
-    @Before
+    @BeforeEach
     public void setup() {
         DxaSpringInitialization spring = new DxaSpringInitialization();
         objectMapper = spring.objectMapper();
     }
 
-    @Test(expected = DxaException.class)
+    @Test
     public void BuildEntityModel_Null_Exception() throws DxaException {
-        // This would happen if you accidentally configure this model builder as the first in the pipeline.
-        EntityModel testEntityModel = null;
-        stronglyTypedTopicBuilder.buildEntityModel(testEntityModel, null, null);
+        Assertions.assertThrows(DxaException.class, () -> {
+            // This would happen if you accidentally configure this model builder as the first in the pipeline.
+            EntityModel testEntityModel = null;
+            stronglyTypedTopicBuilder.buildEntityModel(testEntityModel, null, null);
+        });
     }
 
     @Test
@@ -95,7 +99,7 @@ public class StronglyTypedTopicBuilderTest {
         EntityModel testEntityModel = testArticle;
         stronglyTypedTopicBuilder.buildEntityModel(testEntityModel, null, null);
 
-        Assert.assertEquals("testEntityModel", testArticle, testEntityModel);
+        assertEquals("testEntityModel", testArticle, testEntityModel);
     }
 
     @Test
@@ -106,7 +110,7 @@ public class StronglyTypedTopicBuilderTest {
         EntityModel testEntityModel = genericTopic;
         stronglyTypedTopicBuilder.buildEntityModel(testEntityModel, null, null);
 
-        Assert.assertEquals("testEntityModel", genericTopic, testEntityModel);
+        assertEquals("testEntityModel", genericTopic, testEntityModel);
     }
 
     @Test
@@ -116,7 +120,7 @@ public class StronglyTypedTopicBuilderTest {
         EntityModel testEntityModel = genericTopic;
         stronglyTypedTopicBuilder.buildEntityModel(testEntityModel, null, null);
 
-        Assert.assertEquals("testEntityModel", genericTopic, testEntityModel);
+        assertEquals("testEntityModel", genericTopic, testEntityModel);
     }
 
     @Test
@@ -131,22 +135,22 @@ public class StronglyTypedTopicBuilderTest {
 
         outputJson(testEntityModel);
 
-        Assert.assertTrue("result", testEntityModel instanceof StronglyTypedTopicTest);
+        assertTrue("result", testEntityModel instanceof StronglyTypedTopicTest);
         StronglyTypedTopicTest result = (StronglyTypedTopicTest) testEntityModel;
-        Assert.assertEquals("result.TopicTitle", genericTopic.getTopicTitle(), result.getTopicTitle());
-        Assert.assertEquals("result.title", testTitle, result.getTitle());
-        Assert.assertEquals("result.body", "First sectionSecond section", result.getBody()); // HTML tags should get stripped ("InnerText")
-        Assert.assertNotNull("result.BodyRichText", result.getBodyRichText());
-        Assert.assertEquals("result.BodyRichText.toString()", testBody, result.getBodyRichText().toString());
-        Assert.assertEquals("result.FirstSection", "First section", result.getFirstSection());
-        Assert.assertNotNull("result.sections", result.getSections());
-        Assert.assertEquals("result.sections.Count", 2, result.getSections().size());
-        Assert.assertEquals("result.sections[0]", result.getFirstSection(), result.getSections().get(0));
-        Assert.assertNull("result.Links", result.getLinks());
-        Assert.assertNull("result.FirstChildLink", result.getFirstChildLink());
-        Assert.assertNull("result.ChildLinks", result.getChildLinks());
-        Assert.assertNotNull("result.MvcData", result.getMvcData());
-        Assert.assertEquals("result.MvcData", result.getDefaultMvcData(), result.getMvcData());
+        assertEquals("result.TopicTitle", genericTopic.getTopicTitle(), result.getTopicTitle());
+        assertEquals("result.title", testTitle, result.getTitle());
+        assertEquals("result.body", "First sectionSecond section", result.getBody()); // HTML tags should get stripped ("InnerText")
+        assertNotNull("result.BodyRichText", result.getBodyRichText());
+        assertEquals("result.BodyRichText.toString()", testBody, result.getBodyRichText().toString());
+        assertEquals("result.FirstSection", "First section", result.getFirstSection());
+        assertNotNull("result.sections", result.getSections());
+        assertEquals("result.sections.Count", 2, result.getSections().size());
+        assertEquals("result.sections[0]", result.getFirstSection(), result.getSections().get(0));
+        assertNull("result.Links", result.getLinks());
+        assertNull("result.FirstChildLink", result.getFirstChildLink());
+        assertNull("result.ChildLinks", result.getChildLinks());
+        assertNotNull("result.MvcData", result.getMvcData());
+        assertEquals("result.MvcData", result.getDefaultMvcData(), result.getMvcData());
     }
 
     @Test
@@ -181,19 +185,19 @@ public class StronglyTypedTopicBuilderTest {
         testPageModelData.setMvcData(MvcModelData.builder().areaName("Test").viewName("SimpleTestPage").build());
 
         PageModel pageModel = modelBuilderPipeline.createPageModel(testPageModelData);
-        Assert.assertNotNull("pageModel", pageModel);
+        assertNotNull("pageModel", pageModel);
 
         outputJson(pageModel);
 
         StronglyTypedTopicTest result = (StronglyTypedTopicTest) pageModel.getRegions().get("Main").getEntities().get(0);
-        Assert.assertNotNull(result);
+        assertNotNull("result", result);
 
-        Assert.assertEquals("result.Id", testTopicId, result.getId());
-        Assert.assertEquals("result.TopicTitle", genericTopic.getTopicTitle(), result.getTopicTitle());
-        Assert.assertEquals("result.title", testTitle, result.getTitle());
-        Assert.assertEquals("result.BodyRichText.toString()", testBody, result.getBodyRichText().toString());
-        Assert.assertEquals("result.FirstSection", "First section", result.getFirstSection());
-        Assert.assertEquals("result.MvcData", result.getDefaultMvcData(), result.getMvcData());
+        assertEquals("result.Id", testTopicId, result.getId());
+        assertEquals("result.TopicTitle", genericTopic.getTopicTitle(), result.getTopicTitle());
+        assertEquals("result.title", testTitle, result.getTitle());
+        assertEquals("result.BodyRichText.toString()", testBody, result.getBodyRichText().toString());
+        assertEquals("result.FirstSection", "First section", result.getFirstSection());
+        assertEquals("result.MvcData", result.getDefaultMvcData(), result.getMvcData());
     }
 
     @Test
@@ -208,21 +212,21 @@ public class StronglyTypedTopicBuilderTest {
         );
 
         StronglyTypedTopicTest result = stronglyTypedTopicBuilder.tryConvertToStronglyTypedTopic(genericTopic, StronglyTypedTopicTest.class);
-        Assert.assertNotNull("result", result);
+        assertNotNull("result", result);
 
         outputJson(result);
 
-        Assert.assertEquals("result.Id", genericTopic.getId(), result.getId());
-        Assert.assertNull("result.title", result.getTitle());
-        Assert.assertEquals("result.body", "", result.getBody());
-        Assert.assertNotNull("result.Links", result.getLinks());
-        Assert.assertEquals("result.Links.Count", 3, result.getLinks().size());
-        Assert.assertNotNull("result.FirstChildLink", result.getFirstChildLink());
-        Assert.assertEquals("result.FirstChildLink.Url", "/firstlink.html", result.getFirstChildLink().getUrl());
-        Assert.assertEquals("result.FirstChildLink.LinkText", "First link text", result.getFirstChildLink().getLinkText());
-        Assert.assertNull("result.FirstChildLink.AlternateText", result.getFirstChildLink().getAlternateText());
-        Assert.assertNotNull("result.ChildLinks", result.getChildLinks());
-        Assert.assertEquals("result.ChildLinks.Count", 2, result.getChildLinks().size());
+        assertEquals("result.Id", genericTopic.getId(), result.getId());
+        assertNull("result.title", result.getTitle());
+        assertEquals("result.body", "", result.getBody());
+        assertNotNull("result.Links", result.getLinks());
+        assertEquals("result.Links.Count", 3, result.getLinks().size());
+        assertNotNull("result.FirstChildLink", result.getFirstChildLink());
+        assertEquals("result.FirstChildLink.Url", "/firstlink.html", result.getFirstChildLink().getUrl());
+        assertEquals("result.FirstChildLink.LinkText", "First link text", result.getFirstChildLink().getLinkText());
+        assertNull("result.FirstChildLink.AlternateText", result.getFirstChildLink().getAlternateText());
+        assertNotNull("result.ChildLinks", result.getChildLinks());
+        assertEquals("result.ChildLinks.Count", 2, result.getChildLinks().size());
     }
 
     @Test
@@ -235,39 +239,39 @@ public class StronglyTypedTopicBuilderTest {
         );
 
         SpecializedTopicTest result = stronglyTypedTopicBuilder.tryConvertToStronglyTypedTopic(genericTopic, SpecializedTopicTest.class);
-        Assert.assertNotNull("result", result);
+        assertNotNull("result", result);
 
         outputJson(result);
 
-        Assert.assertNotNull("result.intro", result.getIntro());
-        Assert.assertNotNull("result.objectives", result.getObjectives());
-        Assert.assertNotNull("result.body", result.getBody());
-        Assert.assertNotNull("result.body.intro", result.getBody().getIntro());
-        Assert.assertNotNull("result.body.objectives", result.getBody().getObjectives());
-        Assert.assertNotNull("result.body.objectives.content", result.getBody().getObjectives().getContent());
-        Assert.assertNotNull("result.body.sections", result.getBody().getSections());
+        assertNotNull("result.intro", result.getIntro());
+        assertNotNull("result.objectives", result.getObjectives());
+        assertNotNull("result.body", result.getBody());
+        assertNotNull("result.body.intro", result.getBody().getIntro());
+        assertNotNull("result.body.objectives", result.getBody().getObjectives());
+        assertNotNull("result.body.objectives.content", result.getBody().getObjectives().getContent());
+        assertNotNull("result.body.sections", result.getBody().getSections());
 
-        Assert.assertEquals("result.intro.toString()", "Intro section", result.getIntro().toString());
-        Assert.assertEquals("result.objectives.toString()", "Objectives section", result.getObjectives().toString());
+        assertEquals("result.intro.toString()", "Intro section", result.getIntro().toString());
+        assertEquals("result.objectives.toString()", "Objectives section", result.getObjectives().toString());
 
-        Assert.assertEquals("result.body.Id", "b1", result.getBody().getId());
-        Assert.assertEquals("body lcBaseBody lcOverviewBody ", result.getBody().getHtmlClasses(), "body lcBaseBody lcOverviewBody ");
-        Assert.assertEquals("result.body.intro.toString()", "Intro section", result.getBody().getIntro().toString());
+        assertEquals("result.body.Id", "b1", result.getBody().getId());
+        assertEquals("body lcBaseBody lcOverviewBody ", result.getBody().getHtmlClasses(), "body lcBaseBody lcOverviewBody ");
+        assertEquals("result.body.intro.toString()", "Intro section", result.getBody().getIntro().toString());
 
-        Assert.assertEquals("result.body.objectives.Id", "s2", result.getBody().getObjectives().getId());
-        Assert.assertEquals("result.body.objectives.HtmlClasses", "section lcObjectives ", result.getBody().getObjectives().getHtmlClasses());
-        Assert.assertEquals("result.body.objectives.content.toString()", "Objectives section", result.getBody().getObjectives().getContent().toString());
+        assertEquals("result.body.objectives.Id", "s2", result.getBody().getObjectives().getId());
+        assertEquals("result.body.objectives.HtmlClasses", "section lcObjectives ", result.getBody().getObjectives().getHtmlClasses());
+        assertEquals("result.body.objectives.content.toString()", "Objectives section", result.getBody().getObjectives().getContent().toString());
 
-        Assert.assertEquals("result.body.sections.Count", 2, result.getBody().getSections().size());
-        Assert.assertEquals("result.body.sections[0].Id", "s1", result.getBody().getSections().get(0).getId());
-        Assert.assertEquals("result.body.sections[1].Id", "s2", result.getBody().getSections().get(1).getId());
-        Assert.assertEquals("result.body.sections[0].HtmlClasses", "section lcIntro ", result.getBody().getSections().get(0).getHtmlClasses());
-        Assert.assertEquals("result.body.sections[1].HtmlClasses", "section lcObjectives ", result.getBody().getSections().get(1).getHtmlClasses());
+        assertEquals("result.body.sections.Count", 2, result.getBody().getSections().size());
+        assertEquals("result.body.sections[0].Id", "s1", result.getBody().getSections().get(0).getId());
+        assertEquals("result.body.sections[1].Id", "s2", result.getBody().getSections().get(1).getId());
+        assertEquals("result.body.sections[0].HtmlClasses", "section lcIntro ", result.getBody().getSections().get(0).getHtmlClasses());
+        assertEquals("result.body.sections[1].HtmlClasses", "section lcObjectives ", result.getBody().getSections().get(1).getHtmlClasses());
 
-        Assert.assertNotNull("result.MvcData", result.getMvcData());
-        Assert.assertEquals("result.MvcData", result.getDefaultMvcData(), result.getMvcData());
-        Assert.assertNotNull("result.body.MvcData", result.getBody().getMvcData());
-        Assert.assertEquals("result.body.MvcData", result.getBody().getDefaultMvcData(), result.getBody().getMvcData());
+        assertNotNull("result.MvcData", result.getMvcData());
+        assertEquals("result.MvcData", result.getDefaultMvcData(), result.getMvcData());
+        assertNotNull("result.body.MvcData", result.getBody().getMvcData());
+        assertEquals("result.body.MvcData", result.getBody().getDefaultMvcData(), result.getBody().getMvcData());
 
     }
 

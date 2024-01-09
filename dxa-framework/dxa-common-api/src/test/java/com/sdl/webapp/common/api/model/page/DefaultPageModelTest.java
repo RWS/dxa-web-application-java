@@ -15,7 +15,8 @@ import com.sdl.webapp.common.exceptions.DxaException;
 import org.hamcrest.collection.IsIterableContainingInOrder;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -27,18 +28,15 @@ import java.util.regex.Pattern;
 
 import static com.sdl.webapp.common.api.model.TestEntity.entity;
 import static com.sdl.webapp.common.api.model.TestEntity.feedItem;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 public class DefaultPageModelTest {
 
@@ -85,16 +83,17 @@ public class DefaultPageModelTest {
         assertFalse(notContainsRegion);
     }
 
-    @Test(expected = NullPointerException.class)
+    @Test
     public void shouldThrowNPEIfXpmMetadataIsNull() {
-        //given
-        DefaultPageModel pageModel = new DefaultPageModel();
+        Assertions.assertThrows(NullPointerException.class, () -> {
+            // Given
+            DefaultPageModel pageModel = new DefaultPageModel();
 
-        //when
-        pageModel.setXpmMetadata(null);
+            // When
+            pageModel.setXpmMetadata(null);
 
-        //then
-        //NPE
+            // Then NPE
+        });
     }
 
     @Test

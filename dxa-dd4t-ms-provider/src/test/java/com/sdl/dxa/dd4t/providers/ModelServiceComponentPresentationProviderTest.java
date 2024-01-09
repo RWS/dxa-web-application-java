@@ -7,24 +7,23 @@ import com.sdl.web.model.componentpresentation.ComponentPresentationImpl;
 import com.tridion.dcp.ComponentPresentation;
 import org.apache.commons.io.IOUtils;
 import org.dd4t.core.exceptions.ItemNotFoundException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyInt;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.beans.SamePropertyValuesAs.samePropertyValuesAs;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.lenient;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class ModelServiceComponentPresentationProviderTest {
 
     @Mock
@@ -36,14 +35,14 @@ public class ModelServiceComponentPresentationProviderTest {
     @InjectMocks
     private ModelServiceComponentPresentationProvider componentPresentationProvider;
 
-    @Before
+    @BeforeEach
     public void init() throws ItemNotFoundInModelServiceException, IOException {
-        when(modelServiceClientConfiguration.getEntityModelUrl()).thenReturn("/conf");
+        lenient().when(modelServiceClientConfiguration.getEntityModelUrl()).thenReturn("/conf");
         componentPresentationProvider.setContentIsCompressed("false");
         componentPresentationProvider.setContentIsBase64Encoded(false);
 
         //noinspection unchecked
-        when(modelServiceClient.getForType(anyString(), any(Class.class), anyString(), anyInt(), anyInt(), anyInt()))
+        lenient().when(modelServiceClient.getForType(anyString(), any(Class.class), anyString(), anyInt(), anyInt(), anyInt()))
                 .thenReturn(IOUtils.toString(new ClassPathResource("dcp.json").getInputStream(), "UTF-8"));
     }
 
@@ -56,6 +55,6 @@ public class ModelServiceComponentPresentationProviderTest {
         ComponentPresentation componentPresentation = componentPresentationProvider.getComponentPresentation(1, 2, 3);
 
         //then
-        assertThat(expected, new ReflectionEquals(componentPresentation));
+        assertThat(expected, samePropertyValuesAs(componentPresentation));
     }
 }

@@ -1,10 +1,10 @@
 package com.sdl.webapp.common.impl.taglib.xpm;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import javax.servlet.jsp.tagext.Tag;
+import jakarta.servlet.jsp.tagext.Tag;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.JsonNodeType;
 import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import org.joda.time.DateTime;
 import org.joda.time.format.ISODateTimeFormat;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -17,9 +17,7 @@ import java.util.List;
 import java.util.TreeSet;
 import java.util.stream.Stream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TaxonomyNodeModelDataJsonTest {
 

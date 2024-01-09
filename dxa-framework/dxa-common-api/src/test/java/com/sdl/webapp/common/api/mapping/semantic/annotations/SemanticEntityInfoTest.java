@@ -1,12 +1,11 @@
 package com.sdl.webapp.common.api.mapping.semantic.annotations;
 
 import com.sdl.webapp.common.api.model.entity.AbstractEntityModel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@code SemanticEntityInfo}.
@@ -63,11 +62,11 @@ public class SemanticEntityInfoTest {
 
     private SemanticEntity mockSemanticEntity(String entityName, String value, String vocabulary, String prefix, boolean public_) {
         final SemanticEntity anno = mock(SemanticEntity.class);
-        when(anno.entityName()).thenReturn(entityName);
-        when(anno.value()).thenReturn(value);
-        when(anno.vocabulary()).thenReturn(vocabulary);
-        when(anno.prefix()).thenReturn(prefix);
-        when(anno.public_()).thenReturn(public_);
+        lenient().when(anno.entityName()).thenReturn(entityName);
+        lenient().when(anno.value()).thenReturn(value);
+        lenient().when(anno.vocabulary()).thenReturn(vocabulary);
+        lenient().when(anno.prefix()).thenReturn(prefix);
+        lenient().when(anno.public_()).thenReturn(public_);
         return anno;
     }
 

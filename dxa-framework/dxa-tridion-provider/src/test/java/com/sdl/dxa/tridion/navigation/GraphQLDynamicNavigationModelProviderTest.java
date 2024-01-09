@@ -1,16 +1,5 @@
 package com.sdl.dxa.tridion.navigation;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.ObjectWriter;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.util.StdDateFormat;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import com.sdl.delivery.ugc.client.odata.edm.impl.CommentEdm;
 import com.sdl.dxa.api.datamodel.model.SitemapItemModelData;
 import com.sdl.dxa.api.datamodel.model.TaxonomyNodeModelData;
 import com.sdl.dxa.common.dto.DepthCounter;
@@ -25,13 +14,13 @@ import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import lombok.NonNull;
 import org.jetbrains.annotations.NotNull;
 import org.joda.time.DateTime;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
 
-import java.time.ZonedDateTime;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -40,21 +29,11 @@ import static com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites;
 import static com.sdl.web.pca.client.contentmodel.generated.Ancestor.INCLUDE;
 import static com.sdl.web.pca.client.contentmodel.generated.Ancestor.NONE;
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GraphQLDynamicNavigationModelProviderTest {
     private static final TaxonomyNodeModelData[] EMPTY = new TaxonomyNodeModelData[0];
     private static final int CLASSIFIED_ITEMS_COUNT = 5;
@@ -84,9 +63,9 @@ public class GraphQLDynamicNavigationModelProviderTest {
 
     private SitemapRequestDto requestDto;
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        when(clientProvider.getClient()).thenReturn(pcaClient);
+        lenient().when(clientProvider.getClient()).thenReturn(pcaClient);
         provider = spy(new GraphQLDynamicNavigationModelProvider(clientProvider, DEPTH_COUNTER_TEST_BOUND));
         requestDto = createSitemapRequestDto(DEPTH_COUNTER);
     }
@@ -321,27 +300,5 @@ public class GraphQLDynamicNavigationModelProviderTest {
 
         verify(pcaClient).getSitemapSubtree(eq(Sites), eq(LOCALIZATION_ID), eq(SITEMAP_ID), eq(DEPTH_COUNTER_TEST_BOUND),
                 eq(INCLUDE), any());
-    }
-
-    @Test
-    public void serializeToJson() throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-
-        mapper.setPropertyNamingStrategy(new PropertyNamingStrategy.UpperCamelCaseStrategy());
-        mapper.registerModule(new JodaModule());
-        mapper.registerModule(new JavaTimeModule());
-        mapper.setDateFormat(new StdDateFormat());
-        mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_ABSENT);
-
-        CommentEdm commentEdm = new CommentEdm();
-        commentEdm.setCreationDate(ZonedDateTime.now());
-
-        ObjectWriter ow = mapper.writer();
-
-        String logStr = ow.writeValueAsString(commentEdm);
-        System.err.println(""+logStr);
-
     }
 }

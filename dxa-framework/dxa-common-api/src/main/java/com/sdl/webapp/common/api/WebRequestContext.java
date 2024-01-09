@@ -67,6 +67,7 @@ public interface WebRequestContext {
      *
      * @deprecated Use isSessionPreview or getLocalization().isStaging(), this method is ambiguous.
      */
+    @Deprecated
     boolean isPreview();
 
     /**

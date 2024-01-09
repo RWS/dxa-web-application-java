@@ -6,16 +6,15 @@ import com.sdl.webapp.common.api.content.StaticContentItem;
 import com.sdl.webapp.common.api.content.StaticContentNotLoadedException;
 import com.sdl.webapp.common.util.ImageUtils;
 import org.jetbrains.annotations.NotNull;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
 
 public class GenericStaticContentResolverTest {
     @Mock
@@ -38,11 +37,11 @@ public class GenericStaticContentResolverTest {
         }
     });
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
     }
 
@@ -74,7 +73,7 @@ public class GenericStaticContentResolverTest {
     @Test
     public void getPublicationPath() {
         String path = "C:\\Users\\anonym\\dxa-webapp\\BinaryData\\309\\group\\system\\config\\_all.json";
-        doReturn(path).when(resolver).getRealPath();
+        lenient().doReturn(path).when(resolver).getRealPath();
 
         assertEquals(path + File.separator + "BinaryData" + File.separator + "309",
                 resolver.getPublicationPath("309"));

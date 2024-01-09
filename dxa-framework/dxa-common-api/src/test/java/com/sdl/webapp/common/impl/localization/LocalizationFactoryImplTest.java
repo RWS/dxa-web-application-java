@@ -4,21 +4,21 @@ import com.sdl.webapp.common.api.localization.LocalizationFactoryException;
 import com.sdl.webapp.common.api.mapping.semantic.config.FieldSemantics;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticField;
 import com.sdl.webapp.common.api.mapping.semantic.config.SemanticSchema;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.sdl.webapp.common.api.mapping.semantic.config.SemanticVocabulary.SDL_CORE_VOCABULARY;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class LocalizationFactoryImplTest {
 
     private LocalizationFactoryImpl localizationFactory;
 
-    @Before
+    @BeforeEach
     public void init() {
         this.localizationFactory = new LocalizationFactoryImpl();
     }

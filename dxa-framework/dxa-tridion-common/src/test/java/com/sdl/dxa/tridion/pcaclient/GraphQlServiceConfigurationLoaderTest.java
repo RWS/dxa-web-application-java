@@ -3,24 +3,23 @@ package com.sdl.dxa.tridion.pcaclient;
 import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.web.client.configuration.api.ConfigurationHolder;
 import com.sdl.web.discovery.datalayer.model.ContentServiceCapability;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 import java.util.Properties;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GraphQlServiceConfigurationLoaderTest {
 
     public static final String SERVICE_URL = "http://service.url/context/";
@@ -33,17 +32,17 @@ public class GraphQlServiceConfigurationLoaderTest {
 
     private GraphQlServiceConfigurationLoader configurationLoader;
 
-    @Before
+    @BeforeEach
     public void setup() throws ConfigurationException {
         configurationLoader = spy(new GraphQlServiceConfigurationLoader("cd/api/", false));
-        doReturn(Optional.of(contentServiceCapability)).when(configurationLoader).getContentServiceCapability();
-        when(contentServiceCapability.getUri()).thenReturn("http://localhost:8082/content.svc");
+        lenient().doReturn(Optional.of(contentServiceCapability)).when(configurationLoader).getContentServiceCapability();
+        lenient().when(contentServiceCapability.getUri()).thenReturn("http://localhost:8082/content.svc");
         Properties props = new Properties();
         props.put("key123", "value123");
-        doReturn(props).when(configurationLoader).getCommonProperties();
-        doReturn(rootConfigurationHolder).when(configurationLoader).getRootConfigHolder();
-        when(rootConfigurationHolder.hasConfiguration("/ContentService")).thenReturn(true);
-        when(rootConfigurationHolder.getConfiguration("/ContentService")).thenReturn(configurationHolder);
+        lenient().doReturn(props).when(configurationLoader).getCommonProperties();
+        lenient().doReturn(rootConfigurationHolder).when(configurationLoader).getRootConfigHolder();
+        lenient().when(rootConfigurationHolder.hasConfiguration("/ContentService")).thenReturn(true);
+        lenient().when(rootConfigurationHolder.getConfiguration("/ContentService")).thenReturn(configurationHolder);
     }
 
     @Test
@@ -61,12 +60,14 @@ public class GraphQlServiceConfigurationLoaderTest {
         assertEquals("http://localhost:8082/cd/api", serviceUrl);
     }
 
-    @Test(expected = ApiClientConfigurationException.class)
+    @Test
     public void initializeNotFromRootConfiguration() throws Exception {
-        doReturn(Optional.empty()).when(configurationLoader).getContentServiceCapability();
-        when(rootConfigurationHolder.hasConfiguration("/ContentService")).thenReturn(false);
+        Assertions.assertThrows(ApiClientConfigurationException.class, () -> {
+            doReturn(Optional.empty()).when(configurationLoader).getContentServiceCapability();
+            when(rootConfigurationHolder.hasConfiguration("/ContentService")).thenReturn(false);
 
-        configurationLoader.initialize();
+            configurationLoader.initialize();
+        });
     }
 
     @Test

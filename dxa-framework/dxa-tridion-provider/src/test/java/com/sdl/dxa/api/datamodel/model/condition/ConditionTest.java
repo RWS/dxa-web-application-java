@@ -5,14 +5,13 @@ import com.sdl.dxa.api.datamodel.DataModelSpringConfiguration;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
 import com.sdl.dxa.api.datamodel.model.targetgroup.TargetGroup;
 import com.sdl.dxa.api.datamodel.model.util.ListWrapper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,12 +26,9 @@ import static com.sdl.dxa.api.datamodel.model.condition.ConditionOperator.NOT_EQ
 import static com.sdl.dxa.api.datamodel.model.condition.ConditionOperator.STARTS_WITH;
 import static com.sdl.dxa.api.datamodel.model.condition.ConditionOperator.STRING_EQUALS;
 import static com.sdl.dxa.api.datamodel.model.condition.ConditionOperator.UNKNOWN_BY_CLIENT;
-import static junit.framework.TestCase.assertFalse;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = ConditionTest.SpringConfigurationContext.class)
+@ExtendWith(SpringExtension.class)
 public class ConditionTest {
 
     @Autowired

@@ -10,20 +10,19 @@ import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.model.entity.Link;
 import com.sdl.webapp.common.exceptions.DxaException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.*;
+import static org.springframework.test.util.AssertionErrors.assertTrue;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class StringModelConverterTest {
     private static final String LOCALIZATION_ID = "123";
 
@@ -35,11 +34,11 @@ public class StringModelConverterTest {
     @InjectMocks
     private StringModelConverter converter = new StringModelConverter();
 
-    @Before
+    @BeforeEach
     public void init() {
         Localization localization = mock(Localization.class);
-        when(localization.getId()).thenReturn(LOCALIZATION_ID );
-        when(webRequestContext.getLocalization()).thenReturn(localization);
+        lenient().when(localization.getId()).thenReturn(LOCALIZATION_ID );
+        lenient().when(webRequestContext.getLocalization()).thenReturn(localization);
     }
 
     @Test

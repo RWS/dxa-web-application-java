@@ -1,11 +1,11 @@
 package com.sdl.webapp.common.api.model.mvcdata;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.ENTITY;
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.PAGE;
 import static com.sdl.webapp.common.api.model.mvcdata.DefaultsMvcData.REGION;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class DefaultsMvcDataTest {
 

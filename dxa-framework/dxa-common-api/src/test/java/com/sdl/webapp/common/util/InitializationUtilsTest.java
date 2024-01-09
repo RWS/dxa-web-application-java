@@ -1,21 +1,18 @@
 package com.sdl.webapp.common.util;
 
 import com.google.common.base.Splitter;
-import org.junit.Test;
-import org.mockito.Matchers;
+import org.junit.jupiter.api.Test;
 import org.springframework.core.io.Resource;
 import org.springframework.web.context.ConfigurableWebApplicationContext;
 import org.springframework.web.context.ConfigurableWebEnvironment;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
-import javax.servlet.DispatcherType;
-import javax.servlet.Filter;
-import javax.servlet.FilterRegistration;
-import javax.servlet.Servlet;
-import javax.servlet.ServletContext;
-import javax.servlet.ServletRegistration;
+import jakarta.servlet.Filter;
+import jakarta.servlet.FilterRegistration;
+import jakarta.servlet.Servlet;
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletRegistration;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.EventListener;
 import java.util.Iterator;
 import java.util.Properties;
@@ -23,19 +20,10 @@ import java.util.Properties;
 import static org.hamcrest.Matchers.contains;
 import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.hasProperty;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.same;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
 public class InitializationUtilsTest {
 
@@ -169,14 +157,14 @@ public class InitializationUtilsTest {
         Filter filter = mock(Filter.class);
         String mapping = "/mapping";
         FilterRegistration.Dynamic registration = mock(FilterRegistration.Dynamic.class);
-        when(context.addFilter(eq(filter.getClass().getName()), same(filter))).thenReturn(registration);
+        lenient().when(context.addFilter(eq(filter.getClass().getName()), same(filter))).thenReturn(registration);
 
         //when
         FilterRegistration.Dynamic dynamic = InitializationUtils.registerFilter(context, filter, mapping);
 
         //then
         verify(context).addFilter(eq(filter.getClass().getName()), same(filter));
-        verify(registration).addMappingForUrlPatterns((EnumSet<DispatcherType>) Matchers.isNull(), eq(false), eq(mapping));
+        verify(registration).addMappingForUrlPatterns(isNull(), eq(false), eq(mapping));
         assertSame(registration, dynamic);
     }
 
@@ -188,7 +176,7 @@ public class InitializationUtilsTest {
         String mapping = "/mapping";
         Class<Filter> filterClass = Filter.class;
         FilterRegistration.Dynamic registration = mock(FilterRegistration.Dynamic.class);
-        when(context.addFilter(eq(filterClass.getName()), same(filterClass))).thenReturn(registration);
+        lenient().when(context.addFilter(eq(filterClass.getName()), same(filterClass))).thenReturn(registration);
 
         //when
         FilterRegistration.Dynamic filterRegistration = InitializationUtils.registerFilter(context, filterClass, mapping);
@@ -196,7 +184,7 @@ public class InitializationUtilsTest {
         //then
         assertSame(registration, filterRegistration);
         verify(context).addFilter(eq(filterClass.getName()), same(filterClass));
-        verify(registration).addMappingForUrlPatterns((EnumSet<DispatcherType>) Matchers.isNull(), eq(false), eq(mapping));
+        verify(registration).addMappingForUrlPatterns(isNull(), eq(false), eq(mapping));
     }
 
     @SuppressWarnings("unchecked")
@@ -208,7 +196,7 @@ public class InitializationUtilsTest {
         String filterName = "myName";
         Class<Filter> filterClass = Filter.class;
         FilterRegistration.Dynamic registration = mock(FilterRegistration.Dynamic.class);
-        when(context.addFilter(eq(filterName), same(filterClass))).thenReturn(registration);
+        lenient().when(context.addFilter(eq(filterName), same(filterClass))).thenReturn(registration);
 
         //when
         FilterRegistration.Dynamic filterRegistration = InitializationUtils.registerFilter(context, filterName, filterClass, mapping);
@@ -216,7 +204,7 @@ public class InitializationUtilsTest {
         //then
         assertSame(registration, filterRegistration);
         verify(context).addFilter(eq(filterName), same(filterClass));
-        verify(registration).addMappingForUrlPatterns((EnumSet<DispatcherType>) Matchers.isNull(), eq(false), eq(mapping));
+        verify(registration).addMappingForUrlPatterns(isNull(), eq(false), eq(mapping));
     }
 
     @Test
@@ -235,17 +223,17 @@ public class InitializationUtilsTest {
     public void shouldRegisterFilterByNameIfPresent() {
         //given
         ServletContext context = mock(ServletContext.class);
-        String className = "javax.servlet.Filter";
+        String className = "jakarta.servlet.Filter";
         String mapping = "/mapping";
         FilterRegistration.Dynamic registration = mock(FilterRegistration.Dynamic.class);
-        when(context.addFilter(same(className), same(className))).thenReturn(registration);
+        lenient().when(context.addFilter(same(className), same(className))).thenReturn(registration);
 
         //when
         FilterRegistration.Dynamic dynamic = InitializationUtils.registerFilter(context, className, mapping);
 
         //then
         verify(context).addFilter(same(className), same(className));
-        verify(registration).addMappingForUrlPatterns((EnumSet<DispatcherType>) Matchers.isNull(), eq(false), eq(mapping));
+        verify(registration).addMappingForUrlPatterns(isNull(), eq(false), eq(mapping));
         assertSame(registration, dynamic);
     }
 
@@ -254,10 +242,10 @@ public class InitializationUtilsTest {
     public void shouldRegisterServletByNameIfPresent() {
         //given
         ServletContext context = mock(ServletContext.class);
-        String className = "javax.servlet.Servlet";
+        String className = "jakarta.servlet.Servlet";
         String mapping = "/mapping";
         ServletRegistration.Dynamic servletRegistration = mock(ServletRegistration.Dynamic.class);
-        when(context.addServlet(same(className), same(className))).thenReturn(servletRegistration);
+        lenient().when(context.addServlet(same(className), same(className))).thenReturn(servletRegistration);
 
         //when
         ServletRegistration.Dynamic servletRegistration1 = InitializationUtils.registerServlet(context, className, mapping);
@@ -276,7 +264,7 @@ public class InitializationUtilsTest {
         String mapping = "/mapping";
 
         ServletRegistration.Dynamic servletRegistration = mock(ServletRegistration.Dynamic.class);
-        when(context.addServlet(eq(servlet.getClass().getName()), same(servlet))).thenReturn(servletRegistration);
+        lenient().when(context.addServlet(eq(servlet.getClass().getName()), same(servlet))).thenReturn(servletRegistration);
 
         //when
         ServletRegistration.Dynamic servletRegistration1 = InitializationUtils.registerServlet(context, servlet, mapping);
@@ -296,17 +284,17 @@ public class InitializationUtilsTest {
         String mapping = "/mapping";
 
         FilterRegistration.Dynamic filterRegistration = mock(FilterRegistration.Dynamic.class);
-        when(context.addFilter(same(className), same(className))).thenReturn(filterRegistration);
+        lenient().when(context.addFilter(same(className), same(className))).thenReturn(filterRegistration);
 
         ServletRegistration.Dynamic servletRegistration = mock(ServletRegistration.Dynamic.class);
-        when(context.addServlet(same(className), same(className))).thenReturn(servletRegistration);
+        lenient().when(context.addServlet(same(className), same(className))).thenReturn(servletRegistration);
 
         //when
         FilterRegistration.Dynamic filterRegistration1 = InitializationUtils.registerFilter(context, className, mapping);
 
         //then
         verify(context, never()).addFilter(same(className), same(className));
-        verify(filterRegistration, never()).addMappingForUrlPatterns((EnumSet<DispatcherType>) Matchers.isNull(), eq(false), eq(mapping));
+        verify(filterRegistration, never()).addMappingForUrlPatterns(isNull(), eq(false), eq(mapping));
         assertNull(filterRegistration1);
 
         //when
@@ -320,7 +308,7 @@ public class InitializationUtilsTest {
 
         //then
         verify(context, never()).addServlet(same(className), same(className));
-        verify(filterRegistration, never()).addMappingForUrlPatterns((EnumSet<DispatcherType>) Matchers.isNull(), eq(false), eq(mapping));
+        verify(filterRegistration, never()).addMappingForUrlPatterns(isNull(), eq(false), eq(mapping));
         assertNull(servletRegistration1);
     }
 
@@ -330,14 +318,14 @@ public class InitializationUtilsTest {
         ServletContext servletContext = mock(ServletContext.class);
         ConfigurableWebApplicationContext applicationContext = mock(ConfigurableWebApplicationContext.class);
 
-        when(servletContext.getInitParameter(anyString())).thenReturn("not null");
+        lenient().when(servletContext.getInitParameter(anyString())).thenReturn("not null");
 
         //when
         InitializationUtils.loadActiveSpringProfiles(servletContext, applicationContext);
 
         //then
         verify(servletContext).getInitParameter("spring.profiles.active");
-        verifyZeroInteractions(applicationContext);
+        verifyNoInteractions(applicationContext);
     }
 
     @Test
@@ -347,7 +335,7 @@ public class InitializationUtilsTest {
         ConfigurableWebApplicationContext applicationContext = mock(ConfigurableWebApplicationContext.class);
         ConfigurableWebEnvironment environment = mock(ConfigurableWebEnvironment.class);
 
-        when(applicationContext.getEnvironment()).thenReturn(environment);
+        lenient().when(applicationContext.getEnvironment()).thenReturn(environment);
 
         //when
         InitializationUtils.loadActiveSpringProfiles(servletContext, applicationContext);
@@ -366,9 +354,9 @@ public class InitializationUtilsTest {
         String expectedName = classToMock.getName();
         Filter filter = new DelegatingFilterProxy();
         FilterRegistration.Dynamic filterRegistration = mock(FilterRegistration.Dynamic.class);
-        when(servletContext.addFilter(anyString(), anyString())).thenReturn(filterRegistration);
-        when(servletContext.addFilter(anyString(), same(classToMock))).thenReturn(filterRegistration);
-        when(servletContext.addFilter(anyString(), same(filter))).thenReturn(filterRegistration);
+        lenient().when(servletContext.addFilter(anyString(), anyString())).thenReturn(filterRegistration);
+        lenient().when(servletContext.addFilter(anyString(), same(classToMock))).thenReturn(filterRegistration);
+        lenient().when(servletContext.addFilter(anyString(), same(filter))).thenReturn(filterRegistration);
 
         //when
         InitializationUtils.registerFilter(servletContext, classToMock, "/");

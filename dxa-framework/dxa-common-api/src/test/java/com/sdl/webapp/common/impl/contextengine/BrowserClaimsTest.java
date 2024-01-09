@@ -1,14 +1,12 @@
 package com.sdl.webapp.common.impl.contextengine;
 
 import com.google.common.collect.Lists;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
 import static com.sdl.webapp.common.impl.contextengine.Claims.getClaims;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class BrowserClaimsTest {
 
@@ -84,7 +82,7 @@ public class BrowserClaimsTest {
     public void shouldReturnJsVersion() {
         //given
         BrowserClaims browserClaims = new BrowserClaims();
-        String expected = "1.8";
+        String expected = "11";
         browserClaims.setClaims(getClaims("browser.jsVersion", expected));
 
         //when

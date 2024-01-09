@@ -17,13 +17,15 @@ import com.sdl.webapp.common.controller.exception.BadRequestException;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.tridion.fields.exceptions.TaxonomyNotFoundException;
 import org.jetbrains.annotations.NotNull;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -32,18 +34,11 @@ import java.util.Iterator;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class DynamicNavigationProviderTest {
 
     @Mock
@@ -66,11 +61,11 @@ public class DynamicNavigationProviderTest {
 
     private TaxonomyNodeModelData navigationModel = new TaxonomyNodeModelData();
 
-    @Before
+    @BeforeEach
     public void init() throws NavigationProviderException {
-        when(localization.getId()).thenReturn("42");
+        lenient().when(localization.getId()).thenReturn("42");
 
-        when(linkResolver.resolveLink(eq("/t1k1"), anyString())).thenReturn("resolved");
+        lenient().when(linkResolver.resolveLink(eq("/t1k1"), anyString())).thenReturn("resolved");
 
         navigationModel.setId("t1")
                 .addItem(new SitemapItemModelData().setId("t1-p0").setVisible(true).setUrl("/index").setTitle("000 Index"))
@@ -87,13 +82,13 @@ public class DynamicNavigationProviderTest {
 
         SitemapItem staticModel = new SitemapItem();
         staticModel.setTitle("Static");
-        when(staticNavigationProvider.getNavigationModel(eq(localization))).thenReturn(staticModel);
+        lenient().when(staticNavigationProvider.getNavigationModel(eq(localization))).thenReturn(staticModel);
 
         NavigationLinks staticNavigationLinks = new NavigationLinks();
         staticNavigationLinks.setId("Static");
-        when(staticNavigationProvider.getTopNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
-        when(staticNavigationProvider.getContextNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
-        when(staticNavigationProvider.getBreadcrumbNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
+        lenient().when(staticNavigationProvider.getTopNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
+        lenient().when(staticNavigationProvider.getContextNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
+        lenient().when(staticNavigationProvider.getBreadcrumbNavigationLinks(anyString(), eq(localization))).thenReturn(staticNavigationLinks);
     }
 
     //region Dynamic Navigation
@@ -101,7 +96,7 @@ public class DynamicNavigationProviderTest {
     public void shouldConvertR2Model_ToEntityModel() throws NavigationProviderException {
         //given
         SitemapItemModelData model = new TaxonomyNodeModelData().setId("t1");
-        doReturn(Optional.of(model)).when(navigationModelProvider).getNavigationModel(argThat(getDefaultMatcher()));
+        lenient().doReturn(Optional.of(model)).when(navigationModelProvider).getNavigationModel(argThat(getDefaultMatcher()));
 
         //when
         SitemapItem navigationModel = dynamicNavigationProvider.getNavigationModel(localization);
@@ -115,7 +110,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldFallback_IfModelProviderReturnedEmptyOptional() throws NavigationProviderException {
         //given
-        doReturn(Optional.empty()).when(navigationModelProvider).getNavigationModel(argThat(getDefaultMatcher()));
+        lenient().doReturn(Optional.empty()).when(navigationModelProvider).getNavigationModel(argThat(getDefaultMatcher()));
 
         //when
         SitemapItem navigationModel = dynamicNavigationProvider.getNavigationModel(localization);
@@ -133,7 +128,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldProcessNavigationLinks_ForTopNavigation_FilteringHidden() throws NavigationProviderException {
         //given
-        when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
+        lenient().when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
         NavigationLinks links = dynamicNavigationProvider.getTopNavigationLinks(null, localization);
@@ -150,7 +145,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldProcessNavigationLinks_ForContextNavigation_FilteringHidden() throws NavigationProviderException {
         //given
-        when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
+        lenient().when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
         NavigationLinks links = dynamicNavigationProvider.getContextNavigationLinks("/t1p22", localization);
@@ -169,7 +164,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldReturnEmptyList_ForCurrentContext_IfNothingFound() throws NavigationProviderException {
         //given
-        when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
+        lenient().when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
         NavigationLinks links = dynamicNavigationProvider.getContextNavigationLinks("/unknown", localization);
@@ -182,7 +177,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldCollectBreadcrumbs_EvenForHiddenItems() throws NavigationProviderException {
         //given
-        when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
+        lenient().when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
         NavigationLinks links = dynamicNavigationProvider.getBreadcrumbNavigationLinks("/t1p24", localization);
@@ -207,8 +202,8 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldFindHome_AsSiblingPage() throws NavigationProviderException {
         //given
-        when(localization.getPath()).thenReturn("/t1p1");
-        when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
+        lenient().when(localization.getPath()).thenReturn("/t1p1");
+        lenient().when(navigationModelProvider.getNavigationModel(argThat(getDefaultMatcher()))).thenReturn(Optional.of(navigationModel));
 
         //when
         NavigationLinks links = dynamicNavigationProvider.getBreadcrumbNavigationLinks("/t1k3", localization);
@@ -222,35 +217,41 @@ public class DynamicNavigationProviderTest {
 
     //region On-demand API
 
-    @Test(expected = TaxonomyNotFoundException.class)
+    @Test
     public void shouldThrowException_IfNothingFound() throws DxaItemNotFoundException {
-        //given
-        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.empty());
+        Assertions.assertThrows(TaxonomyNotFoundException.class, () -> {
+            //given
+            lenient().when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.empty());
 
-        //when
-        dynamicNavigationProvider.getNavigationSubtree("t1", NavigationFilter.DEFAULT, localization);
+            //when
+            dynamicNavigationProvider.getNavigationSubtree("t1", NavigationFilter.DEFAULT, localization);
+        });
     }
 
-    @Test(expected = BadRequestException.class)
+    @Test
     public void shouldProceedWithException_IfBadRequest() throws DxaItemNotFoundException {
-        //given
-        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenThrow(new BadRequestException());
+        Assertions.assertThrows(BadRequestException.class, () -> {
+            //given
+            lenient().when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenThrow(new BadRequestException());
 
-        //when
-        dynamicNavigationProvider.getNavigationSubtree("t1", NavigationFilter.DEFAULT, localization);
+            //when
+            dynamicNavigationProvider.getNavigationSubtree("t1", NavigationFilter.DEFAULT, localization);
 
-        //then
+            //then
+        });
     }
 
-    @Test(expected = TaxonomyNotFoundException.class)
+    @Test
     public void shouldPassTheRequest_ToTheService() throws DxaItemNotFoundException {
-        //given
-        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.empty());
-        NavigationFilter navigationFilter = new NavigationFilter().setDescendantLevels(666).setWithAncestors(true);
-        String sitemapItemId = "sitemap";
+        Assertions.assertThrows(TaxonomyNotFoundException.class, () -> {
+            //given
+            lenient().when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.empty());
+            NavigationFilter navigationFilter = new NavigationFilter().setDescendantLevels(666).setWithAncestors(true);
+            String sitemapItemId = "sitemap";
 
-        //when
-        dynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+            //when
+            dynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
+        });
     }
 
     @Test
@@ -258,7 +259,7 @@ public class DynamicNavigationProviderTest {
         //given
         NavigationFilter navigationFilter = new NavigationFilter().setDescendantLevels(666).setWithAncestors(true);
         String sitemapItemId = "whatever";
-        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.of(Collections.singletonList(navigationModel)));
+        lenient().when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.of(Collections.singletonList(navigationModel)));
 
         //when
         Collection<SitemapItem> subtree = dynamicNavigationProvider.getNavigationSubtree(sitemapItemId, navigationFilter, localization);
@@ -286,7 +287,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldHandleMultipleItems_AndReturnTheResult() throws DxaItemNotFoundException {
         //given
-        when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.of(Arrays.asList(
+        lenient().when(onDemandNavigationModelProvider.getNavigationSubtree(any())).thenReturn(Optional.of(Arrays.asList(
                 new SitemapItemModelData().setId("t1-p1").setVisible(true).setUrl("/index").setTitle("001 Index"),
                 new SitemapItemModelData().setId("t1-p2").setVisible(true).setUrl("/index2").setTitle("002 Index 2"))));
 
@@ -306,7 +307,7 @@ public class DynamicNavigationProviderTest {
     @Test
     public void shouldRequestTheWholeTree_ForNormalNavigation() throws NavigationProviderException {
         //given
-        doReturn(Optional.empty()).when(navigationModelProvider).getNavigationModel(argThat(getDefaultMatcher()));
+        lenient().doReturn(Optional.empty()).when(navigationModelProvider).getNavigationModel(argThat(getDefaultMatcher()));
 
         //when
         dynamicNavigationProvider.getNavigationModel(localization);

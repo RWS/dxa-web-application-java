@@ -12,7 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import static com.sdl.webapp.common.controller.ControllerUtils.INCLUDE_MAPPING;
 import static com.sdl.webapp.common.controller.RequestAttributeNames.ENTITY_MODEL;
@@ -40,7 +40,7 @@ public class EntityController extends BaseController {
      */
     @RequestMapping(value = "Entity" + "/{entityId}")
     public String handleGetEntity(HttpServletRequest request,
-                                  @PathVariable String entityId)
+                                  @PathVariable("entityId") String entityId)
             throws Exception {
         return handleEntityRequest(request, entityId);
     }

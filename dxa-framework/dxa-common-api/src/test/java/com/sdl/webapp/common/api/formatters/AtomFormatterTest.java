@@ -5,16 +5,15 @@ import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.model.RichText;
 import com.sdl.webapp.common.api.model.entity.Link;
-import org.junit.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.junit.jupiter.api.Test;
 
 import java.net.URISyntaxException;
 import java.util.Date;
 import java.util.List;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class AtomFormatterTest {
 
@@ -35,7 +34,7 @@ public class AtomFormatterTest {
     public void shouldGetSyndicationFromTeaser() throws URISyntaxException {
         //given
         WebRequestContext webRequestContext = mock(WebRequestContext.class);
-        when(webRequestContext.getBaseUrl()).thenReturn("base_url/");
+        lenient().when(webRequestContext.getBaseUrl()).thenReturn("base_url/");
 
         AtomFormatter atomFormatter = new AtomFormatter(null, webRequestContext);
         FeedItem teaser = new FeedItem();

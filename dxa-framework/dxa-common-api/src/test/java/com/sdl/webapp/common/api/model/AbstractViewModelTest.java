@@ -6,29 +6,24 @@ import com.sdl.webapp.common.api.formatters.support.FeedItem;
 import com.sdl.webapp.common.api.formatters.support.FeedItemsProvider;
 import com.sdl.webapp.common.api.model.mvcdata.MvcDataCreator;
 import org.hamcrest.collection.IsIterableContainingInOrder;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 import static com.sdl.webapp.common.api.model.TestEntity.feedItem;
 import static org.hamcrest.Matchers.empty;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyListOf;
-import static org.mockito.Matchers.anyMapOf;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class AbstractViewModelTest {
 
     @Mock
@@ -69,7 +64,7 @@ public class AbstractViewModelTest {
     public void shouldSetXpmMetadata() {
         //given
         doCallRealMethod().when(viewModel).getXpmMetadata();
-        doCallRealMethod().when(viewModel).setXpmMetadata(anyMapOf(String.class, Object.class));
+        doCallRealMethod().when(viewModel).setXpmMetadata(anyMap());
         ImmutableMap<String, Object> map = ImmutableMap.<String, Object>of("key1", "obj1");
 
         //when
@@ -97,14 +92,14 @@ public class AbstractViewModelTest {
     @Test
     public void shouldCollectAllFeedItemProviders() {
         //given
-        when(viewModel.collectFeedItems(anyListOf(FeedItemsProvider.class))).thenCallRealMethod();
+        lenient().when(viewModel.collectFeedItems(ArgumentMatchers.<Collection<FeedItemsProvider>>any())).thenCallRealMethod();
 
         FeedItemsProvider feedItemsProvider = mock(FeedItemsProvider.class);
         FeedItem feedItem1 = feedItem("1");
         FeedItem feedItem2 = feedItem("2");
         FeedItem feedItem3 = feedItem("3");
         FeedItem feedItem4 = feedItem("4");
-        when(feedItemsProvider.extractFeedItems()).thenReturn(Lists.newArrayList(feedItem1, feedItem2),
+        lenient().when(feedItemsProvider.extractFeedItems()).thenReturn(Lists.newArrayList(feedItem1, feedItem2),
                 Lists.newArrayList(feedItem3, feedItem4));
         List<FeedItemsProvider> list = Lists.newArrayList(feedItemsProvider, feedItemsProvider);
 
@@ -119,7 +114,7 @@ public class AbstractViewModelTest {
     @Test
     public void shouldReturnEmptyListForNullOrEmptyListOfProviders() {
         //given
-        when(viewModel.collectFeedItems(anyListOf(FeedItemsProvider.class))).thenCallRealMethod();
+        lenient().when(viewModel.collectFeedItems(ArgumentMatchers.<Collection<FeedItemsProvider>>any())).thenCallRealMethod();
 
         //when
         List<FeedItem> list1 = viewModel.collectFeedItems(null);

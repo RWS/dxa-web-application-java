@@ -10,7 +10,7 @@ import org.dd4t.providers.PageProvider;
 import org.dd4t.providers.impl.BrokerPageProvider;
 import org.slf4j.Logger;
 
-import javax.annotation.Resource;
+import jakarta.annotation.Resource;
 
 import static org.slf4j.LoggerFactory.getLogger;
 import static org.springframework.web.util.UriComponentsBuilder.fromUriString;

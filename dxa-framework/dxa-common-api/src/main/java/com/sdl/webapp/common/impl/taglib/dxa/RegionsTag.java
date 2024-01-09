@@ -9,8 +9,8 @@ import com.sdl.webapp.common.markup.AbstractMarkupTag;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import javax.servlet.ServletException;
-import javax.servlet.jsp.JspException;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.jsp.JspException;
 import java.io.IOException;
 import java.util.Set;
 

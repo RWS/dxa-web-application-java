@@ -1,12 +1,12 @@
 package com.sdl.dxa.common.dto;
 
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static com.sdl.dxa.common.dto.DepthCounter.UNLIMITED_DEPTH;
 import static com.sdl.webapp.common.api.navigation.NavigationFilter.DEFAULT;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class SitemapRequestDtoTest {
 

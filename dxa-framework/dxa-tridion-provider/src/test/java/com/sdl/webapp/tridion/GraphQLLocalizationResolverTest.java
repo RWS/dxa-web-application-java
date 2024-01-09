@@ -5,21 +5,19 @@ import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.contentmodel.generated.PublicationMapping;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.localization.LocalizationFactory;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import static com.sdl.web.pca.client.contentmodel.enums.ContentNamespace.Sites;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GraphQLLocalizationResolverTest {
 
     @InjectMocks
@@ -41,15 +39,15 @@ public class GraphQLLocalizationResolverTest {
 
     private String testUrl = "http://localhost:8882/";
 
-    @Before
+    @BeforeEach
     public void setup() throws Exception {
-        when(apiClientProvider.getClient()).thenReturn(publicContentApi);
+        lenient().when(apiClientProvider.getClient()).thenReturn(publicContentApi);
 
-        when(localization.getId()).thenReturn("5");
-        when(localizationFactory.createLocalization("5", "/verola")).thenReturn(localization);
-        when(publicationMapping.getPublicationId()).thenReturn(5);
-        when(publicationMapping.getPath()).thenReturn("/verola");
-        when(apiClientProvider.getClient().getPublicationMapping(Sites, testUrl)).thenReturn(publicationMapping);
+        lenient().when(localization.getId()).thenReturn("5");
+        lenient().when(localizationFactory.createLocalization("5", "/verola")).thenReturn(localization);
+        lenient().when(publicationMapping.getPublicationId()).thenReturn(5);
+        lenient().when(publicationMapping.getPath()).thenReturn("/verola");
+        lenient().when(apiClientProvider.getClient().getPublicationMapping(Sites, testUrl)).thenReturn(publicationMapping);
     }
 
     @Test
@@ -90,18 +88,18 @@ public class GraphQLLocalizationResolverTest {
         localizationResolver.getLocalization(testUrl); //create for pub "5" and url
 
         for (int i = 0; i <= n - 1; i++) {
-            when(apiClientProvider.getClient().getPublicationMapping(Sites, testUrl + cypherWords[i]))
+            lenient().when(apiClientProvider.getClient().getPublicationMapping(Sites, testUrl + cypherWords[i]))
                     .thenReturn(publicationMapping);
-            when(publicationMapping.getPublicationId()).thenReturn(i + 1);
-            when(publicationMapping.getPath()).thenReturn("/" + cypherWords[i]);
+            lenient().when(publicationMapping.getPublicationId()).thenReturn(i + 1);
+            lenient().when(publicationMapping.getPath()).thenReturn("/" + cypherWords[i]);
             if (useDifferentLocalizationa) {
                 Localization loc = mock(Localization.class);
-                when(loc.getId()).thenReturn(String.valueOf(i + 1));
-                when(localizationFactory.createLocalization(String.valueOf(i + 1), "/" + cypherWords[i]))
+                lenient().when(loc.getId()).thenReturn(String.valueOf(i + 1));
+                lenient().when(localizationFactory.createLocalization(String.valueOf(i + 1), "/" + cypherWords[i]))
                         .thenReturn(loc);
             } else {
-                when(localization2.getId()).thenReturn(String.valueOf(i + 1));
-                when(localizationFactory.createLocalization(String.valueOf(i + 1), "/" + cypherWords[i]))
+                lenient().when(localization2.getId()).thenReturn(String.valueOf(i + 1));
+                lenient().when(localizationFactory.createLocalization(String.valueOf(i + 1), "/" + cypherWords[i]))
                         .thenReturn(localization2);
             }
 

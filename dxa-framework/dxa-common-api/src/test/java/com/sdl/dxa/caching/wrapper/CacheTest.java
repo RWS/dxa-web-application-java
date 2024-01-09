@@ -3,33 +3,25 @@ package com.sdl.dxa.caching.wrapper;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.MvcModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
-import com.sdl.dxa.caching.LocalizationAwareCacheKey;
 import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.dxa.caching.WebRequestContextLocalizationIdProvider;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.localization.Localization;
-import com.sdl.webapp.common.api.model.PageModel;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import javax.cache.Cache;
 import java.util.function.Supplier;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CacheTest {
 
     @Mock
@@ -40,10 +32,10 @@ public class CacheTest {
 
     private LocalizationAwareKeyGenerator keyGenerator;
 
-    @Before
+    @BeforeEach
     public void init() {
-        when(localization.getId()).thenReturn("42");
-        when(webRequestContext.getLocalization()).thenReturn(localization);
+        lenient().when(localization.getId()).thenReturn("42");
+        lenient().when(webRequestContext.getLocalization()).thenReturn(localization);
         keyGenerator = new LocalizationAwareKeyGenerator();
         WebRequestContextLocalizationIdProvider localizationIdProvider = new WebRequestContextLocalizationIdProvider();
         ReflectionTestUtils.setField(localizationIdProvider, "webRequestContext", webRequestContext);
@@ -90,7 +82,7 @@ public class CacheTest {
 
         NamedCacheProvider cacheProvider = mock(NamedCacheProvider.class);
         //noinspection unchecked
-        when(cacheProvider.getCache(cacheName)).thenReturn(cache);
+        lenient().when(cacheProvider.getCache(cacheName)).thenReturn(cache);
 
         SimpleCacheWrapper<?, ?> objectCache = supplier.get();
         objectCache.setCacheProvider(cacheProvider);

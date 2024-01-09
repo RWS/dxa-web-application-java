@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.sdl.webapp.common.impl.interceptor.StaticContentInterceptor;
 import com.sdl.webapp.common.impl.interceptor.ThreadLocalInterceptor;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.concurrent.ConcurrentMapCache;
 import org.springframework.cache.support.SimpleCacheManager;
@@ -26,17 +25,15 @@ import org.springframework.util.ClassUtils;
 import org.springframework.web.servlet.config.annotation.ContentNegotiationConfigurer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
-import javax.annotation.PostConstruct;
 import java.util.Collections;
 import java.util.List;
 
 @Configuration
 @EnableWebMvc
 @ComponentScan("com.sdl.webapp.common.impl")
-public class SpringConfiguration extends WebMvcConfigurerAdapter {
-
+public class SpringConfiguration implements WebMvcConfigurer {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -74,7 +71,7 @@ public class SpringConfiguration extends WebMvcConfigurerAdapter {
         converters.add(new AllEncompassingFormHttpMessageConverter());
 
         ClassLoader classLoader = getClass().getClassLoader();
-        if (ClassUtils.isPresent("javax.xml.bind.Binder", classLoader)) {
+        if (ClassUtils.isPresent("jakarta.xml.bind.Binder", classLoader)) {
             converters.add(new Jaxb2RootElementHttpMessageConverter());
         }
         if (ClassUtils.isPresent("com.sun.syndication.feed.WireFeed", classLoader)) {

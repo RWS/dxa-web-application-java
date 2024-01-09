@@ -1,15 +1,15 @@
 package com.sdl.webapp.tridion.config;
 
-import com.sdl.web.ambient.client.AmbientClientFilter;
-import com.sdl.web.preview.client.filter.ClientBinaryContentFilter;
-import com.sdl.web.preview.client.filter.ClientPageContentFilter;
+import com.sdl.webapp.tridion.xpm.filter.AmbientClientFilter;
+import com.sdl.webapp.tridion.xpm.filter.ClientBinaryContentFilter;
+import com.sdl.webapp.tridion.xpm.filter.ClientPageContentFilter;
 import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.core.Ordered;
 import org.springframework.web.WebApplicationInitializer;
 
-import javax.servlet.ServletContext;
-import javax.servlet.ServletException;
-
+import jakarta.servlet.ServletContext;
+import jakarta.servlet.ServletException;
 import java.util.Properties;
 
 import static com.sdl.webapp.common.util.InitializationUtils.loadDxaProperties;
@@ -19,14 +19,13 @@ import static com.sdl.webapp.common.util.InitializationUtils.registerFilter;
 public class ExternalFiltersWebConfiguration implements WebApplicationInitializer, Ordered {
 
     @Override
-    public void onStartup(ServletContext servletContext) throws ServletException {
+    public void onStartup(@NotNull ServletContext servletContext) throws ServletException {
         log.info("Registration for XPM and preview filters if needed...");
         Properties properties = loadDxaProperties();
         if (Boolean.parseBoolean(properties.getProperty("dxa.web.xpm.enabled"))) {
             log.info("dxa.web.xpm.enabled = true, thus registering XPM");
             registerXpm(servletContext);
         }
-
         if (Boolean.parseBoolean(properties.getProperty("dxa.web.adf.enabled"))) {
             log.info("dxa.web.adf.enabled = true, thus registering ADF");
             registerAdf(servletContext);

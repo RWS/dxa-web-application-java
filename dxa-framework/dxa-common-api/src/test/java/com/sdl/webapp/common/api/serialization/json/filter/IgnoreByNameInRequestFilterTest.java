@@ -2,17 +2,14 @@ package com.sdl.webapp.common.api.serialization.json.filter;
 
 import com.fasterxml.jackson.databind.ser.PropertyWriter;
 import com.google.common.base.Splitter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.springframework.mock.web.MockHttpServletRequest;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 public class IgnoreByNameInRequestFilterTest {
 
@@ -72,7 +69,7 @@ public class IgnoreByNameInRequestFilterTest {
     public void shouldExcludePropertiesThatAreSet() {
         //given 
         PropertyWriter writer = mock(PropertyWriter.class);
-        when(writer.getName()).thenReturn("test2");
+        lenient().when(writer.getName()).thenReturn("test2");
         IgnoreByNameInRequestFilter.ignoreByName(httpServletRequest, "test1", "test2");
 
         //when
@@ -86,7 +83,7 @@ public class IgnoreByNameInRequestFilterTest {
     public void shouldNotExcludePropertiesThatAreSetButWriterIsDifferent() {
         //given
         PropertyWriter writer = mock(PropertyWriter.class);
-        when(writer.getName()).thenReturn("test3");
+        lenient().when(writer.getName()).thenReturn("test3");
         IgnoreByNameInRequestFilter.ignoreByName(httpServletRequest, "test1", "test2");
 
         //when

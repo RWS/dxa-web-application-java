@@ -1,29 +1,29 @@
 package com.sdl.webapp.common.controller.api;
 
 import com.sdl.webapp.common.api.WebRequestContext;
-import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.api.navigation.NavigationFilter;
 import com.sdl.webapp.common.api.navigation.OnDemandNavigationProvider;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import org.hamcrest.BaseMatcher;
 import org.hamcrest.Description;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.Arrays;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.hamcrest.MockitoHamcrest.argThat;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class OnDemandNavigationControllerTest {
 
     @Mock
@@ -35,18 +35,20 @@ public class OnDemandNavigationControllerTest {
     @InjectMocks
     private OnDemandNavigationController controller;
 
-    @Test(expected = UnsupportedOperationException.class)
+    @Test
     public void shouldThrowExceptionInCaseOnDemandIsNotEnabled() throws DxaItemNotFoundException {
-        //given
-        OnDemandNavigationController controller = new OnDemandNavigationController(null, null);
+        Assertions.assertThrows(UnsupportedOperationException.class, () -> {
+            // Given
+            OnDemandNavigationController controller = new OnDemandNavigationController(null, null);
 
-        //when
-        controller.handle("", true, 0, new MockHttpServletRequest());
+            // When
+            controller.handle("", true, 0, new MockHttpServletRequest());
 
-        //then
-        //UOE
+            // Then UOE
+        });
     }
 
+    //@Disabled
     @Test
     public void shouldCreateNavigationFilterAndPassItToNavigationProvider() throws DxaItemNotFoundException {
         //given
@@ -59,7 +61,7 @@ public class OnDemandNavigationControllerTest {
 
         //then
         try {
-            verify(onDemandNavigationProvider).getNavigationSubtree(eq("t1-k23"), argThat(new BaseMatcher<NavigationFilter>() {
+            verify(onDemandNavigationProvider).getNavigationSubtree(eq("t1-k23"), argThat(new BaseMatcher<>() {
                 @Override
                 public boolean matches(Object item) {
                     NavigationFilter filter = (NavigationFilter) item;
@@ -70,7 +72,7 @@ public class OnDemandNavigationControllerTest {
                 public void describeTo(Description description) {
 
                 }
-            }), any(Localization.class));
+            }), any());
         } catch (com.sdl.webapp.common.exceptions.DxaItemNotFoundException e) {
             e.printStackTrace();
         }

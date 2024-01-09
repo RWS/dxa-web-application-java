@@ -10,11 +10,7 @@ import com.tridion.ambientdata.web.WebClaims;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
@@ -66,7 +62,7 @@ public class ModelServiceClient {
             ResponseEntity<T> response = restTemplate.exchange(serviceUrl, HttpMethod.GET, new HttpEntity<>(null, headers), type, params);
             return response.getBody();
         } catch (HttpStatusCodeException e) {
-            HttpStatus statusCode = e.getStatusCode();
+            HttpStatus statusCode = (HttpStatus)e.getStatusCode();
             if (statusCode.is4xxClientError()) {
                 if (statusCode == HttpStatus.NOT_FOUND) {
                     String message = "Item not found requesting '" + serviceUrl + "' with params '" + Arrays.toString(params) + "'";

@@ -12,29 +12,28 @@ import com.sdl.webapp.common.api.model.EntityModel;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
 import com.sdl.webapp.common.exceptions.DxaException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Collections;
 
-import static org.junit.Assert.assertSame;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Matchers.same;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = ModelBuilderPipelineTest.SpringConfigurationContext.class)
 @ActiveProfiles("test")
 public class ModelBuilderPipelineTest {
@@ -66,26 +65,26 @@ public class ModelBuilderPipelineTest {
     @Autowired
     private ModelBuilderPipeline pipeline;
 
-    @Before
+    @BeforeEach
     public void initMocks() throws DxaException {
         when(firstPageModelBuilder.buildPageModel(any(), any(PageModelData.class)))
                 .thenReturn(firstPageModel);
         when(secondPageModelBuilder.buildPageModel(any(), any(PageModelData.class)))
                 .thenReturn(secondPageModel);
 
-        when(firstEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), anyObject()))
+        when(firstEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), any()))
                 .thenReturn(firstEntityModel);
-        when(secondEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), anyObject()))
+        when(secondEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), any()))
                 .thenReturn(secondEntityModel);
 
-        when(firstEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), anyObject()))
+        when(firstEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), any()))
                 .thenReturn(firstEntityModel);
-        when(secondEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), anyObject()))
+        when(secondEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), any()))
                 .thenReturn(secondEntityModel);
 
-        when(firstEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), anyObject()))
+        when(firstEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), any()))
                 .thenReturn(firstEntityModel);
-        when(secondEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), anyObject()))
+        when(secondEntityModelBuilder.buildEntityModel(any(), any(EntityModelData.class), any()))
                 .thenReturn(secondEntityModel);
     }
 
@@ -106,8 +105,8 @@ public class ModelBuilderPipelineTest {
         EntityModel entityModel = pipeline.createEntityModel(entityModelData);
 
         //then
-        verify(firstEntityModelBuilder).buildEntityModel(isNull(EntityModel.class), same(entityModelData), anyObject());
-        verify(secondEntityModelBuilder).buildEntityModel(same(firstEntityModel), same(entityModelData), anyObject());
+        verify(firstEntityModelBuilder).buildEntityModel(isNull(EntityModel.class), same(entityModelData), any());
+        verify(secondEntityModelBuilder).buildEntityModel(same(firstEntityModel), same(entityModelData), any());
         assertSame(secondEntityModel, entityModel);
     }
 
@@ -125,26 +124,30 @@ public class ModelBuilderPipelineTest {
         assertSame(secondEntityModel, entityModel);
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldNotFail_IfListsOfBuildersNotSet() throws DxaException {
-        //given 
-        ModelBuilderPipeline pipeline = new ModelBuilderPipelineImpl();
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            //given
+            ModelBuilderPipeline pipeline = new ModelBuilderPipelineImpl();
 
-        //when
-        pipeline.createPageModel(pageModelData);
-        pipeline.createEntityModel(entityModelData);
+            //when
+            pipeline.createPageModel(pageModelData);
+            pipeline.createEntityModel(entityModelData);
+        });
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void shouldFail_IfListsOfBuildersIsEmpty() throws DxaException {
-        //given
-        ModelBuilderPipelineImpl pipeline = new ModelBuilderPipelineImpl();
-        pipeline.setEntityModelBuilders(Collections.emptyList());
-        pipeline.setPageModelBuilders(Collections.emptyList());
+        Assertions.assertThrows(IllegalArgumentException.class, () -> {
+            //given
+            ModelBuilderPipelineImpl pipeline = new ModelBuilderPipelineImpl();
+            pipeline.setEntityModelBuilders(Collections.emptyList());
+            pipeline.setPageModelBuilders(Collections.emptyList());
 
-        //when
-        pipeline.createPageModel(pageModelData);
-        pipeline.createEntityModel(entityModelData);
+            //when
+            pipeline.createPageModel(pageModelData);
+            pipeline.createEntityModel(entityModelData);
+        });
     }
 
     @Configuration

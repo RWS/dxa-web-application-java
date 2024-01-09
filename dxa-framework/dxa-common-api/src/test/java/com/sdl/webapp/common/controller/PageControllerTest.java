@@ -7,22 +7,21 @@ import com.sdl.webapp.common.api.content.LinkResolver;
 import com.sdl.webapp.common.api.navigation.NavigationProvider;
 import com.sdl.webapp.common.api.navigation.NavigationProviderException;
 import com.sdl.webapp.common.exceptions.DxaException;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 
 import java.util.List;
 
-import static junit.framework.TestCase.assertNotNull;
-import static junit.framework.TestCase.assertTrue;
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Matchers.eq;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class PageControllerTest {
 
     @Mock
@@ -55,7 +54,7 @@ public class PageControllerTest {
     @Test
     public void shouldConvertPageId_IntoTcmUri_WhenResolvingChildPublication() throws DxaException {
         //given
-        when(linkResolver.resolveLink(eq("tcm:2-1-64"), eq("2"))).thenReturn("resolvedUrl");
+        lenient().when(linkResolver.resolveLink(eq("tcm:2-1-64"), eq("2"))).thenReturn("resolvedUrl");
 
         //when
         String redirect = pageController.handleResolve("1", "2", "", "");
@@ -80,7 +79,7 @@ public class PageControllerTest {
     @Test
     public void shouldResolveDefaultItem_IfPublication_IsNotResolvable() throws DxaException {
         //given 
-        when(linkResolver.resolveLink(eq("tcm:2-45-56"), eq("2"))).thenReturn("resolvedDefaultUrl");
+        lenient().when(linkResolver.resolveLink(eq("tcm:2-45-56"), eq("2"))).thenReturn("resolvedDefaultUrl");
 
         //when
         String redirect = pageController.handleResolve("1", "2", "defaultPath", "tcm:2-45-56");

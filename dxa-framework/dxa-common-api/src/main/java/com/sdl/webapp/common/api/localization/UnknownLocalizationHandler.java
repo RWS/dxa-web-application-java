@@ -1,6 +1,6 @@
 package com.sdl.webapp.common.api.localization;
 
-import javax.servlet.ServletRequest;
+import jakarta.servlet.ServletRequest;
 
 /**
  * <p>Interface for Unknown Localization Handler extension point.</p>

@@ -10,12 +10,12 @@ import com.sdl.webapp.common.api.localization.Localization;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import org.ehcache.config.builders.ResourcePoolsBuilder;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.cache.interceptor.SimpleKey;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -25,11 +25,10 @@ import java.io.Serializable;
 import static javax.cache.Caching.getCachingProvider;
 import static org.ehcache.config.builders.CacheConfigurationBuilder.newCacheConfigurationBuilder;
 import static org.ehcache.jsr107.Eh107Configuration.fromEhcacheCacheConfiguration;
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class CopyingCacheTest {
 
     private static Cache<Object, Object> cache;
@@ -42,7 +41,7 @@ public class CopyingCacheTest {
 
     private TestingCache testingCache;
 
-    @BeforeClass
+    @BeforeAll
     public static void classInit() {
         cache = getCachingProvider().getCacheManager()
                 .createCache("test", fromEhcacheCacheConfiguration(
@@ -50,10 +49,10 @@ public class CopyingCacheTest {
                                 ResourcePoolsBuilder.heap(10)).build()));
     }
 
-    @Before
+    @BeforeEach
     public void init() {
-        when(localization.getId()).thenReturn("42");
-        when(webRequestContext.getLocalization()).thenReturn(localization);
+        lenient().when(localization.getId()).thenReturn("42");
+        lenient().when(webRequestContext.getLocalization()).thenReturn(localization);
 
         WebRequestContextLocalizationIdProvider localizationIdProvider = new WebRequestContextLocalizationIdProvider();
         ReflectionTestUtils.setField(localizationIdProvider, "webRequestContext", webRequestContext);
@@ -63,7 +62,7 @@ public class CopyingCacheTest {
 
         NamedCacheProvider provider = mock(NamedCacheProvider.class);
 
-        when(provider.getCache("test")).thenReturn(cache);
+        lenient().when(provider.getCache("test")).thenReturn(cache);
 
         testingCache.setKeyGenerator(keyGenerator);
         testingCache.setCacheProvider(provider);
@@ -163,8 +162,8 @@ public class CopyingCacheTest {
         Object get = testingCache.get(key);
 
         //then
-        assertNull("Null object should return null", added);
-        assertNull("Null object should return null", get);
+        assertNull(added, "Null object should return null");
+        assertNull(get, "Null object should return null");
     }
 
     private static class TestingCache extends CopyingCache<Object, Serializable> {

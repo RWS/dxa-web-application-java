@@ -18,18 +18,19 @@ import com.sdl.web.pca.client.contentmodel.enums.ContentType;
 import com.sdl.web.pca.client.contentmodel.enums.DataModelType;
 import com.sdl.web.pca.client.contentmodel.enums.DcpType;
 import com.sdl.web.pca.client.contentmodel.enums.PageInclusion;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.core.io.ClassPathResource;
 
 import static com.sdl.dxa.common.util.PathUtils.normalizePathToDefaults;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.when;
 
-@RunWith(MockitoJUnitRunner.class)
+@ExtendWith(MockitoExtension.class)
 public class GraphQLProviderTest {
 
     @Mock
@@ -41,9 +42,9 @@ public class GraphQLProviderTest {
     private ObjectMapper mapper;
     private GraphQLProvider graphQLProvider;
 
-    @Before
+    @BeforeEach
     public void setup() {
-        when(apiClientProvider.getClient()).thenReturn(pcaClient);
+        lenient().when(apiClientProvider.getClient()).thenReturn(pcaClient);
         mapper = new DxaSpringInitialization().objectMapper();
         graphQLProvider = new GraphQLProvider(apiClientProvider, mapper);
     }

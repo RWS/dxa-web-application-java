@@ -18,11 +18,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.http.server.ServletServerHttpResponse;
-import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
+import org.springframework.web.servlet.HandlerInterceptor;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
  * {@link org.springframework.web.servlet.DispatcherServlet} (it will not reach any of the controllers).
  */
 //todo dxa2 remove in preference of simple controller
-public class StaticContentInterceptor extends HandlerInterceptorAdapter {
+public class StaticContentInterceptor implements HandlerInterceptor {
     private static final Logger LOG = LoggerFactory.getLogger(StaticContentInterceptor.class);
     private static final String CACHE_CONTROL_WEEK = "public, max-age=" + Weeks.ONE.toStandardSeconds().getSeconds();
     private static final String CACHE_CONTROL_HOUR = "public, max-age=" + Hours.ONE.toStandardSeconds().getSeconds();
@@ -107,7 +107,6 @@ public class StaticContentInterceptor extends HandlerInterceptorAdapter {
     /**
      * {@inheritDoc}
      */
-    @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException {
         return preHandle(request, response, webRequestContext.isSessionPreview());
     }

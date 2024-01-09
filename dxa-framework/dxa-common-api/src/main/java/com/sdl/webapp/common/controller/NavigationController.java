@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -120,7 +120,7 @@ public class NavigationController extends BaseController {
      */
     @RequestMapping(value = "Navigation/{entityId}")
     public String handleGetNavigation(HttpServletRequest request,
-                                      @PathVariable String entityId, @RequestParam String navType)
+                                      @PathVariable("entityId") String entityId, @RequestParam("navType") String navType)
             throws Exception {
         LOG.trace("handleGetNavigation:, entityId={}", entityId);
 
@@ -175,7 +175,7 @@ public class NavigationController extends BaseController {
      */
     @RequestMapping(value = "SiteMap/{entityId}")
     public String handleGetSiteMap(HttpServletRequest request,
-                                   @PathVariable String entityId) throws NavigationProviderException {
+                                   @PathVariable("entityId") String entityId) throws NavigationProviderException {
         LOG.trace("handleGetSiteMap: entityId={}", entityId);
 
         final EntityModel entity = getEntityFromRequest(request, entityId);

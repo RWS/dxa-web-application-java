@@ -15,7 +15,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
 @Slf4j
@@ -31,11 +30,6 @@ public abstract class AbstractLinkResolver implements LinkResolver, Initializing
 
     @Value("${dxa.web.link-resolver.keep-trailing-slash:#{false}}")
     private boolean shouldKeepTrailingSlash;
-
-    @Cacheable(value = "resolvedLinks", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary, #contextId }", sync = true)
-    public String resolveLink(@Nullable String url, @Nullable String localizationId) {
-        return resolveLink(url, localizationId, false, null);
-    }
 
     @Override
     public String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary, @Nullable String contextId) {

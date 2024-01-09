@@ -3,17 +3,13 @@ package com.sdl.dxa.caching.wrapper;
 import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.webapp.common.api.model.PageModel;
 import com.sdl.webapp.common.api.model.page.DefaultPageModel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.cache.Cache;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 public class PagesCopyingCacheTest {
 
@@ -24,7 +20,7 @@ public class PagesCopyingCacheTest {
         Cache<Object, Object> cache = mock(Cache.class);
 
         NamedCacheProvider cacheProvider = mock(NamedCacheProvider.class);
-        when(cacheProvider.getCache(eq("pages"))).thenReturn(cache);
+        lenient().when(cacheProvider.getCache(eq("pages"))).thenReturn(cache);
 
         PagesCopyingCache pagesCopyingCache = new PagesCopyingCache();
         pagesCopyingCache.setCacheProvider(cacheProvider);

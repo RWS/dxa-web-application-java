@@ -56,30 +56,6 @@ import static com.tridion.ambientdata.AmbientDataContext.getAmbientDataConfig;
 /**
  * Incorporated this class from the udp library in order to update it with the Jakarta Servlet API.
  * Abstract filter that is called by the application server when a request is received.
- * <p/>
- * <p>To use the ambient data framework in a web application,
- * you have to configure this filter class in the {@code web.xml} deployment
- * descriptor, as in the following example:</p>
- * <pre style="color: navy;">
- * &lt;?xml version="1.0" encoding="UTF-8"?&gt;
- * &lt;web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
- * xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- * xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"&gt;
- * &lt;filter&gt;
- * &lt;description&gt;Servlet filter for the ambient data framework.&lt;/description&gt;
- * &lt;filter-name&gt;Ambient Data Framework&lt;/filter-name&gt;
- * &lt;filter-class&gt;com.tridion.ambientdata.web.AmbientDataServletFilter&lt;/filter-class&gt;
- * &lt;/filter&gt;
- * &lt;filter-mapping&gt;
- * &lt;filter-name&gt;Ambient Data Framework&lt;/filter-name&gt;
- * &lt;url-pattern&gt;/*&lt;/url-pattern&gt;
- * &lt;dispatcher&gt;REQUEST&lt;/dispatcher&gt;
- * &lt;/filter-mapping&gt;
- * &lt;welcome-file-list&gt;
- * &lt;welcome-file&gt;index.jsp&lt;/welcome-file&gt;
- * &lt;/welcome-file-list&gt;
- * &lt;/web-app&gt;
- * </pre>
  */
 public abstract class AbstractAmbientDataServletFilter implements Filter {
 

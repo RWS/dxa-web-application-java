@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.sdl.oss</groupId>
         <artifactId>oss-parent</artifactId>
-        <version>1.0.3</version>
+        <version>1.0.4</version>
     </parent>
 
     <groupId>com.sdl.dxa</groupId>
@@ -83,7 +83,7 @@
         <jaxen.version>2.0.0</jaxen.version>
         <jdom2.version>2.0.6.1</jdom2.version>
 
-        <ehcache.version>3.7.1</ehcache.version>
+        <ehcache.version>3.10.8</ehcache.version>
         <cache-api.version>1.1.1</cache-api.version>
 
         <commons-codec.version>1.16.0</commons-codec.version>
@@ -94,8 +94,9 @@
         <jakarta.xml.ws-api.version>4.0.1</jakarta.xml.ws-api.version>
         <jakarta.xml.bind-api.version>4.0.1</jakarta.xml.bind-api.version>
         <jakarta.activation.version>2.1.2</jakarta.activation.version>
-        <jaxb.core.version>4.0.4</jaxb.core.version>
-        <jaxb.version>4.0.4</jaxb.version>
+        <jaxb-api.version>2.3.1</jaxb-api.version>
+        <istack-commons-runtime.version>4.2.0</istack-commons-runtime.version>
+        <fastInfoset-version>2.1.1</fastInfoset-version>
 
         <!-- DD4T dependencies -->
         <!-- These are not really used in the framework and are needed only for Model Service adapter -->
@@ -675,7 +676,25 @@
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>${ehcache.version}</version>
+                <classifier>jakarta</classifier>
             </dependency>
+            <!-- These are required due to ehcache -->
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${jaxb-api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.istack</groupId>
+                <artifactId>istack-commons-runtime</artifactId>
+                <version>${istack-commons-runtime.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.fastinfoset</groupId>
+                <artifactId>FastInfoset</artifactId>
+                <version>${fastInfoset-version}</version>
+            </dependency>
+            <!-- End of additional dependencies required for ehcache -->
             <dependency>
                 <groupId>javax.cache</groupId>
                 <artifactId>cache-api</artifactId>
@@ -847,16 +866,6 @@
                 <groupId>jakarta.xml.bind</groupId>
                 <artifactId>jakarta.xml.bind-api</artifactId>
                 <version>${jakarta.xml.bind-api.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-core</artifactId>
-                <version>${jaxb.core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.sun.xml.bind</groupId>
-                <artifactId>jaxb-impl</artifactId>
-                <version>${jaxb.version}</version>
             </dependency>
 
             <dependency>

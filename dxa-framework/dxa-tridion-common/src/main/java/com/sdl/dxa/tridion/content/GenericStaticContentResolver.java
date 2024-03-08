@@ -13,6 +13,7 @@ import org.springframework.web.util.UriUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.regex.Pattern;
 
@@ -72,12 +73,27 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
 
     @NotNull
     private StaticContentItem getStaticContentFileByPath(String path, StaticContentRequestDto requestDto) throws ContentProviderException {
-        String parentPath = Paths.get(getPublicationPath(requestDto.getLocalizationId())).normalize().toString();
-        String normalized_path = Paths.get(path).normalize().toString();
+        final Path parentPath = Paths.get(getPublicationPath(requestDto.getLocalizationId())).normalize();
+        final Path parentRelativePath = parentPath.subpath(0, parentPath.getNameCount() - 1);
+        final Path normalized_path = Paths.get(path).normalize();
 
-        final File file = new File(parentPath, normalized_path);
+        final File file = getFile(parentPath, normalized_path, parentRelativePath);
+        log.trace("getStaticContentFileByPath: {}", file.getAbsolutePath());
+
+        final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
+        int publicationId = Integer.parseInt(requestDto.getLocalizationId());
+        String urlPath = prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl());
+        return createStaticContentItem(requestDto, file, publicationId, pathInfo, urlPath);
+    }
+
+    @NotNull
+    private static File getFile(Path parentPath, Path normalized_path, Path parentRelativePath) throws ContentProviderException {
+        final File file = new File(parentPath.toString(), normalized_path.toString());
+        final Path filePath = file.toPath();
+        final Path fileRelativePath = filePath.subpath(0, filePath.getNameCount()-1);
+
         try {
-            if (!file.getCanonicalPath().startsWith(parentPath)) {
+            if (!fileRelativePath.startsWith(parentRelativePath)) {
                 throw new ContentProviderException("The path to the static file not starting with the expected " +
                         "parent path. [" + file.getCanonicalPath() + "]");
             }
@@ -85,12 +101,7 @@ public abstract class GenericStaticContentResolver implements StaticContentResol
         catch(IOException ioException) {
             throw new ContentProviderException(ioException);
         }
-        log.trace("getStaticContentFileByPath: {}", file.getAbsolutePath());
-
-        final ImageUtils.StaticContentPathInfo pathInfo = new ImageUtils.StaticContentPathInfo(path);
-        int publicationId = Integer.parseInt(requestDto.getLocalizationId());
-        String urlPath = prependFullUrlIfNeeded(pathInfo.getFileName(), requestDto.getBaseUrl());
-        return createStaticContentItem(requestDto, file, publicationId, pathInfo, urlPath);
+        return file;
     }
 
     protected String prependFullUrlIfNeeded(String path, String baseUrl) {

@@ -216,6 +216,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
             LOG.error("No published version.json found for localization [{}] in path {}", id, path, e);
         }
         catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + id +
                     "] " + path, e);
         }
@@ -234,6 +235,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
             builder.setHtmlDesignPublished(false);
             return true;
         } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + id +
                     "] " + path, e);
         }
@@ -303,6 +305,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                 return objectMapper.readValue(in, resultType);
             }
         } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             throw new LocalizationFactoryException("Exception while reading configuration of localization: [" + locId +
                     "] " + locPath + " for file [" + filePath + "]", e);
         }
@@ -328,6 +331,7 @@ public class LocalizationFactoryImpl implements LocalizationFactory {
                 return objectMapper.readTree(in);
             }
         } catch (Exception e) {
+            LOG.error(e.getMessage(), e);
             throw new LocalizationFactoryException("Could not read configuration of localization for pubId: [" + locId +
                     "] and path [" + locPath + "] for file [" + filePath + "]", e);
         }

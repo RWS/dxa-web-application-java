@@ -72,7 +72,7 @@
         <spring.version>6.1.4</spring.version>
         <spring-security.version>6.2.2</spring-security.version>
 
-        <jsoup.version>1.17.1</jsoup.version>
+        <jsoup.version>1.17.2</jsoup.version>
         <rome.version>2.1.0</rome.version>
         <jettison.version>1.5.4</jettison.version>
 

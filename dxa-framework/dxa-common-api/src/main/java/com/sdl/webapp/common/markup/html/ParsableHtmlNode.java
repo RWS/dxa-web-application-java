@@ -35,7 +35,7 @@ public class ParsableHtmlNode extends HtmlNode {
             Element htmlElement = null;
             Document doc = Jsoup.parse(this.htmlText);
             // The following settings ensure that Jsoup keeps self-enclosing tags unchanged
-            doc.outputSettings().syntax(Document.OutputSettings.Syntax.xml);
+            doc.outputSettings().syntax(Document.OutputSettings.Syntax.html);
             doc.outputSettings().escapeMode(Entities.EscapeMode.xhtml);
             List<Node> htmlNodes = doc.childNodes();
             Node firstNode = htmlNodes.get(0);

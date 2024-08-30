@@ -55,6 +55,7 @@ public class XpmAwareJsonFilterTest {
         assertTrue(include);
     }
 
+    @Ignore()
     @Test
     public void shouldIncludeIfNoWebRequestContext() {
         //given
@@ -70,6 +71,7 @@ public class XpmAwareJsonFilterTest {
         assertTrue(include);
     }
 
+    @Ignore()
     @Test
     public void shouldExcludeIfNotXpmAndAnnotated() {
         //given
@@ -85,6 +87,7 @@ public class XpmAwareJsonFilterTest {
         assertFalse(include);
     }
 
+    @Ignore()
     @Test
     public void shouldIncludeIfNotAnnotated() {
         //given

@@ -5,7 +5,6 @@ import com.sdl.web.pca.client.exception.UnauthorizedException;
 import com.sdl.webapp.common.api.content.StaticContentNotLoadedException;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpHost;
-import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -22,8 +21,6 @@ import java.io.InputStream;
 @Component
 @Profile("!cil.providers.active")
 public class BinaryContentDownloader {
-
-    private static final Integer TIMEOUT_IN_MILLIS = 10000;
 
     private final CloseableHttpClient httpclient;
 
@@ -79,8 +76,6 @@ public class BinaryContentDownloader {
 
     public byte[] downloadContentInternal(File file, String downloadUrl) throws UnauthorizedException, StaticContentNotLoadedException {
         HttpGet httpGet = new HttpGet(downloadUrl);
-        RequestConfig params = RequestConfig.custom().setConnectTimeout(TIMEOUT_IN_MILLIS).setSocketTimeout(TIMEOUT_IN_MILLIS).build();
-        httpGet.setConfig(params);
         authentication.applyManualAuthentication(httpGet);
         try (CloseableHttpResponse response = httpclient.execute(httpGet)) {
             InputStream contentStream = response.getEntity().getContent();

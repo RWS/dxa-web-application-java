@@ -1,6 +1,8 @@
 package com.sdl.webapp.tridion.linking;
 
 import com.google.common.base.Strings;
+import com.sdl.dxa.caching.NamedCacheProvider;
+import com.sdl.dxa.caching.statistics.CacheStatisticsProvider;
 import com.sdl.dxa.common.util.PathUtils;
 import com.sdl.dxa.tridion.annotations.impl.ValueAnnotationLogger;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -14,13 +16,24 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+
+import javax.cache.Cache;
+import java.util.UUID;
 
 @Slf4j
 @Component
 public abstract class AbstractLinkResolver implements LinkResolver, InitializingBean {
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractLinkResolver.class);
+
+    @Autowired
+    private NamedCacheProvider namedCacheProvider;
+
+    @Autowired
+    private CacheStatisticsProvider cacheStatisticsProvider;
 
     @Value("${dxa.web.link-resolver.remove-extension:#{true}}")
     private boolean shouldRemoveExtension;
@@ -33,9 +46,30 @@ public abstract class AbstractLinkResolver implements LinkResolver, Initializing
 
     @Override
     public String resolveLink(@Nullable String url, @Nullable String localizationId, boolean resolveToBinary, @Nullable String contextId) {
-        final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
+        if (!isCacheEnabled()) {
+            return processLink(url, localizationId, resolveToBinary, contextId);
+        }
+        else {
+            String cacheKeyInput = String.format("%s%s%b%s", url, localizationId, resolveToBinary, contextId);
+            String cacheKey = UUID.nameUUIDFromBytes(cacheKeyInput.getBytes()).toString();
+            Cache<Object, Object> resolvedLinksCache = namedCacheProvider.getCache("resolvedLinks");
+            String resolvedLink = (String)resolvedLinksCache.get(cacheKey);
+            if (resolvedLink == null) {
+                resolvedLink = processLink(url, localizationId, resolveToBinary, contextId);
+                if (resolvedLink != null) {
+                    resolvedLinksCache.put(cacheKey, resolvedLink);
+                    if (this.cacheStatisticsProvider != null) {
+                        this.cacheStatisticsProvider.storeStatsInfo("resolvedLinks", resolvedLink);
+                    }
+                }
+            }
+            return resolvedLink;
+        }
+    }
 
-        String resolvedLink = _resolveLink(url, publicationId, resolveToBinary, contextId);
+    private String processLink(String uri, String localizationId, boolean isBinary, String contextId) {
+        final int publicationId = !Strings.isNullOrEmpty(localizationId) ? Integer.parseInt(localizationId) : 0;
+        String resolvedLink = _resolveLink(uri, publicationId, isBinary, contextId);
         String resolvedUrl = shouldStripIndexPath ? PathUtils.stripIndexPath(resolvedLink) : resolvedLink;
         if (shouldKeepTrailingSlash && (! "/".equals(resolvedUrl)) && PathUtils.isIndexPath(resolvedLink)) {
             resolvedUrl = resolvedUrl + "/";
@@ -72,6 +106,10 @@ public abstract class AbstractLinkResolver implements LinkResolver, Initializing
                 log.warn("Could not resolve {}link: {} in pub: {}", isBinary?"binary ":"", uri, publicationId);
                 return "";
         }
+    }
+
+    private boolean isCacheEnabled() {
+        return namedCacheProvider != null && namedCacheProvider.isCacheEnabled("resolvedLinks");
     }
 
     private int getPageId(String contextId) {

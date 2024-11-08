@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
+import com.sdl.dxa.caching.statistics.CacheStatisticsProvider;
 import com.sdl.dxa.common.ClaimValues;
 import com.sdl.webapp.common.api.WebRequestContext;
 import com.sdl.webapp.common.api.content.ConditionalEntityEvaluator;
@@ -30,6 +31,7 @@ public abstract class AbstractContentProvider {
     protected WebRequestContext webRequestContext;
     private final Cache pagemodelCache;
     private final Cache entitymodelCache;
+    private CacheStatisticsProvider cacheStatisticsProvider;
 
     protected AbstractContentProvider(WebRequestContext webRequestContext, CacheManager cacheManager) {
         this.webRequestContext = webRequestContext;
@@ -42,6 +44,10 @@ public abstract class AbstractContentProvider {
         this.entityEvaluators = entityEvaluators;
     }
 
+    @Autowired(required = false)
+    public void setCacheStatisticsProvider(CacheStatisticsProvider cacheStatisticsProvider) {
+        this.cacheStatisticsProvider = cacheStatisticsProvider;
+    }
 
     /**
      * This default implementation handles caching and cloning the pagemodel.
@@ -71,6 +77,9 @@ public abstract class AbstractContentProvider {
                 if (pageModel.canBeCached() && !webRequestContext.isSessionPreview()) {
                     pagemodelCache.put(key, pageModel);
                     pagemodelCache.put(createKeyForCacheByPath(pageModel.getId(), localization, "pagemodel"), pageModel);
+                    if (cacheStatisticsProvider != null) {
+                        cacheStatisticsProvider.storeStatsInfo("pageModels", pageModel);
+                    }
                 }
             }
             try {
@@ -135,6 +144,9 @@ public abstract class AbstractContentProvider {
                 if (pageModel.canBeCached() && !webRequestContext.isSessionPreview()) {
                     pagemodelCache.put(key, pageModel);
                     pagemodelCache.put(createKeyForCacheByPath(pageModel.getUrl(), localization, "pagemodel"), pageModel);
+                    if (cacheStatisticsProvider != null) {
+                        cacheStatisticsProvider.storeStatsInfo("pageModels", pageModel);
+                    }
                 }
             }
             try {
@@ -214,6 +226,9 @@ public abstract class AbstractContentProvider {
             }
             if (entityModel.canBeCached() && !webRequestContext.isSessionPreview()) {
                 entitymodelCache.put(key, entityModel);
+                if (cacheStatisticsProvider != null) {
+                    cacheStatisticsProvider.storeStatsInfo("entityModels", entityModel);
+                }
             }
         }
 

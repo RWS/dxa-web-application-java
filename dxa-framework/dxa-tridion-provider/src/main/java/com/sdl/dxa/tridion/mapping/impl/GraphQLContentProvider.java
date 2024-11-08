@@ -3,6 +3,7 @@ package com.sdl.dxa.tridion.mapping.impl;
 import com.sdl.dxa.api.datamodel.model.ContentModelData;
 import com.sdl.dxa.api.datamodel.model.EntityModelData;
 import com.sdl.dxa.api.datamodel.model.PageModelData;
+import com.sdl.dxa.caching.statistics.CacheStatisticsProvider;
 import com.sdl.dxa.common.dto.EntityRequestDto;
 import com.sdl.dxa.common.dto.PageRequestDto;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
@@ -64,13 +65,15 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
     private final WebRequestContext webRequestContext;
     private ApiClientProvider pcaClientProvider;
     private CacheManager cacheManager;
+    private CacheStatisticsProvider cacheStatisticsProvider;
 
     @Autowired
     public GraphQLContentProvider(WebRequestContext webRequestContext,
                                   StaticContentResolver staticContentResolver,
                                   ModelBuilderPipeline builderPipeline, GraphQLProvider graphQLProvider,
                                   ApiClientProvider pcaClientProvider,
-                                  @Qualifier("compositeCacheManager") CacheManager cacheManager) {
+                                  @Qualifier("compositeCacheManager") CacheManager cacheManager,
+                                  CacheStatisticsProvider cacheStatisticsProvider) {
         super(webRequestContext, cacheManager);
         this.webRequestContext = webRequestContext;
         this.pcaClientProvider = pcaClientProvider;
@@ -78,6 +81,7 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
         this.staticContentResolver = staticContentResolver;
         this.builderPipeline = builderPipeline;
         this.graphQLProvider = graphQLProvider;
+        this.cacheStatisticsProvider = cacheStatisticsProvider;
     }
 
     /**
@@ -168,7 +172,11 @@ public class GraphQLContentProvider extends AbstractContentProvider implements C
                 .baseUrl(webRequestContext.getBaseUrl())
                 .noMediaCache(isNoMediaCache(path, localizationPath))
                 .build();
-        return staticContentResolver.getStaticContent(requestDto);
+        StaticContentItem staticContentItem = staticContentResolver.getStaticContent(requestDto);
+        if (cacheStatisticsProvider != null) {
+            cacheStatisticsProvider.storeStatsInfo("staticContentItems", staticContentItem);
+        }
+        return staticContentItem;
     }
 
     protected PageModel loadPage(String path, Localization localization) throws ContentProviderException {

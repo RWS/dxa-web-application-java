@@ -1,6 +1,7 @@
 package com.sdl.webapp.tridion.linking;
 
 import com.google.common.base.Strings;
+import com.sdl.dxa.caching.statistics.CacheStatisticsProvider;
 import com.sdl.dxa.common.util.PathUtils;
 import com.sdl.dxa.tridion.annotations.impl.ValueAnnotationLogger;
 import com.sdl.webapp.common.api.content.LinkResolver;
@@ -14,6 +15,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
@@ -22,6 +24,9 @@ import org.springframework.stereotype.Component;
 @Component
 public abstract class AbstractLinkResolver implements LinkResolver, InitializingBean {
     private static final Logger LOG = LoggerFactory.getLogger(AbstractLinkResolver.class);
+
+    @Autowired(required = false)
+    private CacheStatisticsProvider cacheStatisticsProvider;
 
     @Value("${dxa.web.link-resolver.remove-extension:#{true}}")
     private boolean shouldRemoveExtension;
@@ -34,7 +39,11 @@ public abstract class AbstractLinkResolver implements LinkResolver, Initializing
 
     @Cacheable(value = "resolvedLinks", key = "{ #root.methodName,  #url, #localizationId, #resolveToBinary, #contextId }", sync = true)
     public String resolveLink(@Nullable String url, @Nullable String localizationId) {
-        return resolveLink(url, localizationId, false, null);
+        String resolvedLink = resolveLink(url, localizationId, false, null);
+        if (cacheStatisticsProvider != null) {
+            cacheStatisticsProvider.storeStatsInfo("resolvedLinks", resolvedLink);
+        }
+        return resolvedLink;
     }
 
     @Override

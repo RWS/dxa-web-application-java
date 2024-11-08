@@ -85,6 +85,7 @@
         <jdom2.version>2.0.6</jdom2.version>
 
         <ehcache.version>3.7.1</ehcache.version>
+        <ehcache-sizeof.version>0.4.4</ehcache-sizeof.version>
         <cache-api.version>1.1.1</cache-api.version>
 
         <!-- DD4T PROPERTIES -->
@@ -677,6 +678,11 @@
                 <groupId>org.ehcache</groupId>
                 <artifactId>ehcache</artifactId>
                 <version>${ehcache.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ehcache</groupId>
+                <artifactId>sizeof</artifactId>
+                <version>${ehcache-sizeof.version}</version>
             </dependency>
             <dependency>
                 <groupId>javax.cache</groupId>

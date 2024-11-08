@@ -1,5 +1,6 @@
 package com.sdl.dxa.tridion.mapping.impl;
 
+import com.sdl.dxa.caching.statistics.CacheStatisticsProvider;
 import com.sdl.dxa.common.dto.StaticContentRequestDto;
 import com.sdl.dxa.tridion.content.StaticContentResolver;
 import com.sdl.dxa.tridion.graphql.GraphQLProvider;
@@ -49,6 +50,8 @@ public class GraphQLContentProviderTest {
     private CacheManager cacheManager;
     @Mock
     private Cache cache;
+    @Mock
+    private CacheStatisticsProvider cacheStatisticsProvider;
 
     @InjectMocks
     private GraphQLContentProvider contentProvider;
@@ -62,7 +65,8 @@ public class GraphQLContentProviderTest {
                 builderPipeline,
                 graphQLProvider,
                 apiClientProvider,
-                cacheManager
+                cacheManager,
+                cacheStatisticsProvider
         ));
     }
 

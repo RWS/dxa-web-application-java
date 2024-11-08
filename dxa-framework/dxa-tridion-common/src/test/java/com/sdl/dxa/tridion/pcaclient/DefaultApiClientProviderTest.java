@@ -1,5 +1,7 @@
 package com.sdl.dxa.tridion.pcaclient;
 
+import com.sdl.dxa.caching.NamedCacheProvider;
+import com.sdl.dxa.caching.statistics.CacheStatisticsProvider;
 import com.sdl.web.client.configuration.api.ConfigurationException;
 import com.sdl.web.pca.client.auth.Authentication;
 import com.sdl.webapp.common.util.ApplicationContextHolder;
@@ -33,6 +35,10 @@ public class DefaultApiClientProviderTest {
     private GraphQlServiceConfigurationLoader configurationLoader;
     @Mock
     private Authentication auth;
+    @Mock
+    private NamedCacheProvider namedCacheProvider;
+    @Mock
+    private CacheStatisticsProvider cacheStatisticsProvider;
 
     private DefaultApiClientProvider apiClientProvider;
 
@@ -42,7 +48,7 @@ public class DefaultApiClientProviderTest {
         when(configurationLoader.getServiceUrl()).thenReturn("http://localhost:8082/cd/api");
         when(configurationLoader.getConfiguration()).thenReturn(new Properties());
         when(configurationLoader.getCacheConfiguration()).thenReturn(new Properties());
-        apiClientProvider = new DefaultApiClientProvider(configurationLoader, auth);
+        apiClientProvider = new DefaultApiClientProvider(configurationLoader, auth, namedCacheProvider, cacheStatisticsProvider);
     }
 
     @Test

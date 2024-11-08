@@ -2,6 +2,8 @@ package com.sdl.dxa.tridion.pcaclient;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sdl.dxa.caching.NamedCacheProvider;
+import com.sdl.dxa.caching.statistics.CacheStatisticsProvider;
 import com.sdl.web.pca.client.ApiClient;
 import com.sdl.web.pca.client.DefaultApiClient;
 import com.sdl.web.pca.client.GraphQLClient;
@@ -41,6 +43,10 @@ public class DefaultApiClientProvider implements ApiClientProvider {
 
     private Authentication auth;
 
+    private NamedCacheProvider namedCacheProvider;
+
+    private CacheStatisticsProvider cacheStatisticsProvider;
+
     private static final String X_PREVIEW_SESSION_TOKEN = "x-preview-session-token";
 
     private static final String PREVIEW_SESSION_TOKEN = "preview-session-token";
@@ -51,9 +57,13 @@ public class DefaultApiClientProvider implements ApiClientProvider {
 
     @Autowired
     public DefaultApiClientProvider(ApiClientConfigurationLoader configurationLoader,
-                                    Authentication auth) {
+                                    Authentication auth,
+                                    NamedCacheProvider namedCacheProvider,
+                                    CacheStatisticsProvider cacheStatisticsProvider) {
         this.configurationLoader = configurationLoader;
         this.auth = auth;
+        this.namedCacheProvider = namedCacheProvider;
+        this.cacheStatisticsProvider = cacheStatisticsProvider;
     }
 
     @Override
@@ -87,7 +97,12 @@ public class DefaultApiClientProvider implements ApiClientProvider {
         if (previewToken != null) {
             defaultHeaders.put(HttpHeaders.COOKIE, String.format("%s=%s", PREVIEW_SESSION_TOKEN, previewToken));
         }
-        GraphQLClient graphQLClient = new DXAGraphQLClient(configurationLoader.getServiceUrl(), defaultHeaders, auth);
+        GraphQLClient graphQLClient = new DXAGraphQLClient(
+                configurationLoader.getServiceUrl(),
+                defaultHeaders,
+                auth,
+                namedCacheProvider,
+                cacheStatisticsProvider);
         Integer requestTimeout = Integer.valueOf(configurationLoader.getConfiguration().getOrDefault(CONNECTION_TIMEOUT, 0).toString());
         ApiClient client = new DefaultApiClient(graphQLClient, requestTimeout);
         client.setDefaultModelType(DataModelType.R2);

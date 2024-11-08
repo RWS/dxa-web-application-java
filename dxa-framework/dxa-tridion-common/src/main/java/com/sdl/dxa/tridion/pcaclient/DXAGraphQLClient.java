@@ -1,21 +1,18 @@
 package com.sdl.dxa.tridion.pcaclient;
 
-import com.sdl.web.client.cache.CacheProvider;
-import com.sdl.web.client.cache.CacheProviderInitializer;
-import com.sdl.web.client.configuration.api.ConfigurationException;
+import com.sdl.dxa.caching.NamedCacheProvider;
+import com.sdl.dxa.caching.statistics.CacheStatisticsProvider;
 import com.sdl.web.content.client.util.ClientCacheKeyEnhancer;
 import com.sdl.web.pca.client.DefaultGraphQLClient;
 import com.sdl.web.pca.client.auth.Authentication;
 import com.sdl.web.pca.client.exception.GraphQLClientException;
 import com.sdl.web.pca.client.exception.UnauthorizedException;
-import com.sdl.webapp.common.util.ApplicationContextHolder;
 
 import com.tridion.ambientdata.web.WebContext;
 
 import org.slf4j.Logger;
 
 import javax.cache.Cache;
-import java.io.Serializable;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicLong;
@@ -29,42 +26,28 @@ public class DXAGraphQLClient extends DefaultGraphQLClient {
     private static final AtomicLong HIT_CACHE = new AtomicLong();
     private static final AtomicLong MISS_CACHE = new AtomicLong();
 
-    private GraphQlServiceConfigurationLoader configurationLoader;
-    private CacheProvider cacheProvider;
-    private Cache<String, Serializable> queryCache;
+    private Cache<Object, Object> queryCache;
+    private NamedCacheProvider namedCacheProvider;
+    private CacheStatisticsProvider cacheStatisticsProvider;
 
-    public DXAGraphQLClient(String endpoint, Map<String, String> defaultHeaders) {
+    public DXAGraphQLClient(String endpoint, Map<String, String> defaultHeaders,
+                            NamedCacheProvider namedCacheProvider, CacheStatisticsProvider cacheStatisticsProvider) {
         super(endpoint, defaultHeaders);
-        initializeCacheProvider();
+        this.namedCacheProvider = namedCacheProvider;
+        this.queryCache = namedCacheProvider.getCache("queryCache");
+        this.cacheStatisticsProvider = cacheStatisticsProvider;
     }
 
-    public DXAGraphQLClient(String endpoint, Map<String, String> defaultHeaders, Authentication auth) {
+    public DXAGraphQLClient(String endpoint, Map<String, String> defaultHeaders, Authentication auth,
+                            NamedCacheProvider namedCacheProvider, CacheStatisticsProvider cacheStatisticsProvider) {
         super(endpoint, defaultHeaders, auth);
-        initializeCacheProvider();
-    }
-
-    private void initializeCacheProvider() {
-        if (ApplicationContextHolder.getContext() == null) {
-            LOG.warn("The application context is not yet available. No caching for now.");
-            return;
-        }
-
-        try {
-            configurationLoader = ApplicationContextHolder.getContext().getBean(GraphQlServiceConfigurationLoader.class);
-            this.cacheProvider = CacheProviderInitializer.getCacheProvider(configurationLoader.getCacheConfiguration());
-            if (isCacheEnabled()) {
-                this.queryCache = this.cacheProvider.provideCacheForClass(String.class, Serializable.class);
-            }
-        }
-        catch (ConfigurationException e) {
-            LOG.error("Failed to initiate cache provider", e);
-        }
+        this.namedCacheProvider = namedCacheProvider;
+        this.queryCache = namedCacheProvider.getCache("queryCache");
+        this.cacheStatisticsProvider = cacheStatisticsProvider;
     }
 
     private boolean isCacheEnabled() {
-        if (configurationLoader == null)
-            initializeCacheProvider();
-        return this.cacheProvider != null && this.cacheProvider.isCacheEnabled();
+        return namedCacheProvider.isCacheEnabled("queryCache");
     }
 
     private String createCacheKey(String query) {
@@ -76,9 +59,9 @@ public class DXAGraphQLClient extends DefaultGraphQLClient {
         return UUID.nameUUIDFromBytes(query.getBytes()).toString();
     }
 
-    private Serializable getFromCache(Cache<String, Serializable> cache, String cacheKey) {
+    private String getFromCache(Cache<Object, Object> cache, String cacheKey) {
         LOG.debug("Cache is enabled, trying to get the cached response from cache, Hit/miss:" + HIT_CACHE.get() + "/" + MISS_CACHE.get() + ", key:" + cacheKey);
-        Serializable cachedResponse = cache.get(cacheKey);
+        String cachedResponse = (String)cache.get(cacheKey);
         if (cachedResponse != null) {
             HIT_CACHE.incrementAndGet();
             return cachedResponse;
@@ -98,12 +81,15 @@ public class DXAGraphQLClient extends DefaultGraphQLClient {
         else {
             LOG.debug("Cache is enabled, trying to get response from cache");
             String cacheKey = createCacheKey(queryJsonEntity);
-            String response = (String)this.getFromCache(this.queryCache, cacheKey);
+            String response = this.getFromCache(this.queryCache, cacheKey);
             if (response == null) {
                 LOG.debug("No such query in cache, getting from content service");
                 response = super.execute(queryJsonEntity, timeout);
                 if (response != null) {
                     this.queryCache.put(cacheKey, response);
+                    if (this.cacheStatisticsProvider != null) {
+                        this.cacheStatisticsProvider.storeStatsInfo("queryCache", response);
+                    }
                 }
             }
             return response;

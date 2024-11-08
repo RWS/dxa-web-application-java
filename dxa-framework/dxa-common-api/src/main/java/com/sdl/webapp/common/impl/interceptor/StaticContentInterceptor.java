@@ -8,7 +8,6 @@ import com.sdl.webapp.common.api.content.StaticContentNotFoundException;
 import com.sdl.webapp.common.api.localization.Localization;
 import com.sdl.webapp.common.exceptions.DxaItemNotFoundException;
 import com.sdl.webapp.common.util.MimeUtils;
-import org.apache.commons.io.IOUtils;
 import org.joda.time.Hours;
 import org.joda.time.Weeks;
 import org.slf4j.Logger;
@@ -99,7 +98,7 @@ public class StaticContentInterceptor implements HandlerInterceptor {
                 isPreview)) {
             try (final InputStream in = contentResource.openStream();
                  final OutputStream out = response.getBody();) {
-                IOUtils.copy(in, out);
+                in.transferTo(out);
             }
         }
     }
@@ -143,7 +142,7 @@ public class StaticContentInterceptor implements HandlerInterceptor {
                 if (toBeRefreshed) {
                     try (final InputStream in = staticContentItem.getContent();
                          final OutputStream out = res.getBody()) {
-                        IOUtils.copy(in, out);
+                        in.transferTo(out);
                     }
                 }
             } catch (StaticContentNotFoundException e) {

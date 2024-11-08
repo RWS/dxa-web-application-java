@@ -4,6 +4,7 @@ import com.sdl.dxa.caching.ConditionalKey;
 import com.sdl.dxa.caching.LocalizationAwareKeyGenerator;
 import com.sdl.dxa.caching.NamedCacheProvider;
 import com.sdl.dxa.caching.NeverCached;
+import com.sdl.dxa.caching.statistics.CacheStatisticsProvider;
 import com.sdl.webapp.common.api.model.ViewModel;
 import lombok.extern.slf4j.Slf4j;
 import org.jetbrains.annotations.NotNull;
@@ -26,6 +27,8 @@ public abstract class SimpleCacheWrapper<B, V> {
 
     private NamedCacheProvider cacheProvider;
 
+    private CacheStatisticsProvider cacheStatisticsProvider;
+
     @Autowired
     public void setKeyGenerator(LocalizationAwareKeyGenerator keyGenerator) {
         this.keyGenerator = keyGenerator;
@@ -34,6 +37,11 @@ public abstract class SimpleCacheWrapper<B, V> {
     @Autowired
     public void setCacheProvider(NamedCacheProvider cacheProvider) {
         this.cacheProvider = cacheProvider;
+    }
+
+    @Autowired(required = false)
+    public void setCacheStatisticsProvider(CacheStatisticsProvider cacheStatisticsProvider) {
+        this.cacheStatisticsProvider = cacheStatisticsProvider;
     }
 
     @PostConstruct
@@ -115,6 +123,9 @@ public abstract class SimpleCacheWrapper<B, V> {
 
         getCache().put(key, value);
         logPut(key, getCache().getName());
+        if (cacheStatisticsProvider != null) {
+            cacheStatisticsProvider.storeStatsInfo(getCacheName(), value);
+        }
         return value;
     }
 

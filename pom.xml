@@ -34,52 +34,52 @@
         <!-- /DXA Versions -->
 
         <!-- Apache -->
-        <commons-io-version>2.15.1</commons-io-version>
-        <commons-lang3.version>3.14.0</commons-lang3.version>
-        <commons-text.version>1.11.0</commons-text.version>
+        <commons-io-version>2.18.0</commons-io-version>
+        <commons-lang3.version>3.17.0</commons-lang3.version>
+        <commons-text.version>1.13.0</commons-text.version>
         <commons-collections4.version>4.4</commons-collections4.version>
         <commons-compress.version>1.27.1</commons-compress.version>
         <httpcomponents-client-version>4.5.14</httpcomponents-client-version>
         <httpcomponents.core.version>4.4.16</httpcomponents.core.version>
 
-        <guava-version>32.1.3-jre</guava-version>
+        <guava-version>33.3.1-jre</guava-version>
 
         <!-- Joda Time -->
-        <joda-time-version>2.12.5</joda-time-version>
+        <joda-time-version>2.13.0</joda-time-version>
 
-        <jackson.version>2.16.0</jackson.version>
-        <lombok.version>1.18.30</lombok.version>
+        <jackson.version>2.18.2</jackson.version>
+        <lombok.version>1.18.36</lombok.version>
 
         <!-- Logging -->
-        <logback.version>1.4.14</logback.version>
-        <slf4j-version>2.0.9</slf4j-version>
+        <logback.version>1.5.16</logback.version>
+        <slf4j-version>2.0.16</slf4j-version>
 
         <!-- Servlet and JSP APIs -->
-        <servlet-api-version>6.0.0</servlet-api-version>
-        <jsp-api-version>3.1.1</jsp-api-version>
-        <jstl-version>3.0.0</jstl-version>
+        <servlet-api-version>6.1.0</servlet-api-version>
+        <jsp-api-version>4.0.0</jsp-api-version>
+        <jstl-version>3.0.2</jstl-version>
         <glassfish-jstl-version>3.0.1</glassfish-jstl-version>
 
         <!-- JUnit and other test libraries -->
-        <junit-version>5.10.1</junit-version>
-        <hamcrest-version>2.2</hamcrest-version>
-        <mockito-version>5.8.0</mockito-version>
+        <junit-version>5.11.4</junit-version>
+        <hamcrest-version>3.0</hamcrest-version>
+        <mockito-version>5.15.2</mockito-version>
         <openpojo.version>0.9.1</openpojo.version>
-        <jsonassert.version>1.5.1</jsonassert.version>
-        <xmlunit.version>2.9.1</xmlunit.version>
+        <jsonassert.version>1.5.3</jsonassert.version>
+        <xmlunit.version>2.10.0</xmlunit.version>
 
         <!-- Spring -->
-        <spring.version>6.1.13</spring.version>
-        <spring-security.version>6.3.3</spring-security.version>
+        <spring.version>6.2.1</spring.version>
+        <spring-security.version>6.4.2</spring-security.version>
 
-        <jsoup.version>1.17.2</jsoup.version>
+        <jsoup.version>1.18.3</jsoup.version>
         <rome.version>2.1.0</rome.version>
         <jettison.version>1.5.4</jettison.version>
 
         <dozer.version>6.5.2</dozer.version>
         <device-detection.version>3.2.18.1</device-detection.version>
 
-        <jb-annotations.version>24.1.0</jb-annotations.version>
+        <jb-annotations.version>26.0.1</jb-annotations.version>
         <jaxen.version>2.0.0</jaxen.version>
         <jdom2.version>2.0.6.1</jdom2.version>
 
@@ -87,14 +87,14 @@
         <ehcache-sizeof.version>0.4.4</ehcache-sizeof.version>
         <cache-api.version>1.1.1</cache-api.version>
 
-        <commons-codec.version>1.16.0</commons-codec.version>
+        <commons-codec.version>1.17.2</commons-codec.version>
 
-        <fast-classpath-scanner.version>4.8.165</fast-classpath-scanner.version>
-        <gson.version>2.10.1</gson.version>
-        <jakarta.annotation.version>3.0.0-M1</jakarta.annotation.version>
-        <jakarta.xml.ws-api.version>4.0.1</jakarta.xml.ws-api.version>
-        <jakarta.xml.bind-api.version>4.0.1</jakarta.xml.bind-api.version>
-        <jakarta.activation.version>2.1.2</jakarta.activation.version>
+        <fast-classpath-scanner.version>4.8.179</fast-classpath-scanner.version>
+        <gson.version>2.11.0</gson.version>
+        <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
+        <jakarta.xml.ws-api.version>4.0.2</jakarta.xml.ws-api.version>
+        <jakarta.xml.bind-api.version>4.0.2</jakarta.xml.bind-api.version>
+        <jakarta.activation.version>2.1.3</jakarta.activation.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <istack-commons-runtime.version>4.2.0</istack-commons-runtime.version>
         <fastInfoset-version>2.1.1</fastInfoset-version>
@@ -102,7 +102,8 @@
         <!-- DD4T dependencies -->
         <!-- These are not really used in the framework and are needed only for Model Service adapter -->
         <!-- In order to still manage all the dependencies in the same place, they are defined here -->
-        <dd4t-latest.version>2.1.7</dd4t-latest.version>
+        <dd4t-latest.version>2.1.12</dd4t-latest.version>
+        <dd4t-providers-web8-latest.version>2.1.7</dd4t-providers-web8-latest.version>
 
         <pca-client.version>2.2.29</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>
@@ -736,32 +737,32 @@
             <dependency>
                 <groupId>com.squareup.okio</groupId>
                 <artifactId>okio-jvm</artifactId>
-                <version>3.7.0</version>
+                <version>3.10.2</version>
             </dependency>
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
                 <artifactId>scala-parser-combinators_2.12</artifactId>
-                <version>2.3.0</version>
+                <version>2.4.0</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>1.9.21</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-common</artifactId>
-                <version>1.9.21</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk7</artifactId>
-                <version>1.9.21</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk8</artifactId>
-                <version>1.9.21</version>
+                <version>2.1.0</version>
             </dependency>
             <dependency>
                 <groupId>com.github.ua-parser</groupId>
@@ -823,7 +824,7 @@
             <dependency>
                 <groupId>org.dd4t</groupId>
                 <artifactId>dd4t-providers-web8</artifactId>
-                <version>${dd4t-latest.version}</version>
+                <version>${dd4t-providers-web8-latest.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.skyscreamer</groupId>
@@ -877,7 +878,7 @@
             <dependency>
                 <groupId>org.yaml</groupId>
                 <artifactId>snakeyaml</artifactId>
-                <version>2.2</version>
+                <version>2.3</version>
             </dependency>
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
@@ -898,18 +899,18 @@
             <dependency>
                 <groupId>net.minidev</groupId>
                 <artifactId>json-smart</artifactId>
-                <version>2.5.0</version>
+                <version>2.5.1</version>
             </dependency>
             <dependency>
                 <groupId>org.glassfish.jersey.core</groupId>
                 <artifactId>jersey-common</artifactId>
-                <version>3.1.5</version>
+                <version>3.1.10</version>
             </dependency>
 
             <dependency>
                 <groupId>org.javassist</groupId>
                 <artifactId>javassist</artifactId>
-                <version>3.30.1-GA</version>
+                <version>3.30.2-GA</version>
             </dependency>
 
         </dependencies>

@@ -67,6 +67,7 @@ public class GraphQLContentProviderTest {
                 graphQLProvider,
                 apiClientProvider,
                 cacheManager,
+                null,
                 cacheStatisticsProvider
         ));
     }
@@ -103,7 +104,7 @@ public class GraphQLContentProviderTest {
         when(staticContentResolver.getStaticContent(any(StaticContentRequestDto.class))).thenReturn(new StaticContentItem("testType",
                 contentFile, false));
 
-        StaticContentItem result = contentProvider.getStaticContent("/static", "localizationId", "localilzationPath");
+        StaticContentItem result = contentProvider.getStaticContent("/static", "localizationId", "localizationPath");
 
         assertEquals("path", contentFile.getName());
         assertEquals("testType", result.getContentType());

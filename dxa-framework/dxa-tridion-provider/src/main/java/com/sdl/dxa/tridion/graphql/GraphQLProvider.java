@@ -80,11 +80,28 @@ public class GraphQLProvider {
                     null
             );
             T result = mapToType(type, pageNode);
+            // result may be 'null' starting from Jackson 2.18.3, so checking for this condition
+            if (result == null) {
+                String pathToDefaults = normalizePathToDefaults(pageRequest.getPath(), true);
+                log.info("Page not found by " + pageRequest + ", trying to find it by path " + pathToDefaults);
+                pageNode = getPcaClient().getPageModelData(
+                        GraphQLUtils.convertUriToGraphQLContentNamespace(pageRequest.getUriType()),
+                        pageRequest.getPublicationId(),
+                        pathToDefaults,
+                        contentType,
+                        DataModelType.valueOf(pageRequest.getDataModelType().toString()),
+                        PageInclusion.valueOf(pageRequest.getIncludePages().toString()),
+                        ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
+                        null);
+                result = mapToType(type, pageNode);
+            }
             if (log.isTraceEnabled()) {
                 log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
             }
             return result;
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
+            // Keeping this for users who may override the Jackson version and utilize a version prior to 2.18.3
             String pathToDefaults = normalizePathToDefaults(pageRequest.getPath(), true);
             log.info("Page not found by " + pageRequest + ", trying to find it by path " + pathToDefaults);
             JsonNode node = null;
@@ -103,7 +120,8 @@ public class GraphQLProvider {
                     log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
                 }
                 return result;
-            } catch (IOException ex) {
+            }
+            catch (IOException ex) {
                 if (log.isTraceEnabled()) {
                     log.trace("Response for request " + pageRequest + " is " + node, e);
                 }

@@ -95,7 +95,7 @@ public class GraphQLQueryProvider implements QueryProvider {
 
         if (queryParams.getSchemaId() > 0) {
             InputSchemaCriteria schema = new InputSchemaCriteria();
-            schema.setId("" + queryParams.getSchemaId());
+            schema.setId(queryParams.getSchemaId());
             filter.setSchema(schema);
         }
 

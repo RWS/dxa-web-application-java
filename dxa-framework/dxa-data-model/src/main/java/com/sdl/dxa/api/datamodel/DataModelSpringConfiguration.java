@@ -2,10 +2,7 @@ package com.sdl.dxa.api.datamodel;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.PropertyNamingStrategy;
-import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.*;
 import com.fasterxml.jackson.databind.util.StdDateFormat;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -36,7 +33,7 @@ public class DataModelSpringConfiguration {
     public ObjectMapper dxaR2ObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
 
-        objectMapper.setPropertyNamingStrategy(new PropertyNamingStrategy.UpperCamelCaseStrategy());
+        objectMapper.setPropertyNamingStrategy(PropertyNamingStrategies.UPPER_CAMEL_CASE);
         objectMapper.registerModule(new JodaModule());
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.setDateFormat(new StdDateFormat());

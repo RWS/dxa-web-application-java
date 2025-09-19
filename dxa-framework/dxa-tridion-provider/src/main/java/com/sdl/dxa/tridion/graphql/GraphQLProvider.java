@@ -68,6 +68,7 @@ public class GraphQLProvider {
     // To determine this, DXA first tries the regular Page and if it doesn't exist, it appends /index.html and tries again.
     // TODO: The above should be handled by GraphQL (See CRQ-11703)
     public <T> T loadPage(Class<T> type, PageRequestDto pageRequest, ContentType contentType) throws ContentProviderException {
+        T result = null;
         try {
             JsonNode pageNode = getPcaClient().getPageModelData(
                     GraphQLUtils.convertUriToGraphQLContentNamespace(pageRequest.getUriType()),
@@ -79,7 +80,7 @@ public class GraphQLProvider {
                     ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
                     null
             );
-            T result = mapToType(type, pageNode);
+            result = mapToType(type, pageNode);
             // result may be 'null' starting from Jackson 2.18.3, so checking for this condition
             if (result == null) {
                 String pathToDefaults = normalizePathToDefaults(pageRequest.getPath(), true);
@@ -95,10 +96,6 @@ public class GraphQLProvider {
                         null);
                 result = mapToType(type, pageNode);
             }
-            if (log.isTraceEnabled()) {
-                log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
-            }
-            return result;
         }
         catch (IOException e) {
             // Keeping this for users who may override the Jackson version and utilize a version prior to 2.18.3
@@ -115,11 +112,7 @@ public class GraphQLProvider {
                         PageInclusion.valueOf(pageRequest.getIncludePages().toString()),
                         ContentIncludeMode.INCLUDE_DATA_AND_RENDER,
                         null);
-                T result = mapToType(type, node);
-                if (log.isTraceEnabled()) {
-                    log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
-                }
-                return result;
+                result = mapToType(type, node);
             }
             catch (IOException ex) {
                 if (log.isTraceEnabled()) {
@@ -128,6 +121,13 @@ public class GraphQLProvider {
                 throw new PageNotFoundException("Unable to load page, by request " + pageRequest, ex);
             }
         }
+        if (log.isTraceEnabled()) {
+            log.trace("Loaded '{}' for pageRequest '{}'", result, pageRequest);
+        }
+        if (result == null) {
+            throw new PageNotFoundException("Unable to load page (retrieved 'null'), by request " + pageRequest);
+        }
+        return result;
     }
 
     public <T> T loadPage(Class<T> type, String namespace, int publicationId, int pageId, ContentType contentType, DataModelType modelType, PageInclusion pageInclusion, ContextData contextData) throws ContentProviderException {

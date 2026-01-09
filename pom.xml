@@ -34,24 +34,25 @@
         <!-- /DXA Versions -->
 
         <!-- Apache -->
-        <commons-io-version>2.20.0</commons-io-version>
-        <commons-lang3.version>3.18.0</commons-lang3.version>
-        <commons-text.version>1.14.0</commons-text.version>
+        <commons-io-version>2.21.0</commons-io-version>
+        <commons-lang3.version>3.20.0</commons-lang3.version>
+        <commons-text.version>1.15.0</commons-text.version>
         <commons-collections4.version>4.5.0</commons-collections4.version>
         <commons-compress.version>1.28.0</commons-compress.version>
         <httpcomponents-client-version>4.5.14</httpcomponents-client-version>
         <httpcomponents.core.version>4.4.16</httpcomponents.core.version>
 
-        <guava-version>33.4.8-jre</guava-version>
+        <guava-version>33.5.0-jre</guava-version>
 
         <!-- Joda Time -->
         <joda-time-version>2.14.0</joda-time-version>
 
-        <jackson.version>2.19.2</jackson.version>
-        <lombok.version>1.18.38</lombok.version>
+        <jackson.version>2.20.1</jackson.version>
+        <jackson-annotations.version>2.20</jackson-annotations.version>
+        <lombok.version>1.18.42</lombok.version>
 
         <!-- Logging -->
-        <logback.version>1.5.18</logback.version>
+        <logback.version>1.5.24</logback.version>
         <slf4j-version>2.0.17</slf4j-version>
 
         <!-- Servlet and JSP APIs -->
@@ -61,18 +62,18 @@
         <glassfish-jstl-version>3.0.1</glassfish-jstl-version>
 
         <!-- JUnit and other test libraries -->
-        <junit-version>5.13.4</junit-version>
+        <junit-version>6.0.2</junit-version>
         <hamcrest-version>3.0</hamcrest-version>
-        <mockito-version>5.19.0</mockito-version>
+        <mockito-version>5.21.0</mockito-version>
         <openpojo.version>0.9.1</openpojo.version>
         <jsonassert.version>1.5.3</jsonassert.version>
-        <xmlunit.version>2.10.3</xmlunit.version>
+        <xmlunit.version>2.11.0</xmlunit.version>
 
         <!-- Spring -->
-        <spring.version>6.2.10</spring.version>
-        <spring-security.version>6.5.3</spring-security.version>
+        <spring.version>7.0.2</spring.version>
+        <spring-security.version>7.0.2</spring-security.version>
 
-        <jsoup.version>1.21.2</jsoup.version>
+        <jsoup.version>1.22.1</jsoup.version>
         <rome.version>2.1.0</rome.version>
         <jettison.version>1.5.4</jettison.version>
 
@@ -83,18 +84,18 @@
         <jaxen.version>2.0.0</jaxen.version>
         <jdom2.version>2.0.6.1</jdom2.version>
 
-        <ehcache.version>3.10.8</ehcache.version>
+        <ehcache.version>3.11.1</ehcache.version>
         <ehcache-sizeof.version>0.4.4</ehcache-sizeof.version>
         <cache-api.version>1.1.1</cache-api.version>
 
         <commons-codec.version>1.19.0</commons-codec.version>
 
-        <fast-classpath-scanner.version>4.8.181</fast-classpath-scanner.version>
-        <gson.version>2.13.1</gson.version>
+        <fast-classpath-scanner.version>4.8.184</fast-classpath-scanner.version>
+        <gson.version>2.13.2</gson.version>
         <jakarta.annotation.version>3.0.0</jakarta.annotation.version>
         <jakarta.xml.ws-api.version>4.0.2</jakarta.xml.ws-api.version>
-        <jakarta.xml.bind-api.version>4.0.2</jakarta.xml.bind-api.version>
-        <jakarta.activation.version>2.1.3</jakarta.activation.version>
+        <jakarta.xml.bind-api.version>4.0.4</jakarta.xml.bind-api.version>
+        <jakarta.activation.version>2.1.4</jakarta.activation.version>
         <jaxb-api.version>2.3.1</jaxb-api.version>
         <istack-commons-runtime.version>4.2.0</istack-commons-runtime.version>
         <fastInfoset-version>2.1.1</fastInfoset-version>
@@ -107,6 +108,7 @@
 
         <pca-client.version>2.2.30</pca-client.version>
         <sitemapgen4j.version>1.1.2</sitemapgen4j.version>
+        <activemq.version>6.2.0</activemq.version>
     </properties>
 
     <scm>
@@ -350,6 +352,10 @@
                         <groupId>javax.servlet</groupId>
                         <artifactId>javax.servlet-api</artifactId>
                     </exclusion>
+                    <exclusion>
+                        <groupId>org.ehcache</groupId>
+                        <artifactId>ehcache</artifactId>
+                    </exclusion>
                 </exclusions>
             </dependency>
             <dependency>
@@ -362,6 +368,12 @@
                 <artifactId>cil</artifactId>
                 <version>${cd-cil.version}</version>
                 <type>pom</type>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.ehcache</groupId>
+                        <artifactId>ehcache</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <dependency>
@@ -641,7 +653,7 @@
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-annotations</artifactId>
-                <version>${jackson.version}</version>
+                <version>${jackson-annotations.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
@@ -726,7 +738,7 @@
             <dependency>
                 <groupId>com.squareup.okio</groupId>
                 <artifactId>okio-jvm</artifactId>
-                <version>3.16.0</version>
+                <version>3.16.4</version>
             </dependency>
             <dependency>
                 <groupId>org.scala-lang.modules</groupId>
@@ -736,17 +748,17 @@
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib</artifactId>
-                <version>2.2.10</version>
+                <version>2.3.0</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk7</artifactId>
-                <version>2.2.10</version>
+                <version>2.3.0</version>
             </dependency>
             <dependency>
                 <groupId>org.jetbrains.kotlin</groupId>
                 <artifactId>kotlin-stdlib-jdk8</artifactId>
-                <version>2.2.10</version>
+                <version>2.3.0</version>
             </dependency>
             <dependency>
                 <groupId>com.github.ua-parser</groupId>
@@ -867,12 +879,12 @@
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>okhttp</artifactId>
-                <version>5.1.0</version>
+                <version>5.3.2</version>
             </dependency>
             <dependency>
                 <groupId>com.squareup.okhttp3</groupId>
                 <artifactId>logging-interceptor</artifactId>
-                <version>5.1.0</version>
+                <version>5.3.2</version>
             </dependency>
 
             <dependency>
@@ -888,7 +900,7 @@
             <dependency>
                 <groupId>org.glassfish.jersey.core</groupId>
                 <artifactId>jersey-common</artifactId>
-                <version>3.1.11</version>
+                <version>4.0.0</version>
             </dependency>
 
             <dependency>
@@ -900,7 +912,7 @@
             <dependency>
                 <groupId>com.jayway.jsonpath</groupId>
                 <artifactId>json-path</artifactId>
-                <version>2.9.0</version>
+                <version>2.10.0</version>
             </dependency>
 
         </dependencies>

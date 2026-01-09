@@ -9,7 +9,7 @@ Java CI with Maven:
 
 About
 -----
-The RWS Digital Experience Accelerator (DXA) is a reference implementation of RWS Tridion Sites 10, 9.x and RWS Web 8 intended to help you create, design and publish an RWS Tridion/Web-based website quickly.
+The RWS Digital Experience Accelerator (DXA) is a reference implementation of RWS Tridion Sites 10.x, 10, 9.x and RWS Web 8 intended to help you create, design and publish an RWS Tridion/Web-based website quickly.
 
 DXA is available for both .NET and Java web applications. Its modular architecture consists of a framework and example web application, which includes all core RWS Tridion/Web functionality as well as separate Modules for additional, optional functionality.
 
@@ -26,6 +26,7 @@ Compatibility Matrices
 <table>
     <tr>
         <th nowrap="nowrap">DXA Version</th>
+        <th nowrap="nowrap">Tridion Sites 10.1</th>
         <th nowrap="nowrap">Tridion Sites 10</th>
         <th nowrap="nowrap">Tridion Sites 9.6</th>
         <th nowrap="nowrap">Tridion Sites 9.5</th>
@@ -37,9 +38,11 @@ Compatibility Matrices
         <td nowrap="nowrap" align="center">✔️</td>
         <td nowrap="nowrap" align="center">✔️</td>
         <td nowrap="nowrap" align="center">✔️</td>
+        <td nowrap="nowrap" align="center">✔️</td>
     </tr>
     <tr text-align="center">
         <td nowrap="nowrap">2.3.x</td>
+        <td nowrap="nowrap" align="center">✔️</td>
         <td nowrap="nowrap" align="center">✔️</td>
         <td nowrap="nowrap" align="center">✔️</td>
         <td nowrap="nowrap" align="center">✔️</td>
@@ -74,7 +77,7 @@ Compatibility Matrices
     </tr>
 </table>
 
-The latest `DXA 2.3` version includes the `Spring Framework version 6` and `Jakarta Servlet API` as dependencies.
+The latest `DXA 2.3` version includes the `Spring Framework version 7` and `Jakarta Servlet API` as dependencies.
 
 Build
 -----

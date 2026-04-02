@@ -47,8 +47,8 @@
         <!-- Joda Time -->
         <joda-time-version>2.14.0</joda-time-version>
 
-        <jackson.version>2.20.1</jackson.version>
-        <jackson-annotations.version>2.20</jackson-annotations.version>
+        <jackson.version>2.21.2</jackson.version>
+        <jackson-annotations.version>2.21</jackson-annotations.version>
         <lombok.version>1.18.42</lombok.version>
 
         <!-- Logging -->
@@ -70,8 +70,8 @@
         <xmlunit.version>2.11.0</xmlunit.version>
 
         <!-- Spring -->
-        <spring.version>7.0.2</spring.version>
-        <spring-security.version>7.0.2</spring-security.version>
+        <spring.version>7.0.6</spring.version>
+        <spring-security.version>7.0.4</spring-security.version>
 
         <jsoup.version>1.22.1</jsoup.version>
         <rome.version>2.1.0</rome.version>

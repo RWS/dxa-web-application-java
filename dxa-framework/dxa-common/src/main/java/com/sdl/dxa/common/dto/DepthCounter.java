@@ -29,7 +29,17 @@ public final class DepthCounter {
     }
 
     public synchronized boolean depthIncreaseAndCheckIfSafe() {
-        return isNotTooDeep() && counter-- > 0;
+        // Counter must be decremented unconditionally so it stays balanced with
+        // the unconditional increment in depthDecrease() that callers run in
+        // their finally blocks. The previous implementation short-circuited the
+        // decrement via && when counter reached 0, causing every failed check
+        // to leak +1 of budget back into the counter — which allowed the model
+        // expander to recurse past its intended depth limit. See SRQ-31346.
+        if (unlimited) {
+            return true;
+        }
+        counter--;
+        return counter >= 0;
     }
 
     public synchronized boolean depthIncreaseAndCheckIfSafe(int levels) {

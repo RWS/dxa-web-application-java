@@ -349,6 +349,7 @@
             <dependency>
                 <groupId>com.sdl.tridion.xo</groupId>
                 <artifactId>xo-compatible-client</artifactId>
+                <version>11.6.0-1110</version>
             </dependency>
             <dependency>
                 <groupId>com.sdl.delivery</groupId>
